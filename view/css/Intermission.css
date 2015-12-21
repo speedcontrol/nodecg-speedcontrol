@@ -1,0 +1,71 @@
+@font-face {
+    font-family: 'AmericanCaptain';
+    src: url('../images/American%20Captain.otf');
+    src: url('../images/American%20Captain.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#window-container {
+    background-image: url('/view/speedcontrol/images/intermissionscreen_test.png');
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    color: white;
+    background-color: #000000;
+}
+
+#comingUp {
+    position: absolute;
+    font-family: AmericanCaptain;
+    font-size: 24px;
+    top: 580px;
+    left: 1100px;
+}
+
+#justMissed {
+    position: absolute;
+    font-family: AmericanCaptain;
+    font-size: 24px;
+    top: 580px;
+    left: 70px;
+}
+
+#comingUpRun {
+    position: absolute;
+    font-family: AmericanCaptain;
+    font-size: 24px;
+    top: 650px;
+    left: 1100px;
+}
+
+#justMissedRun {
+    position: absolute;
+    font-family: AmericanCaptain;
+    font-size: 24px;
+    top: 650px;
+    left: 70px;
+}
+
+#positionDebug {
+    position: absolute;
+    background-color: black;
+    top: 5px;
+    left: 5px;
+    color: white;
+    font-size: 20px;
+    opacity: 0;
+}
+
+td.rowTitleGame {
+    font-family: AmericanCaptain;
+    font-size: 15px;
+    text-align: left;
+    width: 100px;
+    color: white;
+}
+
+.editableObject {
+    background: rgba(255,0,0,0.3);
+}
+

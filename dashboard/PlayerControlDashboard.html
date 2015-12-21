@@ -1,0 +1,76 @@
+<script src="speedcontrol/components/jquery-ui/jquery-ui.js"></script>
+<script src="speedcontrol/components/verify.notify.js"></script>
+<link rel="stylesheet" href="speedcontrol/components/jquery-ui/themes/redmond/jquery-ui.css"/>
+<style>
+    .ui-autocomplete-loading {
+        background: white url("/view/speedcontrol/images/loading.gif") right center no-repeat;
+    }
+
+    .playerControlRunnerClass {
+        margin-left: 15px;
+        margin-top: 5px;
+    }
+
+    #playerControlAddPlayerButton {
+        width: 30px;
+        height: 30px;
+    }
+
+    #playerControlAddRunButton, #playerControlRandomizeRunsButton, #playerControlRemoveRunsButton,#playerControlRegion,
+    #playerControlEstimate, #playerControlCategory, #playerControlSystem, #playerControlGame{
+        width: 100%;
+    }
+
+    h4 {
+        text-align: left;
+    }
+</style>
+
+<div id="player-control">
+    <form id="run-submission">
+        <div id="player-control-run-container">
+            <h4>Add Run</h4>
+            <div id="playerControlButtons">
+                <div class="row">
+                    <div class="ui-widget" id="runnerContainer">
+                        <input id="playerControlRunner1" class="playerControlRunnerClass" placeholder="Player 1 Nick" data-validate="runnerValidation,required">
+                        <button type="button" id="playerControlAddPlayerButton"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui-widget">
+            <label for="playerControlGame">Game: </label>
+            <input id="playerControlGame" data-validate="required">
+        </div>
+
+        <label for="playerControlEstimate">Estimate: </label>
+        <input type="text" id="playerControlEstimate" placeholder="hhmm" data-validate="regex(^[0-9][0-9]:[0-5][0-9]$, Type in estimate in the following format: hhmm),required">
+
+        <div class="ui-widget">
+            <label for="playerControlCategory">Category: </label>
+            <input id="playerControlCategory" data-validate="required">
+        </div>
+
+        <div class="ui-widget">
+            <label for="playerControlSystem">System: </label>
+            <input id="playerControlSystem" data-validate="required">
+        </div>
+
+        <div class="ui-widget">
+            <label for="playerControlRegion">Region: </label><br>
+            <select id="playerControlRegion" data-validate="required">
+                <option value="JP">Japan</option>
+                <option value="USA">USA</option>
+                <option value="EU">European</option>
+                <option value="PAL">PAL</option>
+                <option value="NTSC" selected="selected">NTSC</option>
+            </select>
+        </div>
+        <button type="submit" id="playerControlAddRunButton" value="validate">Add Run</button>
+        <button type="button" id="playerControlRemoveRunsButton">Remove All Runs</button>
+        <button type="button" id="playerControlRandomizeRunsButton">Create 10 random runs</button>
+        <div id="addResult"></div>
+    </form>
+</div>

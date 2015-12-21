@@ -1,0 +1,96 @@
+@font-face {
+    font-family: 'AmericanCaptain';
+    src: url('../images/American%20Captain.otf');
+    src: url('../images/American%20Captain.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#window-container {
+    background-image: url('/view/speedcontrol/images/single_test.png');
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    color: white;
+    background-color: #000000;
+}
+
+#timer {
+    font-family: AmericanCaptain;
+    font-size: 30px;
+    position: absolute;
+    top: 200px;
+    left: 1000px;
+
+}
+
+#runInformation {
+    color: white;
+    position: absolute;
+    top: 650px;
+    left: 10px;
+}
+
+#runner1Information {
+    color: white;
+    position: absolute;
+    top: 30px;
+    left: 25px;
+}
+
+#positionDebug {
+    position: absolute;
+    background-color: black;
+    top: 5px;
+    left: 5px;
+    color: white;
+    font-size: 20px;
+    opacity: 0;
+}
+
+#twitchField {
+    padding-left: 35px;
+    background-size: 25px 25px;
+    background-image: url('/view/speedcontrol/images/twitchlogo.png');
+    background-repeat: no-repeat;
+}
+
+td.rowTitleGame {
+    font-family: AmericanCaptain;
+    font-size: 25px;
+    width: 200px;
+    color: white;
+}
+
+td.rowTitle {
+    font-family: AmericanCaptain;
+    font-size: 15px;
+    width: 200px;
+    color: white;
+}
+
+td.rowContent {
+    font-family: AmericanCaptain;
+    font-size: 15px;
+    color: white;
+    text-align: right;
+}
+
+td.rowTitlePlayer {
+    font-family: AmericanCaptain;
+    font-size: 30px;
+    width: 200px;
+    color: white;
+}
+
+td.rowContentPlayer {
+    font-family: AmericanCaptain;
+    font-size: 30px;
+    color: white;
+    text-align: right;
+}
+
+.editableObject {
+    background: rgba(255,0,0,0.3);
+}
+

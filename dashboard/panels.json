@@ -1,0 +1,44 @@
+[
+  {
+    "name": "player-control",
+    "title": "Player Control",
+    "width": 2,
+    "file": "PlayerControlDashboard.html",
+    "faIcon": "fa-exclamation"
+  },
+  {
+    "name": "run-control",
+    "title": "Run Control",
+    "width": 3,
+    "file": "RunControlDashboard.html",
+    "faIcon": "fa-exclamation"
+  },
+  {
+    "name": "run-player",
+    "title": "Run Player",
+    "width": 3,
+    "file": "RunPlayerDashboard.html",
+    "faIcon": "fa-exclamation"
+  },
+  {
+    "name": "run-timer",
+    "title": "Run Timer",
+    "width": 2,
+    "file": "PlayerTimerDashboard.html",
+    "faIcon": "fa-exclamation"
+  },
+  {
+    "name": "player-layout",
+    "title": "Player Layout",
+    "width": 2,
+    "file": "PlayerLayoutDashboard.html",
+    "faIcon": "fa-exclamation"
+  },
+  {
+    "name": "scene-layout",
+    "title": "Scene Layout",
+    "width": 2,
+    "file": "SceneLayoutDashboard.html",
+    "faIcon": "fa-exclamation"
+  }
+]

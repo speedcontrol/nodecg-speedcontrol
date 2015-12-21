@@ -1,0 +1,14 @@
+{
+    "name": "speedcontrol",
+    "version": "0.0.1",
+    "nodecgDependency": "~0.6.2",
+    "homepage": "http://twitch.tv/sethcharleon",
+    "authors": [
+        "Tobias Nerg <charleon@gmail.com>"
+    ],
+    "description": "Stream control for speedrunning marathons",
+    "license": "MIT",
+    "extension": {
+        "path": "extension.js"
+    }
+}

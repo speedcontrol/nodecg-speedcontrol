@@ -1,0 +1,43 @@
+<style>
+    .playerGroup {
+        width: 100%;
+        font-size: 12px;
+    }
+    #runPlayerItems {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    td.rowTitle {
+        width: 70px;
+    }
+
+    #toolbar {
+        padding: 4px;
+        display: inline-block;
+    }
+
+    .playRunButton {
+        float: right;
+        width: 30px;
+        height: 30px;
+    }
+    .ui-accordion-header.ui-state-playing { background-color: #7fb96a; color: #7fb96a; }
+    .ui-accordion-content.ui-state-playing { background-color: #7fb96a; color: #7fb96a; }
+
+</style>
+<div id="run-player">
+    <div id="run-player-container">
+        <h4>Runs</h4>
+        <div id="toolbarPrevNext" class="ui-widget-header ui-corner-all">
+            <button class="previous" id="previousRun">previous</button>
+            <button class="next" id="nextRun">next</button>
+        </div>
+        <div id="runPlayerItems">
+        </div>
+    </div>
+</div>
+
+
+

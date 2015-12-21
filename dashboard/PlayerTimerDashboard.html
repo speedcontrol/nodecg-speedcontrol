@@ -1,0 +1,37 @@
+<style>
+    #theTimer {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-size: 20px;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        text-align: center;
+        border: 1px solid #008BB9;
+        border-radius: 15px;
+        background: rgba(0,139,185,0.1);
+    }
+
+    #toolbar {
+        width: 100%;
+        padding: 5px;
+    }
+
+    #playerSpecificToolbar {
+        width: 100%;
+        padding: 5px;
+    }
+</style>
+<div id="run-timer">
+    <div id="player-timer-control-run-container">
+        <h4>Timer</h4>
+        <div id="theTimer">
+        </div>
+        <div id="toolbar" class="ui-widget-header ui-corner-all">
+            <button id="play">play</button>
+            <button id="reset">reset</button>
+            <button id="stop">stop</button>
+        </div>
+        <h4>Player Timers</h4>
+        <div id="playerSpecificToolbar">
+        </div>
+    </div>
+</div>
