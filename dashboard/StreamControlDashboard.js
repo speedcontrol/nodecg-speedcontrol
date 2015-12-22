@@ -37,6 +37,16 @@ function createStreamControlConfiguration() {
 }
 
 $streamControlSubmit.click(function() {
+
+    if(typeof nodecg.bundleConfig.user === 'undefined') {
+        alert("If you want to use the twitch functionality, you need to create a file called speedcontrol.json in nodecg/cfg and fill it with:\n" +
+            "{\n"+
+            "\"user\": \"username\"\n" +
+            "}\n"+
+            "exchange username with the twitch username which you want to access");
+        return;
+    }
+
     if($streamControlTitle.val() != "" && $streamControlGame.val() != "") {
         var methodString = "/channels/"+nodecg.bundleConfig.user+"/";
         Twitch.api({method: methodString, params: {
@@ -54,11 +64,11 @@ $streamControlSubmit.click(function() {
     }
 });
 
-
 Twitch.init({clientId: 'lrt9h6mot5gaf9lk62sea8u38lomfrc'}, function(error, status) {
     if (status.authenticated) {
         // Already logged in, hide button
         $streamControlInit.button({disabled: true});
+        $streamControlInit.text("Already logged into twitch");
         $streamControlSubmit.button({disabled: false});
     }
 });

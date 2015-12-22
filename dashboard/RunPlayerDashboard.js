@@ -154,6 +154,14 @@ function runPlayer_playRunIdOnly(runID) {
 }
 
 function runPlayer_setTwitchChannelData(runData) {
+    if(typeof nodecg.bundleConfig.user === 'undefined') {
+        alert("If you want to use the twitch functionality, you need to create a file called speedcontrol.json in nodecg/cfg and fill it with:\n" +
+            "{\n"+
+            "\"user\": \"username\"\n" +
+            "}\n"+
+            "exchange username with the twitch username which you want to access");
+        return;
+    }
     var methodString = "/channels/"+nodecg.bundleConfig.user+"/";
     Twitch.api({method: methodString, params: {
         "channel": {
