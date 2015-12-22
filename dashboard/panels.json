@@ -40,5 +40,12 @@
     "width": 2,
     "file": "SceneLayoutDashboard.html",
     "faIcon": "fa-exclamation"
+  },
+  {
+    "name": "stream-control",
+    "title": "Twitch Control",
+    "width": 2,
+    "file": "StreamControlDashboard.html",
+    "faIcon": "fa-exclamation"
   }
 ]

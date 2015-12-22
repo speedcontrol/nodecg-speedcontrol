@@ -3,6 +3,7 @@ var runPlayer_activeRunID = -1;
 var runPlayer_neighbourRuns = {};
 var runPlayer_activeRunObject = undefined;
 var isInitialized = false;
+var syncGamePlayedToTwitch = false;
 var blankSlateRunContainerHtml = $('#run-player-container').html();
 // Initialize replicants we will use
 var runDataArrayReplicantPlayer = nodecg.Replicant("runDataArray");
@@ -12,6 +13,13 @@ runDataArrayReplicantPlayer.on("change", function (oldValue, newValue) {
     }
     else {
         $('#runPlayerItems').html('');
+    }
+});
+
+var streamControlConfigurationReplicantPlayer = nodecg.Replicant('streamControlConfiguration');
+streamControlConfigurationReplicantPlayer.on('change', function(oldVal, newVal) {
+    if(typeof newVal !== 'undefined') {
+        syncGamePlayedToTwitch = newVal.synchronizeAutomatically;
     }
 });
 
@@ -134,11 +142,26 @@ function runPlayer_playRunIdOnly(runID) {
     $('#'+runID+".playerGroup").find('h3').addClass('ui-state-playing');
     runDataActiveRunReplicant.value = runPlayer_activeRunObject;
     runDataActiveRunRunnerListReplicant.value = runPlayer_activeRunObject.players;
+    if(syncGamePlayedToTwitch) {
+        runPlayer_setTwitchChannelData(runPlayer_activeRunObject);
+    }
     $( ".previous").button({
         disabled: false
     });
     $( ".next").button({
         disabled: false
+    });
+}
+
+function runPlayer_setTwitchChannelData(runData) {
+    var methodString = "/channels/"+nodecg.bundleConfig.user+"/";
+    Twitch.api({method: methodString, params: {
+        "channel": {
+            "game": runData.game
+        }
+    },
+        verb: 'PUT' }, function(resp, ans) {
+        console.log (resp + " " + ans );
     });
 }
 

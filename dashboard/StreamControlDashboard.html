@@ -1,0 +1,17 @@
+<style>
+    #streamControlInit,#streamControlSubmit,#streamControlTitle,#streamControlGame {
+        width: 100%;
+    }
+</style>
+<div id="stream-control">
+    <p>Automatically synchronize active game to twitch?</p>
+    <div id="enableTwitchSynchronization">
+        <input type="radio" name="enableTwitchSynchronizationRadio" id="enableTwitchSynchronizationRadioOn" value="On"> <label for="enableTwitchSynchronizationRadioOn">On</label>
+        <input type="radio" name="enableTwitchSynchronizationRadio" id="enableTwitchSynchronizationRadioOff" value="Off" checked> <label for="enableTwitchSynchronizationRadioOff">Off</label>
+    </div>
+    <hr>
+    <input id="streamControlTitle" placeholder="Stream Title" data-validate="required">
+    <input id="streamControlGame" placeholder="Stream Game" data-validate="required">
+    <button type="button" id="streamControlSubmit">Manual Change</button>
+    <button type="button" id="streamControlInit">Log in to twitch</button>
+</div>
