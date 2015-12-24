@@ -5,14 +5,14 @@ var blankSlateContainerHtml = $('#run-control-container').html();
 var runDataArrayReplicant = nodecg.Replicant("runDataArray");
 runDataArrayReplicant.on("change", function (oldValue, newValue) {
     if(typeof newValue !== 'undefined') {
-        updateList(newValue);
+        runControl_UpdateList(newValue);
     }
     else {
         $('#runItems').html('');
     }
 });
 
-function getPlayers(runData) {
+function runControl_GetPlayers(runData) {
     var playerString = '<tr> <td class="rowTitle">Runners</td>';
     $.each(runData.players, function(index, player) {
         if(index == 0) {
@@ -27,8 +27,8 @@ function getPlayers(runData) {
     return playerString;
 }
 
-function getRunBodyHtml(runData) {
-    var players = getPlayers(runData);
+function runControl_GetRunBodyHtml(runData) {
+    var players = runControl_GetPlayers(runData);
     var bodyHtml = '<table class="table-striped">'+
                        players +
                        '<tr><td class="rowTitle">Estimate</td><td class="rowContent">' + runData.estimate + '</td></tr>' +
@@ -40,7 +40,7 @@ function getRunBodyHtml(runData) {
 
 }
 
-function updateList(runData) {
+function runControl_UpdateList(runData) {
     var htmlDescriptor = '';
     var buttonRemoveIDs = [];
     var buttonChangeIDs = [];
@@ -55,10 +55,10 @@ function updateList(runData) {
         buttonRemoveIDs.push(buttonRemoveIDString);
         buttonChangeIDs.push(buttonChangeIDString);
         htmlDescriptor += '<div class="group" id="' +runData.runID+ '">' +
-                              '<h3>' +runData.game+ ' (' +runData.category+ ')' +
+                              '<h3>' +runData.game+ ' (' +runData.category+ ')' + " "+ runData.players.length+ "p" +
                               '</h3>' +
                               '<div>' +
-                                  getRunBodyHtml(runData) +
+                                  runControl_GetRunBodyHtml(runData) +
                                   '<button class="removeButton" id="'+buttonRemoveIDString+'"></button>' +
                                   '<button class="changeButton" id="'+buttonChangeIDString+'"></button>' +
                               '</div>' +
@@ -72,7 +72,7 @@ function updateList(runData) {
         $('#'+buttonID).click(function() {
             var r = confirm("Do you really want to remove this run?");
             if(r) {
-                removeRun(index);
+                runControl_RemoveRun(index);
             }
         });
 
@@ -131,7 +131,7 @@ function updateList(runData) {
     lastItemSize = runData.length;
 }
 
-function removeRun(ID) {
+function runControl_RemoveRun(ID) {
     var runContainer = runDataArrayReplicant.value;
     runContainer.splice(ID,1);
     runDataArrayReplicant.value = runContainer;

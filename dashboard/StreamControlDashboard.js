@@ -15,29 +15,28 @@ $streamControlSubmit.button({disabled: true});
 $streamControlInit.button();
 
 $enableTwitchSynchronizationRadio.change(function() {
-    var configuration = getOrCreateStreamControlConfiguration();
+    var configuration = streamControl_GetOrCreateStreamControlConfiguration();
     configuration.synchronizeAutomatically = $(this).val() == "On";
     streamControlConfigurationReplicant.value = configuration;
 });
 
-function getOrCreateStreamControlConfiguration() {
+function streamControl_GetOrCreateStreamControlConfiguration() {
     var configuration = streamControlConfigurationReplicant.value;
     if(typeof configuration !== 'undefined') {
         return configuration;
     }
     else {
-        return createStreamControlConfiguration();
+        return streamControl_CreateStreamControlConfiguration();
     }
 }
 
-function createStreamControlConfiguration() {
+function streamControl_CreateStreamControlConfiguration() {
     var configuration = {};
     configuration.synchronizeAutomatically = false;
     return configuration;
 }
 
 $streamControlSubmit.click(function() {
-
     if(typeof nodecg.bundleConfig.user === 'undefined') {
         alert("If you want to use the twitch functionality, you need to create a file called speedcontrol.json in nodecg/cfg and fill it with:\n" +
             "{\n"+
@@ -64,6 +63,12 @@ $streamControlSubmit.click(function() {
     }
 });
 
+$streamControlInit.click(function() {
+    Twitch.login({
+        scope: ['user_read', 'channel_editor']
+    });
+});
+
 Twitch.init({clientId: 'lrt9h6mot5gaf9lk62sea8u38lomfrc'}, function(error, status) {
     if (status.authenticated) {
         // Already logged in, hide button
@@ -71,4 +76,10 @@ Twitch.init({clientId: 'lrt9h6mot5gaf9lk62sea8u38lomfrc'}, function(error, statu
         $streamControlInit.text("Already logged into twitch");
         $streamControlSubmit.button({disabled: false});
     }
+    else {
+        console.log("Could not log in to twitch: ");
+        console.log(status);
+    }
 });
+
+

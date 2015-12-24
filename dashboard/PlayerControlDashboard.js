@@ -1,5 +1,6 @@
 'use strict';
 
+// JQuery selectors..
 var $panel = $bundle.filter('#player-control');
 var $addRunButton = $('#playerControlAddRunButton');
 var $removeRunsButton = $('#playerControlRemoveRunsButton');
@@ -7,51 +8,17 @@ var $randomizeRunsButton =$('#playerControlRandomizeRunsButton');
 var $addPlayerButton = $('#playerControlAddPlayerButton');
 var $estimateInputField = $('#playerControlEstimate');
 var $panelLayout = $('#player-control');
+
+// Local variables..
+// Used to keep track of data in a http response from speedrun.com
 var cachedRunnerSearch = [];
 var cachedRunner = [];
 var cachedGameSearch = undefined;
 var cachedGame = undefined;
 var cachedGameCathegories = undefined;
+
 var runnerNumberIterator = 1;
 var runnerContainerHTML = $("#player-control-run-container").html();
-
-playerControl_InitializeFieldAutoCompletion();
-playerControl_InitializeElements();
-playerControl_ClearAllFields();
-
-$.verify({
-    hideErrorOnChange: true,
-    debug: false,
-    beforeSubmit: function(form, result) {
-        if(result != false) {
-            var runData = playerControl_CreateRunData();
-            runData.game = $('#playerControlGame').val();
-            runData.estimate = $('#playerControlEstimate').val();
-            runData.category = $('#playerControlCategory').val();
-            runData.system = $('#playerControlSystem').val();
-            runData.region = $('#playerControlRegion').find('option:selected').val();
-
-            $('.playerControlRunnerClass').each(function () {
-                var selectedRunner = $(this).val();
-                var found = false;
-                $.each(cachedRunner, function (i, v) {
-                    if (v.names.international == selectedRunner && found != true) {
-                        runData.players.push(v);
-                        found = true;
-                    }
-                });
-                if (found == false) {
-                    console.error("ERROR");
-                }
-            });
-
-            playerControl_AddRun(runData);
-            playerControl_ClearAllFields();
-        }
-        else {
-        }
-    }
-})
 
 // Initialize replicants we will use
 var runDataArrayReplicant = nodecg.Replicant("runDataArray");
@@ -70,6 +37,50 @@ var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
 runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
 });
 
+// Initialize dashboard
+playerControl_InitializeFieldAutoCompletion();
+playerControl_InitializeElements();
+playerControl_ClearAllFields();
+
+// Used for input field validation (the "nice" tooltips you get when something is wrong
+$.verify({
+    hideErrorOnChange: true,
+    debug: false,
+    beforeSubmit: function(form, result) {
+        // Happens when you click the "add run" button. If something is wrong then we don't create e new run
+        if(result != false) {
+            var runData = playerControl_CreateRunData();
+            runData.game = $('#playerControlGame').val();
+            runData.estimate = $('#playerControlEstimate').val();
+            runData.category = $('#playerControlCategory').val();
+            runData.system = $('#playerControlSystem').val();
+            runData.region = $('#playerControlRegion').find('option:selected').val();
+
+            // Go through all the player name input fields and lookup cached player data for each one,
+            // should never fail.
+            $('.playerControlRunnerClass').each(function () {
+                var selectedRunner = $(this).val();
+                var found = false;
+                $.each(cachedRunner, function (i, v) {
+                    if (v.names.international == selectedRunner && found != true) {
+                        runData.players.push(v);
+                        found = true;
+                    }
+                });
+                if (found == false) {
+                    console.error("Did not find cached player data when adding run. Should NEVER happen");
+                }
+            });
+
+            playerControl_AddRun(runData);
+            playerControl_ClearAllFields();
+        }
+        else {
+        }
+    }
+});
+
+// Empties all the fields of the form
 function playerControl_ClearAllFields() {
     cachedRunnerSearch = [];
     cachedRunner = [];
@@ -85,6 +96,7 @@ function playerControl_ClearAllFields() {
     playerControl_InitializePlayerElements();
 }
 
+// Called as a process when pushing the "add run" button
 function playerControl_AddRun(runData) {
     if(typeof runDataArrayReplicant.value !== 'undefined') {
         var runContainer = runDataArrayReplicant.value;
@@ -100,6 +112,7 @@ function playerControl_AddRun(runData) {
     }
 }
 
+// All the runs have a uniqe ID attached to them
 function playerControl_GetSetLastID() {
     var runID = runDataLastIDReplicant.value;
     var runIDIncremented = Number(runDataLastIDReplicant.value);
@@ -108,6 +121,7 @@ function playerControl_GetSetLastID() {
     return runID;
 }
 
+// Returns an empty run object
 function playerControl_CreateRunData() {
     var theRun = {};
     theRun.players = [];
@@ -119,50 +133,10 @@ function playerControl_CreateRunData() {
     return theRun;
 }
 
+// Function that sets up autocompletion
 function playerControl_InitializeFieldAutoCompletion() {
-
-    $removeRunsButton = $('#playerControlRemoveRunsButton');
     $addRunButton = $('#playerControlAddRunButton');
-    $estimateInputField = $('#playerControlEstimate');
     $panelLayout = $('#player-control');
-    $randomizeRunsButton = $('#playerControlRandomizeRunsButton');
-
-    $estimateInputField.on('input',function(e){
-        if($(this).val().length == 4) {
-            var formattedString = $(this).val().substr(0,2) + ":" + $(this).val().substr(2,3)
-            $(this).val(formattedString);
-        }
-    });
-
-    $removeRunsButton.click(function() {
-        runDataArrayReplicant.value = undefined;
-        runDataLastIDReplicant.value = undefined;
-        runDataActiveRunReplicant.value = undefined;
-    });
-
-    $randomizeRunsButton.click(function() {
-        for(var i = 0; i < 10; i++) {
-            var runData = playerControl_CreateRunData();
-
-            var player = {};
-            player.names = {};
-            player.names.international = "Charleon";
-
-            var player_two = {};
-            player_two.names = {};
-            player_two.names.international = "Edenal";
-
-            runData.game = "Game " +i;
-            runData.estimate = "01:45";
-            runData.category = "100%";
-            runData.system = "SNES";
-            runData.region = "Japan";
-            runData.players.push(player);
-            runData.players.push(player_two
-            );
-            playerControl_AddRun(runData);
-        }
-    });
 
     $( "#playerControlGame" ).autocomplete({
         source: function( request, response ) {
@@ -220,11 +194,60 @@ function playerControl_InitializeFieldAutoCompletion() {
     });
 }
 
+// Initializes logic for buttons, fields, and validation
 function playerControl_InitializeElements() {
     $addRunButton.button({});
     $removeRunsButton.button({});;
     $randomizeRunsButton.button({});
+    $estimateInputField = $('#playerControlEstimate');
     $( "#playerControlRegion" ).selectmenu();
+    $randomizeRunsButton = $('#playerControlRandomizeRunsButton');
+    $removeRunsButton = $('#playerControlRemoveRunsButton');
+
+    $removeRunsButton.click(function() {
+        if(confirm("Really remove all runs?")) {
+            runDataArrayReplicant.value = undefined;
+            runDataLastIDReplicant.value = undefined;
+            runDataActiveRunReplicant.value = undefined;
+        }
+    });
+
+    $randomizeRunsButton.click(function() {
+        for(var i = 0; i < 10; i++) {
+            var runData = playerControl_CreateRunData();
+            var numRunners = Math.floor(Math.random() * 4) + 1;
+            var players = [];
+            var runnerNames = ["Charleon", "Grukk", "Edenal", "Planks", "Therio", "Thiefbug", "kaizer", "Morningstar", "Kallepluffs", "010_Vargas", "Xemnas10"];
+            var gameNames = ["Castlevania", "Megaman", "Megaman X", "Castlevania: Aria Of Sorrow", "Castle of Illusion Starring Donald duck and Mickey Mouse", "Undertale", "Halo", "World of Warcraft", "Minecraft", "Metal Gear Solid"];
+            var categories = ["100%", "Any%", "All Powerups", "Any% Glitchless", "100% Glitchless", "All Keys"];
+            var systems = ["NES", "SNES", "SMS", "Playstation", "Playstation 2", "XBOX", "XBOXOne", "Amiga", "PC"];
+
+            for(var j = 0; j < numRunners; j++) {
+                var player = {};
+                player.names = {};
+                player.names.international = runnerNames[Math.floor(Math.random() * runnerNames.length)];
+                player.twitch = {};
+                player.twitch.uri = "http://www.twitch.tv/" + player.names.international+"Chan";
+                players.push(player);
+            }
+
+            runData.game = gameNames[Math.floor(Math.random() * gameNames.length)];
+            runData.estimate = "01:45";
+            runData.category = categories[Math.floor(Math.random() * categories.length)];
+            runData.system = systems[Math.floor(Math.random() * systems.length)];;
+            runData.region = "Japan";
+            $.each(players,function(index, runner) {
+                runData.players.push(runner);
+            });
+            playerControl_AddRun(runData);
+        }
+    });
+    $estimateInputField.on('input',function(e){
+        if($(this).val().length == 4) {
+            var formattedString = $(this).val().substr(0,2) + ":" + $(this).val().substr(2,3)
+            $(this).val(formattedString);
+        }
+    });
 
     $.verify.addRules({
         runnerValidation: function(r) {

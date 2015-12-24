@@ -24,39 +24,116 @@
 
 }
 
-#runInformation {
-    color: white;
-    position: absolute;
-    top: 650px;
-    left: 10px;
-}
-
-#runner1Information {
+#runner1InformationName {
+    font-family: AmericanCaptain;
     color: white;
     position: absolute;
     top: 30px;
     left: 25px;
+
+    padding-left: 35px;
+    background-size: 25px 25px;
+    background-image: url('/view/speedcontrol/images/playerlogo.png');
+    background-repeat: no-repeat;
 }
 
-#runner2Information {
+#runner2InformationName {
+    font-family: AmericanCaptain;
     color: white;
     position: absolute;
     top: 30px;
     left: 500px;
+
+    padding-left: 35px;
+    background-size: 25px 25px;
+    background-image: url('/view/speedcontrol/images/playerlogo.png');
+    background-repeat: no-repeat;
 }
 
-#runner3Information {
+#runner3InformationName {
+    font-family: AmericanCaptain;
     color: white;
     position: absolute;
     top: 345px;
     left: 25px;
+
+    padding-left: 35px;
+    background-size: 25px 25px;
+    background-image: url('/view/speedcontrol/images/playerlogo.png');
+    background-repeat: no-repeat;
 }
 
-#runner4Information {
+#runner4InformationName {
+    font-family: AmericanCaptain;
     color: white;
     position: absolute;
     top: 345px;
     left: 500px;
+
+    padding-left: 35px;
+    background-size: 25px 25px;
+    background-image: url('/view/speedcontrol/images/playerlogo.png');
+    background-repeat: no-repeat;
+}
+
+#runner1InformationTwitch {
+    font-family: AmericanCaptain;
+    color: white;
+    position: absolute;
+    top: 30px;
+    left: 75px;
+    height: 25px;
+
+    padding-left: 35px;
+    background-size: 25px 25px;
+    background-image: url('/view/speedcontrol/images/twitchlogo.png');
+    background-repeat: no-repeat;
+
+}
+
+#runner2InformationTwitch {
+    font-family: AmericanCaptain;
+    color: white;
+    position: absolute;
+    top: 30px;
+    left: 550px;
+    height: 25px;
+
+    padding-left: 35px;
+    background-size: 25px 25px;
+    background-image: url('/view/speedcontrol/images/twitchlogo.png');
+    background-repeat: no-repeat;
+
+}
+
+#runner3InformationTwitch {
+    font-family: AmericanCaptain;
+    color: white;
+    position: absolute;
+    top: 345px;
+    left: 75px;
+    height: 25px;
+
+    padding-left: 35px;
+    background-size: 25px 25px;
+    background-image: url('/view/speedcontrol/images/twitchlogo.png');
+    background-repeat: no-repeat;
+
+}
+
+#runner4InformationTwitch {
+    font-family: AmericanCaptain;
+    color: white;
+    position: absolute;
+    top: 345px;
+    left: 550px;
+    height: 25px;
+
+    padding-left: 35px;
+    background-size: 25px 25px;
+    background-image: url('/view/speedcontrol/images/twitchlogo.png');
+    background-repeat: no-repeat;
+
 }
 
 #runner1TimerFinished {
@@ -105,13 +182,6 @@
     opacity: 0;
 }
 
-#twitchField {
-    padding-left: 35px;
-    background-size: 25px 25px;
-    background-image: url('/view/speedcontrol/images/twitchlogo.png');
-    background-repeat: no-repeat;
-}
-
 td.rowTitleGame {
     font-family: AmericanCaptain;
     font-size: 25px;
@@ -151,3 +221,34 @@ td.rowContentPlayer {
     background: rgba(255,0,0,0.3);
 }
 
+#runInformationGameEstimate {
+    font-family: AmericanCaptain;
+    font-size: 20px;
+    position: absolute;
+    top: 500px;
+    left: 700px;
+}
+
+#runInformationGameName{
+    font-family: AmericanCaptain;
+    font-size: 20px;
+    position: absolute;
+    top: 520px;
+    left: 700px;
+}
+
+#runInformationGameSystem{
+    font-family: AmericanCaptain;
+    font-size: 20px;
+    position: absolute;
+    top: 540px;
+    left: 700px;
+}
+
+#runInformationGameCategory{
+    font-family: AmericanCaptain;
+    font-size: 20px;
+    position: absolute;
+    top: 560px;
+    left: 700px;
+}

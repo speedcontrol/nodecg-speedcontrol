@@ -14,13 +14,13 @@ $saveConfigurationButton.button({});
 $revertToDefaultButton.button({});
 
 $backgroundTransparanceRadio.change(function() {
-    var configuration = getOrCreateSceneLayoutConfiguration();
+    var configuration = sceneLayout_GetOrCreateSceneLayoutConfiguration();
     configuration.backgroundTransparency = $(this).val() == "On";
     sceneLayoutConfigurationReplicant.value = configuration;
 });
 
 $editModeRadio.change(function() {
-    var configuration = getOrCreateSceneLayoutConfiguration();
+    var configuration = sceneLayout_GetOrCreateSceneLayoutConfiguration();
     configuration.editMode = $(this).val() == "On";
     sceneLayoutConfigurationReplicant.value = configuration;
 });
@@ -33,19 +33,19 @@ $revertToDefaultButton.click(function() {
     nodecg.sendMessage("revertToDefault");
 });
 
-function createSceneLayoutConfiguration() {
+function sceneLayout_CreateSceneLayoutConfiguration() {
     var configuration = {};
     configuration.backgroundTransparency = false;
     configuration.editMode = false;
     return configuration;
 }
 
-function getOrCreateSceneLayoutConfiguration() {
+function sceneLayout_GetOrCreateSceneLayoutConfiguration() {
     var configuration = sceneLayoutConfigurationReplicant.value;
     if(typeof configuration !== 'undefined') {
         return configuration;
     }
     else {
-        return createSceneLayoutConfiguration();
+        return sceneLayout_CreateSceneLayoutConfiguration();
     }
 }

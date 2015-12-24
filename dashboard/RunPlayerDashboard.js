@@ -72,7 +72,7 @@ function runPlayer_updateList(runData) {
     var htmlDescriptor = '';
     $.each(runData, function(index, runData) {
         htmlDescriptor += '<div class="playerGroup" id="' +runData.runID+ '">' +
-            '<h3>' +runData.game+ ' (' +runData.category+ ')' +
+            '<h3>' +runData.game+ ' (' +runData.category+ ')' + " "+ runData.players.length+ "p" +
             '</h3>' +
             '<div>' +
             runPlayer_getRunBodyHtml(runData) +

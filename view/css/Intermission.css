@@ -69,3 +69,17 @@ td.rowTitleGame {
     background: rgba(255,0,0,0.3);
 }
 
+#informationMarquee {
+    font-family: AmericanCaptain;
+    color: white;
+    position: absolute;
+    top: 680px;
+    left: 0px;
+    height: 0px;
+    width: 1280px;
+    overflow:hidden;
+    white-space: nowrap;
+    background-color: rgba(0,0,0,0.5);
+    opacity: 0;
+    font-size: 30px;
+}

@@ -1,16 +1,17 @@
 'use strict';
 
+// Replicant initialization
 var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
 runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
     if(typeof newValue !== 'undefined') {
-        updateLayoutPanel(newValue);
+        playerLayout_UpdateLayoutPanel(newValue);
     }
 });
 
-function updateLayoutPanel(runners) {
+function playerLayout_UpdateLayoutPanel(runners) {
     var playersSortableHTML = '' +
     '<ul id="playerLayoutSortable">'+
-        createPlayerListHtmlElements(runners)+
+        playerLayout_CreatePlayerListHtmlElements(runners)+
     '</ul>';
     $('#playerLayoutContainer').html(playersSortableHTML);
     $( "#playerLayoutSortable" ).sortable({
@@ -35,7 +36,7 @@ function updateLayoutPanel(runners) {
     $( "#playerLayoutSortable" ).disableSelection();
 }
 
-function createPlayerListHtmlElements(runnerArray) {
+function playerLayout_CreatePlayerListHtmlElements(runnerArray) {
     var runnerHtml = '';
     $.each(runnerArray, function(index, value) {
         runnerHtml += '<li class="ui-state-default" id="'+value.names.international+'">'+value.names.international+'</li>';

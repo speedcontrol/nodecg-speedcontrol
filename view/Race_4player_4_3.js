@@ -2,11 +2,18 @@
 $(function () {
     // JQuery selector initialiation ###
     var $timerInfo = $('#timer');
-    var $runInfoTag = $('#runInformation');
-    var $runnerInfoTagPlayer1 = $('#runner1Information');
-    var $runnerInfoTagPlayer2 = $('#runner2Information');
-    var $runnerInfoTagPlayer3 = $('#runner3Information');
-    var $runnerInfoTagPlayer4 = $('#runner4Information');
+    var $runnerInfoTagPlayer1Name = $('#runner1InformationName');
+    var $runnerInfoTagPlayer2Name = $('#runner2InformationName');
+    var $runnerInfoTagPlayer3Name = $('#runner3InformationName');
+    var $runnerInfoTagPlayer4Name = $('#runner4InformationName');
+    var $runnerInfoTagPlayer1Twitch = $('#runner1InformationTwitch');
+    var $runnerInfoTagPlayer2Twitch = $('#runner2InformationTwitch');
+    var $runnerInfoTagPlayer3Twitch = $('#runner3InformationTwitch');
+    var $runnerInfoTagPlayer4Twitch = $('#runner4InformationTwitch');
+    var $runInformationSystem = $('#runInformationGameSystem');
+    var $runInformationCategory = $('#runInformationGameCategory');
+    var $runInformationEstimate = $('#runInformationGameEstimate');
+    var $runInformationName = $('#runInformationGameName');
 
     var currentTime = '';
 
@@ -20,13 +27,13 @@ $(function () {
     var isEditModeEnabled = false;
 
     // NodeCG Message subscription ###
+    nodecg.listenFor("resetTime", resetAllPlayerTimers);
     nodecg.listenFor('timerReset', resetTimer);
     nodecg.listenFor('timerSplit', splitTimer);
     nodecg.listenFor('savePositionConfiguration', saveConfiguration);
     nodecg.listenFor('revertToDefault', revertChanges);
 
     // Replicants ###
-
     var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration');
     sceneLayoutConfigurationReplicant.on('change', function(oldVal, newVal) {
         if(typeof newVal !== 'undefined') {
@@ -66,7 +73,7 @@ $(function () {
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
     runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
-        if(typeof newValue !== 'undefined') {
+        if(typeof newValue !== 'undefined' && newValue.players.length == 4) {
             updateSceneFields(newValue);
         }
     });
@@ -76,19 +83,20 @@ $(function () {
         if(typeof newValue === 'undefined') {
             return;
         }
-            if(newValue.length != 4) {
+
+        if(newValue.length != 4) {
             return;
         }
 
-        var runnerInfoHTMLDataPlayer1 = getRunnerInformationTable(newValue,0);
-        var runnerInfoHTMLDataPlayer2 = getRunnerInformationTable(newValue,1);
-        var runnerInfoHTMLDataPlayer3 = getRunnerInformationTable(newValue,2);
-        var runnerInfoHTMLDataPlayer4 = getRunnerInformationTable(newValue,3);
+        $runnerInfoTagPlayer1Name.html(getRunnerInformationName(newValue,0));
+        $runnerInfoTagPlayer2Name.html(getRunnerInformationName(newValue,1));
+        $runnerInfoTagPlayer3Name.html(getRunnerInformationName(newValue,2));
+        $runnerInfoTagPlayer4Name.html(getRunnerInformationName(newValue,3));
 
-        $runnerInfoTagPlayer1.html(runnerInfoHTMLDataPlayer1);
-        $runnerInfoTagPlayer2.html(runnerInfoHTMLDataPlayer2);
-        $runnerInfoTagPlayer3.html(runnerInfoHTMLDataPlayer3);
-        $runnerInfoTagPlayer4.html(runnerInfoHTMLDataPlayer4);
+        $runnerInfoTagPlayer1Twitch.html(getRunnerInformationTwitch(newValue,0));
+        $runnerInfoTagPlayer2Twitch.html(getRunnerInformationTwitch(newValue,1));
+        $runnerInfoTagPlayer3Twitch.html(getRunnerInformationTwitch(newValue,2));
+        $runnerInfoTagPlayer4Twitch.html(getRunnerInformationTwitch(newValue,3));
     });
 
     // Replicant functions ###
@@ -104,8 +112,15 @@ $(function () {
     }
 
     function updateSceneFields(runData) {
-        var runInfoHTMLData = getRunInformationTable(runData);
-        $runInfoTag.html(runInfoHTMLData);
+        var runInfoGameName = runData.game;
+        var runInfoGameEstimate = runData.estimate;
+        var runInfoGameSystem = runData.system;
+        var runInfoGameCategory = runData.category;
+
+        $runInformationSystem.html(runInfoGameSystem);
+        $runInformationCategory.html(runInfoGameCategory);
+        $runInformationEstimate.html(runInfoGameEstimate);
+        $runInformationName.html(runInfoGameName);
     }
 
     function setTime(timeHTML) {
@@ -113,15 +128,15 @@ $(function () {
         currentTime = timeHTML;
     }
 
-    function getRunInformationTable(runData) {
-        var bodyHtml = '<table class="table-information">'+
-            '<tr><td class="rowTitleGame">'+ runData.game +'</td><td class="rowTitleGame">' + runData.estimate + '</td></tr>' +
-            '<tr><td class="rowTitleGame">'+ runData.category +'</td><td class="rowTitleGame">' + runData.system + '</td></tr>' +
-            '</table>';
-        return bodyHtml;
+    function getRunnerInformationName(runnerDataArray, index) {
+        if(typeof runnerDataArray[index] === 'undefined') {
+            console.log("Player nonexistant!");
+            return "";
+        }
+        return runnerDataArray[index].names.international;
     }
 
-    function getRunnerInformationTable(runnerDataArray, index) {
+    function getRunnerInformationTwitch(runnerDataArray, index) {
         if(typeof runnerDataArray[index] === 'undefined') {
             console.log("Player nonexistant!");
             return "";
@@ -135,10 +150,7 @@ $(function () {
         else {
             twitchUrl = "---";
         }
-        var bodyHtml = '<table class="table-information">'+
-            '<tr><td class="rowTitlePlayer">'+ runnerDataArray[index].names.international +'</td><td class="rowContentPlayer" id="twitchField">' + twitchUrl+ '</td></tr>' +
-            '</table>';
-        return bodyHtml;
+        return twitchUrl;
     }
 
     // Edit Mode functions ###
@@ -209,7 +221,6 @@ $(function () {
         } else if (entryFound.length == 1) {
             entryFound[0].x = configData.x;
             entryFound[0].y = configData.y;
-            console.log(entryFound);
 
         } else {
             console.log("Well we found multiple entries,should NEVER happen!");
@@ -223,6 +234,14 @@ $(function () {
         var realIndex = Number(index) + Number(1);
         $('#runner'+realIndex+'TimerFinished').html("");
     }
+
+    function resetAllPlayerTimers() {
+        $('#runner1TimerFinished').html("");
+        $('#runner2TimerFinished').html("");
+        $('#runner3TimerFinished').html("");
+        $('#runner4TimerFinished').html("");
+    }
+
     function splitTimer(index) {
         var realIndex = Number(index) + Number(1);
         $('#runner'+realIndex+'TimerFinished').html(currentTime);
@@ -239,3 +258,6 @@ $(function () {
         }
     }
 });
+
+
+
