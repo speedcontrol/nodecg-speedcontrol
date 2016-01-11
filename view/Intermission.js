@@ -2,6 +2,16 @@
 $(function () {
     // JQuery selector initialiation ###
 
+    var $comingUpGame = $('#comingUpGame');
+    var $comingUpCathegory = $('#comingUpCathegory');
+    var $comingUpSystem = $('#comingUpSystem');
+    var $comingUpPlayer = $('#comingUpPlayer');
+
+    var $justMissedGame = $('#justMissedGame');
+    var $justMissedCathegory = $('#justMissedCathegory');
+    var $justMissedSystem = $('#justMissedSystem');
+    var $justMissedPlayer = $('#justMissedPlayer');
+
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
     var sceneID = "Intermission";
@@ -10,6 +20,8 @@ $(function () {
     var itemPositioningConfigurationContainer = [];
 
     var isEditModeEnabled = false;
+
+    var isInitialized = false;
 
     // NodeCG Message subscription ###
     nodecg.listenFor('savePositionConfiguration', saveConfiguration);
@@ -50,7 +62,10 @@ $(function () {
         else {
             comingUpRun = runDataArrayReplicant.value[indexOfNextRun];
         }
-        updateMissedComingUp(newValue, comingUpRun);
+        if(!isInitialized) {
+            updateMissedComingUp(newValue, comingUpRun);
+            isInitialized = true;
+        }
     });
 
 
@@ -65,10 +80,8 @@ $(function () {
     }
 
     function updateMissedComingUp(currentRun, nextRun) {
-        var htmlCurrentRun = getRunInformationTable(currentRun);
-        var htmlNextRun = getRunInformationTable(nextRun);
-        setGameField($('#comingUpRun'),htmlNextRun);
-        setGameField($('#justMissedRun'),htmlCurrentRun);
+        changeComingUpRunInformation(nextRun);
+        changeJustMissedRunInformation(currentRun);
     }
 
     // Replicant functions ###
@@ -83,7 +96,7 @@ $(function () {
         });
     }
 
-    function getRunInformationTable(runData) {
+    function changeComingUpRunInformation(runData) {
         var game = "END";
         var category = "";
         var system = "";
@@ -94,13 +107,26 @@ $(function () {
             system = runData.system;
         }
 
-        var bodyHtml = '<table class="table-information">'+
-            '<tr><td class="rowTitleGame">'+ game +'</td><td class="rowTitleGame"></td></tr>' +
-            '<tr><td class="rowTitleGame">'+ category +'</td><td class="rowTitleGame">' + system + '</td></tr>' +
-            '</table>';
-        return bodyHtml;
+        setGameField($comingUpGame,game);
+        setGameField($comingUpCathegory,category);
+        setGameField($comingUpSystem,system);
     }
 
+    function changeJustMissedRunInformation(runData) {
+        var game = "END";
+        var category = "";
+        var system = "";
+
+        if(typeof runData !== "undefined") {
+            game = runData.game;
+            category =  runData.category;
+            system = runData.system;
+        }
+
+        setGameField($justMissedGame,game);
+        setGameField($justMissedCathegory,category);
+        setGameField($justMissedSystem,system);
+    }
 
     // Edit Mode functions ###
 
@@ -181,8 +207,8 @@ $(function () {
     // Transition to change html from current to nextHtml
     function setGameField($selector, nextHtml) {
         var tm = new TimelineMax({paused: true});
-        tm.to($selector, 0.3, {opacity: '0',  ease: Quad.easeOut },'0');
-        tm.to($selector, 0.3, {opacity: '1', onStart:updateSelectorText, onStartParams:[$selector, nextHtml] ,ease: Quad.easeOut },'0.3');
+        tm.to($selector, 0.5, {opacity: '0', transform: "translateX(-50px)",  ease: Quad.easeOut },'0');
+        tm.to($selector, 0.5, {opacity: '1', transform: "translateX(0px)", onStart:updateSelectorText, onStartParams:[$selector, nextHtml] ,ease: Quad.easeOut },'0.5');
         tm.play();
     }
 

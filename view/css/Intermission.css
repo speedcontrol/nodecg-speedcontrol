@@ -1,50 +1,63 @@
 @font-face {
-    font-family: 'AmericanCaptain';
-    src: url('../images/American%20Captain.otf');
-    src: url('../images/American%20Captain.ttf') format('truetype');
+    font-family: 'FFFForward';
+    src: url('../images/FFFFORWA.TTF') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
+body {
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+}
+
 #window-container {
-    background-image: url('/view/speedcontrol/images/intermissionscreen_test.png');
+    background-image: url('/view/speedcontrol/images/Intermission.png');
     width: 1280px;
     height: 720px;
     overflow: hidden;
-    color: white;
+    margin: 0px;
+    padding: 0px;
     background-color: #000000;
 }
 
 #comingUp {
-    position: absolute;
-    font-family: AmericanCaptain;
-    font-size: 24px;
-    top: 580px;
-    left: 1100px;
+    font-family: FFFForward;
+    color: #856899;
+    font-size: 20px;
+    text-align: right;
+    padding-bottom: 15px;
+    width: 400px;
 }
 
 #justMissed {
-    position: absolute;
-    font-family: AmericanCaptain;
-    font-size: 24px;
-    top: 580px;
-    left: 70px;
+    font-family: FFFForward;
+    color: #856899;
+    font-size: 20px;
+    padding-bottom: 15px;
+    width: 400px;
 }
 
 #comingUpRun {
     position: absolute;
-    font-family: AmericanCaptain;
-    font-size: 24px;
-    top: 650px;
-    left: 1100px;
+    font-family: FFFForward;
+    font-size: 14px;
+    top: 580px;
+    right: 100px;
+    display: flex;
+    flex-flow: row wrap;
+    width: 400px;
 }
 
 #justMissedRun {
     position: absolute;
-    font-family: AmericanCaptain;
-    font-size: 24px;
-    top: 650px;
-    left: 70px;
+    font-family: FFFForward;
+    display: flex;
+    flex-flow: row wrap;
+    font-size: 14px;
+    top: 580px;
+    left: 100px;
+    width: 400px;
 }
 
 #positionDebug {
@@ -57,23 +70,15 @@
     opacity: 0;
 }
 
-td.rowTitleGame {
-    font-family: AmericanCaptain;
-    font-size: 15px;
-    text-align: left;
-    width: 100px;
-    color: white;
-}
-
 .editableObject {
     background: rgba(255,0,0,0.3);
 }
 
 #informationMarquee {
-    font-family: AmericanCaptain;
-    color: white;
+    font-family: FFFForward;
+    color: #856899;
     position: absolute;
-    top: 680px;
+    top: 500px;
     left: 0px;
     height: 0px;
     width: 1280px;
@@ -81,5 +86,48 @@ td.rowTitleGame {
     white-space: nowrap;
     background-color: rgba(0,0,0,0.5);
     opacity: 0;
-    font-size: 30px;
+    font-size: 25px;
 }
+
+#comingUpGame {
+    padding: 2px;
+    color: #856899;
+    width: 400px;
+    background: #362b41;
+}
+
+#comingUpSystem {
+    padding-right: 5px;
+    color: #856899;
+    width: 50px;
+    text-align: right;
+    background: #271e2f;
+}
+#comingUpCathegory {
+    padding: 2px;
+    color: #856899;
+    width: 320px;
+    background: #271e2f;
+}
+
+#justMissedGame {
+    padding: 2px;
+    color: #856899;
+    width: 400px;
+    background: #362b41;
+}
+
+#justMissedSystem {
+    padding-right: 5px;
+    color: #856899;
+    width: 50px;
+    text-align: right;
+    background: #271e2f;
+}
+#justMissedCathegory {
+    padding: 2px;
+    color: #856899;
+    width: 320px;
+    background: #271e2f;
+}
+
