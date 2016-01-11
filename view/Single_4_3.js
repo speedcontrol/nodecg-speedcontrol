@@ -2,10 +2,16 @@
 $(function () {
     // JQuery selector initialiation ###
     var $timerInfo = $('#timer');
-    var $runInfoTag = $('#runInformation');
-    var $runnerInfoTagPlayer1 = $('#runner1Information');
+    var $runnerInfoTagPlayer1Name = $('#runner1InformationName');
+    var $runInformationSystem = $('#runInformationGameSystem');
+    var $runInformationCategory = $('#runInformationGameCategory');
+    var $runInformationEstimate = $('#runInformationGameEstimate');
+    var $runInformationName = $('#runInformationGameName');
+    var $twitchLogo = $('#twitchLogo');
 
     var currentTime = '';
+    var displayTwitchforMilliseconds = 15000;
+    var intervalToNextTwitchDisplay = 120000;
 
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
@@ -17,14 +23,21 @@ $(function () {
     var isEditModeEnabled = false;
 
     // NodeCG Message subscription ###
+    nodecg.listenFor("resetTime", resetAllPlayerTimers);
     nodecg.listenFor('timerReset', resetTimer);
     nodecg.listenFor('timerSplit', splitTimer);
-    nodecg.listenFor('editMode', handleEditMode);
     nodecg.listenFor('savePositionConfiguration', saveConfiguration);
     nodecg.listenFor('revertToDefault', revertChanges);
-    nodecg.listenFor('backgroundTransparance', applyBackgroundTransparence);
 
     // Replicants ###
+    var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration');
+    sceneLayoutConfigurationReplicant.on('change', function(oldVal, newVal) {
+        if(typeof newVal !== 'undefined') {
+            applyBackgroundTransparence(newVal.backgroundTransparency);
+            handleEditMode(newVal.editMode)
+        }
+    });
+
     var scenePositioningConfigurationReplicant = nodecg.Replicant("scenePositioningConfiguration");
     scenePositioningConfigurationReplicant.on("change", function (oldValue, newValue) {
         if(typeof newValue !== 'undefined') {
@@ -56,7 +69,7 @@ $(function () {
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
     runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
-        if(typeof newValue !== 'undefined') {
+        if(typeof newValue !== 'undefined' && newValue.players.length == 1) {
             updateSceneFields(newValue);
         }
     });
@@ -71,9 +84,7 @@ $(function () {
             return;
         }
 
-        var runnerInfoHTMLDataPlayer1 = getRunnerInformationTable(newValue,0);
-
-        $runnerInfoTagPlayer1.html(runnerInfoHTMLDataPlayer1);
+        setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationName(newValue,0));
     });
 
     // Replicant functions ###
@@ -89,9 +100,15 @@ $(function () {
     }
 
     function updateSceneFields(runData) {
-        var runInfoHTMLData = getRunInformationTable(runData);
+        var runInfoGameName = runData.game;
+        var runInfoGameEstimate = "EST: 00:"+runData.estimate;
+        var runInfoGameSystem = runData.system;
+        var runInfoGameCategory = runData.category;
 
-        $runInfoTag.html(runInfoHTMLData);
+        setGameField($runInformationSystem,runInfoGameSystem);
+        setGameField($runInformationCategory,runInfoGameCategory);
+        setGameField($runInformationEstimate,runInfoGameEstimate);
+        setGameField($runInformationName,runInfoGameName);
     }
 
     function setTime(timeHTML) {
@@ -99,30 +116,35 @@ $(function () {
         currentTime = timeHTML;
     }
 
-    function getRunInformationTable(runData) {
-        var bodyHtml = '<table class="table-information">'+
-            '<tr><td class="rowTitleGame">'+ runData.game +'</td><td class="rowTitleGame">' + runData.estimate + '</td></tr>' +
-            '<tr><td class="rowTitleGame">'+ runData.category +'</td><td class="rowTitleGame">' + runData.system + '</td></tr>' +
-            '</table>';
-        return bodyHtml;
-    }
-
-    function getRunnerInformationTable(runnerDataArray, index) {
+    function getRunnerInformationName(runnerDataArray, index) {
         if(typeof runnerDataArray[index] === 'undefined') {
             console.log("Player nonexistant!");
             return "";
         }
-        console.log(runnerDataArray[index]);
-        var bodyHtml = '<table class="table-information">'+
-            '<tr><td class="rowTitlePlayer">'+ runnerDataArray[index].names.international +'</td><td class="rowContentPlayer" id="twitchField">' + runnerDataArray[index].twitch.uri.replace("http://www.twitch.tv/","")+ '</td></tr>' +
-            '</table>';
-        return bodyHtml;
+        return runnerDataArray[index].names.international;
+    }
+
+    function getRunnerInformationTwitch(runnerDataArray, index) {
+        if(typeof runnerDataArray[index] === 'undefined') {
+            console.log("Player nonexistant!");
+            return "";
+        }
+
+        var twitchUrl = "";
+        if (runnerDataArray[index].twitch != null &&
+            runnerDataArray[index].twitch.uri != null) {
+            twitchUrl = runnerDataArray[index].twitch.uri.replace("http://www.twitch.tv/","")
+        }
+        else {
+            twitchUrl = "---";
+        }
+        return twitchUrl;
     }
 
     // Edit Mode functions ###
 
     function addPositioningInformation() {
-       $('#positionDebug').css('opacity','1');
+        $('#positionDebug').css('opacity','1');
     }
 
     function removePositioningInformation(){
@@ -168,7 +190,7 @@ $(function () {
                     addToPositionConfig(positionConfig);
                 }
             });
-                $('.dummyTextable').html("######");
+            $('.dummyTextable').html("######");
         }
         else {
             if(isEditModeEnabled) {
@@ -187,7 +209,6 @@ $(function () {
         } else if (entryFound.length == 1) {
             entryFound[0].x = configData.x;
             entryFound[0].y = configData.y;
-            console.log(entryFound);
 
         } else {
             console.log("Well we found multiple entries,should NEVER happen!");
@@ -201,6 +222,14 @@ $(function () {
         var realIndex = Number(index) + Number(1);
         $('#runner'+realIndex+'TimerFinished').html("");
     }
+
+    function resetAllPlayerTimers() {
+        $('#runner1TimerFinished').html("");
+        $('#runner2TimerFinished').html("");
+        $('#runner3TimerFinished').html("");
+        $('#runner4TimerFinished').html("");
+    }
+
     function splitTimer(index) {
         var realIndex = Number(index) + Number(1);
         $('#runner'+realIndex+'TimerFinished').html(currentTime);
@@ -208,12 +237,58 @@ $(function () {
 
     // General functions ###
 
-    function applyBackgroundTransparence(value) {
-        if (value == 'On') {
+    function applyBackgroundTransparence(applyTransparency) {
+        if (applyTransparency) {
             $('#window-container').css('opacity',0.5);
         }
-        else if (value == 'Off') {
+        else{
             $('#window-container').css('opacity',1.0);
         }
     }
+
+    // Transition to change html from current to nextHtml
+    function setGameFieldAlternate($selector, nextHtml) {
+        var tm = new TimelineMax({paused: true});
+        tm.to($selector, 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0');
+        tm.to($selector, 0.5, {opacity: '1', transform: "scale(1)", onStart:updateSelectorText, onStartParams:[$selector, nextHtml] ,ease: Quad.easeOut },'0.5');
+        tm.play();
+    }
+
+    // Transition to change html from current to nextHtml
+    function setGameField($selector, nextHtml) {
+        var tm = new TimelineMax({paused: true});
+        tm.to($selector, 0.5, {opacity: '0', transform: "translateX(-50px)",  ease: Quad.easeOut },'0');
+        tm.to($selector, 0.5, {opacity: '1', transform: "translateX(0px)", onStart:updateSelectorText, onStartParams:[$selector, nextHtml] ,ease: Quad.easeOut },'0.5');
+        tm.play();
+    }
+
+    // Function just sets the text of the DOM element
+    function updateSelectorText($textDivToUpdate, newHtml) {
+        $textDivToUpdate.html(newHtml);
+    }
+
+    setTimeout(displayTwitchInstead, 2000);
+
+    function displayTwitchInstead() {
+        setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,0));
+        $twitchLogo.show();
+
+        var tm = new TimelineMax({paused: true});
+        tm.to($twitchLogo, 0.5, {opacity: '1', transform: "scale(0.9)",  ease: Quad.easeOut },'0');
+        tm.play();
+        setTimeout(hideTwitch,displayTwitchforMilliseconds);
+    }
+
+    function hideTwitch() {
+        setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationName(runDataActiveRunRunnerListReplicant.value,0));
+        var tm = new TimelineMax({paused: true});
+        tm.to($twitchLogo, 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0');
+        tm.play();
+        setTimeout(displayTwitchInstead,intervalToNextTwitchDisplay);
+    }
+
+    $twitchLogo.css('transform', 'scale(0)');
 });
+
+
+

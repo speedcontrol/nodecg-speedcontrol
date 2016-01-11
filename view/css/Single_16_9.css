@@ -10,7 +10,7 @@ body {
     padding: 0px;
 }
 #window-container {
-    background-image: url('/view/speedcontrol/images/Single_43.png');
+    background-image: url('/view/speedcontrol/images/Single_169.png');
     width: 1280px;
     height: 720px;
     overflow: hidden;
@@ -23,8 +23,8 @@ body {
 #playerContainer {
     position: absolute;
     width: 400px;
-    height: 50px;
-    top: 600px;
+    height: 45px;
+    top: 610px;
     display: flex;
     overflow: hidden;
 }
@@ -55,7 +55,7 @@ body {
     position: absolute;
     width: 400px;
     height: 50px;
-    top: 655px;
+    top: 660px;
     display: flex;
     overflow: hidden;
 }
@@ -74,7 +74,8 @@ body {
     width: 412px;
     height: 100px;
     background: rgba(255,255,255,0.1);
-    top: 490px;
+    top: 613px;
+    left: 435px;
 }
 
 #timer {
@@ -133,12 +134,13 @@ body {
 
 #marathonLogo {
     position: absolute;
-    top: 200px;
-    left: 100px;
+    top: 615px;
+    right: 40px;
     width: 263px;
     height: 121px;
     background-image: url('/view/speedcontrol/images/preEsaMarathonLogo.png');
     background-repeat: no-repeat;
+    background-size: 80%;
 }
 
 #positionDebug {

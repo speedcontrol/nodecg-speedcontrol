@@ -1,9 +1,9 @@
 <html>
 <head>
-    <link href="css/Single_4_3.css" rel="stylesheet"/>
+    <link href="css/Race_2player_16_9.css" rel="stylesheet"/>
     <script src="components/gsap/src/minified/TweenMax.min.js"></script>
     <script src="components/jquery/dist/jquery.min.js"></script>
-    <script src="Single_4_3.js"></script>
+    <script src="Race_2player_4_3.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 </head>
 <body>
@@ -12,12 +12,29 @@
         X: 100
         Y: 100
     </div>
+    <div id="runner1TimerFinishedContainer">
+        <div class="finishedLogo"></div>
+        <div id="runner1TimerFinished" class="positionable dummyTextable">
+        </div>
+    </div>
+    <div id="runner2TimerFinishedContainer">
+        <div class="finishedLogo"></div>
+        <div id="runner2TimerFinished" class="positionable dummyTextable">
+        </div>
+    </div>
     <div id="marathonLogo"> </div>
-    <div id="playerContainer">
+    <div id="player1Container">
         <div id="runner1Logo" class="positionable">
-            <img id="twitchLogo" src="/view/speedcontrol/images/twitchlogo.png">
+            <img id="twitchLogo1" src="/view/speedcontrol/images/twitchlogo.png">
         </div>
         <div id="runner1InformationName" class="positionable">
+        </div>
+    </div>
+    <div id="player2Container">
+        <div id="runner2InformationName" class="positionable">
+        </div>
+        <div id="runner2Logo" class="positionable">
+            <img id="twitchLogo2" src="/view/speedcontrol/images/twitchlogo.png">
         </div>
     </div>
     <div id="timerContainer">

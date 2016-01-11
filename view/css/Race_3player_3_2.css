@@ -10,7 +10,7 @@ body {
     padding: 0px;
 }
 #window-container {
-    background-image: url('/view/speedcontrol/images/Single_43.png');
+    background-image: url('/view/speedcontrol/images/3PRace_32.png');
     width: 1280px;
     height: 720px;
     overflow: hidden;
@@ -20,17 +20,18 @@ body {
     background-color: #000000;
 }
 
-#playerContainer {
+#player1Container {
     position: absolute;
-    width: 400px;
+    width: 300px;
     height: 50px;
-    top: 600px;
+    top: 375px;
+    left: 550px;
     display: flex;
     overflow: hidden;
 }
 
 #runner1Logo {
-    background-image: url('/view/speedcontrol/images/playerlogo.png');
+    background-image: url('/view/speedcontrol/images/playerlogoup.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 50px;
@@ -42,7 +43,7 @@ body {
 #runner1InformationName {
     font-family: FFFForward;
     color: #8d7996;
-    background: rgba(255,255,255,0.1);
+    background: rgba(47, 7, 76, 0.6);
     line-height: 50px;
     height: 50px;
     width: 100%;
@@ -51,11 +52,78 @@ body {
     flex: 1;
 }
 
+#player2Container {
+    position: absolute;
+    width: 300px;
+    height: 50px;
+    top: 430px;
+    left: 550px;
+    display: flex;
+    overflow: hidden;
+}
+
+#runner2Logo {
+    background-image: url('/view/speedcontrol/images/playerlogoupleft.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+}
+
+
+#runner2InformationName {
+    font-family: FFFForward;
+    color: #8d7996;
+    background: rgba(22, 48, 48, 0.6);
+    line-height: 50px;
+    height: 50px;
+    width: 100%;
+    vertical-align: middle;
+    padding-left: 15px;
+    text-align: left;
+    flex: 1;
+}
+
+#player3Container {
+    position: absolute;
+    width: 300px;
+    height: 50px;
+    top: 485px;
+    left: 550px;
+    display: flex;
+    overflow: hidden;
+}
+
+#runner3Logo {
+    background-image: url('/view/speedcontrol/images/playerlogoleft.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+}
+
+
+#runner3InformationName {
+    font-family: FFFForward;
+    color: #8d7996;
+    background: rgba(71, 13, 40, 0.6);
+    line-height: 50px;
+    height: 50px;
+    width: 100%;
+    vertical-align: middle;
+    padding-left: 15px;
+    text-align: left;
+    flex: 1;
+}
+
 #runInformationContainer {
     position: absolute;
     width: 400px;
     height: 50px;
     top: 655px;
+    right: 15px;
     display: flex;
     overflow: hidden;
 }
@@ -67,6 +135,7 @@ body {
     width: 50px;
     height: 50px;
     vertical-align: middle;
+    padding-right: 5px;
 }
 
 #timerContainer {
@@ -74,7 +143,8 @@ body {
     width: 412px;
     height: 100px;
     background: rgba(255,255,255,0.1);
-    top: 490px;
+    top: 550px;
+    right: 15px;
 }
 
 #timer {
@@ -133,8 +203,8 @@ body {
 
 #marathonLogo {
     position: absolute;
-    top: 200px;
-    left: 100px;
+    top: 400px;
+    right: 70px;
     width: 263px;
     height: 121px;
     background-image: url('/view/speedcontrol/images/preEsaMarathonLogo.png');
@@ -158,6 +228,64 @@ body {
     background-repeat: no-repeat;
 }
 
+#runner1TimerFinishedContainer {
+    border-radius: 5px;
+    display: flex;
+    color: white;
+    position: absolute;
+    top: 15px;
+    left: 750px;
+    font-family: FFFForward;
+    font-size: 15px;
+    height: 42px;
+    background-color: rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+#runner2TimerFinishedContainer {
+    border-radius: 5px;
+    display: flex;
+    color: white;
+    position: absolute;
+    top: 15px;
+    left: 200px;
+    font-family: FFFForward;
+    font-size: 15px;
+    height: 42px;
+    background-color: rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+#runner3TimerFinishedContainer {
+    border-radius: 5px;
+    display: flex;
+    color: white;
+    position: absolute;
+    top: 365px;
+    left: 200px;
+    font-family: FFFForward;
+    font-size: 15px;
+    height: 42px;
+    background-color: rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+#runner1TimerFinished,#runner2TimerFinished,#runner3TimerFinished {
+    height: 32px;
+    line-height: 42px;
+    padding-right: 5px;
+}
+
+.finishedLogo {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    background-image: url('/view/speedcontrol/images/finishFlag.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 32px;
+}
 .editableObject {
     background: rgba(255,0,0,0.3);
 }
