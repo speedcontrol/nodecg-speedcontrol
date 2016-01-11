@@ -98,6 +98,7 @@ function runPlayer_updateList(runData) {
         }
     })
         .click(function() {
+            nodecg.sendMessage("resetTime", 0);
             runPlayer_playRun($(this).attr('id'));
         });
 

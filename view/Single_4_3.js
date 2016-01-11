@@ -54,7 +54,7 @@ $(function () {
                 $timerInfo.css('color','yellow');
                 break;
             case 'finished':
-                $timerInfo.css('color','green');
+                $timerInfo.css('color','#22D640');
                 break;
             case 'running':
                 $timerInfo.css('color','white');
