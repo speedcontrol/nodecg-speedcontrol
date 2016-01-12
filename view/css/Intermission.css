@@ -99,14 +99,14 @@ body {
 #comingUpSystem {
     padding-right: 5px;
     color: #856899;
-    width: 50px;
+    width: 100px;
     text-align: right;
     background: #271e2f;
 }
 #comingUpCathegory {
     padding: 2px;
     color: #856899;
-    width: 320px;
+    width: 220px;
     background: #271e2f;
 }
 
@@ -120,14 +120,14 @@ body {
 #justMissedSystem {
     padding-right: 5px;
     color: #856899;
-    width: 50px;
+    width: 100px;
     text-align: right;
     background: #271e2f;
 }
 #justMissedCathegory {
     padding: 2px;
     color: #856899;
-    width: 320px;
+    width: 220px;
     background: #271e2f;
 }
 

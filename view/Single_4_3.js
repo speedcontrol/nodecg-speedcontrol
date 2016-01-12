@@ -85,6 +85,7 @@ $(function () {
         }
 
         setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationName(newValue,0));
+        setTimeout(displayTwitchInstead, 15000);
     });
 
     // Replicant functions ###
@@ -266,8 +267,6 @@ $(function () {
     function updateSelectorText($textDivToUpdate, newHtml) {
         $textDivToUpdate.html(newHtml);
     }
-
-    setTimeout(displayTwitchInstead, 2000);
 
     function displayTwitchInstead() {
         setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,0));
