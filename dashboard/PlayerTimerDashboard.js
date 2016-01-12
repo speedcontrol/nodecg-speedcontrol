@@ -19,19 +19,41 @@ stopWatchesReplicant.on('change', function(oldVal, newVal) {
     switch (newVal[0].state) {
         case 'paused':
             $timer.css('color','#555500');
+            $( "#reset").button({
+                disabled: true
+            });
             break;
         case 'finished':
             $timer.css('color','green');
+            $( "#reset").button({
+                disabled: false
+            });
             break;
         case 'running':
             $timer.css('color','#008BB9');
+            $( "#reset").button({
+                disabled: true
+            });
             break;
         case 'stopped':
+            $( "#reset").button({
+                disabled: true
+            });
             $timer.css('color','gray');
             break;
         default:
     }
     playerTimer_SetTime(time);
+});
+
+nodecg.listenFor("resetTime", function() {
+    var options = {
+        label: "play",
+        icons: {
+            primary: "ui-icon-play"
+        }
+    };
+    $("#play").button( "option", options );
 });
 
 function playerTimer_SetTime(timeHTML) {
@@ -94,6 +116,11 @@ function playerTimer_InitializeElements() {
     })
         .click(function() {
             if ( $( this ).text() === "play" ) {
+
+                $( "#reset").button({
+                    disabled: true
+                });
+
                 nodecg.sendMessage("startTime", 0);
                 options = {
                     label: "pause",

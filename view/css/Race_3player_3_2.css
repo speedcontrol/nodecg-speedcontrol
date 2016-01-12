@@ -30,7 +30,7 @@ body {
 }
 
 #runner1Logo {
-    background-image: url('/view/speedcontrol/images/playerlogoup.png');
+    background-image: url('/view/speedcontrol/images/playerlogoupleft.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 50px;
@@ -42,7 +42,7 @@ body {
 #runner1InformationName {
     font-family: FFFForward;
     color: #8d7996;
-    background: rgba(47, 7, 76, 0.6);
+    background: rgba(22, 48, 48, 0.6);
     line-height: 50px;
     height: 50px;
     width: 100%;
@@ -62,7 +62,7 @@ body {
 }
 
 #runner2Logo {
-    background-image: url('/view/speedcontrol/images/playerlogoupleft.png');
+    background-image: url('/view/speedcontrol/images/playerlogoup.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 50px;
@@ -74,7 +74,7 @@ body {
 #runner2InformationName {
     font-family: FFFForward;
     color: #8d7996;
-    background: rgba(22, 48, 48, 0.6);
+    background: rgba(47, 7, 76, 0.6);
     line-height: 50px;
     height: 50px;
     width: 100%;
@@ -233,7 +233,7 @@ body {
     color: white;
     position: absolute;
     top: 15px;
-    left: 750px;
+    left: 200px;
     font-family: FFFForward;
     font-size: 15px;
     height: 42px;
@@ -247,7 +247,7 @@ body {
     color: white;
     position: absolute;
     top: 15px;
-    left: 200px;
+    left: 750px;
     font-family: FFFForward;
     font-size: 15px;
     height: 42px;

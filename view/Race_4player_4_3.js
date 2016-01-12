@@ -61,7 +61,7 @@ $(function () {
                 $timerInfo.css('color','#22D640');
                 break;
             case 'running':
-                $timerInfo.css('color','white');
+                $timerInfo.css('color','rgb(255,255,255,0.7)');
                 break;
             case 'stopped':
                 $timerInfo.css('color','gray');
