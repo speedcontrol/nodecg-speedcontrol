@@ -111,24 +111,25 @@ body {
     text-align: left;
     color: #8d7996;
     width: 350px;
+    white-space: nowrap;
 }
 
 #runInformationGameCategory {
     font-family: FFFForward;
     font-size: 12px;
-    text-align: center;
     color: #8d7996;
     width: 150px;
     text-align: left;
+    white-space: nowrap;
 }
 
 #runInformationGameSystem {
     font-family: FFFForward;
     font-size: 12px;
-    text-align: center;
     color: #8d7996;
     width: 175px;
     text-align: right;
+    white-space: nowrap;
 }
 
 #marathonLogo {

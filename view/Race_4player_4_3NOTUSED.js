@@ -16,7 +16,7 @@ $(function () {
     var $runInformationName = $('#runInformationGameName');
 
     var currentTime = '';
-
+    var timeout = null;
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
     var sceneID = "4PlayerRace4_3";

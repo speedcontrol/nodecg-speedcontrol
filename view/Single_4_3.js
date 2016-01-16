@@ -12,6 +12,7 @@ $(function () {
     var currentTime = '';
     var displayTwitchforMilliseconds = 15000;
     var intervalToNextTwitchDisplay = 120000;
+    var timeout = null;
 
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
@@ -85,7 +86,12 @@ $(function () {
         }
 
         setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationName(newValue,0));
-        setTimeout(displayTwitchInstead, 15000);
+
+        if(timeout != null) {
+            clearTimeout(timeout);
+        }
+
+        timeout = setTimeout(displayTwitchInstead, 15000);
     });
 
     // Replicant functions ###
@@ -102,7 +108,7 @@ $(function () {
 
     function updateSceneFields(runData) {
         var runInfoGameName = runData.game;
-        var runInfoGameEstimate = "EST: 00:"+runData.estimate;
+        var runInfoGameEstimate = "EST: "+runData.estimate+":00";
         var runInfoGameSystem = runData.system;
         var runInfoGameCategory = runData.category;
 
@@ -275,7 +281,7 @@ $(function () {
         var tm = new TimelineMax({paused: true});
         tm.to($twitchLogo, 0.5, {opacity: '1', transform: "scale(0.9)",  ease: Quad.easeOut },'0');
         tm.play();
-        setTimeout(hideTwitch,displayTwitchforMilliseconds);
+        timeout = setTimeout(hideTwitch,displayTwitchforMilliseconds);
     }
 
     function hideTwitch() {
@@ -283,7 +289,7 @@ $(function () {
         var tm = new TimelineMax({paused: true});
         tm.to($twitchLogo, 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0');
         tm.play();
-        setTimeout(displayTwitchInstead,intervalToNextTwitchDisplay);
+        timeout = setTimeout(displayTwitchInstead,intervalToNextTwitchDisplay);
     }
 
     $twitchLogo.css('transform', 'scale(0)');

@@ -1,4 +1,13 @@
 'use strict';
+/*
+,
+ {
+ "name": "run-control",
+ "title": "Run Control",
+ "width": 3,
+ "file": "RunControlDashboard.html",
+ "faIcon": "fa-exclamation"
+ }*/
 
 // JQuery selectors..
 var $panel = $bundle.filter('#player-control');

@@ -7,13 +7,6 @@
     "faIcon": "fa-exclamation"
   },
   {
-    "name": "run-control",
-    "title": "Run Control",
-    "width": 3,
-    "file": "RunControlDashboard.html",
-    "faIcon": "fa-exclamation"
-  },
-  {
     "name": "run-player",
     "title": "Run Player",
     "width": 3,
@@ -53,6 +46,13 @@
     "title": "Marquee Information",
     "width": 2,
     "file": "MarqueeInformationDashboard.html",
+    "faIcon": "fa-exclamation"
+  },
+  {
+    "name": "horaro-import",
+    "title": "Horaro Schedule Import",
+    "width": 2,
+    "file": "HoraroImportDashboard.html",
     "faIcon": "fa-exclamation"
   }
 ]

@@ -28,7 +28,7 @@ runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
     if(!isInitialized && typeof newValue !== 'undefined') {
         isInitialized = true;
         if (typeof runPlayer_getRunObject(newValue.runID) !== 'undefined') {
-            runPlayer_playRunIdOnly(newValue.runID);
+            runPlayer_playRunIdOnly(newValue.runID, false);
         }
     }
     else {
@@ -132,17 +132,19 @@ function runPlayer_updateList(runData) {
 
 function runPlayer_playRun(id) {
     var runID = id.replace('playRun','');
-    runPlayer_playRunIdOnly(runID);
+    runPlayer_playRunIdOnly(runID, true);
 }
 
-function runPlayer_playRunIdOnly(runID) {
+function runPlayer_playRunIdOnly(runID, updateActiveRunnerList) {
     runPlayer_activeRunID = runID;
     runPlayer_activeRunObject = runPlayer_getRunObject(runID);
     runPlayer_neighbourRuns = runPlayer_findNeighbourRuns(runID);
     $('.playerGroup').find('*').removeClass('ui-state-playing');
     $('#'+runID+".playerGroup").find('h3').addClass('ui-state-playing');
     runDataActiveRunReplicant.value = runPlayer_activeRunObject;
-    runDataActiveRunRunnerListReplicant.value = runPlayer_activeRunObject.players;
+    if(updateActiveRunnerList) {
+        runDataActiveRunRunnerListReplicant.value = runPlayer_activeRunObject.players;
+    }
     if(syncGamePlayedToTwitch) {
         runPlayer_setTwitchChannelData(runPlayer_activeRunObject);
     }
@@ -177,13 +179,13 @@ function runPlayer_setTwitchChannelData(runData) {
 function runPlayer_playPreviousRun() {
     var runToPlay = runPlayer_neighbourRuns.before;
     var runs = runDataArrayReplicantPlayer.value;
-    runPlayer_playRunIdOnly(runs[Number(runToPlay)].runID);
+    runPlayer_playRunIdOnly(runs[Number(runToPlay)].runID, true);
 }
 
 function runPlayer_playNextRun() {
     var runToPlay = runPlayer_neighbourRuns.after;
     var runs = runDataArrayReplicantPlayer.value;
-    runPlayer_playRunIdOnly(runs[Number(runToPlay)].runID);
+    runPlayer_playRunIdOnly(runs[Number(runToPlay)].runID, true);
 }
 
 function runPlayer_findNeighbourRuns(ID) {
