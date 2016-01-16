@@ -39,6 +39,36 @@ var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunn
 runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
 });
 
+var stopWatchesReplicant = nodecg.Replicant('stopwatches');
+stopWatchesReplicant.on('change', function(oldVal, newVal) {
+    if (!newVal) return;
+    switch (newVal[0].state) {
+        case 'paused':
+            disableRunChange();
+            break;
+        case 'finished':
+            enableRunChange();
+            break;
+        case 'running':
+            disableRunChange();
+            break;
+        case 'stopped':
+            enableRunChange();
+            break;
+        default:
+    }
+});
+
+function enableRunChange() {
+    $( ".playRunButton" ).button({disabled: false});
+    $( ".runPlayerNext" ).button({disabled: false});
+}
+
+function disableRunChange() {
+    $( ".playRunButton" ).button({disabled: true});
+    $( ".runPlayerNext" ).button({disabled: true});
+}
+
 function runPlayer_getPlayers(runData) {
     var playerString = '<tr> <td class="rowTitle">Runners</td>';
     $.each(runData.players, function(index, player) {
@@ -102,30 +132,20 @@ function runPlayer_updateList(runData) {
             runPlayer_playRun($(this).attr('id'));
         });
 
-    $( ".previous" ).button({
-        text: false,
-        icons: {
-            primary: "ui-icon-seek-prev"
-        }
-    })
-        .click(function() {
-            runPlayer_playPreviousRun();
-        });
-
-    $( ".next" ).button({
-        text: false,
+    $( ".runPlayerNext" ).button({
+        text: true,
         icons: {
             primary: "ui-icon-seek-next"
         }
-    })
-        .click(function() {
-            runPlayer_playNextRun()
-        });
-
-    $( ".previous").button({
-        disabled: true
+    }).click(function() {
+        var displayString ="Are you sure that you want to activate the run\n "+ $(this).text().replace("Play ","");
+        if(confirm(displayString)) {
+            runPlayer_playNextRun();
+        }
     });
-    $( ".next").button({
+
+
+    $( ".runPlayerNext").button({
         disabled: true
     });
 }
@@ -136,11 +156,15 @@ function runPlayer_playRun(id) {
 }
 
 function runPlayer_playRunIdOnly(runID, updateActiveRunnerList) {
+    var theNextGame = runPlayer_getRunObject(Number(Number(runID)+1));
     runPlayer_activeRunID = runID;
     runPlayer_activeRunObject = runPlayer_getRunObject(runID);
     runPlayer_neighbourRuns = runPlayer_findNeighbourRuns(runID);
     $('.playerGroup').find('*').removeClass('ui-state-playing');
+    $('.playerGroup').find('*').removeClass('ui-state-playing-next');
     $('#'+runID+".playerGroup").find('h3').addClass('ui-state-playing');
+    $('#'+Number(Number(runID)+1)+".playerGroup").find('h3').addClass('ui-state-playing-next');
+    $("#runPlayerWindow").scrollTo($('#'+Number(Number(runID) - 1)+".playerGroup"),500 ,{queue:false});
     runDataActiveRunReplicant.value = runPlayer_activeRunObject;
     if(updateActiveRunnerList) {
         runDataActiveRunRunnerListReplicant.value = runPlayer_activeRunObject.players;
@@ -148,10 +172,16 @@ function runPlayer_playRunIdOnly(runID, updateActiveRunnerList) {
     if(syncGamePlayedToTwitch) {
         runPlayer_setTwitchChannelData(runPlayer_activeRunObject);
     }
-    $( ".previous").button({
-        disabled: false
+
+    $( ".runPlayerNext" ).button({
+        text: true,
+        label: theNextGame!=null?"Play "+theNextGame.game:"Loop back to the beginning",
+        icons: {
+            primary: "ui-icon-seek-next"
+        }
     });
-    $( ".next").button({
+
+    $( ".runPlayerNext").button({
         disabled: false
     });
 }
@@ -174,12 +204,6 @@ function runPlayer_setTwitchChannelData(runData) {
         verb: 'PUT' }, function(resp, ans) {
         console.log (resp + " " + ans );
     });
-}
-
-function runPlayer_playPreviousRun() {
-    var runToPlay = runPlayer_neighbourRuns.before;
-    var runs = runDataArrayReplicantPlayer.value;
-    runPlayer_playRunIdOnly(runs[Number(runToPlay)].runID, true);
 }
 
 function runPlayer_playNextRun() {
@@ -220,30 +244,13 @@ function runPlayer_getRunObject(runIdToFind) {
     return runFound;
 }
 
-$( ".previous" ).button({
-    text: false,
-    icons: {
-        primary: "ui-icon-seek-prev"
-    }
-})
-    .click(function() {
-        runPlayer_playPreviousRun();
-    });
-
-$( ".next" ).button({
-    text: false,
-    icons: {
-        primary: "ui-icon-seek-next"
-    }
-})
-    .click(function() {
-        runPlayer_playNextRun()
-    });
-
-$( ".previous").button({
-    disabled: true
+$( ".runPlayerNext" ).button({
+    text: true
+}).click(function() {
+    runPlayer_playNextRun()
 });
-$( ".next").button({
+
+$( ".runPlayerNext").button({
     disabled: true
 });
 

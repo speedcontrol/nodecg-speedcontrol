@@ -9,6 +9,13 @@
         padding: 0;
     }
 
+    #runPlayerWindow {
+        margin: 0;
+        padding: 0;
+        height: 304px;
+        overflow-y: scroll;
+    }
+
     td.rowTitle {
         width: 70px;
     }
@@ -23,7 +30,8 @@
         width: 30px;
         height: 30px;
     }
-    .ui-accordion-header.ui-state-playing { background-color: #7fb96a; color: #7fb96a; }
+    .ui-accordion-header.ui-state-playing {color: #45b94d;}
+    .ui-accordion-header.ui-state-playing-next {color: #b97fb4;}
     .ui-accordion-content.ui-state-playing { background-color: #7fb96a; color: #7fb96a; }
 
 </style>
@@ -31,10 +39,11 @@
     <div id="run-player-container">
         <h4>Runs</h4>
         <div id="toolbarPrevNext" class="ui-widget-header ui-corner-all">
-            <button class="previous" id="previousRun">previous</button>
-            <button class="next" id="nextRun">next</button>
+            <button class="runPlayerNext" id="nextRun">Next Run Is</button>
         </div>
-        <div id="runPlayerItems">
+        <div id="runPlayerWindow">
+            <div id="runPlayerItems">
+            </div>
         </div>
     </div>
 </div>
