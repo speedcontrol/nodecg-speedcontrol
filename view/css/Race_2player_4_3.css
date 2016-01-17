@@ -88,7 +88,7 @@ body {
     position: absolute;
     width: 400px;
     height: 50px;
-    top: 655px;
+    top: 600px;
     left: 435px;
     display: flex;
     overflow: hidden;
@@ -169,12 +169,13 @@ body {
 
 #marathonLogo {
     position: absolute;
-    top: 570px;
+    top: 555px;
     right: 70px;
     width: 263px;
     height: 121px;
     background-image: url('/view/speedcontrol/images/preEsaMarathonLogo.png');
     background-repeat: no-repeat;
+    background-size: 85%;
 }
 
 #positionDebug {

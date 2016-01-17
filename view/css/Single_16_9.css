@@ -23,7 +23,8 @@ body {
     position: absolute;
     width: 400px;
     height: 45px;
-    top: 610px;
+    top: 615px;
+    left: 10px;
     display: flex;
     overflow: hidden;
 }
@@ -54,7 +55,8 @@ body {
     position: absolute;
     width: 400px;
     height: 50px;
-    top: 660px;
+    top: 665px;
+    left: 10px;
     display: flex;
     overflow: hidden;
 }
@@ -70,11 +72,11 @@ body {
 
 #timerContainer {
     position: absolute;
-    width: 412px;
+    width: 250px;
     height: 100px;
     background: rgba(255,255,255,0.1);
-    top: 613px;
-    left: 435px;
+    top: 615px;
+    left: 415px;
 }
 
 #timer {
@@ -135,12 +137,12 @@ body {
 #marathonLogo {
     position: absolute;
     top: 615px;
-    right: 40px;
+    right: 140px;
     width: 263px;
     height: 121px;
     background-image: url('/view/speedcontrol/images/preEsaMarathonLogo.png');
     background-repeat: no-repeat;
-    background-size: 80%;
+    background-size: 50%;
 }
 
 #positionDebug {

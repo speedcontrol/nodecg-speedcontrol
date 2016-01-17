@@ -23,7 +23,7 @@ body {
     position: absolute;
     width: 400px;
     height: 50px;
-    top: 600px;
+    top: 545px;
     display: flex;
     overflow: hidden;
 }
@@ -54,7 +54,7 @@ body {
     position: absolute;
     width: 400px;
     height: 50px;
-    top: 655px;
+    top: 600px;
     display: flex;
     overflow: hidden;
 }
@@ -73,7 +73,7 @@ body {
     width: 412px;
     height: 100px;
     background: rgba(255,255,255,0.1);
-    top: 490px;
+    top: 430px;
 }
 
 #timer {

@@ -21,9 +21,9 @@ body {
 
 #playerContainer {
     position: absolute;
-    width: 400px;
+    width: 370px;
     height: 50px;
-    top: 610px;
+    top: 535px;
     display: flex;
     overflow: hidden;
 }
@@ -52,9 +52,9 @@ body {
 
 #runInformationContainer {
     position: absolute;
-    width: 400px;
+    width: 370px;
     height: 50px;
-    top: 665px;
+    top: 590px;
     display: flex;
     overflow: hidden;
 }
@@ -73,7 +73,7 @@ body {
     width: 375px;
     height: 100px;
     background: rgba(255,255,255,0.1);
-    top: 490px;
+    top: 415px;
 }
 
 #timer {
@@ -117,7 +117,7 @@ body {
     font-family: FFFForward;
     font-size: 12px;
     color: #8d7996;
-    width: 150px;
+    width: 75%;
     text-align: left;
     white-space: nowrap;
 }
@@ -126,7 +126,7 @@ body {
     font-family: FFFForward;
     font-size: 12px;
     color: #8d7996;
-    width: 175px;
+    width: 25%;
     text-align: right;
     white-space: nowrap;
 }
@@ -134,8 +134,8 @@ body {
 
 #marathonLogo {
     position: absolute;
-    top: 200px;
-    left: 50px;
+    top: 185px;
+    left: 60px;
     width: 263px;
     height: 121px;
     background-image: url('/view/speedcontrol/images/preEsaMarathonLogo.png');
