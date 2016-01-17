@@ -4,14 +4,12 @@ $(function () {
     var $timerInfo = $('#timer');
     var $runnerInfoTagPlayer1Name = $('#runner1InformationName');
     var $runnerInfoTagPlayer2Name = $('#runner2InformationName');
-    var $runnerInfoTagPlayer3Name = $('#runner3InformationName');
     var $runInformationSystem = $('#runInformationGameSystem');
     var $runInformationCategory = $('#runInformationGameCategory');
     var $runInformationEstimate = $('#runInformationGameEstimate');
     var $runInformationName = $('#runInformationGameName');
     var $twitchLogo = $('#twitchLogo1');
     var $twitchLogo2 = $('#twitchLogo2');
-    var $twitchLogo3 = $('#twitchLogo3');
 
     var currentTime = '';
     var displayTwitchforMilliseconds = 15000;
@@ -20,7 +18,7 @@ $(function () {
 
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
-    var sceneID = "Race_3player_3_2";
+    var sceneID = "Race_2player_16_9";
 
     // Temporary container used for edit mode to store all element position data. See createPositioningConfig()
     var itemPositioningConfigurationContainer = [];
@@ -74,7 +72,7 @@ $(function () {
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
     runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
-        if(typeof newValue !== 'undefined' && newValue.players.length == 3) {
+        if(typeof newValue !== 'undefined' && newValue.players.length == 2) {
             updateSceneFields(newValue);
         }
     });
@@ -85,13 +83,12 @@ $(function () {
             return;
         }
 
-        if(newValue.length != 3) {
+        if(newValue.length != 2) {
             return;
         }
 
         setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationName(newValue,0));
         setGameFieldAlternate($runnerInfoTagPlayer2Name,getRunnerInformationName(newValue,1));
-        setGameFieldAlternate($runnerInfoTagPlayer3Name,getRunnerInformationName(newValue,2));
 
         if(timeout != null) {
             clearTimeout(timeout);
@@ -240,10 +237,8 @@ $(function () {
     function resetAllPlayerTimers() {
         $('#runner1TimerFinished').html("");
         $('#runner2TimerFinished').html("");
-        $('#runner3TimerFinished').html("");
         hideTimerFinished(1);
         hideTimerFinished(2);
-        hideTimerFinished(3);
     }
 
     function splitTimer(index) {
@@ -287,14 +282,12 @@ $(function () {
     function displayTwitchInstead() {
         setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,0));
         setGameFieldAlternate($runnerInfoTagPlayer2Name,getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,1));
-        setGameFieldAlternate($runnerInfoTagPlayer3Name,getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,2));
         $twitchLogo.show();
         $twitchLogo2.show();
 
         var tm = new TimelineMax({paused: true});
         tm.to($twitchLogo, 0.5, {opacity: '1', transform: "scale(0.9)",  ease: Quad.easeOut },'0');
         tm.to($twitchLogo2, 0.5, {opacity: '1', transform: "scale(0.9)",  ease: Quad.easeOut },'0');
-        tm.to($twitchLogo3, 0.5, {opacity: '1', transform: "scale(0.9)",  ease: Quad.easeOut },'0');
         tm.play();
         timeout = setTimeout(hideTwitch,displayTwitchforMilliseconds);
     }
@@ -302,11 +295,9 @@ $(function () {
     function hideTwitch() {
         setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationName(runDataActiveRunRunnerListReplicant.value,0));
         setGameFieldAlternate($runnerInfoTagPlayer2Name,getRunnerInformationName(runDataActiveRunRunnerListReplicant.value,1));
-        setGameFieldAlternate($runnerInfoTagPlayer3Name,getRunnerInformationName(runDataActiveRunRunnerListReplicant.value,2));
         var tm = new TimelineMax({paused: true});
         tm.to($twitchLogo, 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0');
         tm.to($twitchLogo2, 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0');
-        tm.to($twitchLogo3, 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0');
         tm.play();
         timeout = setTimeout(displayTwitchInstead,intervalToNextTwitchDisplay);
     }
@@ -323,9 +314,6 @@ $(function () {
 
     hideTimerFinished(1);
     hideTimerFinished(2);
-    hideTimerFinished(3);
-
-    $twitchLogo3.css('transform', 'scale(0)');
     $twitchLogo2.css('transform', 'scale(0)');
     $twitchLogo.css('transform', 'scale(0)');
 });
