@@ -8,6 +8,13 @@ var $enableTwitchSynchronizationRadio = $('input[name=enableTwitchSynchronizatio
 
 var streamControlConfigurationReplicant = nodecg.Replicant('streamControlConfiguration');
 streamControlConfigurationReplicant.on('change', function(oldVal, newVal) {
+    if(typeof newVal !== 'undefined') {
+        if (newVal.synchronizeAutomatically != null && newVal.synchronizeAutomatically == true) {
+            var radio = $('#enableTwitchSynchronizationRadioOn');
+            radio[0].checked = true;
+            radio.button("refresh");
+        }
+    }
 });
 
 $enableTwitchSynchronizationRadios.buttonset();

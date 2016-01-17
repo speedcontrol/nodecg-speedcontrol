@@ -6,6 +6,18 @@ var toggle = false;
 
 var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration');
 sceneLayoutConfigurationReplicant.on('change', function(oldVal, newVal) {
+    if(typeof newVal !== 'undefined') {
+        if(newVal.editMode != null && newVal.editMode == true) {
+            var radio = $('#enableEditModeOn');
+            radio[0].checked = true;
+            radio.button("refresh");
+        }
+        if(newVal.editMode != null && newVal.backgroundTransparency == true) {
+            var radio = $('#backgroundTransparencyOn');
+            radio[0].checked = true;
+            radio.button("refresh");
+        }
+    }
 });
 
 $("#enableEditModeRadios").buttonset();
@@ -49,3 +61,5 @@ function sceneLayout_GetOrCreateSceneLayoutConfiguration() {
         return sceneLayout_CreateSceneLayoutConfiguration();
     }
 }
+
+

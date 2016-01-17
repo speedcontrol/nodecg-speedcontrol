@@ -140,6 +140,7 @@ function runPlayer_updateList(runData) {
     }).click(function() {
         var displayString ="Are you sure that you want to activate the run\n "+ $(this).text().replace("Play ","");
         if(confirm(displayString)) {
+            nodecg.sendMessage("resetTime", 0);
             runPlayer_playNextRun();
         }
     });
@@ -247,6 +248,7 @@ function runPlayer_getRunObject(runIdToFind) {
 $( ".runPlayerNext" ).button({
     text: true
 }).click(function() {
+    nodecg.sendMessage("resetTime", 0);
     runPlayer_playNextRun()
 });
 
