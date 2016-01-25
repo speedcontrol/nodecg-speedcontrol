@@ -1,5 +1,5 @@
 {
-    "name": "speedcontrol",
+    "name": "nodecg-speedcontrol",
     "version": "0.0.1",
     "nodecgDependency": "~0.6.2",
     "homepage": "http://twitch.tv/sethcharleon",

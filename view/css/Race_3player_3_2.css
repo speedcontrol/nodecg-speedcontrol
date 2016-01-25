@@ -10,7 +10,7 @@ body {
     padding: 0px;
 }
 #window-container {
-    background-image: url('/view/speedcontrol/images/3PRace_32.png');
+    background-image: url('/view/nodecg-speedcontrol/images/3PRace_32.png');
     width: 1280px;
     height: 720px;
     overflow: hidden;
@@ -30,7 +30,7 @@ body {
 }
 
 #runner1Logo {
-    background-image: url('/view/speedcontrol/images/playerlogoupleft.png');
+    background-image: url('/view/nodecg-speedcontrol/images/playerlogoupleft.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 50px;
@@ -62,7 +62,7 @@ body {
 }
 
 #runner2Logo {
-    background-image: url('/view/speedcontrol/images/playerlogoup.png');
+    background-image: url('/view/nodecg-speedcontrol/images/playerlogoup.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 50px;
@@ -95,7 +95,7 @@ body {
 }
 
 #runner3Logo {
-    background-image: url('/view/speedcontrol/images/playerlogoleft.png');
+    background-image: url('/view/nodecg-speedcontrol/images/playerlogoleft.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 50px;
@@ -128,7 +128,7 @@ body {
 }
 
 #runInformationLogo {
-    background-image: url('/view/speedcontrol/images/runInformationIcon.png');
+    background-image: url('/view/nodecg-speedcontrol/images/runInformationIcon.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 50px;
@@ -207,7 +207,7 @@ body {
     left: 600px;
     width: 263px;
     height: 121px;
-    background-image: url('/view/speedcontrol/images/preEsaMarathonLogo.png');
+    background-image: url('/view/nodecg-speedcontrol/images/preEsaMarathonLogo.png');
     background-repeat: no-repeat;
     background-size: 80%;
 }
@@ -225,7 +225,7 @@ body {
 #twitchField {
     padding-left: 35px;
     background-size: 25px 25px;
-    background-image: url('/view/speedcontrol/images/twitchlogo.png');
+    background-image: url('/view/nodecg-speedcontrol/images/twitchlogo.png');
     background-repeat: no-repeat;
 }
 
@@ -282,7 +282,7 @@ body {
     width: 32px;
     height: 32px;
     padding: 5px;
-    background-image: url('/view/speedcontrol/images/finishFlag.gif');
+    background-image: url('/view/nodecg-speedcontrol/images/finishFlag.gif');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 32px;

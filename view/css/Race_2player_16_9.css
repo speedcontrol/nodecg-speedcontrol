@@ -10,7 +10,7 @@ body {
     padding: 0px;
 }
 #window-container {
-    background-image: url('/view/speedcontrol/images/2PRace_169.png');
+    background-image: url('/view/nodecg-speedcontrol/images/2PRace_169.png');
     width: 1280px;
     height: 720px;
     overflow: hidden;
@@ -30,7 +30,7 @@ body {
 }
 
 #runner1Logo {
-    background-image: url('/view/speedcontrol/images/playerlogo.png');
+    background-image: url('/view/nodecg-speedcontrol/images/playerlogo.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 50px;
@@ -62,7 +62,7 @@ body {
 }
 
 #runner2Logo {
-    background-image: url('/view/speedcontrol/images/playerlogo.png');
+    background-image: url('/view/nodecg-speedcontrol/images/playerlogo.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 50px;
@@ -95,7 +95,7 @@ body {
 }
 
 #runInformationLogo {
-    background-image: url('/view/speedcontrol/images/runInformationIcon.png');
+    background-image: url('/view/nodecg-speedcontrol/images/runInformationIcon.png');
     background-repeat: no-repeat;
     background-position: center;
     width: 50px;
@@ -173,7 +173,7 @@ body {
     left: 925px;
     width: 263px;
     height: 121px;
-    background-image: url('/view/speedcontrol/images/preEsaMarathonLogo.png');
+    background-image: url('/view/nodecg-speedcontrol/images/preEsaMarathonLogo.png');
     background-repeat: no-repeat;
 }
 
@@ -190,7 +190,7 @@ body {
 #twitchField {
     padding-left: 35px;
     background-size: 25px 25px;
-    background-image: url('/view/speedcontrol/images/twitchlogo.png');
+    background-image: url('/view/nodecg-speedcontrol/images/twitchlogo.png');
     background-repeat: no-repeat;
 }
 
@@ -233,7 +233,7 @@ body {
     width: 32px;
     height: 32px;
     padding: 5px;
-    background-image: url('/view/speedcontrol/images/finishFlag.gif');
+    background-image: url('/view/nodecg-speedcontrol/images/finishFlag.gif');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 32px;

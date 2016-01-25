@@ -1,5 +1,5 @@
 {
-  "name": "speedcontrol",
+  "name": "nodecg-speedcontrol",
   "dependencies": {
     "jquery": "^2.1.3",
     "jquery-ui":">1.0.0",

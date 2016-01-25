@@ -45,7 +45,7 @@ function streamControl_CreateStreamControlConfiguration() {
 
 $streamControlSubmit.click(function() {
     if(typeof nodecg.bundleConfig.user === 'undefined') {
-        alert("If you want to use the twitch functionality, you need to create a file called speedcontrol.json in nodecg/cfg and fill it with:\n" +
+        alert("If you want to use the twitch functionality, you need to create a file called nodecg-speedcontrol.json in nodecg/cfg and fill it with:\n" +
             "{\n"+
             "\"user\": \"username\"\n" +
             "}\n"+
