@@ -1,20 +1,44 @@
-<style>
-    #editModeField, #backgroundTransparencyField {
-        padding: 15px;
-        margin-bottom: 10px;
-        border: 1px solid #008BB9;
-        border-radius: 15px;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="components/jquery/dist/jquery.js"></script>
+    <script src="components/jquery-ui/jquery-ui.js"></script>
+    <script src="SceneLayoutDashboard.js"></script>
+    <link rel="stylesheet" href="components/jquery-ui/themes/redmond/jquery-ui.css"/>
 
-    #backgroundTransparencyRadios, #enableEditModeRadios {
-        vertical-align: middle;
-        float: right;
-    }
+    <title></title>
+    <style>
+        label {
+            font-size: 12px;
+        }
 
-    #saveConfigurationButton,#revertToDefaultButton {
-        width: 100%;
-    }
-</style>
+        #editModeField {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #008BB9;
+            border-radius: 15px;
+        }
+
+        #backgroundTransparencyField {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #008BB9;
+            border-radius: 15px;
+            height: 30px;
+        }
+
+        #backgroundTransparencyRadios, #enableEditModeRadios {
+            vertical-align: middle;
+            float: right;
+        }
+
+        #saveConfigurationButton,#revertToDefaultButton {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
 <div id="scene-layout">
     <div id="scene-layout-container">
         <h4>Scene Layout</h4>
@@ -29,13 +53,14 @@
                 <button id="revertToDefaultButton">Revert To Default</button>
             </div>
             <div id="backgroundTransparencyField">
-            <label for="backgroundTransparencyRadios"> Transparency: </label>
-            <div id="backgroundTransparencyRadios">
-                <input type="radio" name="backgroundTransparency" id="backgroundTransparencyOn" value="On"> <label for="backgroundTransparencyOn">On</label>
-                <input type="radio" name="backgroundTransparency" id="backgroundTransparencyOff" value="Off" checked> <label for="backgroundTransparencyOff">Off</label>
+                <label for="backgroundTransparencyRadios"> Transparency: </label>
+                <div id="backgroundTransparencyRadios">
+                    <input type="radio" name="backgroundTransparency" id="backgroundTransparencyOn" value="On"> <label for="backgroundTransparencyOn">On</label>
+                    <input type="radio" name="backgroundTransparency" id="backgroundTransparencyOff" value="Off" checked> <label for="backgroundTransparencyOff">Off</label>
+                </div>
             </div>
         </div>
     </div>
 </div>
-</div>
+</body>
 

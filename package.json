@@ -7,54 +7,104 @@
   "license": "MIT",
   "nodecg": {
     "compatibleRange": "~0.7.0",
-    "dashboardPanels": [
+    "graphics": [
       {
-        "name": "player-control",
-        "title": "Player Control",
-        "width": 2,
-        "file": "PlayerControlDashboard.html"
+        "file": "Intermission.html",
+        "width": 1280,
+        "height": 720
       },
+      {
+        "file": "Race_2player_4_3.html",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "file": "Race_2player_16_9.html",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "file": "Race_3player_3_2.html",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "file": "Race_4player_16_9.html",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "file": "Single_3_2.html",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "file": "Single_4_3.html",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "file": "Single_16_9.html",
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "dashboardPanels": [
       {
         "name": "run-player",
         "title": "Run Player",
         "width": 3,
-        "file": "RunPlayerDashboard.html"
+        "file": "RunPlayerDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "player-control",
+        "title": "Player Control",
+        "width": 2,
+        "file": "PlayerControlDashboard.html",
+        "headerColor": "#008BB9"
       },
       {
         "name": "run-timer",
         "title": "Run Timer",
         "width": 2,
-        "file": "PlayerTimerDashboard.html"
+        "file": "PlayerTimerDashboard.html",
+        "headerColor": "#008BB9"
       },
       {
         "name": "player-layout",
         "title": "Player Layout",
         "width": 2,
-        "file": "PlayerLayoutDashboard.html"
+        "file": "PlayerLayoutDashboard.html",
+        "headerColor": "#008BB9"
       },
       {
         "name": "scene-layout",
         "title": "Scene Layout",
         "width": 2,
-        "file": "SceneLayoutDashboard.html"
+        "file": "SceneLayoutDashboard.html",
+        "headerColor": "#008BB9"
       },
       {
         "name": "stream-control",
         "title": "Twitch Control",
         "width": 2,
-        "file": "StreamControlDashboard.html"
-      },
-      {
-        "name": "marquee-information",
-        "title": "Marquee Information",
-        "width": 2,
-        "file": "MarqueeInformationDashboard.html"
+        "file": "StreamControlDashboard.html",
+        "headerColor": "#008BB9"
       },
       {
         "name": "horaro-import",
         "title": "Horaro Schedule Import",
         "width": 2,
-        "file": "HoraroImportDashboard.html"
+        "file": "HoraroImportDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "marquee-information",
+        "title": "Marquee Information",
+        "width": 2,
+        "file": "MarqueeInformationDashboard.html",
+        "headerColor": "#008BB9"
       }
     ]
   }

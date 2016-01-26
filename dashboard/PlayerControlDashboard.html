@@ -1,33 +1,40 @@
-<script src="nodecg-speedcontrol/components/jquery-ui/jquery-ui.js"></script>
-<script src="nodecg-speedcontrol/components/verify.notify.js"></script>
-<script src="nodecg-speedcontrol/components/twitch-js-sdk/twitch.js"></script>
-<script src="nodecg-speedcontrol/components/jquery.scrollto/jquery.scrollTo.js"></script>
-<link rel="stylesheet" href="nodecg-speedcontrol/components/jquery-ui/themes/redmond/jquery-ui.css"/>
-<style>
-    .ui-autocomplete-loading {
-        background: white url("/view/nodecg-speedcontrol/images/loading.gif") right center no-repeat;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="components/jquery/dist/jquery.js"></script>
+    <script src="components/jquery-ui/jquery-ui.js"></script>
+    <script src="components/jquery.scrollto/jquery.scrollTo.js"></script>
+    <script src="components/verify.notify.js"></script>
+    <script src="PlayerControlDashboard.js"></script>
+    <link rel="stylesheet" href="components/jquery-ui/themes/redmond/jquery-ui.css"/>
+    <style>
+        .ui-autocomplete-loading {
+            background: white url("/view/nodecg-speedcontrol/images/loading.gif") right center no-repeat;
+        }
 
-    .playerControlRunnerClass {
-        margin-left: 15px;
-        margin-top: 5px;
-    }
+        .playerControlRunnerClass {
+            margin-left: 15px;
+            margin-top: 5px;
+        }
 
-    #playerControlAddPlayerButton {
-        width: 30px;
-        height: 30px;
-    }
+        #playerControlAddPlayerButton {
+            width: 30px;
+            height: 30px;
+        }
 
-    #playerControlAddRunButton, #playerControlRandomizeRunsButton, #playerControlRemoveRunsButton,#playerControlRegion,
-    #playerControlEstimate, #playerControlCategory, #playerControlSystem, #playerControlGame{
-        width: 100%;
-    }
+        #playerControlAddRunButton, #playerControlRandomizeRunsButton, #playerControlRemoveRunsButton,#playerControlRegion,
+        #playerControlEstimate, #playerControlCategory, #playerControlSystem, #playerControlGame{
+            width: 100%;
+        }
 
-    h4 {
-        text-align: left;
-    }
-</style>
-
+        h4 {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
 <div id="player-control">
     <form id="run-submission">
         <div id="player-control-run-container">
@@ -76,3 +83,4 @@
         <div id="addResult"></div>
     </form>
 </div>
+</body>

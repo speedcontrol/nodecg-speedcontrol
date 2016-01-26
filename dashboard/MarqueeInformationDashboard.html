@@ -1,13 +1,24 @@
-<style>
-    #textToDisplay {
-        width: 100%;
-        height: 100px;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="components/jquery/dist/jquery.js"></script>
+    <script src="components/jquery-ui/jquery-ui.js"></script>
+    <script src="MarqueeInformationDashboard.js"></script>
+    <link rel="stylesheet" href="components/jquery-ui/themes/redmond/jquery-ui.css"/>
+    <title></title>
+    <style>
+        #textToDisplay {
+            width: 100%;
+            height: 100px;
+        }
 
-    #submitMarqueeInformationButton, #removeMarqueeInformationButton {
-        width: 100%;
-    }
-</style>
+        #submitMarqueeInformationButton, #removeMarqueeInformationButton {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
 <div id="marquee-information">
     <div id="marquee-information-container">
         <h4>Marquee Information</h4>
@@ -16,3 +27,4 @@
         <button id="removeMarqueeInformationButton"> Hide Information </button>
     </div>
 </div>
+</body>

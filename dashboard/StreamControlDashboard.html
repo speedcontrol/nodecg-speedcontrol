@@ -1,8 +1,26 @@
-<style>
-    #streamControlInit,#streamControlSubmit,#streamControlTitle,#streamControlGame {
-        width: 100%;
-    }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="components/jquery/dist/jquery.js"></script>
+    <script src="components/jquery-ui/jquery-ui.js"></script>
+    <script src="components/twitch-js-sdk/twitch.js"></script>
+    <script src="StreamControlDashboard.js"></script>
+    <link rel="stylesheet" href="components/jquery-ui/themes/redmond/jquery-ui.css"/>
+
+    <title></title>
+    <style>
+        #streamControlInit,#streamControlSubmit {
+            width: 100%;
+        }
+
+        #streamControlTitle,#streamControlGame {
+            width: 100%;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
 <div id="stream-control">
     <p>Automatically synchronize active game to twitch?</p>
     <div id="enableTwitchSynchronization">
@@ -15,3 +33,4 @@
     <button type="button" id="streamControlSubmit">Manual Change</button>
     <button type="button" id="streamControlInit">Log in to twitch</button>
 </div>
+</body>
