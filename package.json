@@ -1,3 +1,61 @@
 {
-  "name": "nodecg-speedcontrol"
+  "name": "nodecg-speedcontrol",
+  "version": "0.0.1",
+  "homepage": "http://twitch.tv/sethcharleon",
+  "author": "Tobias Palm Nerg <charleon@gmail.com>",
+  "description": "NodeCG Overlay engine for Speedrun Marathons",
+  "license": "MIT",
+  "nodecg": {
+    "compatibleRange": "~0.7.0",
+    "dashboardPanels": [
+      {
+        "name": "player-control",
+        "title": "Player Control",
+        "width": 2,
+        "file": "PlayerControlDashboard.html"
+      },
+      {
+        "name": "run-player",
+        "title": "Run Player",
+        "width": 3,
+        "file": "RunPlayerDashboard.html"
+      },
+      {
+        "name": "run-timer",
+        "title": "Run Timer",
+        "width": 2,
+        "file": "PlayerTimerDashboard.html"
+      },
+      {
+        "name": "player-layout",
+        "title": "Player Layout",
+        "width": 2,
+        "file": "PlayerLayoutDashboard.html"
+      },
+      {
+        "name": "scene-layout",
+        "title": "Scene Layout",
+        "width": 2,
+        "file": "SceneLayoutDashboard.html"
+      },
+      {
+        "name": "stream-control",
+        "title": "Twitch Control",
+        "width": 2,
+        "file": "StreamControlDashboard.html"
+      },
+      {
+        "name": "marquee-information",
+        "title": "Marquee Information",
+        "width": 2,
+        "file": "MarqueeInformationDashboard.html"
+      },
+      {
+        "name": "horaro-import",
+        "title": "Horaro Schedule Import",
+        "width": 2,
+        "file": "HoraroImportDashboard.html"
+      }
+    ]
+  }
 }
