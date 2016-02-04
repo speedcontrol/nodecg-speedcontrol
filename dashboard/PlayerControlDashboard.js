@@ -70,7 +70,7 @@ $(function () {
                     }
                 });
 
-                playerControl_AddRun(runData);
+                playerControl_AddRun(runData, true);
                 playerControl_ClearAllFields();
             }
             else {
@@ -95,16 +95,22 @@ $(function () {
     }
 
 // Called as a process when pushing the "add run" button
-    function playerControl_AddRun(runData) {
+    function playerControl_AddRun(runData, assignRunID) {
         if (typeof runDataArrayReplicant.value !== 'undefined') {
             var runContainer = runDataArrayReplicant.value;
-            runData.runID = playerControl_GetSetLastID();
+            if(assignRunID) {
+                runData.runID = playerControl_GetSetLastID();
+            }
             runContainer.push(runData);
+            console.log(runData);
             runDataArrayReplicant.value = runContainer;
         }
         else {
             var runContainer = [];
-            runData.runID = playerControl_GetSetLastID();
+            if(assignRunID) {
+                runData.runID = playerControl_GetSetLastID();
+            }
+            console.log(runData);
             runContainer.push(runData);
             runDataArrayReplicant.value = runContainer;
         }
@@ -211,6 +217,8 @@ $(function () {
         });
 
         $randomizeRunsButton.click(function () {
+            var runs = [];
+            var runID = runDataLastIDReplicant.value;
             for (var i = 0; i < 10; i++) {
                 var runData = playerControl_CreateRunData();
                 var numRunners = Math.floor(Math.random() * 4) + 1;
@@ -233,13 +241,19 @@ $(function () {
                 runData.estimate = "01:45";
                 runData.category = categories[Math.floor(Math.random() * categories.length)];
                 runData.system = systems[Math.floor(Math.random() * systems.length)];
-                ;
+                runData.runID = runID;
                 runData.region = "Japan";
                 $.each(players, function (index, runner) {
                     runData.players.push(runner);
                 });
-                playerControl_AddRun(runData);
+                runs.push(runData);
+                runID++;
             }
+
+            var runContainer = runDataArrayReplicant.value;
+            runContainer = runs;
+            runDataArrayReplicant.value = runContainer;
+
         });
         $estimateInputField.on('input', function (e) {
             if ($(this).val().length == 4) {
