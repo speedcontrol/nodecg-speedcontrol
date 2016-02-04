@@ -3,14 +3,10 @@ $(function () {
     var $timer = $("#theTimer");
     var splitsBeforeStoppingMainTimer = 255;
     var stoppedTimers = 0;
-
+    var moreThanOnePlayer = false;
+    var splitTimes = [];
+    var lastTimerState = "";
 // Replicant initialization
-    var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-    runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
-        if (newValue != '') {
-            playerTimer_UpdateTimers(newValue);
-        }
-    });
 
     var stopWatchesReplicant = nodecg.Replicant('stopwatches');
     stopWatchesReplicant.on('change', function (oldVal, newVal) {
@@ -18,33 +14,175 @@ $(function () {
         var time = newVal[0].time || '88:88:88';
         switch (newVal[0].state) {
             case 'paused':
-                $timer.css('color', '#555500');
-                $("#reset").button({
-                    disabled: true
-                });
+                if(lastTimerState != newVal[0].state) {
+                    $timer.css('color', '#555500');
+                    disableMainTimerStopButton(true);
+                    playerTimer_disablePersonalSplitButton(true);
+                    playerTimer_disablePersonalResetButton(false);
+                    disableMainResetButton(true);
+                }
                 break;
             case 'finished':
-                $timer.css('color', 'green');
-                $("#reset").button({
-                    disabled: false
-                });
+                if(lastTimerState != newVal[0].state) {
+                    $timer.css('color', 'green');
+                    disableMainTimerStopButton(true);
+                    disableMainResetButton(false);
+                    playerTimer_disablePersonalSplitButton(true);
+                    playerTimer_disablePersonalResetButton(true);
+                }
                 break;
             case 'running':
-                $timer.css('color', '#008BB9');
-                $("#reset").button({
-                    disabled: true
-                });
+                if(lastTimerState != newVal[0].state) {
+                    $timer.css('color', '#008BB9');
+                    if (moreThanOnePlayer) {
+                        disableMainTimerStopButton(true);
+                    }
+                    else {
+                        disableMainTimerStopButton(false);
+                    }
+                    disableMainResetButton(true);
+                    playerTimer_disablePersonalResetButton(false);
+                    playerTimer_disablePersonalSplitButton(false);
+                    setPlayButtonToPauseButton();
+                }
                 break;
             case 'stopped':
-                $("#reset").button({
-                    disabled: true
-                });
-                $timer.css('color', 'gray');
+                if(lastTimerState != newVal[0].state) {
+                    disableMainTimerStopButton(true);
+                    disableMainResetButton(true);
+                    playerTimer_disablePersonalResetButton(false);
+                    playerTimer_disablePersonalSplitButton(true);
+                    $timer.css('color', 'gray');
+                }
                 break;
             default:
         }
+        lastTimerState = newVal[0].state;
         playerTimer_SetTime(time);
     });
+
+    var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
+    runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
+        if (typeof newValue !== 'undefined' && newValue != '') {
+            playerTimer_UpdateTimers(newValue);
+            if(newValue.length > 1) {
+                moreThanOnePlayer = true;
+            }
+            else {
+                moreThanOnePlayer = false;
+            }
+        }
+    });
+
+    var finishedTimersReplicant = nodecg.Replicant('finishedTimers');
+    finishedTimersReplicant.on('change', function(oldValue, newValue) {
+        if(typeof newValue != 'undefined' && newValue != '') {
+            if(splitTimes.length != newValue.length) {
+                splitTimes = newValue;
+                updateSplitTimerTextColor(newValue);
+            }
+        }
+    });
+
+    function updateSplitTimerTextColor(timerArray) {
+        $.each(timerArray, function(index, value){
+            $('#toolbar'+value.index).css('color','#0000dd');
+        });
+    }
+
+    function resetSplitTimerTextColor(index) {
+        $('#toolbar'+index).css('color','white');
+    }
+
+    function resetSplitTimes() {
+        finishedTimersReplicant.value = [];
+        splitTimes = [];
+        resetSplitTimerTextColor(0);
+        resetSplitTimerTextColor(1);
+        resetSplitTimerTextColor(2);
+        resetSplitTimerTextColor(3);
+    }
+
+    function splitTimer(splitIndex) {
+        var found = false;
+        $.each(splitTimes, function(index, value){
+            if(value.index == splitIndex) {
+                found = true;
+                value.time = stopWatchesReplicant.value[0].time;
+            }
+        });
+        if(!found) {
+            var newSplit = createSplitTime(splitIndex);
+            splitTimes.push(newSplit);
+        }
+        stoppedTimers = splitTimes.length;
+
+        if (stoppedTimers >= splitsBeforeStoppingMainTimer) {
+            nodecg.sendMessage("finishTime", 0);
+        }
+
+        finishedTimersReplicant.value = splitTimes;
+
+        $('#toolbar'+splitIndex).css('color','#0000dd');
+    }
+
+    function unSplitTimer(splitIndex) {
+        var removeIndex = -1;
+        $.each(splitTimes, function(index, value){
+            if(value.index == splitIndex) {
+                removeIndex = index;
+                return;
+            }
+        });
+
+        if(removeIndex != -1) {
+            splitTimes.splice(removeIndex, 1);
+            finishedTimersReplicant.value = splitTimes;
+            resetSplitTimerTextColor(splitIndex);
+        }
+    }
+
+    function createSplitTime(index) {
+        var splitTime = {};
+        splitTime.index = index;
+        splitTime.time = stopWatchesReplicant.value[0].time;
+        splitTime.name = runDataActiveRunRunnerListReplicant.value[index].names.international;
+        return splitTime;
+    }
+
+    function setPlayButtonToPauseButton() {
+        var options = {
+            label: "pause",
+            icons: {
+                primary: "ui-icon-pause"
+            }
+        };
+        $('#play').button("option", options);
+    }
+
+    function disableMainTimerStopButton(shouldDisable) {
+        $("#stop").button({
+            disabled: shouldDisable
+        })
+    }
+
+    function playerTimer_disablePersonalSplitButton(shouldDisable) {
+        $(".personalSplitButton").button({
+            disabled: shouldDisable
+        });
+    }
+
+    function playerTimer_disablePersonalResetButton(shouldDisable) {
+        $(".personalResetButton").button({
+            disabled: shouldDisable
+        });
+    }
+
+    function disableMainResetButton(shouldDisable) {
+        $("#reset").button({
+            disabled: shouldDisable
+        });
+    }
 
     nodecg.listenFor("resetTime", function () {
         var options = {
@@ -54,6 +192,7 @@ $(function () {
             }
         };
         $("#play").button("option", options);
+        resetSplitTimes();
     });
 
     function playerTimer_SetTime(timeHTML) {
@@ -75,26 +214,32 @@ $(function () {
 
             $('.personalSplitButton').click(function () {
                 var index = $(this).attr('id').replace('split', '');
-                stoppedTimers++;
-                if (stoppedTimers >= splitsBeforeStoppingMainTimer) {
-                    nodecg.sendMessage("finishTime", 0);
-                }
                 nodecg.sendMessage('timerSplit', index);
+                splitTimer(index);
             });
             $('.personalResetButton').click(function () {
                 var index = $(this).attr('id').replace('resetTime', '');
-                stoppedTimers--;
                 nodecg.sendMessage('timerReset', index);
+                unSplitTimer(index);
             });
+
+            var shouldBeDisabled = true;
+            if (typeof stopWatchesReplicant.value != 'undefined' &&
+                stopWatchesReplicant.value != '' &&
+                stopWatchesReplicant.value[0].state == "running") {
+                shouldBeDisabled = false;
+            }
 
             $(".personalSplitButton").button({
                 text: false,
+                disabled: shouldBeDisabled,
                 icons: {
                     primary: "ui-icon-check"
                 }
             });
             $(".personalResetButton").button({
                 text: false,
+                disabled: shouldBeDisabled,
                 icons: {
                     primary: "ui-icon-close"
                 }
@@ -147,7 +292,7 @@ $(function () {
         })
             .click(function () {
                 nodecg.sendMessage("resetTime", 0);
-                stoppedTimers = 0;
+                resetSplitTimes();
                 if ($('#play').text() === "pause") {
                     var options = {
                         label: "play",
@@ -163,7 +308,8 @@ $(function () {
             text: false,
             icons: {
                 primary: "ui-icon-check"
-            }
+            },
+            disabled: true
         })
             .click(function () {
                 nodecg.sendMessage("finishTime", 0);

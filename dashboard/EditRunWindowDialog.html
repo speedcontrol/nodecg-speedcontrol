@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="stylesheet" href="/components/paper-styles/paper-styles.html">
+    <link rel="import" href="/components/paper-button/paper-button.html">
+    <script src="components/jquery/dist/jquery.js"></script>
+    <style>
+        paper-button {
+            margin-top: 8px;
+            margin-bottom: 0;
+            display: block;
+        }
+
+        #runContainer {
+            display: flex;
+            width: 100%;
+        }
+
+        #playerContainer {
+            flex: 1;
+            width: 50%;
+            border: 1px solid #bebebe;
+            padding: 10px;
+        }
+
+        #game {
+            width: 50%;
+            flex: 2;
+            margin-left: 5px;
+            border: 1px solid #bebebe;
+            padding: 10px;
+        }
+
+        #gameName, #gameCategory, #gameEstimate, #gameSystem, #gameRegion {
+            display: flex;
+            width: 100%;
+            height: 50px;
+        }
+
+        #playerContentContainer {
+            display: flex;
+            width: 100%;
+        }
+
+        .playerText, .playerTwitchText {
+            flex: 1;
+            width: 100%;
+            height: 35px;
+            text-align: left;
+            line-height: 35px;
+        }
+
+        .playerInput, .playerTwitchInput {
+            flex: 2;
+            width: 100%;
+            height: 35px;
+        }
+
+        #gameNameText, #gameEstimateText, #gameCategoryText, #gameSystemText, #gameRegionText {
+            flex: 1;
+            width: 10%;
+            height: 35px;
+            text-align: left;
+            line-height: 35px;
+
+        }
+
+        #gameNameInput, #gameEstimateInput, #gameCategoryInput, #gameSystemInput, #gameRegionInput {
+            flex: 2;
+            width: 90%;
+            height: 35px;
+        }
+
+        #operationResult {
+            width: 100%;
+            height: 25px;
+            display: block;
+            text-align: center;
+        }
+    </style>
+    <script>
+        $(function () {
+            $('#operationResult').html("");
+            var $confirmButton = $('#confirm');
+            var $cancelButton = $('#cancel');
+
+            var runDataArrayReplicant = nodecg.Replicant("runDataArray");
+            runDataArrayReplicant.on("change", function (oldValue, newValue) {
+            });
+
+            var runDataEditRunReplicant = nodecg.Replicant("runDataEditRun",{persistent: false});
+            runDataEditRunReplicant.on("change", function (oldValue, newValue) {
+                var playerNamesTwitchHTML = getPlayerNameTwitchHtml(newValue.players);
+                $('#gameNameInput').val(newValue.game);
+                $('#gameEstimateInput').val(newValue.estimate);
+                $('#gameCategoryInput').val(newValue.category);
+                $('#gameSystemInput').val(newValue.system);
+                $('#gameRegionInput').val(newValue.region);
+                $('#playerContainer').html(playerNamesTwitchHTML);
+            });
+
+            var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
+            runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
+            });
+
+            var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
+            runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
+            });
+
+            $cancelButton.on('click', function() {
+                var gameData = runDataEditRunReplicant.value;
+                $('#gameNameInput').val(gameData.game);
+                $('#gameEstimateInput').val(gameData.estimate);
+                $('#gameCategoryInput').val(gameData.category);
+                $('#gameSystemInput').val(gameData.system);
+                $('#gameRegionInput').val(gameData.region);
+                $('.playerInput').each(function(){
+                    var index = Number($(this).attr('id').replace('player','').replace('Input',''));
+                    var playerName = '';
+                    console.log("index: "+index);
+                    console.log(gameData.players[index]);
+                    if(typeof gameData.players[index] !== 'undefined' &&
+                            typeof gameData.players[index].names.international !== 'undefined') {
+                        playerName = gameData.players[index].names.international;
+                    }
+                    $(this).val(playerName);
+                });
+                $("#operationResult").html("Reverted Changes");
+            });
+
+            $confirmButton.on('click', function() {
+                var gameArray = runDataArrayReplicant.value;
+                var gameData = runDataEditRunReplicant.value;
+                var validationResult = true;
+                var validationMessage = '';
+                if( $('#gameNameInput').val() == '' ||
+                        $('#gameEstimateInput').val() == '' ||
+                        $('#gameCategoryInput').val() == '' ||
+                        $('#gameSystemInput').val() == '') {
+                    validationMessage = 'All fields but region has to be filled in';
+                    validationResult = false;
+                }
+
+                $('.playerInput').each(function () {
+                    if ($(this).val() == "") {
+                        validationResult = false;
+                        validationMessage = "Player Names can not be empty!";
+                    }
+                });
+
+                $('.playerTwitchInput').each(function () {
+                    if ($(this).val() != "" && ($(this).val().indexOf("http://www.twitch.tv/") < 0)) {
+                        validationResult = false;
+                        validationMessage = "Twitch field has to start with http://www.twitch.tv/";
+                    }
+                });
+
+                if(validationResult == false) {
+                    $('#operationResult').html(validationMessage);
+                    return;
+                }
+
+                gameData.game = $('#gameNameInput').val();
+                gameData.estimate = $('#gameEstimateInput').val();
+                gameData.category = $('#gameCategoryInput').val();
+                gameData.system = $('#gameSystemInput').val();
+                gameData.region = $('#gameRegionInput').val();
+
+                $('.playerInput').each(function () {
+                    var index = Number($(this).attr('id').replace('player', '').replace('Input', ''));
+                    if (typeof gameData.players[index] !== 'undefined' &&
+                        typeof gameData.players[index].names.international !== 'undefined') {
+                        gameData.players[index].names.international = $(this).val();
+                    }
+                });
+
+                $('.playerTwitchInput').each(function () {
+                    var index = Number($(this).attr('id').replace('player', '').replace('TwitchInput', ''));
+                    if (typeof gameData.players[index] !== 'undefined' &&
+                        typeof gameData.players[index].twitch !== 'undefined') {
+                        gameData.players[index].twitch.uri = $(this).val();
+                    }
+                });
+
+                var arrayIndex = getRunIndexInRunDataArrayReplicant(gameData.runID);
+                if (arrayIndex != -1) {
+                    gameArray[arrayIndex] = gameData;
+                    runDataArrayReplicant.value = gameArray;
+                    if(typeof runDataActiveRunReplicant.value !== 'undefined' && gameData.runID == runDataActiveRunReplicant.value.runID) {
+                        runDataActiveRunReplicant.value = gameData;
+                        runDataActiveRunRunnerListReplicant.value = gameData.players;
+                    }
+                }
+                $('#operationResult').html("update succeeded");
+            });
+
+            function getRunIndexInRunDataArrayReplicant(runID) {
+                var gameArray = runDataArrayReplicant.value;
+                for(var i = 0; i < gameArray.length; i++) {
+                    if(gameArray[i].runID == runID) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            function getPlayerNameTwitchHtml(playerArray) {
+                var HTML = '';
+                $.each(playerArray,function(index, player) {
+                    var playerName = player.names.international;
+                    var playerTwitch = '';
+
+                    if(typeof player.twitch !=='undefined') {
+                        playerTwitch = player.twitch.uri;
+                    }
+
+                    HTML += "<div class='playerContentContainer'>"+
+                            "<div class='playerText'>" +
+                            "Player:"+
+                            "</div>" +
+                            "<input id='player"+index+"Input' class='playerInput' value='"+playerName+"'>"+
+                            "<div class='playerTwitchText'>" +
+                            "Twitch:"+
+                            "</div>" +
+                            "<input id='player"+index+"TwitchInput' class='playerTwitchInput' value='"+playerTwitch+"'>"+
+                            "</div>";
+                });
+                return HTML;
+            }
+        });
+    </script>
+</head>
+<body>
+<div id="operationResult">
+</div>
+<div id="runContainer">
+    <div id="playerContainer">
+    </div>
+    <div id="game">
+        <div id="gameName">
+            <div id="gameNameText">
+                Game:
+            </div>
+            <input id="gameNameInput" placeholder="gameNameInput">
+        </div>
+        <div id="gameEstimate">
+            <div id="gameEstimateText">
+                Estimate:
+            </div>
+            <input id="gameEstimateInput" placeholder="gameEstimateInput">
+        </div>
+        <div id="gameCategory">
+            <div id="gameCategoryText">
+                Category:
+            </div>
+            <input id="gameCategoryInput" placeholder="gameCategoryInput">
+        </div>
+        <div id="gameSystem">
+            <div id="gameSystemText">
+                System:
+            </div>
+            <input id="gameSystemInput" placeholder="gameSystemInput">
+        </div>
+        <div id="gameRegion">
+            <div id="gameRegionText">
+                Region:
+            </div>
+            <input id="gameRegionInput" placeholder="gameRegionInput">
+        </div>
+    </div>
+</div>
+<paper-button id="confirm" raised>Apply changes</paper-button>
+<paper-button id="cancel">Cancel</paper-button>
+</body>
+</html>

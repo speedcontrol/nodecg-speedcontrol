@@ -4,12 +4,16 @@ $(function () {
 // Initialize replicants we will use
     var runDataArrayReplicant = nodecg.Replicant("runDataArray");
     runDataArrayReplicant.on("change", function (oldValue, newValue) {
-        if (newValue != '') {
+        if (typeof newValue !== 'undefined' && newValue != '') {
             runControl_UpdateList(newValue);
         }
         else {
             $('#runItems').html('');
         }
+    });
+
+    var runDataEditRunReplicant = nodecg.Replicant("runDataEditRun",{persistent: false});
+    runDataEditRunReplicant.on("change", function (oldValue, newValue) {
     });
 
     function runControl_GetPlayers(runData) {
@@ -45,10 +49,6 @@ $(function () {
         var buttonRemoveIDs = [];
         var buttonChangeIDs = [];
 
-        if (lastItemSize == runData.length) {
-            return;
-        }
-
         $.each(runData, function (index, runData) {
             var buttonRemoveIDString = 'remove' + runData.runID;
             var buttonChangeIDString = 'change' + runData.runID;
@@ -60,7 +60,7 @@ $(function () {
                 '<div>' +
                 runControl_GetRunBodyHtml(runData) +
                 '<button class="removeButton" id="' + buttonRemoveIDString + '"></button>' +
-                '<button class="changeButton" id="' + buttonChangeIDString + '"></button>' +
+                '<button class="changeButton" nodecg-dialog="edit-game" id="' + buttonChangeIDString + '"></button>' +
                 '</div>' +
                 '</div>';
         });
@@ -86,9 +86,7 @@ $(function () {
 
         $.each(buttonChangeIDs, function (index, buttonID) {
             $('#' + buttonID).click(function () {
-                var r = confirm("Edit not supported at this time");
-                if (r) {
-                }
+                runDataEditRunReplicant.value = runControl_GetRun(index);
             });
 
             $('#' + buttonID).button({
@@ -135,5 +133,10 @@ $(function () {
         var runContainer = runDataArrayReplicant.value;
         runContainer.splice(ID, 1);
         runDataArrayReplicant.value = runContainer;
+    }
+
+    function runControl_GetRun(ID) {
+        var runContainer = runDataArrayReplicant.value;
+        return runContainer[ID];
     }
 })

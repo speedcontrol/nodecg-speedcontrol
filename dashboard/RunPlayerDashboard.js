@@ -2,14 +2,14 @@ $(function () {
     var runPlayer_activeRunID = -1;
     var runPlayer_neighbourRuns = {};
     var runPlayer_activeRunObject = undefined;
-    var isInitialized = false;
     var syncGamePlayedToTwitch = false;
     var blankSlateRunContainerHtml = $('#run-player-container').html();
-// Initialize replicants we will use
+    // Initialize replicants we will use
     var runDataArrayReplicantPlayer = nodecg.Replicant("runDataArray");
     runDataArrayReplicantPlayer.on("change", function (oldValue, newValue) {
-        if (newValue != "") {
+        if (typeof newValue !== 'undefined' && newValue != "") {
             runPlayer_updateList(newValue);
+            setActiveRun(runPlayer_activeRunID);
         }
         else {
             $('#runPlayerItems').html('');
@@ -25,11 +25,8 @@ $(function () {
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
     runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
-        if (!isInitialized && newValue != "") {
-            isInitialized = true;
-            if (typeof runPlayer_getRunObject(newValue.runID) !== 'undefined') {
-                runPlayer_playRunIdOnly(newValue.runID, false);
-            }
+        if (newValue != "" && typeof newValue !== 'undefined') {
+            setActiveRun(newValue.runID);
         }
         else {
         }
@@ -159,20 +156,49 @@ $(function () {
         runPlayer_playRunIdOnly(runID, true);
     }
 
-    function runPlayer_playRunIdOnly(runID, updateActiveRunnerList) {
-        var theNextGame = runPlayer_getRunObject(Number(Number(runID) + 1));
+    function setActiveRun(runID) {
+        var thisGameIndex = runPlayer_getRunIndexInArray(Number(runID));
+        var nextGameArrayIndex = thisGameIndex + 1;
+        var thePreviousGameIndex = thisGameIndex - 1;
+        var theNextGame = runPlayer_getRunObjectByIndex(nextGameArrayIndex);
+        runPlayer_activeRunObject = runPlayer_getRunObjectByIndex(thisGameIndex);
         runPlayer_activeRunID = runID;
-        runPlayer_activeRunObject = runPlayer_getRunObject(runID);
-        runPlayer_neighbourRuns = runPlayer_findNeighbourRuns(runID);
+        var thePreviousGame = runPlayer_getRunObjectByIndex(thePreviousGameIndex);
         $('.playerGroup').find('*').removeClass('ui-state-playing');
         $('.playerGroup').find('*').removeClass('ui-state-playing-next');
         $('#' + runID + ".playerGroup").find('h3').addClass('ui-state-playing');
-        $('#' + Number(Number(runID) + 1) + ".playerGroup").find('h3').addClass('ui-state-playing-next');
-        $("#runPlayerWindow").scrollTo($('#' + Number(Number(runID) - 1) + ".playerGroup"), 500, {queue: false});
+        $('#' + theNextGame.runID + ".playerGroup").find('h3').addClass('ui-state-playing-next');
+        $("#runPlayerWindow").scrollTo($('#' + thePreviousGame.runID + ".playerGroup"), 500, {queue: false});
+
+        $(".runPlayerNext").button({
+            text: true,
+            label: theNextGame != null ? "Play " + theNextGame.game : "Loop back to the beginning",
+            icons: {
+                primary: "ui-icon-seek-next"
+            }
+        });
+
+        $(".runPlayerNext").button({
+            disabled: false
+        });
+    }
+
+    function runPlayer_playRunIdOnly(runID, updateActiveRunnerList) {
+        var thisGameIndex = runPlayer_getRunIndexInArray(Number(runID));
+        var nextGameArrayIndex = thisGameIndex + 1;
+        var thePreviousGameIndex = thisGameIndex - 1;
+        var theNextGame = runPlayer_getRunObjectByIndex(nextGameArrayIndex);
+        runPlayer_activeRunID = runID;
+        runPlayer_activeRunObject = runPlayer_getRunObjectByIndex(thisGameIndex);
+        var thePreviousGame = runPlayer_getRunObjectByIndex(thePreviousGameIndex);
+        $('.playerGroup').find('*').removeClass('ui-state-playing');
+        $('.playerGroup').find('*').removeClass('ui-state-playing-next');
+        $('#' + runID + ".playerGroup").find('h3').addClass('ui-state-playing');
+        $('#' + theNextGame.runID + ".playerGroup").find('h3').addClass('ui-state-playing-next');
+        $("#runPlayerWindow").scrollTo($('#' + thePreviousGame.runID + ".playerGroup"), 500, {queue: false});
         runDataActiveRunReplicant.value = runPlayer_activeRunObject;
-        if (updateActiveRunnerList) {
-            runDataActiveRunRunnerListReplicant.value = runPlayer_activeRunObject.players;
-        }
+        runDataActiveRunRunnerListReplicant.value = runPlayer_activeRunObject.players;
+
         if (syncGamePlayedToTwitch) {
             runPlayer_setTwitchChannelData(runPlayer_activeRunObject);
         }
@@ -199,7 +225,7 @@ $(function () {
                 "exchange username with the twitch username which you want to access");
             return;
         }
-        var methodString = "/channels/" + nodecg.bundleConfig.user + "/";
+       /* var methodString = "/channels/" + nodecg.bundleConfig.user + "/";
         Twitch.api({
             method: methodString, params: {
                 "channel": {
@@ -209,45 +235,42 @@ $(function () {
             verb: 'PUT'
         }, function (resp, ans) {
             console.log(resp + " " + ans);
-        });
+        });*/
     }
 
     function runPlayer_playNextRun() {
-        var runToPlay = runPlayer_neighbourRuns.after;
-        var runs = runDataArrayReplicantPlayer.value;
-        runPlayer_playRunIdOnly(runs[Number(runToPlay)].runID, true);
+        var activeGame = runDataActiveRunReplicant.value;
+        var nextGameIndex = runPlayer_getRunIndexInArray(activeGame.runID);
+        nextGameIndex++;
+        if(nextGameIndex >= runDataArrayReplicantPlayer.value.length) {
+            nextGameIndex = 0;
+        }
+        runPlayer_playRunIdOnly(runDataArrayReplicantPlayer.value[nextGameIndex].runID);
     }
 
-    function runPlayer_findNeighbourRuns(ID) {
+    function runPlayer_getRunObjectByIndex(runIndex) {
         var runs = runDataArrayReplicantPlayer.value;
-        var neighbours = {};
-        neighbours.before = -1;
-        neighbours.after = -1;
-
-        $.each(runs, function (index, run) {
-            if (run.runID == ID) {
-                neighbours.before = index - 1;
-                neighbours.after = index + 1;
-                if (neighbours.before < 0) {
-                    neighbours.before = runs.length - 1;
-                }
-                if (neighbours.after >= runs.length) {
-                    neighbours.after = 0;
-                }
-            }
-        });
-        return neighbours;
+        if(runIndex >= runs.length) {
+            runIndex = 0;
+        }
+        else if(runIndex < 0) {
+            runIndex = 0;
+        }
+        if(typeof runs[runIndex] !== 'undefined') {
+            return runs[runIndex];
+        }
+        return -1;
     }
 
-    function runPlayer_getRunObject(runIdToFind) {
+    function runPlayer_getRunIndexInArray(runID) {
         var runs = runDataArrayReplicantPlayer.value;
-        var runFound = undefined;
-        $.each(runs, function (index, value) {
-            if (value.runID == runIdToFind) {
-                runFound = value;
+        var foundIndex = -1;
+        $.each(runs, function(index, run) {
+            if(run.runID == runID) {
+                foundIndex = index;
             }
         });
-        return runFound;
+        return Number(foundIndex);
     }
 
     $(".runPlayerNext").button({

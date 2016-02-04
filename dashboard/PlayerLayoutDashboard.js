@@ -3,7 +3,7 @@ $(function () {
 // Replicant initialization
     var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
     runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
-        if (newValue != '') {
+        if (typeof newValue !== 'undefined' && newValue != '') {
             playerLayout_UpdateLayoutPanel(newValue);
         }
     });
@@ -15,7 +15,6 @@ $(function () {
             '</ul>';
         $('#playerLayoutContainer').html(playersSortableHTML);
         $("#playerLayoutSortable").sortable({
-            containment: "parent",
             stop: function (event, ui) {
                 // IE doesn't register the blur when sorting
                 // so trigger focusout handlers to remove .ui-state-focus

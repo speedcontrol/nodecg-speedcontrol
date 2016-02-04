@@ -22,7 +22,6 @@ $(function () {
 // Initialize replicants we will use
     var runDataArrayReplicant = nodecg.Replicant("runDataArray");
     runDataArrayReplicant.on("change", function (oldValue, newValue) {
-
     });
 
     var runDataLastIDReplicant = nodecg.Replicant("runDataLastID");
@@ -197,7 +196,6 @@ $(function () {
     function playerControl_InitializeElements() {
         $addRunButton.button({});
         $removeRunsButton.button({});
-        ;
         $randomizeRunsButton.button({});
         $estimateInputField = $('#playerControlEstimate');
         $("#playerControlRegion").selectmenu();

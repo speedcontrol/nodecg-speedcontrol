@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="stylesheet" href="/components/paper-styles/paper-styles.html">
+    <link rel="import" href="/components/paper-button/paper-button.html">
+    <style>
+        paper-button {
+            margin-top: 8px;
+            margin-bottom: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<p>
+    If you want to use the twitch functionality, you need to create a file called nodecg-speedcontrol.json in nodecg/cfg and fill it with the following:<br/>
+    {<br/>
+    "user": "username"<br/>
+    }<br/>
+    <br/>
+    exchange username with the twitch username which you want to access. Also make sure that the file extention is .json and not .txt
+</p>
+
+<paper-button id="ok" raised>Ok, got it!</paper-button>
+</body>
+</html>

@@ -58,6 +58,13 @@
         "headerColor": "#008BB9"
       },
       {
+        "name": "run-control",
+        "title": "Run Control",
+        "width": 3,
+        "file": "RunControlDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
         "name": "player-control",
         "title": "Player Control",
         "width": 2,
@@ -105,6 +112,20 @@
         "width": 2,
         "file": "MarqueeInformationDashboard.html",
         "headerColor": "#008BB9"
+      },
+      {
+        "name": "twitch-alert",
+        "title": "Twitch Alert",
+        "width": 2,
+        "file": "TwitchAlertDialog.html",
+        "dialog": true
+      },
+      {
+        "name": "edit-game",
+        "title": "Edit Game",
+        "width": 5,
+        "file": "EditRunWindowDialog.html",
+        "dialog": true
       }
     ]
   }

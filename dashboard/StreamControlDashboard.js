@@ -1,6 +1,6 @@
 'use strict';
 $(function () {
-    var $streamControlTitle = $('#streamControlTitle');
+  /*  var $streamControlTitle = $('#streamControlTitle');
     var $streamControlGame = $('#streamControlGame');
     var $streamControlSubmit = $('#streamControlSubmit');
     var $streamControlInit = $('#streamControlInit');
@@ -53,7 +53,6 @@ $(function () {
                 "exchange username with the twitch username which you want to access");
             return;
         }
-
         if ($streamControlTitle.val() != "" && $streamControlGame.val() != "") {
             var methodString = "/channels/" + nodecg.bundleConfig.user + "/";
             Twitch.api({
@@ -90,7 +89,7 @@ $(function () {
             console.log("Could not log in to twitch: ");
             console.log(status);
         }
-    });
+    });*/
 })
 
 
