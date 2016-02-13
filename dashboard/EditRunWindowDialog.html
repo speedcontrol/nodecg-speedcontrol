@@ -93,6 +93,10 @@
 
             var runDataEditRunReplicant = nodecg.Replicant("runDataEditRun",{persistent: false});
             runDataEditRunReplicant.on("change", function (oldValue, newValue) {
+                if(typeof newValue === 'undefined') {
+                    return;
+                }
+
                 var playerNamesTwitchHTML = getPlayerNameTwitchHtml(newValue.players);
                 $('#gameNameInput').val(newValue.game);
                 $('#gameEstimateInput').val(newValue.estimate);
