@@ -1,0 +1,42 @@
+
+@font-face {
+    font-family: 'FFFForward';
+    src: url('../images/FFFFORWA.TTF') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+    overflow:hidden;
+    margin: 0px;
+    padding: 0px;
+}
+
+.timer_paused {
+  color: yellow;
+}
+
+.timer_running {
+  color: rgb(255,255,255,0.7);
+}
+
+.timer_stopped {
+  color: gray;
+}
+
+.timer_finished {
+  color: blue;
+}
+
+.editableObject {
+    background: rgba(255,0,0,0.3);
+}
+
+#positionDebug {
+    position: absolute;
+    background-color: black;
+    top: 5px;
+    left: 5px;
+    color: white;
+    font-size: 20px;
+    opacity: 0;
+}

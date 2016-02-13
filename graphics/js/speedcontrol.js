@@ -2,12 +2,14 @@
 $(function () {
     // JQuery selector initialiation ###
     var $timerInfo = $('#timer');
-    var $runnerInfoTagPlayer1Name = $('#runner1InformationName');
+    var $runnerInfoElements = $('div.runnerInfo');
+    var $runnerTimerFinishedElements = $('div[id$=TimerFinished]')
+    var $runnerTimerFinishedContainers = $('div[id$=TimerFinishedContainer]')
     var $runInformationSystem = $('#runInformationGameSystem');
     var $runInformationCategory = $('#runInformationGameCategory');
     var $runInformationEstimate = $('#runInformationGameEstimate');
     var $runInformationName = $('#runInformationGameName');
-    var $twitchLogo = $('#twitchLogo');
+    var $twitchLogos = $('[id^=twitchLogo]');
 
     var currentTime = '';
     var displayTwitchforMilliseconds = 15000;
@@ -16,7 +18,7 @@ $(function () {
 
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
-    var sceneID = "Single_16_9";
+    var sceneID = $('html').attr('data-sceneid');
 
     // Temporary container used for edit mode to store all element position data. See createPositioningConfig()
     var itemPositioningConfigurationContainer = [];
@@ -50,27 +52,17 @@ $(function () {
     stopWatchesReplicant.on('change', function(oldVal, newVal) {
         if (!newVal) return;
         var time  = newVal[0].time || '88:88:88';
-        switch (newVal[0].state) {
-            case 'paused':
-                $timerInfo.css('color','yellow');
-                break;
-            case 'finished':
-                $timerInfo.css('color','#22D640');
-                break;
-            case 'running':
-                $timerInfo.css('color','rgb(255,255,255,0.7)');
-                break;
-            case 'stopped':
-                $timerInfo.css('color','gray');
-                break;
-            default:
+        if( oldVal )
+        {
+          $timerInfo.toggleClass('timer_'+oldVal[0].state,false);
         }
+        $timerInfo.toggleClass('timer_'+newVal[0].state,true);
         setTime(time);
     });
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
     runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
-        if(typeof newValue !== 'undefined' && newValue != '' && newValue.players.length == 1) {
+        if(typeof newValue !== 'undefined' && newValue != '' ) {
             updateSceneFields(newValue);
         }
     });
@@ -81,11 +73,10 @@ $(function () {
             return;
         }
 
-        if(newValue.length != 1) {
-            return;
-        }
 
-        setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationName(newValue,0));
+        $runnerInfoElements.each( function( index, element ) {
+            setGameFieldAlternate($(this),getRunnerInformationName(newValue,index));
+        });
 
         if(timeout != null) {
             clearTimeout(timeout);
@@ -226,20 +217,20 @@ $(function () {
     // Timer functions ###
 
     function resetTimer(index) {
-        var realIndex = Number(index) + Number(1);
-        $('#runner'+realIndex+'TimerFinished').html("");
+        $runnerTimerFinishedElements.eq(index).html("");
+        hideTimerFinished(index);
     }
 
     function resetAllPlayerTimers() {
-        $('#runner1TimerFinished').html("");
-        $('#runner2TimerFinished').html("");
-        $('#runner3TimerFinished').html("");
-        $('#runner4TimerFinished').html("");
+        $runnerTimerFinishedElements.each( function( index, element) {
+          $(this).html("");
+          hideTimerFinished(index);
+        });
     }
 
     function splitTimer(index) {
-        var realIndex = Number(index) + Number(1);
-        $('#runner'+realIndex+'TimerFinished').html(currentTime);
+        $runnerTimerFinishedElements.eq(index).html(currentTime);
+        showTimerFinished(index);
     }
 
     // General functions ###
@@ -275,25 +266,45 @@ $(function () {
     }
 
     function displayTwitchInstead() {
-        setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,0));
-        $twitchLogo.show();
-
+        $runnerInfoElements.each(function(index,element) {
+            setGameFieldAlternate($(this),getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,index));
+        });
         var tm = new TimelineMax({paused: true});
-        tm.to($twitchLogo, 0.5, {opacity: '1', transform: "scale(0.9)",  ease: Quad.easeOut },'0');
+        $twitchLogos.each( function(index, element) {
+            $(this).show();
+            tm.to($(this), 0.5, {opacity: '1', transform: "scale(0.9)",  ease: Quad.easeOut },'0');
+        });
         tm.play();
         timeout = setTimeout(hideTwitch,displayTwitchforMilliseconds);
     }
 
     function hideTwitch() {
-        setGameFieldAlternate($runnerInfoTagPlayer1Name,getRunnerInformationName(runDataActiveRunRunnerListReplicant.value,0));
+        $runnerInfoElements.each( function(index,element) {
+            setGameFieldAlternate($(this),getRunnerInformationName(runDataActiveRunRunnerListReplicant.value,index));
+        });
         var tm = new TimelineMax({paused: true});
-        tm.to($twitchLogo, 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0');
+        $twitchLogos.each( function(index, element) {
+            $(this).show();
+            tm.to($(this), 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0');
+        });
         tm.play();
         timeout = setTimeout(displayTwitchInstead,intervalToNextTwitchDisplay);
     }
 
-    $twitchLogo.css('transform', 'scale(0)');
+    function hideTimerFinished(index) {
+        $runnerTimerFinishedContainers.eq(index).css("opacity","0");
+    }
+
+    function showTimerFinished(index) {
+        var tm = new TimelineMax({paused: true});
+        tm.to($runnerTimerFinishedContainers.eq(index), 0.5, {opacity: '1',  ease: Quad.easeOut },'0');
+        tm.play();
+    }
+
+    $runnerTimerFinishedElements.each( function( index, e ){
+        hideTimerFinished(index);
+    });
+    $twitchLogos.each( function(index, element) {
+        $(this).css('transform', 'scale(0)');
+    });
 });
-
-
-
