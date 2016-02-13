@@ -1,14 +1,3 @@
-@font-face {
-    font-family: 'FFFForward';
-    src: url('../images/FFFFORWA.TTF') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-body {
-    overflow:hidden;
-    margin: 0px;
-    padding: 0px;
-}
 #window-container {
     background-image: url('/graphics/nodecg-speedcontrol/images/3PRace_32.png');
     width: 1280px;
@@ -212,16 +201,6 @@ body {
     background-size: 80%;
 }
 
-#positionDebug {
-    position: absolute;
-    background-color: black;
-    top: 5px;
-    left: 5px;
-    color: white;
-    font-size: 20px;
-    opacity: 0;
-}
-
 #twitchField {
     padding-left: 35px;
     background-size: 25px 25px;
@@ -287,7 +266,3 @@ body {
     background-position: center;
     background-size: 32px;
 }
-.editableObject {
-    background: rgba(255,0,0,0.3);
-}
-
