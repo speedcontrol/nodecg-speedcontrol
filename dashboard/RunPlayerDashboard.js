@@ -217,25 +217,21 @@ $(function () {
     }
 
     function runPlayer_setTwitchChannelData(runData) {
-        if (typeof nodecg.bundleConfig.user === 'undefined') {
+        if (typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') {
             alert("If you want to use the twitch functionality, you need to create a file called nodecg-speedcontrol.json in nodecg/cfg and fill it with:\n" +
                 "{\n" +
-                "\"user\": \"username\"\n" +
+                "\"enableTwitchApi\": \"true\"," +
+                "\"user\": \"twitchusername\"\n" +
                 "}\n" +
                 "exchange username with the twitch username which you want to access");
             return;
         }
-       /* var methodString = "/channels/" + nodecg.bundleConfig.user + "/";
-        Twitch.api({
-            method: methodString, params: {
-                "channel": {
-                    "game": runData.game
-                }
-            },
-            verb: 'PUT'
-        }, function (resp, ans) {
-            console.log(resp + " " + ans);
-        });*/
+
+        var requestObject = {};
+        requestObject.channel = {};
+        requestObject.channel.game = runData.game;
+
+        nodecg.sendMessage('updateChannel',requestObject);
     }
 
     function runPlayer_playNextRun() {

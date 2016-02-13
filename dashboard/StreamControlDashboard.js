@@ -1,12 +1,17 @@
 'use strict';
 $(function () {
-  /*  var $streamControlTitle = $('#streamControlTitle');
+    var $streamControlTitle = $('#streamControlTitle');
     var $streamControlGame = $('#streamControlGame');
     var $streamControlSubmit = $('#streamControlSubmit');
     var $streamControlInit = $('#streamControlInit');
     var $enableTwitchSynchronizationRadios = $('#enableTwitchSynchronization');
     var $enableTwitchSynchronizationRadio = $('input[name=enableTwitchSynchronizationRadio]');
-
+    var errorMessage = "If you want to use the twitch functionality, you need to create a file called nodecg-speedcontrol.json in nodecg/cfg and fill it with:\n" +
+        "{\n" +
+        "\"enableTwitchApi\": true\n" +
+        "\"user\": \"twitchusername\"\n" +
+        "}\n" +
+        "exchange username with the twitch username which you want to access"
     var streamControlConfigurationReplicant = nodecg.Replicant('streamControlConfiguration');
     streamControlConfigurationReplicant.on('change', function (oldVal, newVal) {
         if (typeof newVal !== 'undefined') {
@@ -18,6 +23,9 @@ $(function () {
         }
     });
 
+    nodecg.listenFor('twitchLoginAuthorization',redirectTwitchAuthorization);
+    nodecg.listenFor('twitchLoginSuccessful',streamControl_loginSuccessful);
+
     $enableTwitchSynchronizationRadios.buttonset();
     $streamControlSubmit.button({disabled: true});
     $streamControlInit.button();
@@ -26,6 +34,35 @@ $(function () {
         var configuration = streamControl_GetOrCreateStreamControlConfiguration();
         configuration.synchronizeAutomatically = $(this).val() == "On";
         streamControlConfigurationReplicant.value = configuration;
+    });
+
+    $streamControlInit.click(function () {
+        streamControl_login();
+    });
+
+    $streamControlSubmit.click(function () {
+        if (typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') {
+            alert(errorMessage);
+            return;
+        }
+        var title = $streamControlTitle.val();
+        var game = $streamControlGame.val();
+        var requestObject = {};
+        requestObject.channel = {};
+
+        if(title == '' && game == '') {
+            alert("You need to fill in at least one field");
+            return;
+        }
+
+        if(title != "") {
+            requestObject.channel.status = title;
+        }
+        if(game != "") {
+            requestObject.channel.game = game;
+        }
+
+        nodecg.sendMessage('updateChannel',requestObject);
     });
 
     function streamControl_GetOrCreateStreamControlConfiguration() {
@@ -44,52 +81,49 @@ $(function () {
         return configuration;
     }
 
-    $streamControlSubmit.click(function () {
-        if (typeof nodecg.bundleConfig.user === 'undefined') {
-            alert("If you want to use the twitch functionality, you need to create a file called nodecg-speedcontrol.json in nodecg/cfg and fill it with:\n" +
-                "{\n" +
-                "\"user\": \"username\"\n" +
-                "}\n" +
-                "exchange username with the twitch username which you want to access");
-            return;
-        }
-        if ($streamControlTitle.val() != "" && $streamControlGame.val() != "") {
-            var methodString = "/channels/" + nodecg.bundleConfig.user + "/";
-            Twitch.api({
-                method: methodString, params: {
-                    "channel": {
-                        "status": $streamControlTitle.val(),
-                        "game": $streamControlGame.val(),
-                        "delay": 0
-                    }
-                },
-                verb: 'PUT'
-            }, function (resp, ans) {
-            });
-        }
-        else {
-            alert("Both fields must be filled in to make a valid submission to Twitch");
-        }
-    });
+    function streamControl_loginSuccessful() {
+        $streamControlInit.button({disabled: true});
+        $streamControlInit.text("Already logged into twitch");
+        $streamControlSubmit.button({disabled: false});
+    }
 
-    $streamControlInit.click(function () {
-        Twitch.login({
-            scope: ['user_read', 'channel_editor']
-        });
-    });
+    function redirectTwitchAuthorization(URL) {
+        console.log("Redirecting to " + URL);
+        window.top.location = URL;
+    }
 
-    Twitch.init({clientId: 'lrt9h6mot5gaf9lk62sea8u38lomfrc'}, function (error, status) {
-        if (status.authenticated) {
-            // Already logged in, hide button
-            $streamControlInit.button({disabled: true});
-            $streamControlInit.text("Already logged into twitch");
-            $streamControlSubmit.button({disabled: false});
+    function streamControl_login(automatic) {
+        if ((typeof nodecg.bundleConfig.user !== 'undefined' && typeof nodecg.bundleConfig.enableTwitchApi !== 'undefined') &&
+            nodecg.bundleConfig.enableTwitchApi == true) {
+            if(getParameterByName('code') == null || getParameterByName('code') == "") {
+                nodecg.sendMessage('twitchLogin');
+            }
         }
-        else {
-            console.log("Could not log in to twitch: ");
-            console.log(status);
+        else if(automatic != true) {
+            if ((typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') || nodecg.bundleConfig.enableTwitchApi != true) {
+                alert(errorMessage);
+                return;
+            }
         }
-    });*/
-})
+    }
+
+    function getParameterByName(name, url) {
+        if (!url) url = window.top.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    var parameter = getParameterByName('code');
+    if(parameter != null && parameter != '') {
+        nodecg.sendMessage('twitchLoginForwardCode', parameter);
+        console.log("code is " + parameter);
+    }
+
+    streamControl_login(true);
+});
 
 
