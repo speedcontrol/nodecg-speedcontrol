@@ -99,7 +99,7 @@ $(function () {
 
     function updateSceneFields(runData) {
         var runInfoGameName = runData.game;
-        var runInfoGameEstimate = "EST: "+runData.estimate+":00";
+        var runInfoGameEstimate = runData.estimate;
         var runInfoGameSystem = runData.system;
         var runInfoGameCategory = runData.category;
 

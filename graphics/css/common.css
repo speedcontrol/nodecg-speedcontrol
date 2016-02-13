@@ -40,3 +40,10 @@ body {
     font-size: 20px;
     opacity: 0;
 }
+
+#runInformationGameEstimate:before {
+  content: 'EST: ';
+}
+#runInformationGameEstimate:after {
+  content: ':00';
+}
