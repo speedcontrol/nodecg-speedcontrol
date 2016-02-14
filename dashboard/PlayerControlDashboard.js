@@ -4,6 +4,7 @@ $(function () {
     var $addRunButton = $('#playerControlAddRunButton');
     var $removeRunsButton = $('#playerControlRemoveRunsButton');
     var $randomizeRunsButton = $('#playerControlRandomizeRunsButton');
+    var $playerControlAddRunRawButton = $('#playerControlAddRunRawButton');
     var $addPlayerButton = $('#playerControlAddPlayerButton');
     var $estimateInputField = $('#playerControlEstimate');
     var $panelLayout = $('#player-control');
@@ -203,6 +204,7 @@ $(function () {
         $addRunButton.button({});
         $removeRunsButton.button({});
         $randomizeRunsButton.button({});
+        $playerControlAddRunRawButton.button({});
         $estimateInputField = $('#playerControlEstimate');
         $("#playerControlRegion").selectmenu();
         $randomizeRunsButton = $('#playerControlRandomizeRunsButton');

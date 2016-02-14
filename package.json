@@ -135,6 +135,13 @@
         "width": 5,
         "file": "EditRunWindowDialog.html",
         "dialog": true
+      },
+      {
+        "name": "add-run",
+        "title": "Add Game",
+        "width": 5,
+        "file": "AddRunWindowDialog.html",
+        "dialog": true
       }
     ]
   }

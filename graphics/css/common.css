@@ -24,7 +24,7 @@ body {
 }
 
 .timer_finished {
-  color: blue;
+    color: rgba(0,127,0,1);
 }
 
 .editableObject {
@@ -39,6 +39,15 @@ body {
     color: white;
     font-size: 20px;
     opacity: 0;
+    z-index: 200;
+}
+
+.gameCapture {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background-color: #00DD00;
+    border: 3px solid #663366;
 }
 
 #runInformationGameEstimate:before {

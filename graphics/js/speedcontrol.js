@@ -10,6 +10,7 @@ $(function () {
     var $runInformationEstimate = $('#runInformationGameEstimate');
     var $runInformationName = $('#runInformationGameName');
     var $twitchLogos = $('[id^=twitchLogo]');
+    var $gameCaptures = $('.gameCapture');
 
     var currentTime = '';
     var displayTwitchforMilliseconds = 15000;
@@ -19,6 +20,24 @@ $(function () {
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
     var sceneID = $('html').attr('data-sceneid');
+
+    $gameCaptures.each(function () {
+        var aspectRatio = $(this).attr('aspect-ratio');
+        switch(aspectRatio) {
+            case '4:3':
+                $(this).css('width','400px');
+                $(this).css('height','300px');
+                break;
+            case '16:9':
+                $(this).css('width','720px');
+                $(this).css('height','405px');
+                break;
+            case '3:2':
+                $(this).css('width','240px');
+                $(this).css('height','160px');
+                break;
+        }
+    });
 
     // Temporary container used for edit mode to store all element position data. See createPositioningConfig()
     var itemPositioningConfigurationContainer = [];
@@ -88,11 +107,13 @@ $(function () {
     // Replicant functions ###
 
     function updateItemPositions(positioningArray) {
-        itemPositioningConfigurationContainer = positioningArray;
+        itemPositioningConfigurationContainer = JSON.parse(JSON.stringify(positioningArray))
         $.each(positioningArray,function(index, positioningItem) {
             if(positioningItem.scene == sceneID) {
                 $('#' + positioningItem.id).css('top', positioningItem.y);
                 $('#' + positioningItem.id).css('left', positioningItem.x);
+                $('#' + positioningItem.id).css('width', positioningItem.width);
+                $('#' + positioningItem.id).css('height', positioningItem.height);
             }
         });
     }
@@ -150,7 +171,7 @@ $(function () {
     }
 
     function itemDragged( event, ui ) {
-        $('#positionDebug').html("X: "+ui.position.left + " Y: " + ui.position.top);
+        $('#positionDebug').html("X: "+ui.position.left + " Y: " + ui.position.top + " Item ID: "+ui.helper[0].id);
     }
 
     function createPositioningConfig(xPos, yPos, ItemId, scene) {
@@ -159,6 +180,8 @@ $(function () {
         positionConfig.y = yPos;
         positionConfig.id = ItemId;
         positionConfig.scene = scene;
+        positionConfig.width = $('#'+ItemId).width();
+        positionConfig.height = $('#'+ItemId).height();
         return positionConfig;
     }
 
@@ -170,8 +193,20 @@ $(function () {
         scenePositioningConfigurationReplicant.value = undefined;
     }
 
+    function convertToTrueAspectRatio(aspectRatioString) {
+        var numbers = aspectRatioString.split(':');
+        var realNumber = Number(numbers[0])/Number(numbers[1]);
+        return realNumber;
+    }
+
     function handleEditMode(isEnabled) {
         if(isEnabled) {
+            $('.dummyTextable').html("######");
+
+            $runnerTimerFinishedElements.each( function( index, e ){
+                showTimerFinished(index);
+            });
+
             isEditModeEnabled = true;
             $('.positionable').addClass("editableObject");
             $('.positionable').draggable({
@@ -181,21 +216,51 @@ $(function () {
                 drag: itemDragged,
                 start: function( event, ui ) {
                     addPositioningInformation();
+                    $('#'+ui.helper[0].id).css('z-index','100');
+                    if($('#'+ui.helper[0].id).hasClass('gameCapture')) {
+
+                    }
                 },
                 stop: function( event, ui ) {
-                    var positionConfig = createPositioningConfig(ui.position.left, ui.position.top, ui.helper[0].id, sceneID);
-                    removePositioningInformation();
-                    addToPositionConfig(positionConfig);
+                    if($('#'+ui.helper[0].id).hasClass('gameCapture')) {
+                        $('.gameCapture').each(function() {
+                            var positionConfig = createPositioningConfig($(this).offset().left, $(this).offset().top, $(this).attr('id'), sceneID);
+                            addToPositionConfig(positionConfig);
+                        });
+                    }
+                    else {
+                        var positionConfig = createPositioningConfig(ui.position.left, ui.position.top, ui.helper[0].id, sceneID);
+                        removePositioningInformation();
+                        addToPositionConfig(positionConfig);
+                    }
+                    $('#'+ui.helper[0].id).css('z-index','0');
                 }
             });
-            $('.dummyTextable').html("######");
+
+            var aspectRatio = $('.gameCapture').attr('aspect-ratio');
+            var trueAspectRatio = convertToTrueAspectRatio(aspectRatio);
+
+            $('.gameCapture').first().resizable({
+                aspectRatio: trueAspectRatio,
+                alsoResize: ".gameCapture",
+                stop: function( event, ui ) {
+                    $('.gameCapture').each(function() {
+                        var positionConfig = createPositioningConfig($(this).offset().left, $(this).offset().top, $(this).attr('id'), sceneID);
+                        addToPositionConfig(positionConfig);
+                    });
+                }
+            });
         }
         else {
             if(isEditModeEnabled) {
                 $('.positionable').removeClass("editableObject");
                 $('.positionable').draggable("destroy");
+                $('.gameCapture').first().resizable("destroy");
                 isEditModeEnabled = false;
                 $('.dummyTextable').html("");
+                $runnerTimerFinishedElements.each( function( index, e ){
+                    hideTimerFinished(index);
+                });
             }
         }
     }
@@ -207,6 +272,8 @@ $(function () {
         } else if (entryFound.length == 1) {
             entryFound[0].x = configData.x;
             entryFound[0].y = configData.y;
+            entryFound[0].width = configData.width;
+            entryFound[0].height = configData.height;
 
         } else {
             console.log("Well we found multiple entries,should NEVER happen!");
@@ -304,6 +371,7 @@ $(function () {
     $runnerTimerFinishedElements.each( function( index, e ){
         hideTimerFinished(index);
     });
+
     $twitchLogos.each( function(index, element) {
         $(this).css('transform', 'scale(0)');
     });

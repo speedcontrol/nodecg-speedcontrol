@@ -1,5 +1,5 @@
 #window-container {
-    background-image: url('/graphics/nodecg-speedcontrol/images/3PRace_32.png');
+    background-image: url('/graphics/nodecg-speedcontrol/images/Background.png');
     width: 1280px;
     height: 720px;
     overflow: hidden;
@@ -111,7 +111,7 @@
     width: 400px;
     height: 50px;
     top: 655px;
-    right: 15px;
+    left: 15px;
     display: flex;
     overflow: hidden;
 }
@@ -132,7 +132,7 @@
     height: 100px;
     background: rgba(255,255,255,0.1);
     top: 550px;
-    right: 15px;
+    left: 15px;
 }
 
 #timer {

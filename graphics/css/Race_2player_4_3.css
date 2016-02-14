@@ -1,6 +1,6 @@
 
 #window-container {
-    background-image: url('/graphics/nodecg-speedcontrol/images/2PRace_43.png');
+    background-image: url('/graphics/nodecg-speedcontrol/images/Background.png');
     width: 1280px;
     height: 720px;
     overflow: hidden;
@@ -46,7 +46,7 @@
     width: 400px;
     height: 50px;
     top: 490px;
-    right: 10px;
+    left: 10px;
     display: flex;
     overflow: hidden;
 }
@@ -160,7 +160,7 @@
 #marathonLogo {
     position: absolute;
     top: 555px;
-    right: 70px;
+    left: 70px;
     width: 263px;
     height: 121px;
     background-image: url('/graphics/nodecg-speedcontrol/images/preEsaMarathonLogo.png');

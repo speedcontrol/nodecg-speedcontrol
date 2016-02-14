@@ -1,5 +1,5 @@
 #window-container {
-    background-image: url('/graphics/nodecg-speedcontrol/images/Single_169.png');
+    background-image: url('/graphics/nodecg-speedcontrol/images/Background.png');
     width: 1280px;
     height: 720px;
     overflow: hidden;
@@ -126,7 +126,7 @@
 #marathonLogo {
     position: absolute;
     top: 615px;
-    right: 140px;
+    left: 140px;
     width: 263px;
     height: 121px;
     background-image: url('/graphics/nodecg-speedcontrol/images/preEsaMarathonLogo.png');

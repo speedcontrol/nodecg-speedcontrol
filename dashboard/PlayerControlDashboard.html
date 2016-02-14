@@ -33,7 +33,7 @@
             height: 30px;
         }
 
-        #playerControlAddRunButton, #playerControlRandomizeRunsButton, #playerControlRemoveRunsButton,#playerControlRegion,
+        #playerControlAddRunButton, #playerControlAddRunRawButton, #playerControlRandomizeRunsButton, #playerControlRemoveRunsButton,#playerControlRegion,
         #playerControlEstimate, #playerControlCategory, #playerControlSystem, #playerControlGame{
             width: 100%;
         }
@@ -91,6 +91,7 @@
             </select>
         </div>
         <button type="submit" id="playerControlAddRunButton" value="validate">Add Run</button>
+        <button type="button" id="playerControlAddRunRawButton" nodecg-dialog="add-run">Add Run Raw</button>
         <button type="button" id="playerControlRemoveRunsButton">Remove All Runs</button>
         <button type="button" id="playerControlRandomizeRunsButton">Create 10 random runs</button>
         <div id="addResult"></div>

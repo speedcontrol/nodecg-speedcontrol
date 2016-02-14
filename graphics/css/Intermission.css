@@ -43,7 +43,7 @@ body {
     font-family: FFFForward;
     font-size: 14px;
     top: 580px;
-    right: 100px;
+    left: 700px;
     display: flex;
     flex-flow: row wrap;
     width: 400px;

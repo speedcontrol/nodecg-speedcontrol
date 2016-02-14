@@ -8,7 +8,6 @@ $(function () {
     var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration');
     sceneLayoutConfigurationReplicant.on('change', function (oldVal, newVal) {
         if (newVal != "" && typeof newVal != 'undefined') {
-            console.log("["+newVal+"]");
             if (newVal.editMode != null && newVal.editMode == true) {
                 var radio = $('#enableEditModeOn');
                 radio[0].checked = true;
@@ -44,7 +43,9 @@ $(function () {
     });
 
     $revertToDefaultButton.click(function () {
-        nodecg.sendMessage("revertToDefault");
+        if(confirm("Revert _ALL_ overlays positioning to the default CSS values?")) {
+            nodecg.sendMessage("revertToDefault");
+        }
     });
 
     function sceneLayout_CreateSceneLayoutConfiguration() {
@@ -56,7 +57,7 @@ $(function () {
 
     function sceneLayout_GetOrCreateSceneLayoutConfiguration() {
         var configuration = sceneLayoutConfigurationReplicant.value;
-        if (typeof configuration !== 'undefined') {
+        if (typeof configuration !== 'undefined' && configuration != '') {
             return configuration;
         }
         else {

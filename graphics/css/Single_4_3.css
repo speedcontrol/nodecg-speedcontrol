@@ -1,5 +1,5 @@
 #window-container {
-    background-image: url('/graphics/nodecg-speedcontrol/images/Single_43.png');
+    background-image: url('/graphics/nodecg-speedcontrol/images/Background.png');
     width: 1280px;
     height: 720px;
     overflow: hidden;
@@ -25,7 +25,6 @@
     height: 50px;
     vertical-align: middle;
 }
-
 
 #runner1InformationName {
     font-family: FFFForward;
