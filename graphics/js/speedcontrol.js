@@ -101,7 +101,7 @@ $(function () {
             clearTimeout(timeout);
         }
 
-        timeout = setTimeout(displayTwitchInstead, 15000);
+        timeout = setTimeout(displayTwitchInstead, 2000);
     });
 
     // Replicant functions ###
@@ -333,26 +333,44 @@ $(function () {
     }
 
     function displayTwitchInstead() {
+        var indexesToNotUpdate = [];
         $runnerInfoElements.each(function(index,element) {
-            setGameFieldAlternate($(this),getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,index));
+            if(getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,index) == '---') {
+                indexesToNotUpdate.push(index);
+            }
+            else {
+                setGameFieldAlternate($(this), getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value, index));
+            }
         });
+
         var tm = new TimelineMax({paused: true});
         $twitchLogos.each( function(index, element) {
-            $(this).show();
-            tm.to($(this), 0.5, {opacity: '1', transform: "scale(0.9)",  ease: Quad.easeOut },'0');
+            if($.inArray(index, indexesToNotUpdate) == -1) {
+                $(this).show();
+                tm.to($(this), 0.5, {opacity: '1', transform: "scale(0.9)", ease: Quad.easeOut}, '0');
+            }
         });
+
         tm.play();
         timeout = setTimeout(hideTwitch,displayTwitchforMilliseconds);
     }
 
     function hideTwitch() {
+        var indexesToNotUpdate = [];
         $runnerInfoElements.each( function(index,element) {
-            setGameFieldAlternate($(this),getRunnerInformationName(runDataActiveRunRunnerListReplicant.value,index));
+            if(getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,index) == '---') {
+                indexesToNotUpdate.push(index);
+            }
+            else {
+                setGameFieldAlternate($(this), getRunnerInformationName(runDataActiveRunRunnerListReplicant.value, index));
+            }
         });
         var tm = new TimelineMax({paused: true});
         $twitchLogos.each( function(index, element) {
-            $(this).show();
-            tm.to($(this), 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0');
+            if($.inArray(index, indexesToNotUpdate) == -1) {
+                $(this).show();
+                tm.to($(this), 0.5, {opacity: '0', transform: "scale(0)", ease: Quad.easeOut}, '0');
+            }
         });
         tm.play();
         timeout = setTimeout(displayTwitchInstead,intervalToNextTwitchDisplay);

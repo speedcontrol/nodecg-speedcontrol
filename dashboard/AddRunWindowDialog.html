@@ -178,16 +178,17 @@
                     $('.playerContentContainer').each(function () {
                         var playerObject = {};
                         var playerName = $(this).find('.playerInput').val();
-                        var playerTwitch = $(this).find('.playerInputTwitch').val();
+                        var playerTwitch = $(this).find('.playerTwitchInput').val();
                         playerObject.names = {};
                         playerObject.names.international = playerName;
-
+                        console.log(playerTwitch);
                         if(playerTwitch != '' && typeof playerTwitch !== 'undefined') {
                             playerObject.twitch = {};
                             playerObject.twitch.uri = playerTwitch;
                         }
                         runData.players.push(playerObject);
                     });
+                    console.log(runData);
                     runArray.push(runData);
                     runDataArrayReplicant.value = runArray;
                 });
