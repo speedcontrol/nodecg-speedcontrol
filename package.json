@@ -3,12 +3,12 @@
   "version": "0.0.1",
   "homepage": "http://twitch.tv/sethcharleon",
   "author": "Tobias Palm Nerg <charleon@gmail.com>",
+  "contributors": [
+    "btrim <btrim.twitch@gmail.com"
+   ],
   "dependencies": {
     "twitch-api": "^0.4.3"
   },
-  "contributors": [
-    "btrim <btrim.twitch@gmail.com"
-  ],
   "description": "NodeCG Overlay engine for Speedrun Marathons",
   "license": "MIT",
   "dependencies": {

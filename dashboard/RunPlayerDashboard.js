@@ -217,7 +217,7 @@ $(function () {
     }
 
     function runPlayer_setTwitchChannelData(runData) {
-        if (typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') {
+        if (!nodecg.bundleConfig || typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') {
             alert("If you want to use the twitch functionality, you need to create a file called nodecg-speedcontrol.json in nodecg/cfg and fill it with:\n" +
                 "{\n" +
                 "\"enableTwitchApi\": \"true\"," +

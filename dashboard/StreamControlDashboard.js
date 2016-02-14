@@ -93,7 +93,7 @@ $(function () {
     }
 
     function streamControl_login(automatic) {
-        if ((typeof nodecg.bundleConfig.user !== 'undefined' && typeof nodecg.bundleConfig.enableTwitchApi !== 'undefined') &&
+        if (nodecg.bundleConfig &&(typeof nodecg.bundleConfig.user !== 'undefined' && typeof nodecg.bundleConfig.enableTwitchApi !== 'undefined') &&
             nodecg.bundleConfig.enableTwitchApi == true) {
             if(getParameterByName('code') == null || getParameterByName('code') == "") {
                 nodecg.sendMessage('twitchLogin');

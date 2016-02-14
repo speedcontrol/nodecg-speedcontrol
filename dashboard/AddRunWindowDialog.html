@@ -84,199 +84,198 @@
     <script>
         $(function () {
             $('#operationResult').html("");
+            var $form = $('#form');
             var $confirmButton = $('#confirm');
             var $cancelButton = $('#cancel');
+            var $addPlayerButton = $('#addPlayer');
+            var initialForm = $form.html();
 
             var runDataArrayReplicant = nodecg.Replicant("runDataArray");
             runDataArrayReplicant.on("change", function (oldValue, newValue) {
             });
 
-            var runDataEditRunReplicant = nodecg.Replicant("runDataEditRun",{persistent: false});
-            runDataEditRunReplicant.on("change", function (oldValue, newValue) {
-                if(typeof newValue === 'undefined') {
-                    return;
+            var runDataLastIDReplicant = nodecg.Replicant("runDataLastID");
+            runDataLastIDReplicant.on("change", function (oldValue, newValue) {
+                if (typeof newValue === 'undefined') {
+                    runDataLastIDReplicant.value = 1;
                 }
-
-                var playerNamesTwitchHTML = getPlayerNameTwitchHtml(newValue.players);
-                $('#gameNameInput').val(newValue.game);
-                $('#gameEstimateInput').val(newValue.estimate);
-                $('#gameCategoryInput').val(newValue.category);
-                $('#gameSystemInput').val(newValue.system);
-                $('#gameRegionInput').val(newValue.region);
-                $('#playerContainer').html(playerNamesTwitchHTML);
             });
 
-            var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
-            runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
-            });
+            // All the runs have a uniqe ID attached to them
+            function getSetRunID() {
+                var runID = runDataLastIDReplicant.value;
+                var runIDIncremented = Number(runDataLastIDReplicant.value);
+                runIDIncremented++;
+                runDataLastIDReplicant.value = runIDIncremented;
+                return runID;
+            }
 
-            var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-            runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
-            });
 
-            $cancelButton.on('click', function() {
-                var gameData = runDataEditRunReplicant.value;
-                $('#gameNameInput').val(gameData.game);
-                $('#gameEstimateInput').val(gameData.estimate);
-                $('#gameCategoryInput').val(gameData.category);
-                $('#gameSystemInput').val(gameData.system);
-                $('#gameRegionInput').val(gameData.region);
-                $('.playerInput').each(function(){
-                    var index = Number($(this).attr('id').replace('player','').replace('Input',''));
-                    var playerName = '';
-                    console.log("index: "+index);
-                    console.log(gameData.players[index]);
-                    if(typeof gameData.players[index] !== 'undefined' &&
-                            typeof gameData.players[index].names.international !== 'undefined') {
-                        playerName = gameData.players[index].names.international;
-                    }
-                    $(this).val(playerName);
+            function addPlayer() {
+                var html = createPlayerElement();
+                $('#playerContainer').append(html);
+            }
+
+            function initialize() {
+                $form = $('#form');
+                $confirmButton = $('#confirm');
+                $cancelButton = $('#cancel');
+                $addPlayerButton = $('#addPlayer');
+
+                $addPlayerButton.on('click', function() {
+                    addPlayer();
                 });
-                $("#operationResult").html("Reverted Changes");
-            });
 
-            $confirmButton.on('click', function() {
-                var gameArray = runDataArrayReplicant.value;
-                var gameData = runDataEditRunReplicant.value;
-                var validationResult = true;
-                var validationMessage = '';
-                if( $('#gameNameInput').val() == '' ||
+                $confirmButton.on('click', function() {
+                    var runArray = runDataArrayReplicant.value;
+
+                    if(typeof runArray === 'undefined' || runArray == '') {
+                        runArray = [];
+                    }
+
+                    var validationResult = true;
+                    var validationMessage = '';
+                    if( $('#gameNameInput').val() == '' ||
                         $('#gameEstimateInput').val() == '' ||
                         $('#gameCategoryInput').val() == '' ||
                         $('#gameSystemInput').val() == '') {
-                    validationMessage = 'All fields but region has to be filled in';
-                    validationResult = false;
-                }
-
-                $('.playerInput').each(function () {
-                    if ($(this).val() == "") {
+                        validationMessage = 'All fields but region has to be filled in';
                         validationResult = false;
-                        validationMessage = "Player Names can not be empty!";
                     }
-                });
 
-                $('.playerTwitchInput').each(function () {
-                    if ($(this).val() != "" && ($(this).val().indexOf("http://www.twitch.tv/") < 0)) {
+                    if(!$('#gameEstimateInput').val().match('^[0-9][0-9]:[0-5][0-9]$')) {
+                        validationMessage = 'Estimate has to be in the format hh:mm';
                         validationResult = false;
-                        validationMessage = "Twitch field has to start with http://www.twitch.tv/";
                     }
+
+                    $('.playerInput').each(function () {
+                        if ($(this).val() == "") {
+                            validationResult = false;
+                            validationMessage = "Player Names can not be empty!";
+                        }
+                    });
+
+                    $('.playerTwitchInput').each(function () {
+                        if ($(this).val() != "" && ($(this).val().indexOf("http://www.twitch.tv/") < 0)) {
+                            validationResult = false;
+                            validationMessage = "Twitch field has to start with http://www.twitch.tv/";
+                        }
+                    });
+
+                    if(validationResult == false) {
+                        $('#operationResult').html(validationMessage);
+                        return;
+                    }
+
+                    var runData = createRunData();
+                    runData.game = $('#gameNameInput').val();
+                    runData.estimate = $('#gameEstimateInput').val();
+                    runData.category = $('#gameCategoryInput').val();
+                    runData.system = $('#gameSystemInput').val();
+                    runData.region = $('#gameRegionInput').val();
+                    runData.runID = getSetRunID();
+
+                    $('.playerContentContainer').each(function () {
+                        var playerObject = {};
+                        var playerName = $(this).find('.playerInput').val();
+                        var playerTwitch = $(this).find('.playerInputTwitch').val();
+                        playerObject.names = {};
+                        playerObject.names.international = playerName;
+
+                        if(playerTwitch != '' && typeof playerTwitch !== 'undefined') {
+                            playerObject.twitch = {};
+                            playerObject.twitch.uri = playerTwitch;
+                        }
+                        runData.players.push(playerObject);
+                    });
+                    runArray.push(runData);
+                    runDataArrayReplicant.value = runArray;
                 });
 
-                if(validationResult == false) {
-                    $('#operationResult').html(validationMessage);
-                    return;
-                }
-
-                gameData.game = $('#gameNameInput').val();
-                gameData.estimate = $('#gameEstimateInput').val();
-                gameData.category = $('#gameCategoryInput').val();
-                gameData.system = $('#gameSystemInput').val();
-                gameData.region = $('#gameRegionInput').val();
-
-                $('.playerInput').each(function () {
-                    var index = Number($(this).attr('id').replace('player', '').replace('Input', ''));
-                    if (typeof gameData.players[index] !== 'undefined' &&
-                        typeof gameData.players[index].names.international !== 'undefined') {
-                        gameData.players[index].names.international = $(this).val();
-                    }
+                $cancelButton.on('click', function() {
+                    $cancelButton.unbind( "click" );
+                    $addPlayerButton.unbind( "click" );
+                    $confirmButton.unbind( "click" );
+                    $form.html(initialForm);
+                    initialize();
                 });
 
-                $('.playerTwitchInput').each(function () {
-                    var index = Number($(this).attr('id').replace('player', '').replace('TwitchInput', ''));
-                    if (typeof gameData.players[index] !== 'undefined' &&
-                        typeof gameData.players[index].twitch !== 'undefined') {
-                        gameData.players[index].twitch.uri = $(this).val();
-                    }
-                });
-
-                var arrayIndex = getRunIndexInRunDataArrayReplicant(gameData.runID);
-                if (arrayIndex != -1) {
-                    gameArray[arrayIndex] = gameData;
-                    runDataArrayReplicant.value = gameArray;
-                    if(typeof runDataActiveRunReplicant.value !== 'undefined' && gameData.runID == runDataActiveRunReplicant.value.runID) {
-                        runDataActiveRunReplicant.value = gameData;
-                        runDataActiveRunRunnerListReplicant.value = gameData.players;
-                    }
-                }
-                $('#operationResult').html("update succeeded");
-            });
-
-            function getRunIndexInRunDataArrayReplicant(runID) {
-                var gameArray = runDataArrayReplicant.value;
-                for(var i = 0; i < gameArray.length; i++) {
-                    if(gameArray[i].runID == runID) {
-                        return i;
-                    }
-                }
-                return -1;
+                addPlayer();
             }
 
-            function getPlayerNameTwitchHtml(playerArray) {
+            function createRunData() {
+                var theRun = {};
+                theRun.players = [];
+                theRun.game = "";
+                theRun.estimate = "";
+                theRun.system = "";
+                theRun.region = "";
+                theRun.category = "";
+                return theRun;
+            }
+
+            function createPlayerElement(playerArray) {
                 var HTML = '';
-                $.each(playerArray,function(index, player) {
-                    var playerName = player.names.international;
-                    var playerTwitch = '';
-
-                    if(typeof player.twitch !=='undefined') {
-                        playerTwitch = player.twitch.uri;
-                    }
-
-                    HTML += "<div class='playerContentContainer'>"+
-                            "<div class='playerText'>" +
-                            "Player:"+
-                            "</div>" +
-                            "<input id='player"+index+"Input' class='playerInput' value='"+playerName+"'>"+
-                            "<div class='playerTwitchText'>" +
-                            "Twitch:"+
-                            "</div>" +
-                            "<input id='player"+index+"TwitchInput' class='playerTwitchInput' value='"+playerTwitch+"'>"+
-                            "</div>";
-                });
+                HTML += "<div class='playerContentContainer'>"+
+                        "<div class='playerText'>" +
+                        "Player:"+
+                        "</div>" +
+                        "<input class='playerInput' placeholder='Nickname'>"+
+                        "<div class='playerTwitchText'>" +
+                        "Twitch:"+
+                        "</div>" +
+                        "<input class='playerTwitchInput' placeholder='Full Twitch Link'>"+
+                        "</div>";
                 return HTML;
             }
+
+            initialize();
         });
     </script>
 </head>
 <body>
-<div id="operationResult">
-</div>
-<div id="runContainer">
-    <div id="playerContainer">
+<div id="form">
+    <div id="operationResult">
     </div>
-    <div id="game">
-        <div id="gameName">
-            <div id="gameNameText">
-                Game:
-            </div>
-            <input id="gameNameInput" placeholder="gameNameInput">
+    <div id="runContainer">
+        <div id="playerContainer">
+            <button id="addPlayer">Add Player</button>
         </div>
-        <div id="gameEstimate">
-            <div id="gameEstimateText">
-                Estimate:
+        <div id="game">
+            <div id="gameName">
+                <div id="gameNameText">
+                    Game:
+                </div>
+                <input id="gameNameInput" placeholder="Game Name">
             </div>
-            <input id="gameEstimateInput" placeholder="gameEstimateInput">
-        </div>
-        <div id="gameCategory">
-            <div id="gameCategoryText">
-                Category:
+            <div id="gameEstimate">
+                <div id="gameEstimateText">
+                    Estimate:
+                </div>
+                <input id="gameEstimateInput" placeholder="hh:mm">
             </div>
-            <input id="gameCategoryInput" placeholder="gameCategoryInput">
-        </div>
-        <div id="gameSystem">
-            <div id="gameSystemText">
-                System:
+            <div id="gameCategory">
+                <div id="gameCategoryText">
+                    Category:
+                </div>
+                <input id="gameCategoryInput" placeholder="Category">
             </div>
-            <input id="gameSystemInput" placeholder="gameSystemInput">
-        </div>
-        <div id="gameRegion">
-            <div id="gameRegionText">
-                Region:
+            <div id="gameSystem">
+                <div id="gameSystemText">
+                    System:
+                </div>
+                <input id="gameSystemInput" placeholder="System">
             </div>
-            <input id="gameRegionInput" placeholder="gameRegionInput">
+            <div id="gameRegion">
+                <div id="gameRegionText">
+                    Region:
+                </div>
+                <input id="gameRegionInput" placeholder="Region">
+            </div>
         </div>
     </div>
 </div>
-<paper-button id="confirm" raised>Apply changes</paper-button>
-<paper-button id="cancel">Cancel</paper-button>
+<paper-button id="confirm" raised>Add Run</paper-button>
+<paper-button id="cancel">Reset Form</paper-button>
 </body>
 </html>
