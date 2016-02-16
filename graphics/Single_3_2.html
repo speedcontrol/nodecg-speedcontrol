@@ -1,7 +1,6 @@
 <html data-sceneid="Single_3_2">
 <head>
     <link href="css/common.css" rel="stylesheet"/>
-    <link href="css/Single_3_2.css" rel="stylesheet"/>
     <script src="components/gsap/src/minified/TweenMax.min.js"></script>
     <script src="components/jquery/dist/jquery.min.js"></script>
     <script src="js/speedcontrol.js"></script>
@@ -10,35 +9,36 @@
 </head>
 <body>
 <div id="window-container">
-    <div id="positionDebug">
-        X: 100
-        Y: 100
-    </div>
-    <div id="gameCapture1" class="positionable gameCapture" aspect-ratio="3:2">
-    </div>
-    <div id="marathonLogo" class="positionable"> </div>
-    <div id="playerContainer" class="positionable">
-        <div id="runner1Logo">
-            <img id="twitchLogo" src="/graphics/nodecg-speedcontrol/images/twitchlogo.png">
+    <div id="window-container">
+        <div id="positionDebug">
+            X: 100
+            Y: 100
         </div>
-        <div id="runner1InformationName" class="runnerInfo">
+        <div id="gameCapture1" class="positionable gameCapture" aspect-ratio="3:2">
         </div>
-    </div>
-    <div id="timerContainer" class="positionable">
-        <div id="timer">
-        </div>
-        <div id="runInformationGameEstimate">
-        </div>
-    </div>
-    <div id="runInformationContainer" class="positionable">
-        <div id="runInformationLogo">
-        </div>
-        <div id="runInformationFields">
-            <div id="runInformationGameName">
+        <div id="marathonLogo" class="positionable"> </div>
+        <div id="player1Container" class="playerContainer positionable">
+            <div class="runnerLogo">
+                <img class="twitchLogo" src="/graphics/nodecg-speedcontrol/images/twitchlogo.png">
             </div>
-            <div id="runInformationGameCategory">
+            <div class="runnerInfo"> </div>
+        </div>
+        <div id="timerContainer" class="positionable">
+            <div id="timer">
             </div>
-            <div id="runInformationGameSystem">
+            <div id="runInformationGameEstimate">
+            </div>
+        </div>
+        <div id="runInformationContainer" class="positionable">
+            <div id="runInformationLogo">
+            </div>
+            <div id="runInformationFields">
+                <div id="runInformationGameName">
+                </div>
+                <div id="runInformationGameCategory">
+                </div>
+                <div id="runInformationGameSystem">
+                </div>
             </div>
         </div>
     </div>

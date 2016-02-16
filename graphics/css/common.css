@@ -5,8 +5,19 @@
     font-weight: normal;
     font-style: normal;
 }
+
 body {
-    overflow:hidden;
+  overflow:hidden;
+  margin: 0px;
+  padding: 0px;
+}
+
+#window-container {
+    background-image: url('/graphics/nodecg-speedcontrol/images/Background.png');
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    color: white;
     margin: 0px;
     padding: 0px;
 }
@@ -53,6 +64,165 @@ body {
 #runInformationGameEstimate:before {
   content: 'EST: ';
 }
+
 #runInformationGameEstimate:after {
   content: ':00';
 }
+
+.playerContainer {
+    position: absolute;
+    width: 400px;
+    height: 50px;
+    top: 490px;
+    left: 10px;
+    display: flex;
+    overflow: hidden;
+}
+
+.runnerLogo {
+    background-image: url('/graphics/nodecg-speedcontrol/images/playerlogo.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+}
+
+.runnerInfo {
+    font-family: FFFForward;
+    color: #8d7996;
+    background: rgba(255,255,255,0.1);
+    line-height: 50px;
+    height: 50px;
+    width: 100%;
+    vertical-align: middle;
+    padding-left: 15px;
+    flex: 1;
+}
+
+#runInformationContainer {
+    position: absolute;
+    width: 400px;
+    height: 50px;
+    top: 600px;
+    left: 435px;
+    display: flex;
+    overflow: hidden;
+}
+
+#runInformationFields {
+    display: flex;
+    flex-flow: row wrap;
+    height: 50px;
+    width: 400px;
+    background: rgba(255,255,255,0.1);
+    padding-left: 15px;
+    flex: 1;
+    overflow: hidden;
+}
+
+#runInformationGameEstimate {
+    position: relative;
+    top: 5px;
+    font-family: FFFForward;
+    font-size: 15px;
+    text-align: center;
+    color: rgba(255,255,255,0.25);
+}
+
+#runInformationGameName {
+    font-family: FFFForward;
+    font-size: 12px;
+    text-align: left;
+    color: #8d7996;
+    width: 350px;
+    white-space: nowrap;
+}
+
+#runInformationGameCategory {
+    font-family: FFFForward;
+    font-size: 12px;
+    color: #8d7996;
+    width: 150px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+#runInformationGameSystem {
+    font-family: FFFForward;
+    font-size: 12px;
+    color: #8d7996;
+    width: 175px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+#runInformationLogo {
+    background-image: url('/graphics/nodecg-speedcontrol/images/runInformationIcon.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+}
+
+#timerContainer {
+    position: absolute;
+    width: 412px;
+    height: 100px;
+    background: rgba(255,255,255,0.1);
+    top: 490px;
+    left: 435px;
+}
+
+#timer {
+    position: relative;
+    font-family: FFFForward;
+    font-size: 35px;
+    text-align: center;
+    top: 5px;
+}
+
+#marathonLogo {
+    position: absolute;
+    top: 555px;
+    left: 70px;
+    width: 316px;
+    height: 88px;
+    background-image: url('/graphics/nodecg-speedcontrol/images/SpeedcontrolLogo.png');
+    background-repeat: no-repeat;
+    background-size: 85%;
+}
+
+.runnerTimerFinishedContainer {
+    border-radius: 5px;
+    display: flex;
+    color: white;
+    position: absolute;
+    top: 20px;
+    left: 250px;
+    font-family: FFFForward;
+    font-size: 15px;
+    height: 42px;
+    background-color: rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.runnerTimerFinished {
+    height: 32px;
+    line-height: 42px;
+    padding-right: 5px;
+}
+
+.finishedLogo {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    background-image: url('/graphics/nodecg-speedcontrol/images/finishFlag.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 32px;
+}
+
+

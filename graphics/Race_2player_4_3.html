@@ -1,7 +1,6 @@
 <html data-sceneid="Race_2player_4_3">
 <head>
     <link href="css/common.css" rel="stylesheet"/>
-    <link href="css/Race_2player_4_3.css" rel="stylesheet"/>
     <script src="components/gsap/src/minified/TweenMax.min.js"></script>
     <script src="components/jquery/dist/jquery.min.js"></script>
     <script src="js/speedcontrol.js"></script>
@@ -18,29 +17,25 @@
     </div>
     <div id="gameCapture2" class="positionable gameCapture" aspect-ratio="4:3">
     </div>
-    <div id="runner1TimerFinishedContainer" class="positionable">
+    <div id="runner1TimerFinishedContainer" class="runnerTimerFinishedContainer positionable">
         <div class="finishedLogo"></div>
-        <div id="runner1TimerFinished" class="dummyTextable">
-        </div>
+        <div class="dummyTextable runnerTimerFinished"></div>
     </div>
-    <div id="runner2TimerFinishedContainer" class="positionable">
+    <div id="runner2TimerFinishedContainer" class="runnerTimerFinishedContainer positionable">
         <div class="finishedLogo"></div>
-        <div id="runner2TimerFinished" class="dummyTextable">
-        </div>
+        <div class="dummyTextable runnerTimerFinished"></div>
     </div>
     <div id="marathonLogo" class="positionable"> </div>
-    <div id="player1Container" class="positionable">
-        <div id="runner1Logo">
-            <img id="twitchLogo1" src="/graphics/nodecg-speedcontrol/images/twitchlogo.png">
+    <div id="player1Container" class="playerContainer positionable">
+        <div class="runnerLogo">
+            <img class="twitchLogo" src="/graphics/nodecg-speedcontrol/images/twitchlogo.png">
         </div>
-        <div id="runner1InformationName" class="runnerInfo">
-        </div>
+        <div class="runnerInfo"> </div>
     </div>
-    <div id="player2Container" class="positionable">
-        <div id="runner2InformationName" class="runnerInfo">
-        </div>
-        <div id="runner2Logo">
-            <img id="twitchLogo2" src="/graphics/nodecg-speedcontrol/images/twitchlogo.png">
+    <div id="player2Container" class="playerContainer positionable">
+        <div class="runnerInfo"> </div>
+        <div class="runnerLogo">
+            <img class="twitchLogo" src="/graphics/nodecg-speedcontrol/images/twitchlogo.png">
         </div>
     </div>
     <div id="timerContainer" class="positionable">

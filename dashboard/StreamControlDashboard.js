@@ -100,7 +100,7 @@ $(function () {
             }
         }
         else if(automatic != true) {
-            if ((typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') || nodecg.bundleConfig.enableTwitchApi != true) {
+            if (!nodecg.bundleConfig || (typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') || nodecg.bundleConfig.enableTwitchApi != true) {
                 alert(errorMessage);
                 return;
             }

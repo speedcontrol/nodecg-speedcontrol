@@ -3,13 +3,13 @@ $(function () {
     // JQuery selector initialiation ###
     var $timerInfo = $('#timer');
     var $runnerInfoElements = $('div.runnerInfo');
-    var $runnerTimerFinishedElements = $('div[id$=TimerFinished]')
-    var $runnerTimerFinishedContainers = $('div[id$=TimerFinishedContainer]')
+    var $runnerTimerFinishedElements = $('.runnerTimerFinished')
+    var $runnerTimerFinishedContainers = $('.runnerTimerFinishedContainer')
     var $runInformationSystem = $('#runInformationGameSystem');
     var $runInformationCategory = $('#runInformationGameCategory');
     var $runInformationEstimate = $('#runInformationGameEstimate');
     var $runInformationName = $('#runInformationGameName');
-    var $twitchLogos = $('[id^=twitchLogo]');
+    var $twitchLogos = $('.twitchLogo');
     var $gameCaptures = $('.gameCapture');
 
     var currentTime = '';
