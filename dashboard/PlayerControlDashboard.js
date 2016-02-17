@@ -36,11 +36,6 @@ $(function () {
     runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
     });
 
-// Initialize dashboard
-    playerControl_InitializeFieldAutoCompletion();
-    playerControl_InitializeElements();
-    playerControl_ClearAllFields();
-
 // Used for input field validation (the "nice" tooltips you get when something is wrong
     $.verify({
         hideErrorOnChange: true,
@@ -388,4 +383,17 @@ $(function () {
             }
         });
     }
-})
+
+    // Initialize dashboard panel, only runs once
+    playerControl_InitializeFieldAutoCompletion();
+    playerControl_InitializeElements();
+    playerControl_ClearAllFields();
+
+    if (nodecg.bundleConfig && (typeof nodecg.bundleConfig.live !== 'undefined' && nodecg.bundleConfig.live === true)) {
+        $addRunButton.button({disabled: true});
+        $removeRunsButton.button({disabled: true});
+        $randomizeRunsButton.button({disabled: true});
+        $addPlayerButton.button({disabled: true});
+    }
+
+});

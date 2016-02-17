@@ -15,4 +15,11 @@ module.exports = function(nodecg) {
         nodecg.log.error('Failed to load "twitchapi" lib:', e.stack);
         process.exit(1);
     }
+
+    try {
+        require('./csscreater')(nodecg);
+    } catch (e) {
+        nodecg.log.error('Failed to load "csscreater" lib:', e.stack);
+        process.exit(1);
+    }
 };

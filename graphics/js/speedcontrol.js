@@ -11,6 +11,8 @@ $(function () {
     var $runInformationName = $('#runInformationGameName');
     var $twitchLogos = $('.twitchLogo');
     var $gameCaptures = $('.gameCapture');
+    var $generateCSSContentButton = $('#generateCSSContentButton');
+    var $resetCSSContentButton = $('#resetCSSContentButton');
 
     var currentTime = '';
     var displayTwitchforMilliseconds = 15000;
@@ -21,34 +23,12 @@ $(function () {
     // if there are two views with the same sceneID all the elements will not have the correct positions
     var sceneID = $('html').attr('data-sceneid');
 
-    $gameCaptures.each(function () {
-        var aspectRatio = $(this).attr('aspect-ratio');
-        switch(aspectRatio) {
-            case '4:3':
-                $(this).css('width','400px');
-                $(this).css('height','300px');
-                break;
-            case '16:9':
-                $(this).css('width','720px');
-                $(this).css('height','405px');
-                break;
-            case '3:2':
-                $(this).css('width','240px');
-                $(this).css('height','160px');
-                break;
-        }
-    });
-
-    // Temporary container used for edit mode to store all element position data. See createPositioningConfig()
-    var itemPositioningConfigurationContainer = [];
-
     var isEditModeEnabled = false;
 
     // NodeCG Message subscription ###
     nodecg.listenFor("resetTime", resetAllPlayerTimers);
     nodecg.listenFor('timerReset', resetTimer);
     nodecg.listenFor('timerSplit', splitTimer);
-    nodecg.listenFor('savePositionConfiguration', saveConfiguration);
     nodecg.listenFor('revertToDefault', revertChanges);
 
     // Replicants ###
@@ -57,13 +37,6 @@ $(function () {
         if(typeof newValue !== 'undefined' && newValue != '') {
             applyBackgroundTransparence(newValue.backgroundTransparency);
             handleEditMode(newValue.editMode)
-        }
-    });
-
-    var scenePositioningConfigurationReplicant = nodecg.Replicant("scenePositioningConfiguration");
-    scenePositioningConfigurationReplicant.on("change", function (oldValue, newValue) {
-        if(typeof newValue !== 'undefined' && newValue != '') {
-            updateItemPositions(newValue);
         }
     });
 
@@ -92,7 +65,6 @@ $(function () {
             return;
         }
 
-
         $runnerInfoElements.each( function( index, element ) {
             setGameFieldAlternate($(this),getRunnerInformationName(newValue,index));
         });
@@ -106,18 +78,7 @@ $(function () {
 
     // Replicant functions ###
 
-    function updateItemPositions(positioningArray) {
-        itemPositioningConfigurationContainer = JSON.parse(JSON.stringify(positioningArray))
-        $.each(positioningArray,function(index, positioningItem) {
-            if(positioningItem.scene == sceneID) {
-                $('#' + positioningItem.id).css('top', positioningItem.y);
-                $('#' + positioningItem.id).css('left', positioningItem.x);
-                $('#' + positioningItem.id).css('width', positioningItem.width);
-                $('#' + positioningItem.id).css('height', positioningItem.height);
-            }
-        });
-    }
-
+    // Changes the Game information text from the replicant, such as System, Category, Estimate and Game name
     function updateSceneFields(runData) {
         var runInfoGameName = runData.game;
         var runInfoGameEstimate = runData.estimate;
@@ -130,11 +91,13 @@ $(function () {
         setGameField($runInformationName,runInfoGameName);
     }
 
+    // Sets the current time of the timer.
     function setTime(timeHTML) {
         $timerInfo.html(timeHTML);
         currentTime = timeHTML;
     }
 
+    // Gets the runner with index 'index' in the runnerarray's nickname from the rundata Replicant
     function getRunnerInformationName(runnerDataArray, index) {
         if(typeof runnerDataArray[index] === 'undefined') {
             console.log("Player nonexistant!");
@@ -143,6 +106,7 @@ $(function () {
         return runnerDataArray[index].names.international;
     }
 
+    // Gets the runner with index 'index' in the runnerarray's twitch URL from the rundata Replicant
     function getRunnerInformationTwitch(runnerDataArray, index) {
         if(typeof runnerDataArray[index] === 'undefined') {
             console.log("Player nonexistant!");
@@ -162,35 +126,27 @@ $(function () {
 
     // Edit Mode functions ###
 
-    function addPositioningInformation() {
-        $('#positionDebug').css('opacity','1');
+    function addEditModeDebugInformation() {
+        $('#positionDebug').css('opacity','0.5');
     }
 
-    function removePositioningInformation(){
+    function removeEditModeDebugInformation(){
         $('#positionDebug').css('opacity','0');
     }
 
-    function itemDragged( event, ui ) {
-        $('#positionDebug').html("X: "+ui.position.left + " Y: " + ui.position.top + " Item ID: "+ui.helper[0].id);
-    }
-
-    function createPositioningConfig(xPos, yPos, ItemId, scene) {
-        var positionConfig = {};
-        positionConfig.x = xPos;
-        positionConfig.y = yPos;
-        positionConfig.id = ItemId;
-        positionConfig.scene = scene;
-        positionConfig.width = $('#'+ItemId).width();
-        positionConfig.height = $('#'+ItemId).height();
-        return positionConfig;
-    }
-
-    function saveConfiguration() {
-        scenePositioningConfigurationReplicant.value = itemPositioningConfigurationContainer;
+    // When we reposition an element we are dragging we need to update coordinates as well as the current DOM ID
+    function updateDebugInformation( event, ui ) {
+        var debugInformationText = '';
+        debugInformationText += " Item ID: " + ui.helper[0].id;
+        debugInformationText += " X: " + $('#' + ui.helper[0].id).offset().left;
+        debugInformationText += " Y: " + $('#' + ui.helper[0].id).offset().top;
+        debugInformationText += " Width: " + $('#'+ui.helper[0].id).width();
+        debugInformationText += " Height: " + $('#'+ui.helper[0].id).height();
+        $('#positionDebugText').html(debugInformationText);
     }
 
     function revertChanges() {
-        scenePositioningConfigurationReplicant.value = undefined;
+        //TODO: do thiiis
     }
 
     function convertToTrueAspectRatio(aspectRatioString) {
@@ -201,6 +157,7 @@ $(function () {
 
     function handleEditMode(isEnabled) {
         if(isEnabled) {
+            addEditModeDebugInformation();
             $('.dummyTextable').html("######");
 
             $runnerTimerFinishedElements.each( function( index, e ){
@@ -213,26 +170,11 @@ $(function () {
                 containment: "parent",
                 grid: [ 5, 5 ],
                 opacity: 0.35,
-                drag: itemDragged,
+                drag: updateDebugInformation,
                 start: function( event, ui ) {
-                    addPositioningInformation();
                     $('#'+ui.helper[0].id).css('z-index','100');
-                    if($('#'+ui.helper[0].id).hasClass('gameCapture')) {
-
-                    }
                 },
                 stop: function( event, ui ) {
-                    if($('#'+ui.helper[0].id).hasClass('gameCapture')) {
-                        $('.gameCapture').each(function() {
-                            var positionConfig = createPositioningConfig($(this).offset().left, $(this).offset().top, $(this).attr('id'), sceneID);
-                            addToPositionConfig(positionConfig);
-                        });
-                    }
-                    else {
-                        var positionConfig = createPositioningConfig(ui.position.left, ui.position.top, ui.helper[0].id, sceneID);
-                        removePositioningInformation();
-                        addToPositionConfig(positionConfig);
-                    }
                     $('#'+ui.helper[0].id).css('z-index','0');
                 }
             });
@@ -241,13 +183,14 @@ $(function () {
             var trueAspectRatio = convertToTrueAspectRatio(aspectRatio);
 
             $('.gameCapture').first().resizable({
+                start: function (event, ui) {
+                    $('#'+ui.helper[0].id).css('z-index','100');
+                },
                 aspectRatio: trueAspectRatio,
+                resize: updateDebugInformation,
                 alsoResize: ".gameCapture",
                 stop: function( event, ui ) {
-                    $('.gameCapture').each(function() {
-                        var positionConfig = createPositioningConfig($(this).offset().left, $(this).offset().top, $(this).attr('id'), sceneID);
-                        addToPositionConfig(positionConfig);
-                    });
+                    $('#'+ui.helper[0].id).css('z-index','0');
                 }
             });
         }
@@ -261,26 +204,12 @@ $(function () {
                 $runnerTimerFinishedElements.each( function( index, e ){
                     hideTimerFinished(index);
                 });
+                removeEditModeDebugInformation();
             }
         }
     }
 
-    function addToPositionConfig(configData) {
-        var entryFound = $.grep(itemPositioningConfigurationContainer, function(e){ return (e.id == configData.id && e.scene == configData.scene); });
-        if (entryFound.length == 0) {
-            itemPositioningConfigurationContainer.push(configData);
-        } else if (entryFound.length == 1) {
-            entryFound[0].x = configData.x;
-            entryFound[0].y = configData.y;
-            entryFound[0].width = configData.width;
-            entryFound[0].height = configData.height;
-
-        } else {
-            console.log("Well we found multiple entries,should NEVER happen!");
-        }
-
-    }
-
+    // Edit Mode functions END ###
     // Timer functions ###
 
     function resetTimer(index) {
@@ -386,6 +315,36 @@ $(function () {
         tm.play();
     }
 
+    function generateCssForLayout() {
+        var completeCss = '';
+        $('.positionable').each(function() {
+            var cssTemplate = "#itemid {\n    position: fixed;\n    top: topValue;\n    left: leftValue;\n    width: widthValue;\n    height: heightValue;\n}\n\n";
+            var itemID = $(this).attr('id');
+            var topOffset = $(this).offset().top;
+            var leftOffset = $(this).offset().left;
+            var width = $(this).width();
+            var height = $(this).height();
+
+            cssTemplate = cssTemplate.replace('itemid',itemID);
+            cssTemplate = cssTemplate.replace('topValue',topOffset);
+            cssTemplate = cssTemplate.replace('leftValue',leftOffset);
+            cssTemplate = cssTemplate.replace('widthValue',width);
+            cssTemplate = cssTemplate.replace('heightValue',height);
+            completeCss += cssTemplate;
+        });
+        console.log(completeCss);
+        return completeCss;
+    }
+
+    function loadCSS (href) {
+        var cssLink = $("<link rel='stylesheet' type='text/css' href='"+href+"'>");
+        $("head").append(cssLink);
+    };
+
+    //
+    // Layout initialization (runs once when the overlay loads)
+    //
+
     $runnerTimerFinishedElements.each( function( index, e ){
         hideTimerFinished(index);
     });
@@ -393,4 +352,47 @@ $(function () {
     $twitchLogos.each( function(index, element) {
         $(this).css('transform', 'scale(0)');
     });
-});
+
+    $generateCSSContentButton.click(function(){
+        var cssGenerationObject = {};
+        cssGenerationObject.sceneID = sceneID;
+        cssGenerationObject.generatedCss = generateCssForLayout();
+        nodecg.sendMessage("createCustomCss",cssGenerationObject);
+    });
+
+    $resetCSSContentButton.click(function(){
+        var cssResetObject = {};
+        cssResetObject.sceneID = sceneID;
+        nodecg.sendMessage("deleteCustomCss",cssResetObject);
+        location.reload();
+    });
+
+    $gameCaptures.each(function () {
+        var aspectRatio = $(this).attr('aspect-ratio');
+
+        // Don't initialize width and height if it already exists in custom css
+        if($(this).css("width") != '0px' || $(this).css("height") != '0px') {
+            return;
+        }
+
+        switch(aspectRatio) {
+            case '4:3':
+                $(this).addClass('aspect4_3');
+                break;
+            case '16:9':
+                $(this).addClass('aspect16_9');
+                break;
+            case '3:2':
+                $(this).addClass('aspect3_2');
+                break;
+        }
+    });
+
+    loadCSS("/graphics/nodecg-speedcontrol/css/editcss/"+sceneID+".css");
+
+    // If we are live, we strip the overlay of the debug element
+    if (nodecg.bundleConfig && (typeof nodecg.bundleConfig.live !== 'undefined' && nodecg.bundleConfig.live === true)) {
+        $('#positionDebug').remove();
+    }
+
+    });

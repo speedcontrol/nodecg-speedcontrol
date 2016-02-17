@@ -13,6 +13,9 @@ body {
 }
 
 #window-container {
+    position: fixed;
+    top: 0px;
+    left: 0px;
     background-image: url('/graphics/nodecg-speedcontrol/images/Background.png');
     width: 1280px;
     height: 720px;
@@ -42,17 +45,6 @@ body {
     background: rgba(255,0,0,0.3);
 }
 
-#positionDebug {
-    position: absolute;
-    background-color: black;
-    top: 5px;
-    left: 5px;
-    color: white;
-    font-size: 20px;
-    opacity: 0;
-    z-index: 200;
-}
-
 .gameCapture {
     position: fixed;
     top: 0px;
@@ -70,11 +62,11 @@ body {
 }
 
 .playerContainer {
-    position: absolute;
+    position: fixed;
+    top: 0px;
+    left: 0px;
     width: 400px;
     height: 50px;
-    top: 490px;
-    left: 10px;
     display: flex;
     overflow: hidden;
 }
@@ -101,11 +93,11 @@ body {
 }
 
 #runInformationContainer {
-    position: absolute;
+    position: fixed;
+    top: 0px;
+    left: 0px;
     width: 400px;
     height: 50px;
-    top: 600px;
-    left: 435px;
     display: flex;
     overflow: hidden;
 }
@@ -167,12 +159,12 @@ body {
 }
 
 #timerContainer {
-    position: absolute;
+    position: fixed;
+    top: 0px;
+    left: 0px;
     width: 412px;
     height: 100px;
     background: rgba(255,255,255,0.1);
-    top: 490px;
-    left: 435px;
 }
 
 #timer {
@@ -184,9 +176,8 @@ body {
 }
 
 #marathonLogo {
-    position: absolute;
-    top: 555px;
-    left: 70px;
+    position: fixed;
+    top: 0px;
     width: 316px;
     height: 88px;
     background-image: url('/graphics/nodecg-speedcontrol/images/SpeedcontrolLogo.png');
@@ -195,12 +186,12 @@ body {
 }
 
 .runnerTimerFinishedContainer {
+    position: fixed;
+    top: 0px;
+    left: 0px;
     border-radius: 5px;
     display: flex;
     color: white;
-    position: absolute;
-    top: 20px;
-    left: 250px;
     font-family: FFFForward;
     font-size: 15px;
     height: 42px;
@@ -223,6 +214,52 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 32px;
+}
+
+#editModeButtons {
+    display: flex;
+    position: fixed;
+    top: 2px;
+    left: 1000px;
+    height: 25px;
+    width: 240px;
+}
+
+#positionDebug {
+    position: fixed;
+    background-color: black;
+    top: 0px;
+    left: 0px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-size: 20px;
+    opacity: 0;
+    z-index: 200;
+    width: 1280px;
+    height: 30px;
+}
+
+.aspect4_3  {
+    top: 0px;
+    left: 0px;
+    width: 400px;
+    height: 300px;
+}
+
+.aspect16_9  {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 720px;
+    height: 405px;
+}
+
+.aspect3_2  {
+    top: 0px;
+    left: 0px;
+    width: 240px;
+    height: 160px;
 }
 
 

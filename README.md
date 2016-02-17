@@ -48,6 +48,22 @@ If I make an update to speedcontrol, or whenever you want to be sure you have th
 
 The above step set up a local server on your computer so you can now test it out! either in your browser (Chrome is the only one that gives the CORRECT result), or in xSplit or OBS For OBS you need the CLR Browser Plugin, but the latest xSplit version already has support to add web url:s using the "Add page URL.." option. 
 
+## bundle configuration
+in nodecg/cfg create a nodecg-speedcontrol.json file optionally and fill with the following:
+{
+    "live": true,
+    "enableTwitchApi": true,
+    "user": <twitchchannel>
+}
+
+If "live" is true, editmode divs are stripped from layouts to make it more clean and give better performance
+
+If "enableTwitchApi": true is defined, automatical and manual sync to your configured user can be used
+from the Stream Control dashboard panel, otherwise this panel doesn't do anything!
+
+"user": <twitchchannel> must be defined if "enableTwitchApi" is defined, otherwise bundle doesn't know which
+user to update. e.g: "user": sethcharleon
+
 ## Instructional Videos
 
 To Come!
