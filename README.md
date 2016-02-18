@@ -41,22 +41,23 @@ In the prompt, type
 ‘nodecg install charleon/nodecg-speedcontrol’
 ```
 
-Whenever you want to start NodeCG open the git bash prompt in the nodecg folder and type `nodecg start`. You can minimize the prompt if you'd
-like but it has to be running for NodeCG to work.
-
-If I make an update to speedcontrol, or whenever you want to be sure you have the latest version installed, open the git bash window in `nodecg/bundles/nodecg-speedcontrol` and type in “git pull” to fetch all the newest changes! (yes, it’s that easy)
+Whenever you want to start NodeCG open the git bash prompt in the nodecg folder and type `nodecg start` (or `node index.js`). You can minimize the prompt if you'd like but it has to be running for NodeCG to work. If you get tired of doing this each time you want to start the server, you can make a shortcut to nodejs.exe in the nodejs installation folder and then in the properties of the shortcut, throw in the full path to nodecg/index.js. This will enable you to start the server with just a doubleclick!
 
 The above step set up a local server on your computer so you can now test it out! either in your browser (Chrome is the only one that gives the CORRECT result), or in xSplit or OBS For OBS you need the CLR Browser Plugin, but the latest xSplit version already has support to add web url:s using the "Add page URL.." option. 
 
+If I make an update to speedcontrol, or whenever you want to be sure you have the latest version installed, open the git bash window in `nodecg/bundles/nodecg-speedcontrol` and type in “git pull” to fetch all the newest changes! (yes, it’s that easy)
+
 ## bundle configuration
 in nodecg/cfg create a nodecg-speedcontrol.json file optionally and fill with the following:
+```
 {
     "live": true,
     "enableTwitchApi": true,
     "user": <twitchchannel>
 }
+```
 
-If "live" is true, editmode divs are stripped from layouts to make it more clean and give better performance
+If "live" is true, editmode divs are stripped from layouts to make it more clean and give better performance, and certain buttons on the dashboard will be disabled that should not be pressed when a marathon is going on. 
 
 If "enableTwitchApi": true is defined, automatical and manual sync to your configured user can be used
 from the Stream Control dashboard panel, otherwise this panel doesn't do anything!
@@ -64,10 +65,14 @@ from the Stream Control dashboard panel, otherwise this panel doesn't do anythin
 "user": <twitchchannel> must be defined if "enableTwitchApi" is defined, otherwise bundle doesn't know which
 user to update. e.g: "user": sethcharleon
 
-## Instructional Videos
+## Instructional Videos / Introduction
 
-To Come!
+https://www.youtube.com/watch?v=K7jTpFYiWNA&list=PLUCcl7X553EBMHRQWTmHwkX3z2QszIOD-
 
 ### Credits
 Developed by [Charleon](https://twitter.com/CharleonChan)
+
+Contributions by:
+- btrim
 - With suggestions and feedback from the speedrunning community <3
+
