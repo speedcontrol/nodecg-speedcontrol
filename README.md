@@ -16,8 +16,6 @@ that would before would have meant manual work for people working with the overl
 * All Items on the overlay is fully configurable during run-time, but should really be configured before the marathon, which means that you can change positions of the game-capture cutout of the background, moving timers, moving player nameplates, game information, etc, etc.
 * Oh no! Runner X and Runner Y nameplates are under the wrong gamefeed! No problem, the "Player Layout" element of speedcontrol lets you click and drag the player to the correct gamefeed.
 
-Speedcontrol will open up to open beta planned for late February, meaning that there might be bugs still lingering. It did run without crashing for the whole Pre-ESA marathon, with many minor bugs found that has since been taken care of. Please note that the current version of speedcontrol comes with the full setup of the PRE-ESA marathon, and that you should tailor the layouts for your own use. How to do this will be covered in instructional videos in the future.
-
 ## Installation (including installation of NodeCG)
 
 There are two prerequisites to get SpeedControl and NodeCG working.
@@ -68,6 +66,9 @@ user to update. e.g: "user": sethcharleon
 ## Instructional Videos / Introduction
 
 https://www.youtube.com/watch?v=K7jTpFYiWNA&list=PLUCcl7X553EBMHRQWTmHwkX3z2QszIOD-
+
+## Used at marathons
+[Pre-ESA Marathon](https://www.youtube.com/watch?v=uQbREedGbhU&list=PLkd2f6JAHslJPSQ5a9zYL09Ie-LugT8eB)
 
 ### Credits
 Developed by [Charleon](https://twitter.com/CharleonChan)
