@@ -127,7 +127,7 @@ $(function () {
         var twitchUrl = "";
         if (runnerDataArray[index].twitch != null &&
             runnerDataArray[index].twitch.uri != null) {
-            twitchUrl = runnerDataArray[index].twitch.uri.replace("http://www.twitch.tv/","")
+            twitchUrl = runnerDataArray[index].twitch.uri.replace("http://www.twitch.tv/","");
         }
         else {
             twitchUrl = "---";
@@ -337,8 +337,8 @@ $(function () {
             var height = $(this).height();
 
             cssTemplate = cssTemplate.replace('itemid',itemID);
-            cssTemplate = cssTemplate.replace('topValue',topOffset);
-            cssTemplate = cssTemplate.replace('leftValue',leftOffset);
+            cssTemplate = cssTemplate.replace('topValue',topOffset/screenHeight * 100 + "%");
+            cssTemplate = cssTemplate.replace('leftValue',leftOffset/screenWidth * 100 + "%");
             cssTemplate = cssTemplate.replace('widthValue',width/screenWidth * 100 + "%");
             cssTemplate = cssTemplate.replace('heightValue',height/screenHeight * 100 + "%");
             completeCss += cssTemplate;
