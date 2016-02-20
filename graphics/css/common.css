@@ -240,26 +240,4 @@ body {
     height: 30px;
 }
 
-.aspect4_3  {
-    top: 0px;
-    left: 0px;
-    width: 400px;
-    height: 300px;
-}
-
-.aspect16_9  {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 720px;
-    height: 405px;
-}
-
-.aspect3_2  {
-    top: 0px;
-    left: 0px;
-    width: 240px;
-    height: 160px;
-}
-
 

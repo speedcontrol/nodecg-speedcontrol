@@ -86,7 +86,8 @@ body {
     white-space: nowrap;
     background-color: rgba(0,0,0,0.5);
     opacity: 0;
-    font-size: 25px;
+    font-size: 15px;
+    text-align: center;
 }
 
 #comingUpGame {

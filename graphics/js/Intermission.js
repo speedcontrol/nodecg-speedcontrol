@@ -31,13 +31,6 @@ $(function () {
     nodecg.listenFor("removeMarqueeInformation", removeMarquee);
 
     // Replicants ###
-    var scenePositioningConfigurationReplicant = nodecg.Replicant("scenePositioningConfiguration");
-    scenePositioningConfigurationReplicant.on("change", function (oldValue, newValue) {
-        if(typeof newValue !== 'undefined' && newValue != "") {
-            updateItemPositions(newValue);
-        }
-    });
-
     var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration');
     sceneLayoutConfigurationReplicant.on('change', function(oldVal, newVal) {
         if(typeof newValue !== 'undefined' && newValue != "") {
@@ -89,17 +82,6 @@ $(function () {
     }
 
     // Replicant functions ###
-
-    function updateItemPositions(positioningArray) {
-        itemPositioningConfigurationContainer = positioningArray;
-        $.each(positioningArray,function(index, positioningItem) {
-            if(positioningItem.scene == sceneID) {
-                $('#' + positioningItem.id).css('top', positioningItem.y);
-                $('#' + positioningItem.id).css('left', positioningItem.x);
-            }
-        });
-    }
-
     function changeComingUpRunInformation(runData) {
         var game = "END";
         var category = "";
@@ -146,15 +128,6 @@ $(function () {
         $('#positionDebug').html("X: "+ui.position.left + " Y: " + ui.position.top);
     }
 
-    function createPositioningConfig(xPos, yPos, ItemId, scene) {
-        var positionConfig = {};
-        positionConfig.x = xPos;
-        positionConfig.y = yPos;
-        positionConfig.id = ItemId;
-        positionConfig.scene = scene;
-        return positionConfig;
-    }
-
     function saveConfiguration() {
         scenePositioningConfigurationReplicant.value = itemPositioningConfigurationContainer;
     }
@@ -193,21 +166,6 @@ $(function () {
         }
     }
 
-    function addToPositionConfig(configData) {
-        var entryFound = $.grep(itemPositioningConfigurationContainer, function(e){ return (e.id == configData.id && e.scene == configData.scene); });
-        if (entryFound.length == 0) {
-            itemPositioningConfigurationContainer.push(configData);
-        } else if (entryFound.length == 1) {
-            entryFound[0].x = configData.x;
-            entryFound[0].y = configData.y;
-            console.log(entryFound);
-
-        } else {
-            console.log("Well we found multiple entries,should NEVER happen!");
-        }
-
-    }
-
     // Transition to change html from current to nextHtml
     function setGameField($selector, nextHtml) {
         var tm = new TimelineMax({paused: true});
@@ -233,10 +191,7 @@ $(function () {
     }
 
     function displayMarquee(text) {
-        $('#informationMarquee').text(text);
-        $('#informationMarquee').marquee({
-            duration: 15000
-        });
+        $('#informationMarquee').html(text);
         var tm = new TimelineMax({paused: true});
         tm.to($('#informationMarquee'), 1.0, {opacity: '1', height: "50px",  ease: Quad.easeOut },'0');
         tm.play();

@@ -29,7 +29,6 @@ $(function () {
     nodecg.listenFor("resetTime", resetAllPlayerTimers);
     nodecg.listenFor('timerReset', resetTimer);
     nodecg.listenFor('timerSplit', splitTimer);
-    nodecg.listenFor('revertToDefault', revertChanges);
 
     // Replicants ###
     var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration');
@@ -145,10 +144,6 @@ $(function () {
         $('#positionDebugText').html(debugInformationText);
     }
 
-    function revertChanges() {
-        //TODO: do thiiis
-    }
-
     function convertToTrueAspectRatio(aspectRatioString) {
         var numbers = aspectRatioString.split(':');
         var realNumber = Number(numbers[0])/Number(numbers[1]);
@@ -240,19 +235,29 @@ $(function () {
         }
     }
 
+    function removeWillChange($selector) {
+        $selector.css('will-change','');
+    }
+
+    function applyWillChange($selector) {
+        $selector.css('will-change', 'transform, opacity');
+    }
+
     // Transition to change html from current to nextHtml
     function setGameFieldAlternate($selector, nextHtml) {
+       // applyWillChange($selector);
         var tm = new TimelineMax({paused: true});
-        tm.to($selector, 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0');
-        tm.to($selector, 0.5, {opacity: '1', transform: "scale(1)", onStart:updateSelectorText, onStartParams:[$selector, nextHtml] ,ease: Quad.easeOut },'0.5');
+        tm.to($selector, 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0.2');
+        tm.to($selector, 0.5, {opacity: '1', transform: "scale(1)", onStart:updateSelectorText, onStartParams:[$selector, nextHtml], onComplete:removeWillChange, onCompleteParams:[$selector], ease: Quad.easeOut },'0.7');
         tm.play();
     }
 
     // Transition to change html from current to nextHtml
     function setGameField($selector, nextHtml) {
+        applyWillChange($selector);
         var tm = new TimelineMax({paused: true});
-        tm.to($selector, 0.5, {opacity: '0', transform: "translateX(-50px)",  ease: Quad.easeOut },'0');
-        tm.to($selector, 0.5, {opacity: '1', transform: "translateX(0px)", onStart:updateSelectorText, onStartParams:[$selector, nextHtml] ,ease: Quad.easeOut },'0.5');
+        tm.to($selector, 0.5, {opacity: '0', transform: "translateX(-50px)",  ease: Quad.easeOut },'0.2');
+        tm.to($selector, 0.5, {opacity: '1', transform: "translateX(0px)", onStart:updateSelectorText, onComplete:removeWillChange, onCompleteParams:[$selector],  onStartParams:[$selector, nextHtml] ,ease: Quad.easeOut },'0.7');
         tm.play();
     }
 
@@ -341,6 +346,11 @@ $(function () {
         $("head").append(cssLink);
     };
 
+    function addCssRule(rule, css) {
+        css = JSON.stringify(css).replace(/"/g, "").replace(/,/g, ";");
+        $("<style>").prop("type", "text/css").html(rule + css).appendTo("head");
+    }
+
     //
     // Layout initialization (runs once when the overlay loads)
     //
@@ -374,18 +384,13 @@ $(function () {
         if($(this).css("width") != '0px' || $(this).css("height") != '0px') {
             return;
         }
-
-        switch(aspectRatio) {
-            case '4:3':
-                $(this).addClass('aspect4_3');
-                break;
-            case '16:9':
-                $(this).addClass('aspect16_9');
-                break;
-            case '3:2':
-                $(this).addClass('aspect3_2');
-                break;
-        }
+        var aspectRatioMultiplier = convertToTrueAspectRatio(aspectRatio);
+        var height = 200;
+        var width = height * aspectRatioMultiplier;
+        addCssRule("#"+$(this).attr('id'), {
+            width: width+"px",
+            height: height+"px"
+        });
     });
 
     loadCSS("/graphics/nodecg-speedcontrol/css/editcss/"+sceneID+".css");
