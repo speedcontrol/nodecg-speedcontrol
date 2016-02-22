@@ -114,7 +114,10 @@ $(function () {
                 }
             });
 
-            var trueAspectRatio = getAspectRatio($('.gameCapture').attr('aspect-ratio'));
+            var trueAspectRatio = 1;
+            if($('.gameCapture').length >= 1) {
+                getAspectRatio($('.gameCapture').attr('aspect-ratio'));
+            }
 
             $('.gameCapture').first().resizable({
                 start: function (event, ui) {

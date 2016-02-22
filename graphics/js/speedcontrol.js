@@ -15,7 +15,7 @@ $(function () {
     var currentTime = '';
     var displayTwitchforMilliseconds = 15000;
     var intervalToNextTwitchDisplay = 120000;
-    var timeout = null;
+    var timeoutTwitch = null;
 
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
@@ -52,14 +52,14 @@ $(function () {
         }
 
         $runnerInfoElements.each( function( index, element ) {
-            setGameFieldAlternate($(this),getRunnerInformationName(newValue,index));
+            animation_setGameFieldAlternate($(this),getRunnerInformationName(newValue,index));
         });
 
-        if(timeout != null) {
-            clearTimeout(timeout);
+        if(timeoutTwitch != null) {
+            clearTimeout(timeoutTwitch);
         }
 
-        timeout = setTimeout(displayTwitchInstead, 2000);
+        timeoutTwitch = setTimeout(displayTwitchInstead, 2000);
     });
 
     // Replicant functions ###
@@ -71,10 +71,10 @@ $(function () {
         var runInfoGameSystem = runData.system;
         var runInfoGameCategory = runData.category;
 
-        setGameField($runInformationSystem,runInfoGameSystem);
-        setGameField($runInformationCategory,runInfoGameCategory);
-        setGameField($runInformationEstimate,runInfoGameEstimate);
-        setGameField($runInformationName,runInfoGameName);
+        animation_setGameField($runInformationSystem,runInfoGameSystem);
+        animation_setGameField($runInformationCategory,runInfoGameCategory);
+        animation_setGameField($runInformationEstimate,runInfoGameEstimate);
+        animation_setGameField($runInformationName,runInfoGameName);
     }
 
     // Sets the current time of the timer.
@@ -126,39 +126,7 @@ $(function () {
 
     function splitTimer(index) {
         $runnerTimerFinishedElements.eq(index).html(currentTime);
-        showTimerFinished(index);
-    }
-
-    // General functions ###
-    function removeWillChange($selector) {
-        $selector.css('will-change','');
-    }
-
-    function applyWillChange($selector) {
-        $selector.css('will-change', 'transform, opacity');
-    }
-
-    // Transition to change html from current to nextHtml
-    function setGameFieldAlternate($selector, nextHtml) {
-       // applyWillChange($selector);
-        var tm = new TimelineMax({paused: true});
-        tm.to($selector, 0.5, {opacity: '0', transform: "scale(0)",  ease: Quad.easeOut },'0.2');
-        tm.to($selector, 0.5, {opacity: '1', transform: "scale(1)", onStart:updateSelectorText, onStartParams:[$selector, nextHtml], onComplete:removeWillChange, onCompleteParams:[$selector], ease: Quad.easeOut },'0.7');
-        tm.play();
-    }
-
-    // Transition to change html from current to nextHtml
-    function setGameField($selector, nextHtml) {
-        applyWillChange($selector);
-        var tm = new TimelineMax({paused: true});
-        tm.to($selector, 0.5, {opacity: '0', transform: "translateX(-50px)",  ease: Quad.easeOut },'0.2');
-        tm.to($selector, 0.5, {opacity: '1', transform: "translateX(0px)", onStart:updateSelectorText, onComplete:removeWillChange, onCompleteParams:[$selector],  onStartParams:[$selector, nextHtml] ,ease: Quad.easeOut },'0.7');
-        tm.play();
-    }
-
-    // Function just sets the text of the DOM element
-    function updateSelectorText($textDivToUpdate, newHtml) {
-        $textDivToUpdate.html(newHtml);
+        animation_fadeInOpacity($runnerTimerFinishedContainers.eq(index));
     }
 
     function displayTwitchInstead() {
@@ -168,20 +136,19 @@ $(function () {
                 indexesToNotUpdate.push(index);
             }
             else {
-                setGameFieldAlternate($(this), getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value, index));
+                animation_setGameFieldAlternate($(this), getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value, index));
             }
         });
 
         var tm = new TimelineMax({paused: true});
         $twitchLogos.each( function(index, element) {
             if($.inArray(index, indexesToNotUpdate) == -1) {
-                $(this).show();
-                tm.to($(this), 0.5, {opacity: '1', transform: "scale(0.9)", ease: Quad.easeOut}, '0');
+                animation_showZoomIn($(this));
             }
         });
 
         tm.play();
-        timeout = setTimeout(hideTwitch,displayTwitchforMilliseconds);
+        timeoutTwitch = setTimeout(hideTwitch,displayTwitchforMilliseconds);
     }
 
     function hideTwitch() {
@@ -191,28 +158,21 @@ $(function () {
                 indexesToNotUpdate.push(index);
             }
             else {
-                setGameFieldAlternate($(this), getRunnerInformationName(runDataActiveRunRunnerListReplicant.value, index));
+                animation_setGameFieldAlternate($(this), getRunnerInformationName(runDataActiveRunRunnerListReplicant.value, index));
             }
         });
-        var tm = new TimelineMax({paused: true});
+
         $twitchLogos.each( function(index, element) {
             if($.inArray(index, indexesToNotUpdate) == -1) {
-                $(this).show();
-                tm.to($(this), 0.5, {opacity: '0', transform: "scale(0)", ease: Quad.easeOut}, '0');
+                animation_hideZoomOut($(this));
             }
         });
-        tm.play();
-        timeout = setTimeout(displayTwitchInstead,intervalToNextTwitchDisplay);
+
+        timeoutTwitch = setTimeout(displayTwitchInstead,intervalToNextTwitchDisplay);
     }
 
     function hideTimerFinished(index) {
         $runnerTimerFinishedContainers.eq(index).css("opacity","0");
-    }
-
-    function showTimerFinished(index) {
-        var tm = new TimelineMax({paused: true});
-        tm.to($runnerTimerFinishedContainers.eq(index), 0.5, {opacity: '1',  ease: Quad.easeOut },'0');
-        tm.play();
     }
 
     function loadCSS (href) {
