@@ -19,6 +19,17 @@ $(function () {
     var intervalToNextTwitchDisplay = 120000;
     var timeout = null;
 
+    var screenHeight = $(window).height();
+    var screenWidth = $(window).width();
+    console.log("height = " + screenHeight);
+    var font = parseFloat($('body').css('font-size'));
+    var scaleRatio = screenHeight / 720;
+    console.log(scaleRatio*font + 'px');
+    $('body').css('font-size',scaleRatio*font + 'px');
+
+
+
+
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
     var sceneID = $('html').attr('data-sceneid');
@@ -115,7 +126,7 @@ $(function () {
         var twitchUrl = "";
         if (runnerDataArray[index].twitch != null &&
             runnerDataArray[index].twitch.uri != null) {
-            twitchUrl = runnerDataArray[index].twitch.uri.replace("http://www.twitch.tv/","")
+            twitchUrl = runnerDataArray[index].twitch.uri.replace("http://www.twitch.tv/","");
         }
         else {
             twitchUrl = "---";
@@ -331,10 +342,10 @@ $(function () {
             var height = $(this).height();
 
             cssTemplate = cssTemplate.replace('itemid',itemID);
-            cssTemplate = cssTemplate.replace('topValue',topOffset);
-            cssTemplate = cssTemplate.replace('leftValue',leftOffset);
-            cssTemplate = cssTemplate.replace('widthValue',width);
-            cssTemplate = cssTemplate.replace('heightValue',height);
+            cssTemplate = cssTemplate.replace('topValue',topOffset/screenHeight * 100 + "%");
+            cssTemplate = cssTemplate.replace('leftValue',leftOffset/screenWidth * 100 + "%");
+            cssTemplate = cssTemplate.replace('widthValue',width/screenWidth * 100 + "%");
+            cssTemplate = cssTemplate.replace('heightValue',height/screenHeight * 100 + "%");
             completeCss += cssTemplate;
         });
         console.log(completeCss);

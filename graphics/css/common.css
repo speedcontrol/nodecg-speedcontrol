@@ -10,6 +10,10 @@ body {
   overflow:hidden;
   margin: 0px;
   padding: 0px;
+
+/* The font size you want at 720p.  Other sizes are calculated from here */
+
+  font-size: 15px;
 }
 
 #window-container {
@@ -17,8 +21,8 @@ body {
     top: 0px;
     left: 0px;
     background-image: url('/graphics/nodecg-speedcontrol/images/Background.png');
-    width: 1280px;
-    height: 720px;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
     color: white;
     margin: 0px;
@@ -65,8 +69,8 @@ body {
     position: fixed;
     top: 0px;
     left: 0px;
-    width: 400px;
-    height: 50px;
+    width: 33%;
+    height: 7%;
     display: flex;
     overflow: hidden;
 }
@@ -75,8 +79,9 @@ body {
     background-image: url('/graphics/nodecg-speedcontrol/images/playerlogo.png');
     background-repeat: no-repeat;
     background-position: center;
-    width: 50px;
-    height: 50px;
+    background-size: 90%;
+    width: 12%;
+    height: 100%;
     vertical-align: middle;
 }
 
@@ -84,8 +89,8 @@ body {
     font-family: FFFForward;
     color: #8d7996;
     background: rgba(255,255,255,0.1);
-    line-height: 50px;
-    height: 50px;
+    line-height: 3.3em;
+    height: 100%;
     width: 100%;
     vertical-align: middle;
     padding-left: 15px;
@@ -96,8 +101,8 @@ body {
     position: fixed;
     top: 0px;
     left: 0px;
-    width: 400px;
-    height: 50px;
+    width: 31%;
+    height: 7%;
     display: flex;
     overflow: hidden;
 }
@@ -105,8 +110,8 @@ body {
 #runInformationFields {
     display: flex;
     flex-flow: row wrap;
-    height: 50px;
-    width: 400px;
+    height: 100%;
+    width: 100%;
     background: rgba(255,255,255,0.1);
     padding-left: 15px;
     flex: 1;
@@ -115,34 +120,34 @@ body {
 
 #runInformationGameEstimate {
     position: relative;
-    top: 5px;
+    top: 10%;
     font-family: FFFForward;
-    font-size: 15px;
+    font-size: 1em;
     text-align: center;
     color: rgba(255,255,255,0.25);
 }
 
 #runInformationGameName {
     font-family: FFFForward;
-    font-size: 12px;
+    font-size: .7em;
     text-align: left;
     color: #8d7996;
-    width: 350px;
+    width: 87.5%;
     white-space: nowrap;
 }
 
 #runInformationGameCategory {
     font-family: FFFForward;
-    font-size: 12px;
+    font-size: .7em;
     color: #8d7996;
-    width: 150px;
+    width: 38%;
     text-align: left;
     white-space: nowrap;
 }
 
 #runInformationGameSystem {
     font-family: FFFForward;
-    font-size: 12px;
+    font-size: .7em;
     color: #8d7996;
     width: 175px;
     text-align: right;
@@ -152,25 +157,31 @@ body {
 #runInformationLogo {
     background-image: url('/graphics/nodecg-speedcontrol/images/runInformationIcon.png');
     background-repeat: no-repeat;
+    background-size: contain;
     background-position: center;
-    width: 50px;
-    height: 50px;
+    width: 12%;
+    height: 100%;
     vertical-align: middle;
+}
+
+.twitchLogo {
+  width: 100%;
+  height: 100%;
 }
 
 #timerContainer {
     position: fixed;
     top: 0px;
     left: 0px;
-    width: 412px;
-    height: 100px;
+    width: 32%;
+    height: 14%;
     background: rgba(255,255,255,0.1);
 }
 
 #timer {
     position: relative;
     font-family: FFFForward;
-    font-size: 35px;
+    font-size: 2.3em;
     text-align: center;
     top: 5px;
 }
@@ -193,27 +204,28 @@ body {
     display: flex;
     color: white;
     font-family: FFFForward;
-    font-size: 15px;
-    height: 42px;
+    font-size: 1em;
+    height: 6%;
     background-color: rgba(0,0,0,0.3);
     overflow: hidden;
 }
 
 .runnerTimerFinished {
-    height: 32px;
-    line-height: 42px;
+    height: 76%;
+    line-height: 2.8em;
     padding-right: 5px;
+    vertical-align: middle;
 }
 
 .finishedLogo {
     position: relative;
     width: 32px;
-    height: 32px;
+    height: 76%;
     padding: 5px;
     background-image: url('/graphics/nodecg-speedcontrol/images/finishFlag.gif');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 32px;
+    background-size: 76%;
 }
 
 #editModeButtons {
@@ -233,11 +245,9 @@ body {
     margin: 0px;
     padding: 0px;
     color: white;
-    font-size: 20px;
+    font-size: 1.3em;
     opacity: 0;
     z-index: 200;
-    width: 1280px;
+    width: 100%;
     height: 30px;
 }
-
-
