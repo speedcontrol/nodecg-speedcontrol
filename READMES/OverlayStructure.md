@@ -81,7 +81,7 @@ panels are split up like this:
 </div>
 ```
 And you'll be able to locate `.playerContainer` in the `common.css` file. So in every overlay you want a player panel
-in you should paste above code. If you want to playerpanels just paste the code twice between <body> and </body>
+in you should paste above code. If you want two playerpanels just paste the code twice between "<div id="window-container">" and the corresponding "</div>"
 
 ### speedcontrol.js
 
