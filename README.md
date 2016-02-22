@@ -1,5 +1,7 @@
 # Speedcontrol
 
+**!!ATTENTION: This branch is now obsoleted, you should use the v0.7 instead!!!**
+
 ## Introduction
 
 Speedcontrol is a nodecg bundle developed for the speedrunning scene which helps the people organizing the stream for marathons greatly by automating tasks
