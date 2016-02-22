@@ -60,7 +60,7 @@ proportions will be kept. Only works if the element has class resizable as well.
 
 ### .gameCapture
 an element tagged with `class="gameCapture"` will serve as the gamefeed on the overlay. It's background color
-will be fully green which you can color/cromakey away. a gameCapture is also positionable/resizable and have
+will be fully green which you can color/cromakey away. a gameCapture is also resizable and have
 the keepproportion attribute inherently, so you will always keep the aspect ratio when resizing gameCaptures.
 If there are multiple gameCapture in an overlay, e.g:
 ```
