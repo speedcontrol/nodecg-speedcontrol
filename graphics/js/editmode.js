@@ -116,7 +116,7 @@ $(function () {
 
             var trueAspectRatio = 1;
             if($('.gameCapture').length >= 1) {
-                getAspectRatio($('.gameCapture').attr('aspect-ratio'));
+                trueAspectRatio = getAspectRatio($('.gameCapture').attr('aspect-ratio'));
             }
 
             $('.gameCapture').first().resizable({
