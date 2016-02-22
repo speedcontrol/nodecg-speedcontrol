@@ -26,7 +26,7 @@ to actually save or revert the overlay, and hence you can't benefit from it.
 
 ## ID is the key!
 If you want your element to be able to be saved and reused later, you NEED to give it a uniqe ID!
-If you look at the example files all or almost all the top level <div>s have an Id, which is how
+If you look at the example files all or almost all the top level `<div>`s have an Id, which is how
 edit-mode refers to them when generating the edit-mode data. For instance the following item will
 be able to be saved
 ```
