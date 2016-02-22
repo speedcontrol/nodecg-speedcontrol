@@ -32,6 +32,7 @@ and we added a "Single_4_3.html" overlay to graphics/, it will then look like th
     }
 ]
 ```
+Please note that you will need to restart the server everytime you add a new overlay
 
 ## What your overlay HAS to contain
 
