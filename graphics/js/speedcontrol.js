@@ -231,6 +231,33 @@ $(function () {
         $("<style>").prop("type", "text/css").html(rule + css).appendTo("head");
     }
 
+    function getAspectRatio(input) {
+        switch(input) {
+            case 'GB':
+            case 'GBC':
+                return convertToTrueAspectRatio("10:9");
+                break;
+            case 'HD':
+                return convertToTrueAspectRatio("16:9");
+                break;
+            case '3DSBottom':
+            case 'SD':
+            case 'DS':
+                return convertToTrueAspectRatio("4:3");
+                break;
+            case '3DSTop':
+                return convertToTrueAspectRatio("5:3");
+                break;
+            case 'GBA':
+                return convertToTrueAspectRatio("3:2");
+                break;
+            default:
+                var numbers = input.split(':');
+                var realNumber = Number(numbers[0])/Number(numbers[1]);
+                return realNumber;
+        }
+    }
+
     //
     // Layout initialization (runs once when the overlay loads)
     //
@@ -244,8 +271,7 @@ $(function () {
     });
 
     $gameCaptures.each(function () {
-        var aspectRatio = $(this).attr('aspect-ratio');
-        var aspectRatioMultiplier = convertToTrueAspectRatio(aspectRatio);
+        var aspectRatioMultiplier = getAspectRatio($(this).attr('aspect-ratio'));
         var height = 200;
         var width = height * aspectRatioMultiplier;
         addCssRule("#"+$(this).attr('id'), {

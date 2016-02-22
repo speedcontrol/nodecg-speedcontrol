@@ -53,9 +53,35 @@ $(function () {
         debugInformationText += " Item ID: " + ui.helper[0].id;
         debugInformationText += " X: " + $('#' + ui.helper[0].id).offset().left;
         debugInformationText += " Y: " + $('#' + ui.helper[0].id).offset().top;
-        debugInformationText += " Width: " + $('#'+ui.helper[0].id).width();
-        debugInformationText += " Height: " + $('#'+ui.helper[0].id).height();
+        debugInformationText += " Size: " + $('#'+ui.helper[0].id).width() + "x" + $('#'+ui.helper[0].id).height();
         $('#positionDebugText').html(debugInformationText);
+    }
+
+    function getAspectRatio(input) {
+        switch(input) {
+            case 'GB':
+            case 'GBC':
+                return convertToTrueAspectRatio("10:9");
+                break;
+            case 'HD':
+                return convertToTrueAspectRatio("16:9");
+                break;
+            case '3DSBottom':
+            case 'SD':
+            case 'DS':
+                return convertToTrueAspectRatio("4:3");
+                break;
+            case '3DSTop':
+                return convertToTrueAspectRatio("5:3");
+                break;
+            case 'GBA':
+                return convertToTrueAspectRatio("3:2");
+                break;
+            default:
+                var numbers = input.split(':');
+                var realNumber = Number(numbers[0])/Number(numbers[1]);
+                return realNumber;
+        }
     }
 
     function convertToTrueAspectRatio(aspectRatioString) {
@@ -88,8 +114,7 @@ $(function () {
                 }
             });
 
-            var aspectRatio = $('.gameCapture').attr('aspect-ratio');
-            var trueAspectRatio = convertToTrueAspectRatio(aspectRatio);
+            var trueAspectRatio = getAspectRatio($('.gameCapture').attr('aspect-ratio'));
 
             $('.gameCapture').first().resizable({
                 start: function (event, ui) {
@@ -116,7 +141,6 @@ $(function () {
 
                 if($(this).hasClass('keepproportion')) {
                     var aspectratio = Number($(this).width())/Number($(this).height());
-                    console.log(aspectratio);
                     options.aspectRatio = aspectratio;
                 }
 
@@ -129,6 +153,7 @@ $(function () {
                 $('.positionable').removeClass("editableObject");
                 $('.positionable').draggable("destroy");
                 $('.gameCapture').first().resizable("destroy");
+                $('.gameCapture').text("");
                 $('.resizable').resizable("destroy");
                 isEditModeEnabled = false;
                 $('.dummyTextable').html("");
