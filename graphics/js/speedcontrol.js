@@ -4,51 +4,27 @@ $(function () {
     var $timerInfo = $('#timer');
     var $runnerInfoElements = $('div.runnerInfo');
     var $runnerTimerFinishedElements = $('.runnerTimerFinished')
-    var $runnerTimerFinishedContainers = $('.runnerTimerFinishedContainer')
+    var $runnerTimerFinishedContainers = $('.runnerTimerFinishedContainer');
     var $runInformationSystem = $('#runInformationGameSystem');
     var $runInformationCategory = $('#runInformationGameCategory');
     var $runInformationEstimate = $('#runInformationGameEstimate');
     var $runInformationName = $('#runInformationGameName');
     var $twitchLogos = $('.twitchLogo');
     var $gameCaptures = $('.gameCapture');
-    var $generateCSSContentButton = $('#generateCSSContentButton');
-    var $resetCSSContentButton = $('#resetCSSContentButton');
 
     var currentTime = '';
     var displayTwitchforMilliseconds = 15000;
     var intervalToNextTwitchDisplay = 120000;
     var timeout = null;
 
-    var screenHeight = $(window).height();
-    var screenWidth = $(window).width();
-    console.log("height = " + screenHeight);
-    var font = parseFloat($('body').css('font-size'));
-    var scaleRatio = screenHeight / 720;
-    console.log(scaleRatio*font + 'px');
-    $('body').css('font-size',scaleRatio*font + 'px');
-
-
-
-
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
     var sceneID = $('html').attr('data-sceneid');
-
-    var isEditModeEnabled = false;
 
     // NodeCG Message subscription ###
     nodecg.listenFor("resetTime", resetAllPlayerTimers);
     nodecg.listenFor('timerReset', resetTimer);
     nodecg.listenFor('timerSplit', splitTimer);
-
-    // Replicants ###
-    var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration');
-    sceneLayoutConfigurationReplicant.on('change', function(oldValue, newValue) {
-        if(typeof newValue !== 'undefined' && newValue != '') {
-            applyBackgroundTransparence(newValue.backgroundTransparency);
-            handleEditMode(newValue.editMode)
-        }
-    });
 
     var stopWatchesReplicant = nodecg.Replicant('stopwatches');
     stopWatchesReplicant.on('change', function(oldVal, newVal) {
@@ -134,88 +110,6 @@ $(function () {
         return twitchUrl;
     }
 
-    // Edit Mode functions ###
-
-    function addEditModeDebugInformation() {
-        $('#positionDebug').css('opacity','0.5');
-    }
-
-    function removeEditModeDebugInformation(){
-        $('#positionDebug').css('opacity','0');
-    }
-
-    // When we reposition an element we are dragging we need to update coordinates as well as the current DOM ID
-    function updateDebugInformation( event, ui ) {
-        var debugInformationText = '';
-        debugInformationText += " Item ID: " + ui.helper[0].id;
-        debugInformationText += " X: " + $('#' + ui.helper[0].id).offset().left;
-        debugInformationText += " Y: " + $('#' + ui.helper[0].id).offset().top;
-        debugInformationText += " Width: " + $('#'+ui.helper[0].id).width();
-        debugInformationText += " Height: " + $('#'+ui.helper[0].id).height();
-        $('#positionDebugText').html(debugInformationText);
-    }
-
-    function convertToTrueAspectRatio(aspectRatioString) {
-        var numbers = aspectRatioString.split(':');
-        var realNumber = Number(numbers[0])/Number(numbers[1]);
-        return realNumber;
-    }
-
-    function handleEditMode(isEnabled) {
-        if(isEnabled) {
-            addEditModeDebugInformation();
-            $('.dummyTextable').html("######");
-
-            $runnerTimerFinishedElements.each( function( index, e ){
-                showTimerFinished(index);
-            });
-
-            isEditModeEnabled = true;
-            $('.positionable').addClass("editableObject");
-            $('.positionable').draggable({
-                containment: "parent",
-                grid: [ 5, 5 ],
-                opacity: 0.35,
-                drag: updateDebugInformation,
-                start: function( event, ui ) {
-                    $('#'+ui.helper[0].id).css('z-index','100');
-                },
-                stop: function( event, ui ) {
-                    $('#'+ui.helper[0].id).css('z-index','0');
-                }
-            });
-
-            var aspectRatio = $('.gameCapture').attr('aspect-ratio');
-            var trueAspectRatio = convertToTrueAspectRatio(aspectRatio);
-
-            $('.gameCapture').first().resizable({
-                start: function (event, ui) {
-                    $('#'+ui.helper[0].id).css('z-index','100');
-                },
-                aspectRatio: trueAspectRatio,
-                resize: updateDebugInformation,
-                alsoResize: ".gameCapture",
-                stop: function( event, ui ) {
-                    $('#'+ui.helper[0].id).css('z-index','0');
-                }
-            });
-        }
-        else {
-            if(isEditModeEnabled) {
-                $('.positionable').removeClass("editableObject");
-                $('.positionable').draggable("destroy");
-                $('.gameCapture').first().resizable("destroy");
-                isEditModeEnabled = false;
-                $('.dummyTextable').html("");
-                $runnerTimerFinishedElements.each( function( index, e ){
-                    hideTimerFinished(index);
-                });
-                removeEditModeDebugInformation();
-            }
-        }
-    }
-
-    // Edit Mode functions END ###
     // Timer functions ###
 
     function resetTimer(index) {
@@ -236,16 +130,6 @@ $(function () {
     }
 
     // General functions ###
-
-    function applyBackgroundTransparence(applyTransparency) {
-        if (applyTransparency) {
-            $('#window-container').css('opacity',0.5);
-        }
-        else{
-            $('#window-container').css('opacity',1.0);
-        }
-    }
-
     function removeWillChange($selector) {
         $selector.css('will-change','');
     }
@@ -331,31 +215,16 @@ $(function () {
         tm.play();
     }
 
-    function generateCssForLayout() {
-        var completeCss = '';
-        $('.positionable').each(function() {
-            var cssTemplate = "#itemid {\n    position: fixed;\n    top: topValue;\n    left: leftValue;\n    width: widthValue;\n    height: heightValue;\n}\n\n";
-            var itemID = $(this).attr('id');
-            var topOffset = $(this).offset().top;
-            var leftOffset = $(this).offset().left;
-            var width = $(this).width();
-            var height = $(this).height();
-
-            cssTemplate = cssTemplate.replace('itemid',itemID);
-            cssTemplate = cssTemplate.replace('topValue',topOffset/screenHeight * 100 + "%");
-            cssTemplate = cssTemplate.replace('leftValue',leftOffset/screenWidth * 100 + "%");
-            cssTemplate = cssTemplate.replace('widthValue',width/screenWidth * 100 + "%");
-            cssTemplate = cssTemplate.replace('heightValue',height/screenHeight * 100 + "%");
-            completeCss += cssTemplate;
-        });
-        console.log(completeCss);
-        return completeCss;
-    }
-
     function loadCSS (href) {
         var cssLink = $("<link rel='stylesheet' type='text/css' href='"+href+"'>");
         $("head").append(cssLink);
     };
+
+    function convertToTrueAspectRatio(aspectRatioString) {
+        var numbers = aspectRatioString.split(':');
+        var realNumber = Number(numbers[0])/Number(numbers[1]);
+        return realNumber;
+    }
 
     function addCssRule(rule, css) {
         css = JSON.stringify(css).replace(/"/g, "").replace(/,/g, ";");
@@ -374,27 +243,8 @@ $(function () {
         $(this).css('transform', 'scale(0)');
     });
 
-    $generateCSSContentButton.click(function(){
-        var cssGenerationObject = {};
-        cssGenerationObject.sceneID = sceneID;
-        cssGenerationObject.generatedCss = generateCssForLayout();
-        nodecg.sendMessage("createCustomCss",cssGenerationObject);
-    });
-
-    $resetCSSContentButton.click(function(){
-        var cssResetObject = {};
-        cssResetObject.sceneID = sceneID;
-        nodecg.sendMessage("deleteCustomCss",cssResetObject);
-        location.reload();
-    });
-
     $gameCaptures.each(function () {
         var aspectRatio = $(this).attr('aspect-ratio');
-
-        // Don't initialize width and height if it already exists in custom css
-        if($(this).css("width") != '0px' || $(this).css("height") != '0px') {
-            return;
-        }
         var aspectRatioMultiplier = convertToTrueAspectRatio(aspectRatio);
         var height = 200;
         var width = height * aspectRatioMultiplier;
@@ -405,10 +255,4 @@ $(function () {
     });
 
     loadCSS("/graphics/nodecg-speedcontrol/css/editcss/"+sceneID+".css");
-
-    // If we are live, we strip the overlay of the debug element
-    if (nodecg.bundleConfig && (typeof nodecg.bundleConfig.live !== 'undefined' && nodecg.bundleConfig.live === true)) {
-        $('#positionDebug').remove();
-    }
-
-    });
+});
