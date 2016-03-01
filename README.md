@@ -33,6 +33,8 @@ To install NodeCG: type, in this order:
 ‘bower install’
 ```
 
+for the tech-savy, know that ’nodecg setup’ runs ’git clone’ under the hood, which means that the ’nodecg setup’ command needs to be executed from a fresh folder not containing anything.
+
 To install speedcontrol, do the following:
 In the prompt, type 
 ```
@@ -69,6 +71,7 @@ https://www.youtube.com/watch?v=K7jTpFYiWNA&list=PLUCcl7X553EBMHRQWTmHwkX3z2QszI
 
 ## Used at marathons
 [Pre-ESA Marathon](https://www.youtube.com/watch?v=uQbREedGbhU&list=PLkd2f6JAHslJPSQ5a9zYL09Ie-LugT8eB)
+
 [BSG Monthly #1](http://www.twitch.tv/nlg_organisation/v/51152532)
 
 ### Credits
