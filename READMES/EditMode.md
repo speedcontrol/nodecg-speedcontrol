@@ -2,7 +2,9 @@
 
 So! You've defined the look & feel of your overlay with player-panels, logos, and everything!
 You should at this stage have a HTML document with everything you need, so now it's time to learn
-how to design your HTML to take edit-mode into account!
+how to design your HTML to take edit-mode into account! the recommended workflow is to first create your
+overlay with all the items that you want (Logos, Gamefeeds, Webcam areas, Player panels etc), and then use
+Edit Mode to position every single item on the overlay. This should be prepared before the marathon.
 
 ## What your overlay HAS to contain to make Edit mode work
 
