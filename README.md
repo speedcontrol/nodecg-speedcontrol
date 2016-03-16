@@ -1,4 +1,10 @@
 # Speedcontrol
+## READMES
+For information about how to customize speedcontrol, please check the README files in the below location:
+
+[READMES](https://github.com/Charleon/nodecg-speedcontrol/tree/v0.7a/READMES)
+
+Please also give feedback on what more information you would like to be contained in the readme:s
 
 ## Introduction
 
