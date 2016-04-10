@@ -62,6 +62,10 @@ https://www.youtube.com/watch?v=K7jTpFYiWNA&list=PLUCcl7X553EBMHRQWTmHwkX3z2QszI
 
 [BSG Monthly #1](http://www.twitch.tv/nlg_organisation/v/51152532)
 
+[BSG Monthly #2](http://www.twitch.tv/nlg_organisation/)
+
+[GTA Marathon 2016](https://www.twitch.tv/gtamarathon)
+
 ### Credits
 Developed by [Charleon](https://twitter.com/CharleonChan)
 
