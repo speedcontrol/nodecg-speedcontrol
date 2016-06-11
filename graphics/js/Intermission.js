@@ -77,7 +77,7 @@ $(function () {
         var category = "";
         var system = "";
 
-        if(typeof runData !== "undefined" && runData != '') {
+        if(typeof runData !== "undefined" && runData !== '') {
             game = runData.game;
             category =  runData.category;
             system = runData.system;
@@ -93,7 +93,7 @@ $(function () {
         var category = "";
         var system = "";
 
-        if(typeof runData !== "undefined" && runData != '') {
+        if(typeof runData !== "undefined" && runData !== '') {
             game = runData.game;
             category =  runData.category;
             system = runData.system;
