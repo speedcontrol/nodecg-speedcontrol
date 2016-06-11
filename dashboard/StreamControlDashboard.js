@@ -67,7 +67,7 @@ $(function () {
 
     function streamControl_GetOrCreateStreamControlConfiguration() {
         var configuration = streamControlConfigurationReplicant.value;
-        if (typeof configuration !== 'undefined') {
+        if (typeof configuration !== 'undefined' && configuration !== '') {
             return configuration;
         }
         else {
