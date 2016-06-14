@@ -236,7 +236,7 @@ $(function () {
 
     function runPlayer_playNextRun() {
         var activeGame = runDataActiveRunReplicant.value;
-        var nextGameIndex = runPlayer_getRunIndexInArray(activeGame.runID);
+        var nextGameIndex; try {nextGameIndex = runPlayer_getRunIndexInArray(activeGame.runID);} catch(e) {nextGameIndex = -1;}
         nextGameIndex++;
         if(nextGameIndex >= runDataArrayReplicantPlayer.value.length) {
             nextGameIndex = 0;

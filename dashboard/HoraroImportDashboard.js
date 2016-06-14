@@ -15,6 +15,7 @@ $(function () {
         }
 
         runNumberIterator = 1;
+		runDataArray = [];
         var jsonURL = $horaroURLField.val() + ".json";
         $.ajax({
             url: jsonURL,
