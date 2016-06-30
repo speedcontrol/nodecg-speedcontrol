@@ -29,6 +29,7 @@ $(function () {
                     disableMainResetButton(false);
                     playerTimer_disablePersonalSplitButton(true);
                     playerTimer_disablePersonalResetButton(true);
+					nodecg.sendMessage("forceRefreshIntermission");
                 }
                 break;
             case 'running':
@@ -84,6 +85,8 @@ $(function () {
         }
     });
 
+    var activeRunStartTime = nodecg.Replicant('activeRunStartTime');
+
     function updateSplitTimerTextColor(timerArray) {
         $.each(timerArray, function(index, value){
             $('#toolbar'+value.index).css('color','#0000dd');
@@ -101,6 +104,7 @@ $(function () {
         resetSplitTimerTextColor(1);
         resetSplitTimerTextColor(2);
         resetSplitTimerTextColor(3);
+        activeRunStartTime.value = 0;
     }
 
     function splitTimer(splitIndex) {
@@ -119,6 +123,7 @@ $(function () {
 
         if (stoppedTimers >= splitsBeforeStoppingMainTimer) {
             nodecg.sendMessage("finishTime", 0);
+            nodecg.sendMessage("runEnded")
         }
 
         finishedTimersReplicant.value = splitTimes;
@@ -251,6 +256,63 @@ $(function () {
         splitsBeforeStoppingMainTimer = players.length;
     }
 
+    function OnPlay() {
+        var options = {};
+        if ($('#play').text() === "play") {
+            $("#reset").button({
+                disabled: true
+            });
+
+            nodecg.sendMessage("startTime", 0);
+            if (activeRunStartTime.value === 0) {
+                nodecg.sendMessage("runStarted");
+            }
+            options = {
+                label: "pause",
+                icons: {
+                    primary: "ui-icon-pause"
+                }
+            };
+        } else {
+            nodecg.sendMessage("pauseTime", 0);
+            options = {
+                label: "play",
+                icons: {
+                    primary: "ui-icon-play"
+                }
+            };
+        }
+        $('#play').button("option", options);
+    }
+
+    function OnReset() {
+        nodecg.sendMessage("resetTime", 0);
+        resetSplitTimes();
+        if ($('#play').text() === "pause") {
+            var options = {
+                label: "play",
+                icons: {
+                    primary: "ui-icon-play"
+                }
+            };
+            $('#play').button("option", options);
+        }
+    }
+
+    function OnStop() {
+        nodecg.sendMessage("finishTime", 0);
+        nodecg.sendMessage("runEnded", 0);
+        if ($('#play').text() === "pause") {
+            var options = {
+                label: "play",
+                icons: {
+                    primary: "ui-icon-play"
+                }
+            };
+            $('#play').button("option", options);
+        }
+    }
+
     function playerTimer_InitializeElements() {
 
         $("#play").button({
@@ -258,51 +320,14 @@ $(function () {
             icons: {
                 primary: "ui-icon-play"
             }
-        })
-            .click(function () {
-                var options = {};
-                if ($(this).text() === "play") {
-                    $("#reset").button({
-                        disabled: true
-                    });
+        }).click(OnPlay);
 
-                    nodecg.sendMessage("startTime", 0);
-                    options = {
-                        label: "pause",
-                        icons: {
-                            primary: "ui-icon-pause"
-                        }
-                    };
-                } else {
-                    nodecg.sendMessage("pauseTime", 0);
-                    options = {
-                        label: "play",
-                        icons: {
-                            primary: "ui-icon-play"
-                        }
-                    };
-                }
-                $(this).button("option", options);
-            });
         $("#reset").button({
             text: false,
             icons: {
                 primary: "ui-icon-seek-prev"
             }
-        })
-            .click(function () {
-                nodecg.sendMessage("resetTime", 0);
-                resetSplitTimes();
-                if ($('#play').text() === "pause") {
-                    var options = {
-                        label: "play",
-                        icons: {
-                            primary: "ui-icon-play"
-                        }
-                    };
-                    $('#play').button("option", options);
-                }
-            });
+        }).click(OnReset);
 
         $("#stop").button({
             text: false,
@@ -310,20 +335,30 @@ $(function () {
                 primary: "ui-icon-check"
             },
             disabled: true
+        }).click(OnStop);
+    }
+
+    function Initialize_EventListeners(nodecg) {
+        console.log(nodecg)
+        nodecg.listenFor("start_run", "nodecg-speedcontrol", function() {
+            OnPlay();
         })
-            .click(function () {
-                nodecg.sendMessage("finishTime", 0);
-                if ($('#play').text() === "pause") {
-                    var options = {
-                        label: "play",
-                        icons: {
-                            primary: "ui-icon-play"
-                        }
-                    };
-                    $('#play').button("option", options);
-                }
-            });
+
+        nodecg.listenFor("reset_run", "nodecg-speedcontrol", function() {
+            OnReset();
+        })
+
+        nodecg.listenFor("reset_stop", "nodecg-speedcontrol", function() {
+            OnStop();
+        })
+
+        nodecg.listenFor("split_timer", "nodecg-speedcontrol", function(id) {
+            console.log("SPLIT-EVENT");
+            console.log(id);
+            splitTimer(id);
+        })
     }
 
     playerTimer_InitializeElements();
+    Initialize_EventListeners(nodecg);
 })

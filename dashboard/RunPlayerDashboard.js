@@ -1,4 +1,11 @@
 $(function () {
+	var $forceRefreshIntermissionButton = $('#forceRefreshIntermissionButton');
+    $forceRefreshIntermissionButton.button();
+	
+	$forceRefreshIntermissionButton.click(function () {
+        nodecg.sendMessage("forceRefreshIntermission");
+    });
+	
     var runPlayer_activeRunID = -1;
     var runPlayer_neighbourRuns = {};
     var runPlayer_activeRunObject = undefined;
