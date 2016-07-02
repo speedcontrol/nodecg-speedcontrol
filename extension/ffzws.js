@@ -14,10 +14,14 @@ var ffzWSAddress = 'wss://catbag.frankerfacez.com/';
 var messageNumber;
 var ffzWS;
 var ffzWSConnected = false;
+var ffzFollowButtonsReplicant;
 
 module.exports = function(nodecg) {
 	nodeCgExport = nodecg;
 	nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
+	
+	// Used to store whatever the WS says are the current buttons on the page.
+	ffzFollowButtonsReplicant = nodecg.Replicant('ffzFollowButtons', {persistent: false});
 	
 	// Waits until we have the Twitch access code before doing anything.
 	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
@@ -82,6 +86,11 @@ function connectToWS(callback) {
 				var authCode = JSON.parse(data.substr(16));
 				sendAuthThroughTwitchChat(authCode);
 			}
+			
+			// This is returned when the follower buttons are updated (including through this script).
+			else if (data.indexOf('-1 follow_buttons') === 0) {
+				ffzFollowButtonsReplicant.value = JSON.parse(data.substr(18))[nodeCgExport.bundleConfig.user];
+			}
 		}
 	});
 }
@@ -92,7 +101,8 @@ function setFFZFollowing(usernames) {
 	// Checks to make sure we are connected and can do this.
 	if (ffzWSConnected) {
 		sendMessage('update_follow_buttons ' + JSON.stringify([nodeCgExport.bundleConfig.user,usernames]), function(message) {
-			// message should be like: ok {"updated_clients":n}
+			var updatedClients = JSON.parse(message.substr(3))['updated_clients'];
+			console.log('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
 		});
 	}
 }
@@ -115,7 +125,7 @@ function sendAuthThroughTwitchChat(auth) {
 	// Settings for the temporary Twitch chat connection.
 	var options = {
 		options: {
-			debug: true  // might want to turn off when in production
+			//debug: true  // might want to turn off when in production
 		},
 		connection: {
 			secure: true

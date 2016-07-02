@@ -1,5 +1,6 @@
 'use strict';
 $(function () {
+	var autoUpdateTwitchBoxes = true;
     var $streamControlTitle = $('#streamControlTitle');
     var $streamControlGame = $('#streamControlGame');
     var $streamControlTwitchNames = $('#streamControlTwitchNames');
@@ -40,6 +41,14 @@ $(function () {
     $streamControlInit.click(function () {
         streamControl_login();
     });
+	
+	// When the user clicks inside of the title/game editing box, stop it from updating automatically for 60 seconds.
+	$streamControlTitle.click(function () {
+		if (autoUpdateTwitchBoxes) {autoUpdateTwitchBoxes = false; setTimeout(function() {autoUpdateTwitchBoxes = true;}, 60000);}
+	});
+	$streamControlGame.click(function () {
+		if (autoUpdateTwitchBoxes) {autoUpdateTwitchBoxes = false; setTimeout(function() {autoUpdateTwitchBoxes = true;}, 60000);}
+	});
 
     $streamControlSubmit.click(function () {
         if (typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') {
@@ -64,6 +73,7 @@ $(function () {
 			twitchNames = twitch.replace(' ', '').split(',');
 		}
 		
+		autoUpdateTwitchBoxes = true
 		nodecg.sendMessage('updateFFZFollowing', twitchNames);
         if (title != '' || game != '') {nodecg.sendMessage('updateChannel',requestObject);}
     });
@@ -135,6 +145,23 @@ $(function () {
 		}
 		
 		else {streamControl_loginSuccessful();}
+	});
+	
+	// Used to update the contents of the FFZ follow box when it has changed.
+	var ffzFollowButtonsReplicant = nodecg.Replicant('ffzFollowButtons', {persistent: false});
+	ffzFollowButtonsReplicant.on('change', function(oldValue, newValue) {
+		newValue = newValue || [];
+		$streamControlTwitchNames.val(newValue.join(', '));
+	});
+	
+	// Used to update the contents of the title/game box automatically frequently.
+	var twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
+	twitchChannelInfoReplicant.on('change', function(oldValue, newValue) {
+		if (newValue && autoUpdateTwitchBoxes) {
+			console.log(newValue);
+			if (newValue['status']) {$streamControlTitle.val(newValue['status']);}
+			if (newValue['game']) {$streamControlGame.val(newValue['game']);}
+		}
 	});
 });
 

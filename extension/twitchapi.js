@@ -6,7 +6,8 @@ var twitch = '';
 var request = require("request");
 var nodeCgExport = ''
 var accessToken ='';
-var accessTokenReplicant
+var accessTokenReplicant;
+var twitchChannelInfoReplicant;
 
 module.exports = function (nodecg) {
     if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.enableTwitchApi) {
@@ -16,6 +17,7 @@ module.exports = function (nodecg) {
         nodecg.listenFor('twitchLoginForwardCode',twitch_LoginForwardCode);
         nodecg.listenFor('updateChannel',twitch_updateChannel);
 		accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
+		twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
 
         app.get('/nodecg-speedcontrol/twitchlogin', function (req, res) {
             console.log("intercepted a message!");
@@ -52,12 +54,13 @@ function twitch_LoginForwardCode(code) {
              accessToken = body.access_token;
 			 accessTokenReplicant.value = accessToken;
              nodeCgExport.sendMessage("twitchLoginSuccessful");
+			 getCurrentChannelInfo();
          }
      });
 }
 
 function twitch_updateChannel(updatedValues) {
-    console.log("user: " + nodeCgExport.bundleConfig.user + " accessToken: " + accessToken);
+    //console.log("user: " + nodeCgExport.bundleConfig.user + " accessToken: " + accessToken);
     twitch.updateChannel(nodeCgExport.bundleConfig.user, accessToken, {
         "channel": {
             "status": updatedValues.channel.status,
@@ -73,5 +76,22 @@ function twitch_updateChannelCallback(err, body) {
 
     } else {
         console.log("We Successfully updated the channel!");
+		twitchChannelInfoReplicant.value = body;
     }
+}
+
+// Used to frequently get the details of the channel for use on the dashboard.
+function getCurrentChannelInfo() {
+	twitch.getChannel(nodeCgExport.bundleConfig.user, function(err, body) {
+		if (err) {
+			console.log("Error occurred in communication with twitch, look below");
+			console.log(err);
+		}
+		
+		else {
+			twitchChannelInfoReplicant.value = body;
+		}
+		
+		setTimeout(getCurrentChannelInfo, 60000);
+	});
 }
