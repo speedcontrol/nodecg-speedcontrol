@@ -9,6 +9,6 @@
     "description": "Stream control for speedrunning marathons",
     "license": "MIT",
     "extension": {
-        "path": "extension.js"
+        "path": "extension/index.js"
     }
 }

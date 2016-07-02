@@ -5,16 +5,15 @@
   "author": "Tobias Palm Nerg <charleon@gmail.com>",
   "contributors": [
     "btrim <btrim.twitch@gmail.com"
-   ],
+  ],
   "dependencies": {
-    "twitch-api": "^0.4.3",
-    "request": "2.72.0"
+    "async": "^2.0.0-rc.6",
+    "tmi.js": "^1.1.1",
+    "twitch-api": ">0.0.0",
+    "ws": "^1.1.1"
   },
   "description": "NodeCG Overlay engine for Speedrun Marathons",
   "license": "MIT",
-  "dependencies": {
-    "twitch-api": ">0.0.0"
-  },
   "nodecg": {
     "compatibleRange": "~0.7.0",
     "graphics": [

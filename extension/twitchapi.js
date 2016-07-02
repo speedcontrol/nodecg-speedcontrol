@@ -16,7 +16,7 @@ module.exports = function (nodecg) {
         nodecg.listenFor('updateChannel',twitch_updateChannel);
 
         app.get('/nodecg-speedcontrol/twitchlogin', function (req, res) {
-            console.log("intercepted a emssage!");
+            console.log("intercepted a message!");
             res.status(200);
         });
 
@@ -24,7 +24,7 @@ module.exports = function (nodecg) {
             clientId: 'lrt9h6mot5gaf9lk62sea8u38lomfrc',
             clientSecret: 'fprpfvriz56tjly2m8o9zxdcvo5nvmi',
             redirectUri: 'http://localhost:9090/dashboard/',
-            scopes: ['channel_editor','user_read']
+            scopes: ['channel_editor','user_read','chat_login']
         });
 
         nodecg.mount(app);
@@ -48,7 +48,7 @@ function twitch_LoginForwardCode(code) {
          } else {
              console.log("We are Authorized to update Twitch Channel!");
              accessToken = body.access_token;
-             nodeCgExport.sendMessage("twitchLoginSuccessful");
+             nodeCgExport.sendMessage("twitchLoginSuccessful", accessToken);
          }
      });
 }
