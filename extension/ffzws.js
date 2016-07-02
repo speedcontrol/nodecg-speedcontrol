@@ -16,22 +16,20 @@ var ffzWS;
 var ffzWSConnected = false;
 
 module.exports = function(nodecg) {
-	console.log('FFZ WS');  // temp debug message
-	
-	//nodeCgExport.listenFor('updateFFZFollowing', setFFZFollowing);
-	
-	// Waits until the user has logged into their Twitch account before doing anything.
-	nodecg.listenFor('twitchLoginSuccessful', function(oauth) {
-		console.log(oauth);  // temp debug message
-		accessToken = oauth;
-		
-		connectToWS(function() {
-			// connection to ws done
-			console.log('connected to FFZ WS');  // temp debug message
-		});
-	});
-	
 	nodeCgExport = nodecg;
+	nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
+	
+	// Waits until we have the Twitch access code before doing anything.
+	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
+	accessTokenReplicant.on('change', function(oldValue, newValue) {
+		if (!oldValue && newValue) {
+			accessToken = newValue;
+			
+			connectToWS(function() {
+				// connection to ws done
+			});
+		}
+	});
 }
 
 function connectToWS(callback) {
@@ -89,7 +87,7 @@ function connectToWS(callback) {
 }
 
 // Used to update the following buttons/emoticons on Twitch.
-// usernames is an array of Twitch usernames.
+// usernames is an array of Twitch usernames; if blank it will remove any channels already there.
 function setFFZFollowing(usernames) {
 	// Checks to make sure we are connected and can do this.
 	if (ffzWSConnected) {

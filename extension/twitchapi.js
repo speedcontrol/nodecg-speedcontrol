@@ -6,6 +6,7 @@ var twitch = '';
 var request = require("request");
 var nodeCgExport = ''
 var accessToken ='';
+var accessTokenReplicant
 
 module.exports = function (nodecg) {
     if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.enableTwitchApi) {
@@ -14,6 +15,7 @@ module.exports = function (nodecg) {
         nodecg.listenFor('twitchLogin',twitch_Login);
         nodecg.listenFor('twitchLoginForwardCode',twitch_LoginForwardCode);
         nodecg.listenFor('updateChannel',twitch_updateChannel);
+		accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
 
         app.get('/nodecg-speedcontrol/twitchlogin', function (req, res) {
             console.log("intercepted a message!");
@@ -48,7 +50,8 @@ function twitch_LoginForwardCode(code) {
          } else {
              console.log("We are Authorized to update Twitch Channel!");
              accessToken = body.access_token;
-             nodeCgExport.sendMessage("twitchLoginSuccessful", accessToken);
+			 accessTokenReplicant.value = accessToken;
+             nodeCgExport.sendMessage("twitchLoginSuccessful");
          }
      });
 }

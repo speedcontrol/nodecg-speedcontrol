@@ -237,8 +237,16 @@ $(function () {
         var requestObject = {};
         requestObject.channel = {};
         requestObject.channel.game = runData.game;
-
-        nodecg.sendMessage('updateChannel',requestObject);
+		
+		// Gets Twitch channel names from the runData and puts them in an array to send to the FFZ WS script.
+		var twitchNames = [];
+		for (var i = 0; i < runData.players.length; i++) {
+			var twitchName = (runData.players[i].twitch) ? runData.players[i].twitch.uri.replace('http://www.twitch.tv/', '') : undefined;
+			if (twitchName) {twitchNames.push(twitchName);}
+		}
+		
+		nodecg.sendMessage('updateFFZFollowing', twitchNames);
+        nodecg.sendMessage('updateChannel', requestObject);
     }
 
     function runPlayer_playNextRun() {

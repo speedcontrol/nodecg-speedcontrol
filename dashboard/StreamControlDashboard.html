@@ -13,7 +13,7 @@
             width: 100%;
         }
 
-        #streamControlTitle,#streamControlGame {
+        #streamControlTitle,#streamControlGame,#streamControlTwitchNames {
             width: 100%;
             height: 30px;
         }
@@ -21,7 +21,7 @@
 </head>
 <body>
 <div id="stream-control">
-    <p>Automatically synchronize active game to twitch?</p>
+    <p>Automatically synchronize active game to Twitch and Twitch names to FFZ?</p>
     <div id="enableTwitchSynchronization">
         <input type="radio" name="enableTwitchSynchronizationRadio" id="enableTwitchSynchronizationRadioOn" value="On"> <label for="enableTwitchSynchronizationRadioOn">On</label>
         <input type="radio" name="enableTwitchSynchronizationRadio" id="enableTwitchSynchronizationRadioOff" value="Off" checked> <label for="enableTwitchSynchronizationRadioOff">Off</label>
@@ -29,6 +29,7 @@
     <hr>
     <input id="streamControlTitle" placeholder="Stream Title" data-validate="required">
     <input id="streamControlGame" placeholder="Stream Game" data-validate="required">
+    <input id="streamControlTwitchNames" placeholder="Twitch Names" data-validate="required">
     <button type="button" id="streamControlSubmit">Manual Change</button>
     <button type="button" id="streamControlInit">Log in to twitch</button>
 </div>

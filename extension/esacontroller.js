@@ -74,7 +74,6 @@ function publish(event) {
 }
 
 module.exports = function (nodecg) {
-    console.log("ESACONTROLLER!");
     _nodecg = nodecg;
     
     if (nodecg.bundleConfig !== undefined && 

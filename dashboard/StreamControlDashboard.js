@@ -2,6 +2,7 @@
 $(function () {
     var $streamControlTitle = $('#streamControlTitle');
     var $streamControlGame = $('#streamControlGame');
+    var $streamControlTwitchNames = $('#streamControlTwitchNames');
     var $streamControlSubmit = $('#streamControlSubmit');
     var $streamControlInit = $('#streamControlInit');
     var $enableTwitchSynchronizationRadios = $('#enableTwitchSynchronization');
@@ -47,22 +48,24 @@ $(function () {
         }
         var title = $streamControlTitle.val();
         var game = $streamControlGame.val();
+        var twitch = $streamControlTwitchNames.val();
         var requestObject = {};
         requestObject.channel = {};
-
-        if(title == '' && game == '') {
-            alert("You need to fill in at least one field");
-            return;
-        }
-
+		
         if(title != "") {
             requestObject.channel.status = title;
         }
         if(game != "") {
             requestObject.channel.game = game;
         }
-
-        nodecg.sendMessage('updateChannel',requestObject);
+		
+		var twitchNames = [];
+		if (twitch != '') {
+			twitchNames = twitch.replace(' ', '').split(',');
+		}
+		
+		nodecg.sendMessage('updateFFZFollowing', twitchNames);
+        if (title != '' || game != '') {nodecg.sendMessage('updateChannel',requestObject);}
     });
 
     function streamControl_GetOrCreateStreamControlConfiguration() {
@@ -116,14 +119,23 @@ $(function () {
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
+	
+	// Checks if the access token has been set yet or not on page load.
+	// If not, gets one, if it has already got one, changes the buttons.
+	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
+	accessTokenReplicant.on('change', function(oldValue, newValue) {
+		if (!newValue) {
+			var parameter = getParameterByName('code');
+			if(parameter != null && parameter != '') {
+				nodecg.sendMessage('twitchLoginForwardCode', parameter);
+				console.log("code is " + parameter);
+			}
 
-    var parameter = getParameterByName('code');
-    if(parameter != null && parameter != '') {
-        nodecg.sendMessage('twitchLoginForwardCode', parameter);
-        console.log("code is " + parameter);
-    }
-
-    streamControl_login(true);
+			streamControl_login(true);
+		}
+		
+		else {streamControl_loginSuccessful();}
+	});
 });
 
 
