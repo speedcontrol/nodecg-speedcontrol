@@ -1,5 +1,11 @@
 'use strict';
 $(function () {
+
+    // The name of the speedcontrol bundle that's used whenever a replicant or
+    // message needs to be used
+
+    var speedcontrolBundle = 'nodecg-speedcontrol';
+
     // JQuery selector initialiation ###
 
     var $comingUpGame = $('#comingUpGame');
@@ -19,11 +25,11 @@ $(function () {
     var sceneID = $('html').attr('data-sceneid');
 
     // NodeCG Message subscription ###
-    nodecg.listenFor("displayMarqueeInformation", displayMarquee);
-    nodecg.listenFor("removeMarqueeInformation", removeMarquee);
+    nodecg.listenFor("displayMarqueeInformation", speedcontrolBundle, displayMarquee);
+    nodecg.listenFor("removeMarqueeInformation", speedcontrolBundle, removeMarquee);
 
     // Replicants ###
-    var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration');
+    var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration', speedcontrolBundle);
     sceneLayoutConfigurationReplicant.on('change', function(oldVal, newVal) {
         if(typeof newValue !== 'undefined' && newValue != "") {
             applyBackgroundTransparence(newVal.backgroundTransparency);
@@ -31,11 +37,11 @@ $(function () {
         }
     });
 
-    var runDataArrayReplicant = nodecg.Replicant("runDataArray");
+    var runDataArrayReplicant = nodecg.Replicant("runDataArray", speedcontrolBundle);
     runDataArrayReplicant.on("change", function (oldValue, newValue) {
     });
 
-    var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
+    var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun", speedcontrolBundle);
     runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
         if(typeof newValue == 'undefined' || newValue == "") {
             return;

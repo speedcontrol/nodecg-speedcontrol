@@ -1,5 +1,11 @@
 'use strict';
 $(function () {
+
+    // The name of the speedcontrol bundle that's used whenever a replicant or
+    // message needs to be used
+
+    var speedcontrolBundle = 'nodecg-speedcontrol';
+
     // JQuery selector initialiation ###
     var $timerInfo = $('#timer');
     var $runnerInfoElements = $('div.runnerInfo');
@@ -17,16 +23,16 @@ $(function () {
     var intervalToNextTwitchDisplay = 120000;
     var timeoutTwitch = null;
 
-    // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
+    // sceneID must be unique for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
     var sceneID = $('html').attr('data-sceneid');
 
     // NodeCG Message subscription ###
-    nodecg.listenFor("resetTime", resetAllPlayerTimers);
-    nodecg.listenFor('timerReset', resetTimer);
-    nodecg.listenFor('timerSplit', splitTimer);
+    nodecg.listenFor("resetTime", speedcontrolBundle, resetAllPlayerTimers);
+    nodecg.listenFor('timerReset', speedcontrolBundle, resetTimer);
+    nodecg.listenFor('timerSplit', speedcontrolBundle, splitTimer);
 
-    var stopWatchesReplicant = nodecg.Replicant('stopwatches');
+    var stopWatchesReplicant = nodecg.Replicant('stopwatches',speedcontrolBundle);
     stopWatchesReplicant.on('change', function(oldVal, newVal) {
         if (!newVal) return;
         var time  = newVal[0].time || '88:88:88';
@@ -38,14 +44,14 @@ $(function () {
         setTime(time);
     });
 
-    var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
+    var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun",speedcontrolBundle);
     runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
         if(typeof newValue !== 'undefined' && newValue != '' ) {
             updateSceneFields(newValue);
         }
     });
 
-    var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
+    var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList",speedcontrolBundle);
     runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
         if(typeof newValue === 'undefined' || newValue == '') {
             return;
