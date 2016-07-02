@@ -12,7 +12,7 @@ body {
 }
 
 #window-container {
-    background-image: url('/graphics/nodecg-speedcontrol/images/Intermission.png');
+    background-image: url('../images/Intermission.png');
     width: 1280px;
     height: 720px;
     overflow: hidden;
@@ -114,4 +114,3 @@ body {
     width: 220px;
     background: #271e2f;
 }
-

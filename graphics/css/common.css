@@ -20,7 +20,7 @@ body {
     position: fixed;
     top: 0px;
     left: 0px;
-    background-image: url('/graphics/nodecg-speedcontrol/images/Background.png');
+    background-image: url('../images/Background.png');
     background-repeat: no-repeat;
     background-size: cover;
     width: 1280px;
@@ -80,7 +80,7 @@ body {
 }
 
 .runnerLogo {
-    background-image: url('/graphics/nodecg-speedcontrol/images/playerlogo.png');
+    background-image: url('../images/playerlogo.png');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 90%;
@@ -159,7 +159,7 @@ body {
 }
 
 #runInformationLogo {
-    background-image: url('/graphics/nodecg-speedcontrol/images/runInformationIcon.png');
+    background-image: url('../images/runInformationIcon.png');
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -195,7 +195,7 @@ body {
     top: 0px;
     width: 316px;
     height: 88px;
-    background-image: url('/graphics/nodecg-speedcontrol/images/SpeedcontrolLogo.png');
+    background-image: url('../images/SpeedcontrolLogo.png');
     background-repeat: no-repeat;
     background-size: 85%;
 }

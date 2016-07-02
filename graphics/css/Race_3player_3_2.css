@@ -1,9 +1,9 @@
 #runner1Logo {
-    background-image: url('/graphics/nodecg-speedcontrol/images/playerlogoupleft.png');
+    background-image: url('../images/playerlogoupleft.png');
 }
 #runner2Logo {
-    background-image: url('/graphics/nodecg-speedcontrol/images/playerlogoup.png');
+    background-image: url('../images/playerlogoup.png');
 }
 #runner3Logo {
-    background-image: url('/graphics/nodecg-speedcontrol/images/playerlogoleft.png');
+    background-image: url('../images/playerlogoleft.png');
 }
