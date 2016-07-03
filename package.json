@@ -75,7 +75,7 @@
       },
       {
         "name": "player-control",
-        "title": "Player Control",
+        "title": "Add Runs",
         "width": 2,
         "file": "PlayerControlDashboard.html",
         "headerColor": "#008BB9"

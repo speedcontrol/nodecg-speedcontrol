@@ -22,20 +22,25 @@
     }
 
     #toolbar {
-        width: 100%;
+        width: 95%;
         padding: 5px;
     }
 
     #playerSpecificToolbar {
-        width: 100%;
+        width: 95%;
         padding: 5px;
     }
+	
+	#playerTimersHeader {
+		margin: 0;
+		margin-top: 10px;
+		display: none;
+	}
 </style>
     </head>
 <body>
 <div id="run-timer">
     <div id="player-timer-control-run-container">
-        <h4>Timer</h4>
         <div id="theTimer">
         </div>
         <div id="toolbar" class="ui-widget-header ui-corner-all">
@@ -43,7 +48,7 @@
             <button id="reset">reset</button>
             <button id="stop">stop</button>
         </div>
-        <h4>Player Timers</h4>
+        <h4 id="playerTimersHeader">Player Timers</h4>
         <div id="playerSpecificToolbar">
         </div>
     </div>

@@ -216,6 +216,7 @@ $(function () {
                     '</div>';
             });
             $('#playerSpecificToolbar').html(toolbarPlayerSpecificHtml);
+			$('#playerTimersHeader').show();
 
             $('.personalSplitButton').click(function () {
                 var index = $(this).attr('id').replace('split', '');
@@ -252,6 +253,7 @@ $(function () {
         }
         else {
             $('#playerSpecificToolbar').html(toolbarPlayerSpecificHtml);
+			$('#playerTimersHeader').hide();
         }
         splitsBeforeStoppingMainTimer = players.length;
     }
