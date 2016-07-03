@@ -1,6 +1,7 @@
 'use strict';
 $(function () {
 	var autoUpdateTwitchBoxes = true;
+    var $streamControlHideShow = $('#streamControlHideShow');
     var $streamControlTitle = $('#streamControlTitle');
     var $streamControlGame = $('#streamControlGame');
     var $streamControlTwitchNames = $('#streamControlTwitchNames');
@@ -95,9 +96,9 @@ $(function () {
     }
 
     function streamControl_loginSuccessful() {
-        $streamControlInit.button({disabled: true});
-        $streamControlInit.text("Already logged into twitch");
+		$streamControlInit.hide();
         $streamControlSubmit.button({disabled: false});
+		$streamControlHideShow.show();
     }
 
     function redirectTwitchAuthorization(URL) {
