@@ -12,8 +12,7 @@
     "twitch-api": ">0.0.0",
     "ws": "^1.1.1",
     "rieussec": "0.3.0",
-    "inherits": "^2.0.1",
-
+    "inherits": "^2.0.1"
   },
   "description": "NodeCG Overlay engine for Speedrun Marathons",
   "license": "MIT",
