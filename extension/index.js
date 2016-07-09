@@ -35,4 +35,11 @@ module.exports = function(nodecg) {
         nodecg.log.error('Failed to load "ffzws" lib:', e.stack);
         process.exit(1);
     }
+	
+	try {
+        require('./g4g')(nodecg);
+    } catch (e) {
+        nodecg.log.error('Failed to load "g4g" lib:', e.stack);
+        process.exit(1);
+    }
 };
