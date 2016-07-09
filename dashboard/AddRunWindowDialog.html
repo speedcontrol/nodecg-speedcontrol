@@ -88,6 +88,7 @@
             var $confirmButton = $('#confirm');
             var $cancelButton = $('#cancel');
             var $addPlayerButton = $('#addPlayer');
+            var $addScreenButton = $('#addScreen');
             var initialForm = $form.html();
 
             var runDataArrayReplicant = nodecg.Replicant("runDataArray");
@@ -116,14 +117,34 @@
                 $('#playerContainer').append(html);
             }
 
+            function addScreen() {
+                var html = createScreenElement();
+                $('#screens').append(html);
+            }
+
+            function addCamera() {
+                $('#cameras').append(createCameraElement());
+            }
+
             function initialize() {
                 $form = $('#form');
                 $confirmButton = $('#confirm');
                 $cancelButton = $('#cancel');
+
+                $addScreenButton = $('#addScreen');
+
+                $addScreenButton.on('click', function() {
+                  addScreen()
+                });
                 $addPlayerButton = $('#addPlayer');
 
                 $addPlayerButton.on('click', function() {
                     addPlayer();
+                });
+
+                $addCameraButton = $('#addCamera');
+                $addCameraButton.on('click', function() {
+                    addCamera();
                 });
 
                 $confirmButton.on('click', function() {
@@ -174,11 +195,23 @@
                     runData.system = $('#gameSystemInput').val();
                     runData.region = $('#gameRegionInput').val();
                     runData.runID = getSetRunID();
+                    var teamObjs = {};
+                    runData.teams = new Array();
+                    runData.screens = new Array();
+                    runData.cameras = new Array();
 
                     $('.playerContentContainer').each(function () {
                         var playerObject = {};
                         var playerName = $(this).find('.playerInput').val();
                         var playerTwitch = $(this).find('.playerTwitchInput').val();
+                        var playerTeam = $(this).find('.playerTeam').val();
+                        if( playerTeam !== '' ) {
+                          if( typeof teamObjs[playerTeam] === 'undefined') {
+                            teamObjs[playerTeam] = { members: new Array(), name: playerTeam };
+                          }
+                          teamObjs[playerTeam].members.push(playerObject);
+                        }
+
                         playerObject.names = {};
                         playerObject.names.international = playerName;
                         console.log(playerTwitch);
@@ -188,6 +221,20 @@
                         }
                         runData.players.push(playerObject);
                     });
+
+                    $('.screen').each(function() {
+                        runData.screens.push({aspectRatio: $(this).val()});
+                    });
+
+                    $('.camera').each(function() {
+                        runData.cameras.push({aspectRatio: $(this).val()});
+                    });
+
+                    for( var key in teamObjs) {
+                      if( teamObjs.hasOwnProperty(key) ) {
+                        runData.teams.push(teamObjs[key]);
+                      }
+                    }
                     console.log(runData);
                     runArray.push(runData);
                     runDataArrayReplicant.value = runArray;
@@ -196,12 +243,15 @@
                 $cancelButton.on('click', function() {
                     $cancelButton.unbind( "click" );
                     $addPlayerButton.unbind( "click" );
+                    $addScreenButton.unbind( "click" );
+                    $addCameraButton.unbind( "click" );
                     $confirmButton.unbind( "click" );
                     $form.html(initialForm);
                     initialize();
                 });
 
                 addPlayer();
+                addScreen();
             }
 
             function createRunData() {
@@ -226,8 +276,17 @@
                         "Twitch:"+
                         "</div>" +
                         "<input class='playerTwitchInput' placeholder='Full Twitch Link'>"+
+                        "<div>Team:</div>"+
+                        "<input class='playerTeam' placeholder='Team name'>"
                         "</div>";
                 return HTML;
+            }
+
+            function createScreenElement(screenArray) {
+                return "<div>Screen Aspect Ratio <input class='screen' placeholder='4:3'></div>";
+            }
+            function createCameraElement(cameraArray) {
+                return "<div>Camera Aspect Ratio <input class='camera' placeholder='4:3'></div>";
             }
 
             initialize();
@@ -272,6 +331,12 @@
                     Region:
                 </div>
                 <input id="gameRegionInput" placeholder="Region">
+            </div>
+            <div id="screens">
+                <button id="addScreen">Add Screen</button>
+            </div>
+            <div id="cameras">
+                <button id="addCamera">Add Camera</button>
             </div>
         </div>
     </div>
