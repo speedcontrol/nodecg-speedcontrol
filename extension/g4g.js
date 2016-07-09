@@ -18,7 +18,7 @@ module.exports = function(nodecg) {
 	twitchChannelInfoReplicant.on('change', function(oldValue, newValue) {
 		if (!oldValue && newValue) {
 			twitchChannelID = newValue['_id'];
-			checkDonationTotal()
+			checkDonationTotal();
 		}
 	});
 	
