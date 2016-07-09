@@ -33,6 +33,12 @@ $(function () {
         }
     });
 
+    var sceneIDReplicant = nodecg.Replicant("sceneID",speedcontrolBundle, {defaultValue: sceneID});
+      sceneIDReplicant.on('change', function( oldValue, newValue) {
+        sceneID = newValue;
+        console.log("Changed sceneID to " + sceneID);
+    });
+
     // Edit Mode functions ###
 
     function hideTimerFinished(index) {
