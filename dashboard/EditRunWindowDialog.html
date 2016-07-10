@@ -104,6 +104,8 @@
                 $('#gameSystemInput').val(newValue.system);
                 $('#gameRegionInput').val(newValue.region);
                 $('#playerContainer').html(playerNamesTwitchHTML);
+                $('#screensContainer').html(getScreensHTML(newValue));
+                $('#camerasContainer').html(getCamerasHTML(newValue));
             });
 
             var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
@@ -172,6 +174,8 @@
                 gameData.category = $('#gameCategoryInput').val();
                 gameData.system = $('#gameSystemInput').val();
                 gameData.region = $('#gameRegionInput').val();
+                gameData.teams = new Array();
+                var teamObjs = {};
 
                 $('.playerInput').each(function () {
                     var index = Number($(this).attr('id').replace('player', '').replace('Input', ''));
@@ -187,6 +191,32 @@
                         typeof gameData.players[index].twitch !== 'undefined') {
                         gameData.players[index].twitch.uri = $(this).val();
                     }
+                });
+
+                $('.playerTeam').each( function() {
+                    var index = Number($(this).attr('id').replace('player','').replace('Team',''));
+                    var playerTeam = $(this).val();
+                    if( typeof teamObjs[playerTeam] === 'undefined') {
+                      teamObjs[playerTeam] = { members: new Array(), name: playerTeam };
+                    }
+                    teamObjs[playerTeam].members.push(gameData.players[index]);
+                    if( typeof gameData.players[index] !== 'undefined' ) {
+                        gameData.players[index].team = $(this).val();
+                    }
+                });
+
+                for( var key in teamObjs) {
+                  if( teamObjs.hasOwnProperty(key) ) {
+                    gameData.teams.push(teamObjs[key]);
+                  }
+                }
+
+                $('.screenInput').each( function(index, element) {
+                    gameData.screens[index].aspectRatio = $(this).val();
+                });
+
+                $('.cameraInput').each( function(index, element) {
+                    gameData.cameras[index].aspectRatio = $(this).val();
                 });
 
                 var arrayIndex = getRunIndexInRunDataArrayReplicant(gameData.runID);
@@ -221,6 +251,11 @@
                         playerTwitch = player.twitch.uri;
                     }
 
+                    var playerTeam = "";
+                    if( typeof player.team !== 'undefined') {
+                        playerTeam = player.team;
+                    }
+
                     HTML += "<div class='playerContentContainer'>"+
                             "<div class='playerText'>" +
                             "Player:"+
@@ -230,9 +265,25 @@
                             "Twitch:"+
                             "</div>" +
                             "<input id='player"+index+"TwitchInput' class='playerTwitchInput' value='"+playerTwitch+"'>"+
+                            "<div>Team: <input id='player"+index+"Team' class='playerTeam' value='"+playerTeam+"'></div>"+
                             "</div>";
                 });
                 return HTML;
+            }
+
+            function getScreensHTML(runData) {
+                var html = "";
+                $.each(runData.screens, function( index, screen ) {
+                    html += "<div>Screen Aspect Ratio: <input id='screenInput"+index+"' class='screenInput' value='"+screen.aspectRatio+"'></div>";
+                });
+                return html;
+            }
+            function getCamerasHTML(runData) {
+                var html = "";
+                $.each(runData.cameras, function( index, camera ) {
+                    html += "<div>Camera Aspect Ratio: <input id='cameraInput"+index+"' class='cameraInput' value='"+camera.aspectRatio+"'></div>";
+                });
+                return html;
             }
         });
     </script>
@@ -273,6 +324,10 @@
                 Region:
             </div>
             <input id="gameRegionInput" placeholder="gameRegionInput">
+        </div>
+        <div id="screensContainer">
+        </div>
+        <div id="camerasContainer">
         </div>
     </div>
 </div>

@@ -210,7 +210,9 @@
                             teamObjs[playerTeam] = { members: new Array(), name: playerTeam };
                           }
                           teamObjs[playerTeam].members.push(playerObject);
+                          playerObject.team = playerTeam;
                         }
+
 
                         playerObject.names = {};
                         playerObject.names.international = playerName;
