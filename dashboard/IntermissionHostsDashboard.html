@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script src="components/jquery/dist/jquery.js"></script>
+	<script src="components/jquery-ui/jquery-ui.js"></script>
+	<script src="IntermissionHostsDashboard.js"></script>
+	<link rel="stylesheet" href="components/jquery-ui/themes/redmond/jquery-ui.css"/>
+	<title></title>
+	<style>
+		#editHostsButton {
+			width: 100%;
+		}
+		
+		#hostLayoutSortable { list-style-type: none; margin: 0; padding: 0; width: 240px; }
+		#hostLayoutSortable li { margin: 3px 3px 3px 0; padding: 0px; float: left; width: 100px; height: 40px; font-size: 12px; text-align: center; word-break: break-all; display: flex; justify-content: center; align-items: center;}
+	</style>
+</head>
+<body>
+<div id="intermission-hosts">
+	<button id="editHostsButton" nodecg-dialog="edit-hosts">Edit Current Hosts</button>
+    <div id="host-layout-container">
+        <div id="hostLayoutContainer">
+
+        </div>
+    </div>
+</div>
+</body>
