@@ -8,11 +8,12 @@
   ],
   "dependencies": {
     "async": "^2.0.0-rc.6",
+    "inherits": "^2.0.1",
+    "request": "^2.73.0",
+    "rieussec": "0.3.0",
     "tmi.js": "^1.1.1",
     "twitch-api": ">0.0.0",
-    "ws": "^1.1.1",
-    "rieussec": "0.3.0",
-    "inherits": "^2.0.1"
+    "ws": "^1.1.1"
   },
   "description": "NodeCG Overlay engine for Speedrun Marathons",
   "license": "MIT",
