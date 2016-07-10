@@ -116,6 +116,9 @@ $(function () {
         theRun.system = "";
         theRun.region = "";
         theRun.category = "";
+        theRun.screens = new Array();
+        theRun.cameras = new Array();
+        theRun.teams = new Array();
         return theRun;
     }
 
@@ -159,4 +162,3 @@ $(function () {
         return hours + ':' + minutes;
     }
 })
-

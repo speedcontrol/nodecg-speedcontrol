@@ -16,7 +16,7 @@ $(function () {
                 playerLayout_UpdateLayoutPanelWithTeams(newValue.teams);
             }
             else {
-                playerLayout_UpdateLayoutPanelWithRunners(newValue.runners, names);
+                playerLayout_UpdateLayoutPanelWithRunners(newValue.players, names);
             }
         }
     });

@@ -24,6 +24,8 @@ $(function () {
     console.log(scaleRatio*font + 'px');
     $('body').css('font-size',scaleRatio*font + 'px');
 
+    var shifted = false;
+
     // Replicants ###
     var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration', speedcontrolBundle);
     sceneLayoutConfigurationReplicant.on('change', function(oldValue, newValue) {
@@ -104,6 +106,10 @@ $(function () {
 
     function handleEditMode(isEnabled) {
         if(isEnabled) {
+          $(document).on("keyup keydown",function(e) {
+              shifted = e.shiftKey;
+              return true;
+          });
             addEditModeDebugInformation();
             $('.dummyTextable').html("######");
 
@@ -131,16 +137,18 @@ $(function () {
                 trueAspectRatio = getAspectRatio($('.gameCapture').attr('aspect-ratio'));
             }
 
-            $('.gameCapture').first().resizable({
+            $('.gameCapture').each(function() {
+              $(this).resizable({
                 start: function (event, ui) {
                     $('#'+ui.helper[0].id).css('z-index','100');
                 },
-                aspectRatio: trueAspectRatio,
+                aspectRatio: getAspectRatio($(this).attr('aspect-ratio')),
                 resize: updateDebugInformation,
-                alsoResize: ".gameCapture",
+                //alsoResize: ".gameCapture",
                 stop: function( event, ui ) {
                     $('#'+ui.helper[0].id).css('z-index','0');
                 }
+              });
             });
 
             $('.resizable').each(function() {
