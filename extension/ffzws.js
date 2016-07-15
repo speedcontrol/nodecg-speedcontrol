@@ -1,7 +1,3 @@
-// Stuff to improve/fix:
-// Include all of the FFZ WS addresses.
-// If the connection fails in some way, I'm pretty sure the whole program will crash.
-
 'use strict';
 
 var WebSocket = require('ws');
@@ -10,7 +6,6 @@ var async = require('async');
 
 var nodeCgExport;
 var accessToken;
-var ffzWSAddress = 'wss://catbag.frankerfacez.com/';
 var messageNumber;
 var ffzWS;
 var ffzWSConnected = false;
@@ -47,7 +42,13 @@ function connectToWS(callback) {
 	
 	// Reset message number and connect.
 	messageNumber = 1;
-	ffzWS = new WebSocket(ffzWSAddress);
+	ffzWS = new WebSocket(pickServer());
+	
+	// Catching any errors with the connection. The "close" event is also fired if it's a disconnect.
+	ffzWS.on('error', function(error) {
+		console.log("Error occurred on the FFZ connection, see below:");
+		console.log(error);
+	});
 	
 	ffzWS.once('open', function() {
 		ffzWS.send('1 hello ["nodecg-speedcontrol",false]');
@@ -146,4 +147,23 @@ function sendAuthThroughTwitchChat(auth) {
 		// Giving it 5 seconds until we disconnect just to make sure the message was sent.
 		setTimeout(function() {client.disconnect();}, 5000);
 	});
+}
+
+// Picks a server randomly, 1-2-2 split in which it picks.
+function pickServer() {
+	switch(randomInt(0, 5)) {
+		case 0:
+			return 'wss://catbag.frankerfacez.com/';
+		case 1:
+		case 2:
+			return 'wss://andknuckles.frankerfacez.com/';
+		case 3:
+		case 4:
+			return 'wss://tuturu.frankerfacez.com/';
+	}
+}
+
+// Function to return a random integer.
+function randomInt(low, high) {
+	return Math.floor(Math.random() * (high - low) + low);
 }
