@@ -10,14 +10,28 @@ function register_api(nodecg) {
         nodecg.readReplicant("runDataActiveRunRunnerList").forEach(function(runner, i) {
             result[i] = {
                 name: runner.names.international,
-                status: "running"
+                status: "waiting"
             };
         });
 
+        const stopwatch = nodecg.readReplicant('stopwatches')[0]
+        console.log(stopwatch);
+        if (stopwatch.state == "running") {
+            result.forEach(function(runner) {
+                runner.status = "running";
+            });
+        }
+
         //Get all finished players
         nodecg.readReplicant("finishedTimers").forEach(function(timer, i) {
-            if (timer.time != '00:00:00')
-                result[i].status = "finished";
+            if (timer.time != '00:00:00') {
+                result.forEach(function(runner) {
+                    if (runner.name == timer.name) {
+                        runner.status = "finished";
+                    }
+                });
+            }
+                
         })
 
         res.status(200).json(result);
