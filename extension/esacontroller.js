@@ -13,7 +13,8 @@ function register_api(nodecg) {
 
         //Get all finished players
         nodecg.readReplicant("finishedTimers").forEach(function(timer) {
-            result[name] = "finished";
+            if (timer.time != '00:00:00')
+                result[timer.name] = "finished";
         })
 
         res.status(200).json(result);
@@ -74,10 +75,11 @@ function publish(event) {
 }
 
 module.exports = function (nodecg) {
+    console.log("ESACONTROLLER!");
     _nodecg = nodecg;
     
-    if (nodecg.bundleConfig !== undefined && 
-        nodecg.bundleConfig.api !== undefined && 
+    if (nodecg.bundleConfig !== 'undefined' && 
+        nodecg.bundleConfig.api !== 'undefined' && 
         nodecg.bundleConfig.api.enable) {
         register_api(nodecg)
     }
