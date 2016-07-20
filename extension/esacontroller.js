@@ -6,15 +6,18 @@ var _nodecg;
 
 function register_api(nodecg) {
     app.get("/speedcontrol/timers", function(req, res) {
-        var result = {}
-        nodecg.readReplicant("runDataActiveRunRunnerList").forEach(function(runner) {
-            result[runner.names.international] = "running"; //Assume running.
-        })
+        var result = []
+        nodecg.readReplicant("runDataActiveRunRunnerList").forEach(function(runner, i) {
+            result[i] = {
+                name: runner.names.international,
+                status: "running"
+            };
+        });
 
         //Get all finished players
-        nodecg.readReplicant("finishedTimers").forEach(function(timer) {
+        nodecg.readReplicant("finishedTimers").forEach(function(timer, i) {
             if (timer.time != '00:00:00')
-                result[timer.name] = "finished";
+                result[i].status = "finished";
         })
 
         res.status(200).json(result);
