@@ -287,7 +287,7 @@ $(function () {
 
     function OnPlay() {
         var options = {};
-        if ($('#play').text() === "play") {
+        if ($('#play').text().trim() === "play") {
             $("#reset").button({
                 disabled: true
             });
