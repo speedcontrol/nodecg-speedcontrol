@@ -79,11 +79,10 @@ function publish(event) {
 }
 
 module.exports = function (nodecg) {
-    console.log("ESACONTROLLER!");
     _nodecg = nodecg;
     
-    if (nodecg.bundleConfig !== 'undefined' && 
-        nodecg.bundleConfig.api !== 'undefined' && 
+    if (typeof(nodecg.bundleConfig) !== 'undefined' && 
+        typeof(nodecg.bundleConfig.api) !== 'undefined' && 
         nodecg.bundleConfig.api.enable) {
         register_api(nodecg)
     }
