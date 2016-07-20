@@ -68,7 +68,11 @@ function publish(event) {
     if (_nodecg.bundleConfig.api.hooks) {
         _nodecg.bundleConfig.api.hooks.forEach(function(sub) {
             request.post(sub, {json: event, timeout: 1500}, function(err) {
-                _nodecg.log.error("Error publishing event " + event.event + " to " + sub + ".", err);
+                if (err) {
+                    _nodecg.log.error(
+                        "Error publishing event " + event.event + " to " + sub + ".", 
+                        err);
+                }
             })
         });
     }
