@@ -5,7 +5,17 @@ var request = require('request');
 var _nodecg;
 
 function register_api(nodecg) {
-    app.get("/speedcontrol/timers", function(req, res) {
+    var speedcontrolRouter = require('express').Router();
+
+    speedcontrolRouter.use(function(req, res, next) {
+        if (req.get('API-Key') !== _nodecg.bundleConfig.api.sharedkey) {
+            res.status(403).json("Invalid key.");
+        } else {
+            next();
+        }
+    });
+
+    speedcontrolRouter.get("/timers", function(req, res) {
         var result = []
         nodecg.readReplicant("runDataActiveRunRunnerList").forEach(function(runner, i) {
             result[i] = {
@@ -37,17 +47,17 @@ function register_api(nodecg) {
         res.status(200).json(result);
     });
 
-    app.put("/speedcontrol/timer/start", function(req, res) {
+    speedcontrolRouter.put("/timer/start", function(req, res) {
         nodecg.sendMessage("start_run");
         res.status(200).json(true);
     });
 
-    app.put("/speedcontrol/timer/:id/split", function(req, res) {
+    speedcontrolRouter.put("/timer/:id/split", function(req, res) {
         nodecg.sendMessage("split_timer", req.params.id);
         res.status(200).json(true);
     });
 
-    app.put("/speedcontrol/timer/reset", function(req, res) {
+    speedcontrolRouter.put("/timer/reset", function(req, res) {
         nodecg.sendMessage("reset_run");
         res.status(200).json(true);
     });
@@ -74,8 +84,11 @@ function register_api(nodecg) {
         publish(data);
     });
 
+    app.use('/speedcontrol', speedcontrolRouter);
     nodecg.mount(app);
 }
+
+
 
 function getTimeStamp() {
     return Date.now()/1000;
@@ -84,11 +97,19 @@ function getTimeStamp() {
 function publish(event) {
     if (_nodecg.bundleConfig.api.hooks) {
         _nodecg.bundleConfig.api.hooks.forEach(function(sub) {
-            request.post(sub, {json: event, timeout: 1500}, function(err) {
-                if (err) {
-                    _nodecg.log.error(
-                        "Error publishing event " + event.event + " to " + sub + ".", 
-                        err);
+            request.post({
+                    uri: sub, 
+                    json: event, 
+                    timeout: 1500,
+                    headers: {
+                        'API-Key': _nodecg.bundleConfig.api.sharedkey
+                    }
+                }, 
+                function(err) {
+                    if (err) {
+                        _nodecg.log.error(
+                            "Error publishing event " + event.event + " to " + sub + ".", 
+                            err);
                 }
             })
         });
