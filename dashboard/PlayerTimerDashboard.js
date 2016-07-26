@@ -77,17 +77,17 @@ $(function () {
     });
     //
     var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-    // runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
-    //     if (typeof newValue !== 'undefined' && newValue != '') {
-    //         playerTimer_UpdateTimers(newValue);
-    //         if(newValue.length > 1) {
-    //             moreThanOnePlayer = true;
-    //         }
-    //         else {
-    //             moreThanOnePlayer = false;
-    //         }
-    //     }
-    // });
+    runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
+        if (typeof newValue !== 'undefined' && newValue != '') {
+            playerTimer_UpdateTimers(newValue);
+            if(newValue.length > 1) {
+                moreThanOnePlayer = true;
+            }
+            else {
+                moreThanOnePlayer = false;
+            }
+        }
+    });
 
     var finishedTimersReplicant = nodecg.Replicant('finishedTimers');
     finishedTimersReplicant.on('change', function(oldValue, newValue) {
@@ -384,6 +384,10 @@ $(function () {
         nodecg.listenFor("split_timer", "nodecg-speedcontrol", function(id) {
             console.log("SPLIT-EVENT");
             console.log(id);
+            if (moreThanOnePlayer) {
+                nodecg.sendMessage('timerSplit', id);
+            }
+            nodecg.sendMessage('timerSplit', id);
             splitTimer(id);
         })
     }
