@@ -9,6 +9,7 @@ $(function () {
     var $streamControlInit = $('#streamControlInit');
     var $enableTwitchSynchronizationRadios = $('#enableTwitchSynchronization');
     var $enableTwitchSynchronizationRadio = $('input[name=enableTwitchSynchronizationRadio]');
+	var $playTwitchAdButton = $('#playTwitchAdButton');
     var errorMessage = "If you want to use the twitch functionality, you need to create a file called nodecg-speedcontrol.json in nodecg/cfg and fill it with:\n" +
         "{\n" +
         "\"enableTwitchApi\": true\n" +
@@ -32,6 +33,7 @@ $(function () {
     $enableTwitchSynchronizationRadios.buttonset();
     $streamControlSubmit.button({disabled: true});
     $streamControlInit.button();
+	$playTwitchAdButton.button();
 
     $enableTwitchSynchronizationRadio.change(function () {
         var configuration = streamControl_GetOrCreateStreamControlConfiguration();
@@ -78,6 +80,19 @@ $(function () {
 		nodecg.sendMessage('updateFFZFollowing', twitchNames);
         if (title != '' || game != '') {nodecg.sendMessage('updateChannel',requestObject);}
     });
+	
+	$playTwitchAdButton.click(function() {
+		if (typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') {
+            alert(errorMessage);
+            return;
+        }
+		
+		nodecg.sendMessage('playTwitchAd');
+		$playTwitchAdButton.button({disabled: true});
+		setTimeout(function() {
+			$playTwitchAdButton.button({disabled: false});
+		}, 60000);
+	});
 
     function streamControl_GetOrCreateStreamControlConfiguration() {
         var configuration = streamControlConfigurationReplicant.value;

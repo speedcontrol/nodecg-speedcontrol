@@ -16,6 +16,7 @@ module.exports = function (nodecg) {
         nodecg.listenFor('twitchLogin',twitch_Login);
         nodecg.listenFor('twitchLoginForwardCode',twitch_LoginForwardCode);
         nodecg.listenFor('updateChannel',twitch_updateChannel);
+        nodecg.listenFor('playTwitchAd',playTwitchAd);
 		accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
 		twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
 
@@ -28,7 +29,7 @@ module.exports = function (nodecg) {
             clientId: 'lrt9h6mot5gaf9lk62sea8u38lomfrc',
             clientSecret: 'fprpfvriz56tjly2m8o9zxdcvo5nvmi',
             redirectUri: 'http://localhost:9090/dashboard/',
-            scopes: ['channel_editor','user_read','chat_login']
+            scopes: ['channel_editor','user_read','chat_login','channel_commercial']
         });
 
         nodecg.mount(app);
@@ -93,5 +94,14 @@ function getCurrentChannelInfo() {
 		}
 		
 		setTimeout(getCurrentChannelInfo, 60000);
+	});
+}
+
+function playTwitchAd() {
+	twitch.startCommercial(nodeCgExport.bundleConfig.user, accessToken, {length: 60}, function(err) {
+		if (err) {
+			console.log("Error occurred in communication with twitch, look below");
+			console.log(err);
+		}
 	});
 }
