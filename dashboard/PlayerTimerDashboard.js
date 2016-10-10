@@ -65,18 +65,18 @@ $(function () {
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
     runDataActiveRunReplicant.on('change', function( newValue, oldValue) {
         if( typeof newValue !== 'undefined' && newValue !== '' ) {
-            moreThanOnePlayer = (newValue.teams.length > 1 && newValue.players.length >=2);
+            moreThanOnePlayer = (newValue.teams.length > 1 || newValue.players.length >=2);
             playerTimer_UpdateTimers(newValue);
         }
     });
-    //
-    // var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-    // runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
-    //     if (typeof newValue !== 'undefined' && newValue != '') {
-    //         playerTimer_UpdateTimers(newValue);
-    //         moreThanOnePlayer = (newValue.length > 1);
-    //     }
-    // });
+
+    var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
+    runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
+        if (typeof newValue !== 'undefined' && newValue != '') {
+            playerTimer_UpdateTimers(runDataActiveRunReplicant.value);
+            moreThanOnePlayer = (newValue.length > 1);
+        }
+    });
 
     var finishedTimersReplicant = nodecg.Replicant('finishedTimers');
     finishedTimersReplicant.on('change', function(newValue, oldValue) {

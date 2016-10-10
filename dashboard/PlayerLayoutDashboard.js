@@ -42,6 +42,7 @@ $(function () {
                         }
                     });
                 });
+                runDataActiveRunReplicant.value.players = newRunnerDataArray;
                 runDataActiveRunRunnerListReplicant.value = newRunnerDataArray;
             }
         });
