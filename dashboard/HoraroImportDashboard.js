@@ -83,22 +83,61 @@ $(function () {
 
                     runData.region = "";
 
-                    var twitchLinksList = run.data[2];
-                    if (twitchLinksList != null) {
-                        twitchLinksList = twitchLinksList.split(",");
-                    }
-                    var runnerList = run.data[1].split(",");
-                    runnerList.forEach(
-                        function (name, index) {
-                            var player = {};
-                            player.names = {};
-                            player.names.international = name.replace(' ', '');
-                            if (twitchLinksList != null && twitchLinksList[index] != null && twitchLinksList[index] != "") {
-                                player.twitch = {};
-                                player.twitch.uri = "http://www.twitch.tv/" + twitchLinksList[index].replace(' ', '');
+                    var playerLinksList = run.data[2];
+
+                    if (playerLinksList != null) {
+                        var vsList =playerLinksList.split(/vs\./);
+                        vsList.forEach( function( rawTeam, index) {
+                            var team = {
+                              name: runData.teams.length+1,
+                              members: new Array()
+                            };
+                            var members = rawTeam.split(",");
+                            for (var i=0; i < members.length; i++) {
+
+                              var username = members[i].match(/\((.*?)\)/)[1];
+                              var playerName = members[i].match(/\[(.*?)\]/)[1];
+                              var member = {
+                                  names: {
+                                    international: playerName
+                                  },
+                                  twitch: {
+                                    uri: "http://www.twitch.tv/"+username
+                                  },
+                                  team: team.name
+                              };
+                              team.members.push(member);
+                              runData.players.push(member);
                             }
-                            runData.players.push(player);
+                            runData.teams.push(team);
                         });
+
+                    //     twitchLinksList = twitchLinksList.split(",");
+                    }
+                    // twitchLinksList.forEach(
+                    //   function(name, index) {
+                    //     var player = {};
+                    //     if (twitchLinksList != null && twitchLinksList[index] != null && twitchLinksList[index] != "") {
+                    //         player.twitch = {};
+                    //         var username = twitchLinksList[index].match(/\[(.*?)\]/)[1];
+	                  //         player.twitch.uri = "http://www.twitch.tv/" + username;
+                    //         player.names = {};
+                    //         player.names.international = username;
+                    //     }
+                    //   }
+                    // )
+                    // var runnerList = run.data[1].split(",");
+                    // runnerList.forEach(
+                    //     function (name, index) {
+                    //         var player = {};
+                    //         player.names = {};
+                    //         player.names.international = name.replace(' ', '');
+                    //         if (twitchLinksList != null && twitchLinksList[index] != null && twitchLinksList[index] != "") {
+                    //             player.twitch = {};
+                    //             player.twitch.uri = "http://www.twitch.tv/" + twitchLinksList[index].replace(' ', '');
+                    //         }
+                    //         runData.players.push(player);
+                    //     });
                     horaro_AddRun(runData);
                 });
                 horaro_finalizeRunList();
