@@ -88,11 +88,12 @@ $(function () {
                     if (playerLinksList != null) {
                         var vsList =playerLinksList.split(/vs\./);
                         vsList.forEach( function( rawTeam, index) {
+                            var members = rawTeam.split(",");
                             var team = {
                               name: runData.teams.length+1,
                               members: new Array()
                             };
-                            var members = rawTeam.split(",");
+
                             for (var i=0; i < members.length; i++) {
 
                               var username = members[i].match(/\((.*?)\)/)[1];
@@ -108,6 +109,10 @@ $(function () {
                               };
                               team.members.push(member);
                               runData.players.push(member);
+                            }
+                            if (members.length == 1) {
+                              team.name = members[0].names.international;
+                              members[0].team = team.name;
                             }
                             runData.teams.push(team);
                         });
