@@ -1,11 +1,11 @@
 $(function () {
 	var $forceRefreshIntermissionButton = $('#forceRefreshIntermissionButton');
     $forceRefreshIntermissionButton.button();
-	
+
 	$forceRefreshIntermissionButton.click(function () {
         nodecg.sendMessage("forceRefreshIntermission");
     });
-	
+
     var runPlayer_activeRunID = -1;
     var runPlayer_neighbourRuns = {};
     var runPlayer_activeRunObject = undefined;
@@ -13,7 +13,7 @@ $(function () {
     var blankSlateRunContainerHtml = $('#run-player-container').html();
     // Initialize replicants we will use
     var runDataArrayReplicantPlayer = nodecg.Replicant("runDataArray");
-    runDataArrayReplicantPlayer.on("change", function (oldValue, newValue) {
+    runDataArrayReplicantPlayer.on("change", function (newValue, oldValue) {
         if (typeof newValue !== 'undefined' && newValue != "") {
             runPlayer_updateList(newValue);
             setActiveRun(runPlayer_activeRunID);
@@ -24,14 +24,14 @@ $(function () {
     });
 
     var streamControlConfigurationReplicantPlayer = nodecg.Replicant('streamControlConfiguration');
-    streamControlConfigurationReplicantPlayer.on('change', function (oldVal, newVal) {
-        if (newVal != "") {
+    streamControlConfigurationReplicantPlayer.on('change', function (newVal, oldVal) {
+        if (typeof newVal !== 'undefined' && newVal != "") {
             syncGamePlayedToTwitch = newVal.synchronizeAutomatically;
         }
     });
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
-    runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
+    runDataActiveRunReplicant.on("change", function (newValue, oldValue) {
         if (newValue != "" && typeof newValue !== 'undefined') {
             setActiveRun(newValue.runID);
         }
@@ -40,11 +40,9 @@ $(function () {
     });
 
     var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-    runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
-    });
 
     var stopWatchesReplicant = nodecg.Replicant('stopwatches');
-    stopWatchesReplicant.on('change', function (oldVal, newVal) {
+    stopWatchesReplicant.on('change', function (newVal, oldVal) {
         if (!newVal) return;
         switch (newVal[0].state) {
             case 'paused':
@@ -237,14 +235,14 @@ $(function () {
         var requestObject = {};
         requestObject.channel = {};
         requestObject.channel.game = runData.game;
-		
+
 		// Gets Twitch channel names from the runData and puts them in an array to send to the FFZ WS script.
 		var twitchNames = [];
 		for (var i = 0; i < runData.players.length; i++) {
 			var twitchName = (runData.players[i].twitch) ? runData.players[i].twitch.uri.replace('http://www.twitch.tv/', '') : undefined;
 			if (twitchName) {twitchNames.push(twitchName);}
 		}
-		
+
 		nodecg.sendMessage('updateFFZFollowing', twitchNames);
         nodecg.sendMessage('updateChannel', requestObject);
     }
@@ -298,5 +296,3 @@ $(function () {
         disabled: true
     });
 })
-
-

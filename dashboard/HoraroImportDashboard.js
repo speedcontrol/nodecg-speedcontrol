@@ -142,11 +142,9 @@ $(function () {
 
 // Initialize replicants we will use
     var horaroRunDataArrayReplicant = nodecg.Replicant("runDataArray");
-    horaroRunDataArrayReplicant.on("change", function (oldValue, newValue) {
-    });
 
     var horaroRunDataLastIDReplicant = nodecg.Replicant("runDataLastID");
-    horaroRunDataLastIDReplicant.on("change", function (oldValue, newValue) {
+    horaroRunDataLastIDReplicant.on("change", function (newValue, oldValue) {
         if (typeof newValue === 'undefined') {
             horaroRunDataLastIDReplicant.value = 1;
         }

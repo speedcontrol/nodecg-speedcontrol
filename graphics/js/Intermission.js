@@ -19,7 +19,7 @@ $(function () {
     var $justMissedPlayer = $('#justMissedPlayer');
 
     var isInitialized = false;
-	
+
 	var marqueeTimeout;
 
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
@@ -33,7 +33,7 @@ $(function () {
 
     // Replicants ###
     var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration', speedcontrolBundle);
-    sceneLayoutConfigurationReplicant.on('change', function(oldVal, newVal) {
+    sceneLayoutConfigurationReplicant.on('change', function(newVal, oldVal) {
         if(typeof newValue !== 'undefined' && newValue != "") {
             applyBackgroundTransparence(newVal.backgroundTransparency);
             handleEditMode(newVal.editMode)
@@ -41,11 +41,11 @@ $(function () {
     });
 
     var runDataArrayReplicant = nodecg.Replicant("runDataArray", speedcontrolBundle);
-    runDataArrayReplicant.on("change", function (oldValue, newValue) {
+    runDataArrayReplicant.on("change", function (newValue, oldValue) {
     });
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun", speedcontrolBundle);
-    runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
+    runDataActiveRunReplicant.on("change", function (newValue, oldValue) {
         if(typeof newValue == 'undefined' || newValue == "") {
             return;
         }

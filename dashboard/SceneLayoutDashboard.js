@@ -4,7 +4,7 @@ $(function () {
     var toggle = false;
 
     var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration');
-    sceneLayoutConfigurationReplicant.on('change', function (oldVal, newVal) {
+    sceneLayoutConfigurationReplicant.on('change', function (newVal, oldVal) {
         if (newVal != "" && typeof newVal != 'undefined') {
             if (newVal.editMode != null && newVal.editMode == true) {
                 var radio = $('#enableEditModeOn');
@@ -58,5 +58,3 @@ $(function () {
         $("#enableEditModeRadios").buttonset({disabled: true});
     }
 })
-
-

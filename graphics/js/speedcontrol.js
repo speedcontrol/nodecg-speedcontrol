@@ -33,26 +33,26 @@ $(function () {
     nodecg.listenFor('timerSplit', speedcontrolBundle, splitTimer);
 
     var stopWatchesReplicant = nodecg.Replicant('stopwatches',speedcontrolBundle);
-    stopWatchesReplicant.on('change', function(oldVal, newVal) {
-        if (!newVal) return;
-        var time  = newVal[0].time || '88:88:88';
-        if( oldVal )
+    stopWatchesReplicant.on("change", function (newValue, oldValue) {
+        if (!newValue) return;
+        var time  = newValue[0].time || '88:88:88';
+        if( oldValue )
         {
-          $timerInfo.toggleClass('timer_'+oldVal[0].state,false);
+          $timerInfo.toggleClass('timer_'+oldValue[0].state,false);
         }
-        $timerInfo.toggleClass('timer_'+newVal[0].state,true);
+        $timerInfo.toggleClass('timer_'+newValue[0].state,true);
         setTime(time);
     });
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun",speedcontrolBundle);
-    runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
+    runDataActiveRunReplicant.on("change", function (newValue, oldValue) {
         if(typeof newValue !== 'undefined' && newValue != '' ) {
             updateSceneFields(newValue);
         }
     });
 
     var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList",speedcontrolBundle);
-    runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
+    runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
         if(typeof newValue === 'undefined' || newValue == '') {
             return;
         }

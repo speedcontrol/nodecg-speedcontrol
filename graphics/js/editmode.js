@@ -28,7 +28,7 @@ $(function () {
 
     // Replicants ###
     var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration', speedcontrolBundle);
-    sceneLayoutConfigurationReplicant.on('change', function(oldValue, newValue) {
+    sceneLayoutConfigurationReplicant.on('change', function(newValue, oldValue) {
         if(typeof newValue !== 'undefined' && newValue != '') {
             applyBackgroundTransparence(newValue.backgroundTransparency);
             handleEditMode(newValue.editMode)
@@ -36,9 +36,9 @@ $(function () {
     });
 
     var sceneIDReplicant = nodecg.Replicant("sceneID",speedcontrolBundle, {defaultValue: sceneID});
-      sceneIDReplicant.on('change', function( oldValue, newValue) {
-        sceneID = newValue;
-        console.log("Changed sceneID to " + sceneID);
+    sceneIDReplicant.on('change', function( newValue, oldValue) {
+//        sceneID = newValue;
+//        console.log("Changed sceneID to " + sceneID);
     });
 
     // Edit Mode functions ###

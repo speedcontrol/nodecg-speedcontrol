@@ -16,7 +16,7 @@ $(function () {
         "}\n" +
         "exchange username with the twitch username which you want to access"
     var streamControlConfigurationReplicant = nodecg.Replicant('streamControlConfiguration');
-    streamControlConfigurationReplicant.on('change', function (oldVal, newVal) {
+    streamControlConfigurationReplicant.on('change', function (newVal, oldVal) {
         if (typeof newVal !== 'undefined') {
             if (newVal.synchronizeAutomatically != null && newVal.synchronizeAutomatically == true) {
                 var radio = $('#enableTwitchSynchronizationRadioOn');
@@ -42,7 +42,7 @@ $(function () {
     $streamControlInit.click(function () {
         streamControl_login();
     });
-	
+
 	// When the user clicks inside of the title/game editing box, stop it from updating automatically for 60 seconds.
 	$streamControlTitle.click(function () {
 		if (autoUpdateTwitchBoxes) {autoUpdateTwitchBoxes = false; setTimeout(function() {autoUpdateTwitchBoxes = true;}, 60000);}
@@ -61,19 +61,19 @@ $(function () {
         var twitch = $streamControlTwitchNames.val();
         var requestObject = {};
         requestObject.channel = {};
-		
+
         if(title != "") {
             requestObject.channel.status = title;
         }
         if(game != "") {
             requestObject.channel.game = game;
         }
-		
+
 		var twitchNames = [];
 		if (twitch != '') {
 			twitchNames = twitch.replace(' ', '').split(',');
 		}
-		
+
 		autoUpdateTwitchBoxes = true
 		nodecg.sendMessage('updateFFZFollowing', twitchNames);
         if (title != '' || game != '') {nodecg.sendMessage('updateChannel',requestObject);}
@@ -130,11 +130,11 @@ $(function () {
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
-	
+
 	// Checks if the access token has been set yet or not on page load.
 	// If not, gets one, if it has already got one, changes the buttons.
 	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
-	accessTokenReplicant.on('change', function(oldValue, newValue) {
+	accessTokenReplicant.on('change', function(newValue, oldValue) {
 		if (!newValue) {
 			var parameter = getParameterByName('code');
 			if(parameter != null && parameter != '') {
@@ -144,20 +144,20 @@ $(function () {
 
 			streamControl_login(true);
 		}
-		
+
 		else {streamControl_loginSuccessful();}
 	});
-	
+
 	// Used to update the contents of the FFZ follow box when it has changed.
 	var ffzFollowButtonsReplicant = nodecg.Replicant('ffzFollowButtons', {persistent: false});
-	ffzFollowButtonsReplicant.on('change', function(oldValue, newValue) {
+	ffzFollowButtonsReplicant.on('change', function(newValue, oldValue) {
 		newValue = newValue || [];
 		$streamControlTwitchNames.val(newValue.join(', '));
 	});
-	
+
 	// Used to update the contents of the title/game box automatically frequently.
 	var twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
-	twitchChannelInfoReplicant.on('change', function(oldValue, newValue) {
+	twitchChannelInfoReplicant.on('change', function(newValue, oldValue) {
 		if (newValue && autoUpdateTwitchBoxes) {
 			console.log(newValue);
 			if (newValue['status']) {$streamControlTitle.val(newValue['status']);}
@@ -165,5 +165,3 @@ $(function () {
 		}
 	});
 });
-
-

@@ -92,11 +92,11 @@
             var initialForm = $form.html();
 
             var runDataArrayReplicant = nodecg.Replicant("runDataArray");
-            runDataArrayReplicant.on("change", function (oldValue, newValue) {
+            runDataArrayReplicant.on("change", function (newValue, oldValue) {
             });
 
             var runDataLastIDReplicant = nodecg.Replicant("runDataLastID");
-            runDataLastIDReplicant.on("change", function (oldValue, newValue) {
+            runDataLastIDReplicant.on("change", function (newValue, oldValue) {
                 if (typeof newValue === 'undefined') {
                     runDataLastIDReplicant.value = 1;
                 }

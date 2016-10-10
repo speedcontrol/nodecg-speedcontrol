@@ -2,14 +2,14 @@
 $(function () {
 // Replicant initialization
     var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-    // runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
+    // runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
     //     if (typeof newValue !== 'undefined' && newValue != '') {
     //         playerLayout_UpdateLayoutPanel(newValue);
     //     }
     // });
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
-    runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
+    runDataActiveRunReplicant.on("change", function (newValue, oldValue) {
         if (typeof newValue !== 'undefined' && newValue != '') {
             var names = new Array();
             if( newValue.teams.length > 1 ) {

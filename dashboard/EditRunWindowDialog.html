@@ -88,11 +88,11 @@
             var $cancelButton = $('#cancel');
 
             var runDataArrayReplicant = nodecg.Replicant("runDataArray");
-            runDataArrayReplicant.on("change", function (oldValue, newValue) {
+            runDataArrayReplicant.on("change", function (newValue, oldValue) {
             });
 
             var runDataEditRunReplicant = nodecg.Replicant("runDataEditRun",{persistent: false});
-            runDataEditRunReplicant.on("change", function (oldValue, newValue) {
+            runDataEditRunReplicant.on("change", function (newValue, oldValue) {
                 if(typeof newValue === 'undefined') {
                     return;
                 }
@@ -109,11 +109,11 @@
             });
 
             var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
-            runDataActiveRunReplicant.on("change", function (oldValue, newValue) {
+            runDataActiveRunReplicant.on("change", function (newValue, oldValue) {
             });
 
             var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-            runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
+            runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
             });
 
             $cancelButton.on('click', function() {

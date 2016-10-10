@@ -9,7 +9,7 @@ $(function () {
 // Replicant initialization
 
     var stopWatchesReplicant = nodecg.Replicant('stopwatches');
-    stopWatchesReplicant.on('change', function (oldVal, newVal) {
+    stopWatchesReplicant.on('change', function (newVal, oldVal) {
         if (!newVal) return;
         var time = newVal[0].time || '88:88:88';
         switch (newVal[0].state) {
@@ -63,34 +63,23 @@ $(function () {
     });
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
-    runDataActiveRunReplicant.on('change', function( oldValue, newValue) {
+    runDataActiveRunReplicant.on('change', function( newValue, oldValue) {
         if( typeof newValue !== 'undefined' && newValue !== '' ) {
-
-            if( newValue.teams.length <= 1 && newValue.players.length < 2 ) {
-                moreThanOnePlayer = false;
-            }
-            else {
-              moreThanOnePlayer = true;
-            }
+            moreThanOnePlayer = (newValue.teams.length > 1 && newValue.players.length >=2);
             playerTimer_UpdateTimers(newValue);
         }
     });
     //
-    var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-    runDataActiveRunRunnerListReplicant.on("change", function (oldValue, newValue) {
-        if (typeof newValue !== 'undefined' && newValue != '') {
-            playerTimer_UpdateTimers(newValue);
-            if(newValue.length > 1) {
-                moreThanOnePlayer = true;
-            }
-            else {
-                moreThanOnePlayer = false;
-            }
-        }
-    });
+    // var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
+    // runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
+    //     if (typeof newValue !== 'undefined' && newValue != '') {
+    //         playerTimer_UpdateTimers(newValue);
+    //         moreThanOnePlayer = (newValue.length > 1);
+    //     }
+    // });
 
     var finishedTimersReplicant = nodecg.Replicant('finishedTimers');
-    finishedTimersReplicant.on('change', function(oldValue, newValue) {
+    finishedTimersReplicant.on('change', function(newValue, oldValue) {
         if(typeof newValue != 'undefined' && newValue != '') {
             if(splitTimes.length != newValue.length) {
                 splitTimes = newValue;

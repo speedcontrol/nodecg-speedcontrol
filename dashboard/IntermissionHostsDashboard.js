@@ -1,14 +1,14 @@
 $(function() {
 	var $editHostsButton = $('#editHostsButton');
 	$editHostsButton.button();
-	
+
 	// Replicant initialization
     var hostsDataReplicant = nodecg.Replicant("hostsData", {defaultValue: []});
-    hostsDataReplicant.on("change", function (oldValue, newValue) {
+    hostsDataReplicant.on("change", function (newValue, oldValue) {
         if (typeof newValue !== 'undefined' && newValue != '') {
             hostLayout_UpdateLayoutPanel(newValue);
         }
-		
+
 		// Clears the sorting boxes if no hosts have been set.
 		else if (typeof newValue !== 'Array' && newValue.length === 0) {
 			$('#hostLayoutContainer').html('');

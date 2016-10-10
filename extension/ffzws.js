@@ -14,16 +14,16 @@ var ffzFollowButtonsReplicant;
 module.exports = function(nodecg) {
 	nodeCgExport = nodecg;
 	nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
-	
+
 	// Used to store whatever the WS says are the current buttons on the page.
 	ffzFollowButtonsReplicant = nodecg.Replicant('ffzFollowButtons', {persistent: false});
-	
+
 	// Waits until we have the Twitch access code before doing anything.
 	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
-	accessTokenReplicant.on('change', function(oldValue, newValue) {
+	accessTokenReplicant.on('change', function(newValue, oldValue) {
 		if (!oldValue && newValue) {
 			accessToken = newValue;
-			
+
 			connectToWS(function() {
 				// connection to ws done
 			});
@@ -39,31 +39,31 @@ function connectToWS(callback) {
 		'sub "channel.' + nodeCgExport.bundleConfig.user + '"',
 		'ready 0'
 	];
-	
+
 	// Reset message number and connect.
 	messageNumber = 1;
 	ffzWS = new WebSocket(pickServer());
-	
+
 	// Catching any errors with the connection. The "close" event is also fired if it's a disconnect.
 	ffzWS.on('error', function(error) {
 		console.log("Error occurred on the FFZ connection, see below:");
 		console.log(error);
 	});
-	
+
 	ffzWS.once('open', function() {
 		ffzWS.send('1 hello ["nodecg-speedcontrol",false]');
 	});
-	
+
 	// If we disconnect, just run this function again after a delay to reconnect.
 	ffzWS.once('close', function() {
 		ffzWSConnected = false;
 		setTimeout(connectToWS, 60000);
 	});
-	
+
 	ffzWS.once('message', function(data) {
 		if (data.indexOf('1 ok') === 0) {
 			messageNumber++;
-			
+
 			// Loop to send all the messages we need on connect.
 			var i = 0;
 			async.whilst(
@@ -77,7 +77,7 @@ function connectToWS(callback) {
 			);
 		}
 	});
-	
+
 	// For -1 messages.
 	ffzWS.on('message', function(data) {
 		if (data.indexOf('-1') === 0) {
@@ -87,7 +87,7 @@ function connectToWS(callback) {
 				var authCode = JSON.parse(data.substr(16));
 				sendAuthThroughTwitchChat(authCode);
 			}
-			
+
 			// This is returned when the follower buttons are updated (including through this script).
 			else if (data.indexOf('-1 follow_buttons') === 0) {
 				ffzFollowButtonsReplicant.value = JSON.parse(data.substr(18))[nodeCgExport.bundleConfig.user];
@@ -112,7 +112,7 @@ function setFFZFollowing(usernames) {
 function sendMessage(message, callback) {
 	ffzWS.send(messageNumber + ' ' + message);
 	var thisMessageNumber = messageNumber; messageNumber++;
-	
+
 	var messageEvent; ffzWS.on('message', messageEvent = function(data) {
 		if (data.indexOf(thisMessageNumber + ' ok') === 0) {
 			ffzWS.removeListener('message', messageEvent);
@@ -136,14 +136,14 @@ function sendAuthThroughTwitchChat(auth) {
 			password: accessToken
 		}
 	};
-	
+
 	var client = new tmi.client(options);
 	client.connect();
-	
+
 	client.once('connected', function(address, port) {
 		// Send the auth code to the specific Twitch channel.
 		client.say('frankerfacezauthorizer', 'AUTH ' + auth);
-		
+
 		// Giving it 5 seconds until we disconnect just to make sure the message was sent.
 		setTimeout(function() {client.disconnect();}, 5000);
 	});
