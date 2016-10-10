@@ -111,8 +111,8 @@ $(function () {
                               runData.players.push(member);
                             }
                             if (members.length == 1) {
-                              team.name = members[0].names.international;
-                              members[0].team = team.name;
+                              team.name = team.members[0].names.international;
+                              team.members[0].team = team.name;
                             }
                             runData.teams.push(team);
                         });
