@@ -15,7 +15,7 @@ $(function () {
         }
 
         runNumberIterator = 1;
-		runDataArray = [];
+		    runDataArray = [];
         var jsonURL = $horaroURLField.val() + ".json";
         $.ajax({
             url: jsonURL,
@@ -34,8 +34,7 @@ $(function () {
                        run.data[0] == null ||
                        run.data[1] == null ||
                        run.data[2] == null ||
-                       run.data[3] == null ||
-                       run.data[4] == null) {
+                       run.data[3] == null) {
                        if(run.data == null) {
                            console.error("Did not receive a valid response from horaro. Has the format changed?");
                            return;
@@ -46,20 +45,15 @@ $(function () {
                            return;
                        }
 
-                        if(run.data[1] == null) {
-                           console.error("Run Number " + itemCounter + " does not have any value for \"Player Name\". This is not ok, will not Import.");
-                           return;
-                       }
-
-                       if(run.data[2] == null) {
+                       if(run.data[1] == null) {
                            console.warn("Run Number " + itemCounter + " does not have any value for \"Twitch User\". This might be ok, continuing import");
                        }
 
-                       if(run.data[3] == null) {
+                       if(run.data[2] == null) {
                            console.warn("Run Number " + itemCounter + " does not have any value for \"System\". This might be ok, continuing import");
                        }
 
-                       if(run.data[4] == null) {
+                       if(run.data[3] == null) {
                            console.warn("Run Number " + itemCounter + " does not have any value for \"Category\". This might be ok, continuing import");
                        }
 
@@ -67,15 +61,15 @@ $(function () {
                     var runData = createRunData();
                     runData.game = run.data[0];
                     runData.estimate = msToTime(run.length_t);
-                    if(run.data[4] != null) {
-                        runData.category = run.data[4];
+                    if(run.data[3] != null) {
+                        runData.category = run.data[3];
                     }
                     else {
                         runData.category ="";
                     }
 
-                    if(run.data[3] != null) {
-                        runData.system = run.data[3];
+                    if(run.data[2] != null) {
+                        runData.system = run.data[2];
                     }
                     else {
                         runData.system = "";
@@ -83,7 +77,7 @@ $(function () {
 
                     runData.region = "";
 
-                    var playerLinksList = run.data[2];
+                    var playerLinksList = run.data[1];
 
                     if (playerLinksList != null) {
                         var vsList =playerLinksList.split(/vs\./);
@@ -116,33 +110,7 @@ $(function () {
                             }
                             runData.teams.push(team);
                         });
-
-                    //     twitchLinksList = twitchLinksList.split(",");
                     }
-                    // twitchLinksList.forEach(
-                    //   function(name, index) {
-                    //     var player = {};
-                    //     if (twitchLinksList != null && twitchLinksList[index] != null && twitchLinksList[index] != "") {
-                    //         player.twitch = {};
-                    //         var username = twitchLinksList[index].match(/\[(.*?)\]/)[1];
-	                  //         player.twitch.uri = "http://www.twitch.tv/" + username;
-                    //         player.names = {};
-                    //         player.names.international = username;
-                    //     }
-                    //   }
-                    // )
-                    // var runnerList = run.data[1].split(",");
-                    // runnerList.forEach(
-                    //     function (name, index) {
-                    //         var player = {};
-                    //         player.names = {};
-                    //         player.names.international = name.replace(' ', '');
-                    //         if (twitchLinksList != null && twitchLinksList[index] != null && twitchLinksList[index] != "") {
-                    //             player.twitch = {};
-                    //             player.twitch.uri = "http://www.twitch.tv/" + twitchLinksList[index].replace(' ', '');
-                    //         }
-                    //         runData.players.push(player);
-                    //     });
                     horaro_AddRun(runData);
                 });
                 horaro_finalizeRunList();

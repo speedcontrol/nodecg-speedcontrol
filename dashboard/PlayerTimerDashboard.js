@@ -65,16 +65,19 @@ $(function () {
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
     runDataActiveRunReplicant.on('change', function( newValue, oldValue) {
         if( typeof newValue !== 'undefined' && newValue !== '' ) {
-            moreThanOnePlayer = (newValue.teams.length > 1 || newValue.players.length >=2);
+            moreThanOnePlayer = newValue.teams.length > 1;
+              //|| (newValue.players.length >=2) && newValue.teams.length == 1);
             playerTimer_UpdateTimers(newValue);
         }
     });
 
     var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
     runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
-        if (typeof newValue !== 'undefined' && newValue != '') {
-            playerTimer_UpdateTimers(runDataActiveRunReplicant.value);
-            moreThanOnePlayer = (newValue.length > 1);
+        if (typeof newValue !== 'undefined' && newValue != '' ) {
+            if (typeof runDataActiveRunReplicant.value !== 'undefined') {
+              playerTimer_UpdateTimers(runDataActiveRunReplicant.value);
+            }
+
         }
     });
 

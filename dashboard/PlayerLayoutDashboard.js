@@ -12,12 +12,12 @@ $(function () {
     runDataActiveRunReplicant.on("change", function (newValue, oldValue) {
         if (typeof newValue !== 'undefined' && newValue != '') {
             var names = new Array();
-            if( newValue.teams.length > 1 ) {
-                playerLayout_UpdateLayoutPanelWithTeams(newValue.teams);
-            }
-            else {
-                playerLayout_UpdateLayoutPanelWithRunners(newValue.players, names);
-            }
+            // if( newValue.teams.length >= 1 ) {
+                 playerLayout_UpdateLayoutPanelWithTeams(newValue.teams);
+            // }
+            // else {
+            //     playerLayout_UpdateLayoutPanelWithRunners(newValue.players, names);
+            // }
         }
     });
 
@@ -43,7 +43,7 @@ $(function () {
                     });
                 });
                 runDataActiveRunReplicant.value.players = newRunnerDataArray;
-                runDataActiveRunRunnerListReplicant.value = newRunnerDataArray;
+                 runDataActiveRunRunnerListReplicant.value = newRunnerDataArray;
             }
         });
 
