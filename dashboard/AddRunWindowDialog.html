@@ -40,9 +40,16 @@
             height: 50px;
         }
 
-        #playerContentContainer {
+        #teamContentContainer {
+          /*display: flex;*/
+          width: 100%;
+          overflow-y: scroll;
+          border: solid 1px black;
+        }
+
+        .playerContentContainer {
             display: flex;
-            width: 100%;
+            width: 80%;
         }
 
         .playerText, .playerTwitchText {
@@ -110,11 +117,21 @@
                 runDataLastIDReplicant.value = runIDIncremented;
                 return runID;
             }
+            var team_id_count = 0;
 
+            function addTeam() {
+              team_id_count++;
+              var html = createTeamElement(team_id_count);
+              $('#teamContainer').append(html);
+              var getCallback = function(team_id) {
+                return function() {addPlayer(team_id); }
+              }
+              $('#addPlayer_'+team_id_count).on('click', getCallback(team_id_count));
+            }
 
-            function addPlayer() {
+            function addPlayer(team_id) {
                 var html = createPlayerElement();
-                $('#playerContainer').append(html);
+                $('#'+team_id+' .playerContainer').append(html);
             }
 
             function addScreen() {
@@ -139,8 +156,13 @@
                 $addPlayerButton = $('#addPlayer');
 
                 $addPlayerButton.on('click', function() {
-                    addPlayer();
+                    addPlayer($(this).parent().id());
                 });
+
+                $addTeamButton = $('#addTeam');
+                $addTeamButton.on('click', function() {
+                  addTeam();
+                })
 
                 $addCameraButton = $('#addCamera');
                 $addCameraButton.on('click', function() {
@@ -193,28 +215,28 @@
                     runData.screens = new Array();
                     runData.cameras = new Array();
 
-                    $('.playerContentContainer').each(function () {
+                    $('.teamContentContainer').each(function () {
                         var playerObject = {};
-                        var playerName = $(this).find('.playerInput').val();
-                        var playerTwitch = $(this).find('.playerTwitchInput').val();
-                        var playerTeam = $(this).find('.playerTeam').val();
-                        if( playerTeam !== '' ) {
-                          if( typeof teamObjs[playerTeam] === 'undefined') {
-                            teamObjs[playerTeam] = { members: new Array(), name: playerTeam };
+                        var teamName = $(this).find('.teamInput').val();
+                        var team = {
+                          name: teamName,
+                          members: new Array()
+                        };
+                        runData.teams.push(team);
+                        $(this).find('.playerContentContainer').each(function() {
+                          var playerName = $(this).find('.playerInput').val();
+                          var playerTwitch = $(this).find('.playerTwitchInput').val();
+                          var member = {
+                            names: {
+                              international: playerName
+                            },
+                            twitch: {
+                              uri: playerTwitch
+                            }
                           }
-                          teamObjs[playerTeam].members.push(playerObject);
-                          playerObject.team = playerTeam;
-                        }
-
-
-                        playerObject.names = {};
-                        playerObject.names.international = playerName;
-                        console.log(playerTwitch);
-                        if(playerTwitch != '' && typeof playerTwitch !== 'undefined') {
-                            playerObject.twitch = {};
-                            playerObject.twitch.uri = playerTwitch;
-                        }
-                        runData.players.push(playerObject);
+                          team.members.push(member);
+                          runData.players.push(member);
+                        });
                     });
 
                     $('.screen').each(function() {
@@ -225,11 +247,6 @@
                         runData.cameras.push({aspectRatio: $(this).val()});
                     });
 
-                    for( var key in teamObjs) {
-                      if( teamObjs.hasOwnProperty(key) ) {
-                        runData.teams.push(teamObjs[key]);
-                      }
-                    }
                     console.log(runData);
                     runArray.push(runData);
                     runDataArrayReplicant.value = runArray;
@@ -245,7 +262,7 @@
                     initialize();
                 });
 
-                addPlayer();
+                addTeam();
                 addScreen();
             }
 
@@ -259,7 +276,18 @@
                 theRun.category = "";
                 return theRun;
             }
-
+            function createTeamElement(team_id) {
+                var HTML = '';
+                HTML += "<div class='teamContentContainer' id='"+(team_id)+"'>"+
+                        "<div class='teamName'>" +
+                        "Team:"+
+                        "</div>" +
+                        "<input class='teamInput' placeholder='Team Name'>"+
+                        "<button id='addPlayer_"+(team_id)+"'>Add Player</button>"+
+                        "<div class='playerContainer'></div>"+
+                        "</div>";
+                return HTML;
+            }
             function createPlayerElement(playerArray) {
                 var HTML = '';
                 HTML += "<div class='playerContentContainer'>"+
@@ -268,11 +296,9 @@
                         "</div>" +
                         "<input class='playerInput' placeholder='Nickname'>"+
                         "<div class='playerTwitchText'>" +
-                        "Twitch:"+
+                        "Link:"+
                         "</div>" +
-                        "<input class='playerTwitchInput' placeholder='Full Twitch Link'>"+
-                        "<div>Team:</div>"+
-                        "<input class='playerTeam' placeholder='Team name'>"
+                        "<input class='playerTwitchInput' placeholder='http://twitch.tv/nickname'>"+
                         "</div>";
                 return HTML;
             }
@@ -293,8 +319,11 @@
     <div id="operationResult">
     </div>
     <div id="runContainer">
-        <div id="playerContainer">
+        <div id="teamContainer">
+          <button id="addTeam">Add Team</button>
+<!--          <div class="playerContainer">
             <button id="addPlayer">Add Player</button>
+          </div>-->
         </div>
         <div id="game">
             <div id="gameName">
