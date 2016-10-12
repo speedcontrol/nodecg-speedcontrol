@@ -176,13 +176,6 @@
                         }
                     });
 
-                    $('.playerTwitchInput').each(function () {
-                        if ($(this).val() != "" && ($(this).val().indexOf("http://www.twitch.tv/") < 0)) {
-                            validationResult = false;
-                            validationMessage = "Twitch field has to start with http://www.twitch.tv/";
-                        }
-                    });
-
                     if(validationResult == false) {
                         $('#operationResult').html(validationMessage);
                         return;

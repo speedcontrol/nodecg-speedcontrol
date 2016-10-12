@@ -15,16 +15,26 @@ $(function () {
     var runDataEditRunReplicant = nodecg.Replicant("runDataEditRun",{persistent: false});
 
     function runControl_GetPlayers(runData) {
-        var playerString = '<tr> <td class="rowTitle">Runners</td>';
-        $.each(runData.players, function (index, player) {
-            if (index == 0) {
-                playerString += '<td class="rowContent">' + player.names.international + '</td>' +
-                    '</tr>';
-            }
-            else {
-                playerString += '<tr><td class="rowTitle"></td><td class="rowContent">' + player.names.international + '</td>' +
-                    '</tr>';
-            }
+        var shouldSayTeams = runData.teams.length > 1;
+        // if any teams have more than 1 player, we should say teams
+        runData.teams.forEach( function(team, index) {
+          shouldSayTeams = team.members.length > 1;
+        });
+        var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
+        $.each(runData.teams, function (index, team) {
+          if (index > 0) {
+            playerString += '<tr><td class="rowTitle"</td>';
+          }
+          playerString += '<td class="rowContent">' + team.name;
+          if (team.members.length > 1) {
+            playerString += '<ul>';
+
+            $.each(team.members, function (index, member) {
+              playerString += '<li>' + member.names.international + '</li>';
+            });
+            playerString += '</ul>'
+          }
+          playerString += '</td></tr>';
         });
         return playerString;
     }
@@ -52,8 +62,9 @@ $(function () {
             var buttonChangeIDString = 'change' + runData.runID;
             buttonRemoveIDs.push(buttonRemoveIDString);
             buttonChangeIDs.push(buttonChangeIDString);
+            teamsString = ( runData.teams.length > 1 ? ", " + runData.teams.length + " Teams" : "");
             htmlDescriptor += '<div class="group" id="' + runData.runID + '">' +
-                '<h3>' + runData.game + ' (' + runData.category + ')' + " " + runData.players.length + "p" +
+                '<h3>' + runData.game + ' (' + runData.category + ')' + " " + runData.players.length + "p" + teamsString +
                 '</h3>' +
                 '<div>' +
                 runControl_GetRunBodyHtml(runData) +

@@ -71,20 +71,30 @@ $(function () {
         $(".runPlayerNext").button({disabled: true});
     }
 
-    function runPlayer_getPlayers(runData) {
-        var playerString = '<tr> <td class="rowTitle">Runners</td>';
-        $.each(runData.players, function (index, player) {
-            if (index == 0) {
-                playerString += '<td class="rowContent">' + player.names.international + '</td>' +
-                    '</tr>';
-            }
-            else {
-                playerString += '<tr><td class="rowTitle"></td><td class="rowContent">' + player.names.international + '</td>' +
-                    '</tr>';
-            }
-        });
-        return playerString;
-    }
+		function runPlayer_getPlayers(runData) {
+				var shouldSayTeams = runData.teams.length > 1;
+				// if any teams have more than 1 player, we should say teams
+				runData.teams.forEach( function(team, index) {
+					shouldSayTeams = team.members.length > 1;
+				});
+				var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
+				$.each(runData.teams, function (index, team) {
+					if (index > 0) {
+						playerString += '<tr><td class="rowTitle"</td>';
+					}
+					playerString += '<td class="rowContent">' + team.name;
+					if (team.members.length > 1) {
+						playerString += '<ul>';
+
+						$.each(team.members, function (index, member) {
+							playerString += '<li>' + member.names.international + '</li>';
+						});
+						playerString += '</ul>'
+					}
+					playerString += '</td></tr>';
+				});
+				return playerString;
+		}
 
     function runPlayer_getRunBodyHtml(runData) {
         var players = runPlayer_getPlayers(runData);
@@ -202,7 +212,7 @@ $(function () {
         $('#' + theNextGame.runID + ".playerGroup").find('h3').addClass('ui-state-playing-next');
         $("#runPlayerWindow").scrollTo($('#' + thePreviousGame.runID + ".playerGroup"), 500, {queue: false});
         runDataActiveRunReplicant.value = runPlayer_activeRunObject;
-        runDataActiveRunRunnerListReplicant.value = runPlayer_activeRunObject.players;
+
 
         if (syncGamePlayedToTwitch) {
             runPlayer_setTwitchChannelData(runPlayer_activeRunObject);
@@ -259,6 +269,9 @@ $(function () {
 
     function runPlayer_getRunObjectByIndex(runIndex) {
         var runs = runDataArrayReplicantPlayer.value;
+				if (typeof runs === 'undefined') {
+					return -1;
+				}
         if(runIndex >= runs.length) {
             runIndex = 0;
         }

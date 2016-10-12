@@ -82,22 +82,35 @@ $(function () {
                     if (playerLinksList != null) {
                         var vsList =playerLinksList.split(/vs\./);
                         vsList.forEach( function( rawTeam, index) {
+                            var cap = rawTeam.match(/(Team\s*)?(\S+):\s+\[/);
+                            var teamName = "";
+                            if (cap !== null && cap.length > 0) {
+                              teamName = cap[2];
+                            }
+                            else {
+                              teamName = "Team "+(runData.teams.length+1);
+                            }
                             var members = rawTeam.split(",");
                             var team = {
-                              name: runData.teams.length+1,
+                              name: teamName,
                               members: new Array()
                             };
 
                             for (var i=0; i < members.length; i++) {
 
-                              var username = members[i].match(/\((.*?)\)/)[1];
-                              var playerName = members[i].match(/\[(.*?)\]/)[1];
+                              if (members[i].match(/\((.*?)\)/)) {
+                                var username = members[i].match(/\((.*?)\)/)[1];
+                                var playerName = members[i].match(/\[(.*?)\]/)[1];
+                              }
+                              else {
+                                console.log("Unable to parse "+members[i]);
+                              }
                               var member = {
                                   names: {
                                     international: playerName
                                   },
                                   twitch: {
-                                    uri: "http://www.twitch.tv/"+username
+                                    uri: username
                                   },
                                   team: team.name
                               };

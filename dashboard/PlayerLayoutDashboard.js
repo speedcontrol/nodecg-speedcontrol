@@ -1,62 +1,14 @@
 'use strict';
 $(function () {
 // Replicant initialization
-    var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-    // runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
-    //     if (typeof newValue !== 'undefined' && newValue != '') {
-    //         playerLayout_UpdateLayoutPanel(newValue);
-    //     }
-    // });
-
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
     runDataActiveRunReplicant.on("change", function (newValue, oldValue) {
         if (typeof newValue !== 'undefined' && newValue != '') {
             var names = new Array();
-            // if( newValue.teams.length >= 1 ) {
-                 playerLayout_UpdateLayoutPanelWithTeams(newValue.teams);
-            // }
-            // else {
-            //     playerLayout_UpdateLayoutPanelWithRunners(newValue.players, names);
-            // }
+           playerLayout_UpdateLayoutPanelWithTeams(newValue.teams);
+
         }
     });
-
-    function playerLayout_UpdateLayoutPanelWithRunners(runners) {
-        var playersSortableHTML = '' +
-            '<ul id="playerLayoutSortable">' +
-            playerLayout_CreatePlayerListHtmlElements(runners) +
-            '</ul>';
-        $('#playerLayoutContainer').html(playersSortableHTML);
-        $("#playerLayoutSortable").sortable({
-            stop: function (event, ui) {
-                // IE doesn't register the blur when sorting
-                // so trigger focusout handlers to remove .ui-state-focus
-                var sortedIDs = $('#playerLayoutSortable').sortable("toArray");
-                var runnersContainer = runDataActiveRunRunnerListReplicant.value;
-                var newRunnerDataArray = [];
-                $.each(sortedIDs, function (index, valueId) {
-                    $.each(runnersContainer, function (index, valueRunnerData) {
-                        if (valueRunnerData.names.international == valueId) {
-                            newRunnerDataArray.push(valueRunnerData);
-                            return false;
-                        }
-                    });
-                });
-                runDataActiveRunReplicant.value.players = newRunnerDataArray;
-                 runDataActiveRunRunnerListReplicant.value = newRunnerDataArray;
-            }
-        });
-
-        $("#playerLayoutSortable").disableSelection();
-    }
-
-    function playerLayout_CreatePlayerListHtmlElements(runnerArray) {
-        var runnerHtml = '';
-        $.each(runnerArray, function (index, value) {
-            runnerHtml += '<li class="ui-state-default" id="' + value.names.international + '">' + value.names.international + '</li>';
-        });
-        return runnerHtml;
-    }
 
     function playerLayout_UpdateLayoutPanelWithTeams(runners) {
         var playersSortableHTML = '' +

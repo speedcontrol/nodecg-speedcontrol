@@ -3,7 +3,7 @@ $(function () {
     var $timer = $("#theTimer");
     var splitsBeforeStoppingMainTimer = 255;
     var stoppedTimers = 0;
-    var moreThanOnePlayer = false;
+    var moreThanOneTeam = false;
     var splitTimes = [];
     var lastTimerState = "";
 // Replicant initialization
@@ -35,7 +35,7 @@ $(function () {
             case 'running':
                 if(lastTimerState != newVal[0].state) {
                     $timer.css('color', '#008BB9');
-                    if (moreThanOnePlayer) {
+                    if (moreThanOneTeam) {
                         disableMainTimerStopButton(true);
                     }
                     else {
@@ -65,21 +65,21 @@ $(function () {
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
     runDataActiveRunReplicant.on('change', function( newValue, oldValue) {
         if( typeof newValue !== 'undefined' && newValue !== '' ) {
-            moreThanOnePlayer = newValue.teams.length > 1;
+            moreThanOneTeam = newValue.teams.length > 1;
               //|| (newValue.players.length >=2) && newValue.teams.length == 1);
             playerTimer_UpdateTimers(newValue);
         }
     });
 
     var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-    runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
-        if (typeof newValue !== 'undefined' && newValue != '' ) {
-            if (typeof runDataActiveRunReplicant.value !== 'undefined') {
-              playerTimer_UpdateTimers(runDataActiveRunReplicant.value);
-            }
-
-        }
-    });
+    // runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
+    //     if (typeof newValue !== 'undefined' && newValue != '' ) {
+    //         if (typeof runDataActiveRunReplicant.value !== 'undefined') {
+    //           playerTimer_UpdateTimers(runDataActiveRunReplicant.value);
+    //         }
+    //
+    //     }
+    // });
 
     var finishedTimersReplicant = nodecg.Replicant('finishedTimers');
     finishedTimersReplicant.on('change', function(newValue, oldValue) {
@@ -157,7 +157,7 @@ $(function () {
         var splitTime = {};
         splitTime.index = index;
         splitTime.time = stopWatchesReplicant.value[0].time;
-        splitTime.name = runDataActiveRunRunnerListReplicant.value[index].names.international;
+        splitTime.name = runDataActiveRunReplicant.value.teams[index].name;
         return splitTime;
     }
 
@@ -223,17 +223,7 @@ $(function () {
                 '</div>';
           });
         }
-        else if (run.teams.length < 1 && players.length > 1) {
-            $.each(players, function (index, value) {
-                toolbarPlayerSpecificHtml += "" +
-                    '<div id="toolbar' + index + '" class="ui-widget-header ui-corner-all">' +
-                    '<button id="split' + index + '" class="personalSplitButton">split</button>' +
-                    '<button id="resetTime' + index + '" class="personalResetButton">reset</button>' +
-                    " " + value.names.international +
-                    '</div>';
-            });
-        }
-        if( moreThanOnePlayer ) {
+        if( moreThanOneTeam ) {
             $('#playerSpecificToolbar').html(toolbarPlayerSpecificHtml);
 			      $('#playerTimersHeader').show();
 
@@ -274,7 +264,7 @@ $(function () {
             $('#playerSpecificToolbar').html(toolbarPlayerSpecificHtml);
 			      $('#playerTimersHeader').hide();
         }
-        splitsBeforeStoppingMainTimer = players.length;
+        splitsBeforeStoppingMainTimer = run.teams.length;
     }
 
     function OnPlay() {
@@ -376,7 +366,7 @@ $(function () {
         nodecg.listenFor("split_timer", "nodecg-speedcontrol", function(id) {
             console.log("SPLIT-EVENT");
             console.log(id);
-            if (moreThanOnePlayer) {
+            if (moreThanOneTeam) {
                 nodecg.sendMessage('timerSplit', id);
             }
             nodecg.sendMessage('timerSplit', id);

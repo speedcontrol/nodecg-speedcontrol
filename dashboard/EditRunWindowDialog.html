@@ -113,8 +113,6 @@
             });
 
             var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-            runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
-            });
 
             $cancelButton.on('click', function() {
                 var gameData = runDataEditRunReplicant.value;
@@ -157,12 +155,6 @@
                     }
                 });
 
-                $('.playerTwitchInput').each(function () {
-                    if ($(this).val() != "" && ($(this).val().indexOf("http://www.twitch.tv/") < 0)) {
-                        validationResult = false;
-                        validationMessage = "Twitch field has to start with http://www.twitch.tv/";
-                    }
-                });
 
                 if(validationResult == false) {
                     $('#operationResult').html(validationMessage);
@@ -225,7 +217,7 @@
                     runDataArrayReplicant.value = gameArray;
                     if(typeof runDataActiveRunReplicant.value !== 'undefined' && gameData.runID == runDataActiveRunReplicant.value.runID) {
                         runDataActiveRunReplicant.value = gameData;
-                        runDataActiveRunRunnerListReplicant.value = gameData.players;
+                        //runDataActiveRunRunnerListReplicant.value = gameData.players;
                     }
                 }
                 $('#operationResult').html("update succeeded");
@@ -262,7 +254,7 @@
                             "</div>" +
                             "<input id='player"+index+"Input' class='playerInput' value='"+playerName+"'>"+
                             "<div class='playerTwitchText'>" +
-                            "Twitch:"+
+                            "Link:"+
                             "</div>" +
                             "<input id='player"+index+"TwitchInput' class='playerTwitchInput' value='"+playerTwitch+"'>"+
                             "<div>Team: <input id='player"+index+"Team' class='playerTeam' value='"+playerTeam+"'></div>"+
