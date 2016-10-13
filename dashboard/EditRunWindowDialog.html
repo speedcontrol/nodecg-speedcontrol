@@ -19,7 +19,7 @@
             width: 100%;
         }
 
-        #playerContainer {
+        #teamContainer {
             flex: 1;
             width: 50%;
             border: 1px solid #bebebe;
@@ -41,12 +41,22 @@
         }
 
         #playerContentContainer {
-            display: flex;
-            width: 100%;
+            /*display: flex;
+            width: 100%;*/
         }
-
-        .playerText, .playerTwitchText {
+        .teamContentContainer {
+          border: 1px solid blue;
+          padding: 10px;
+        }
+        .teamText {
             flex: 1;
+            width: 100%;
+            height: 35px;
+            text-align: left;
+            line-height: 35px;
+        }
+        .playerText, .playerTwitchText, {
+            flex: 2;
             width: 100%;
             height: 35px;
             text-align: left;
@@ -54,7 +64,7 @@
         }
 
         .playerInput, .playerTwitchInput {
-            flex: 2;
+            flex: 3;
             width: 100%;
             height: 35px;
         }
@@ -97,13 +107,13 @@
                     return;
                 }
 
-                var playerNamesTwitchHTML = getPlayerNameTwitchHtml(newValue.players);
+                var teamsHTML = getTeamsHTML(newValue.teams);
                 $('#gameNameInput').val(newValue.game);
                 $('#gameEstimateInput').val(newValue.estimate);
                 $('#gameCategoryInput').val(newValue.category);
                 $('#gameSystemInput').val(newValue.system);
                 $('#gameRegionInput').val(newValue.region);
-                $('#playerContainer').html(playerNamesTwitchHTML);
+                $('#teamContainer').html(teamsHTML);
                 $('#screensContainer').html(getScreensHTML(newValue));
                 $('#camerasContainer').html(getCamerasHTML(newValue));
             });
@@ -121,16 +131,15 @@
                 $('#gameCategoryInput').val(gameData.category);
                 $('#gameSystemInput').val(gameData.system);
                 $('#gameRegionInput').val(gameData.region);
-                $('.playerInput').each(function(){
-                    var index = Number($(this).attr('id').replace('player','').replace('Input',''));
-                    var playerName = '';
-                    console.log("index: "+index);
-                    console.log(gameData.players[index]);
-                    if(typeof gameData.players[index] !== 'undefined' &&
-                            typeof gameData.players[index].names.international !== 'undefined') {
-                        playerName = gameData.players[index].names.international;
-                    }
-                    $(this).val(playerName);
+                var playerIndex = 0;
+                gameData.teams.forEach(function(team, index) {
+                  $('.teamInput').each(function() {
+                    $(this).val(gameData.teams[index].name);
+                  });
+                  this.members.forEach( function(member, index) {
+                    $('#player'+index+'Input').val(member.names.international);
+                    $('#playerTwitch'+index+'Input').val(member.twitch.uri);
+                  });
                 });
                 $("#operationResult").html("Reverted Changes");
             });
@@ -161,59 +170,57 @@
                     return;
                 }
 
-                gameData.game = $('#gameNameInput').val();
-                gameData.estimate = $('#gameEstimateInput').val();
-                gameData.category = $('#gameCategoryInput').val();
-                gameData.system = $('#gameSystemInput').val();
-                gameData.region = $('#gameRegionInput').val();
-                gameData.teams = new Array();
-                var teamObjs = {};
+                var newGameData = {}
 
-                $('.playerInput').each(function () {
-                    var index = Number($(this).attr('id').replace('player', '').replace('Input', ''));
-                    if (typeof gameData.players[index] !== 'undefined' &&
-                        typeof gameData.players[index].names.international !== 'undefined') {
-                        gameData.players[index].names.international = $(this).val();
-                    }
+                newGameData.game = $('#gameNameInput').val();
+                newGameData.estimate = $('#gameEstimateInput').val();
+                newGameData.category = $('#gameCategoryInput').val();
+                newGameData.system = $('#gameSystemInput').val();
+                newGameData.region = $('#gameRegionInput').val();
+                newGameData.teams = new Array();
+                newGameData.players = new Array();
+                newGameData.screens = new Array();
+                newGameData.cameras = new Array();
+
+
+
+                $('.teamContentContainer').each(function(index) {
+
+                    var teamInput = $(this).find('.teamInput');
+                    var teamIndex = Number($(teamInput).attr('id').replace('team','').replace('Input',''));
+                    var newTeamName = $(teamInput).val();
+                    newGameData.teams.push({ name: newTeamName, members: new Array() });
+
+                    $(this).find('.playerContentContainer').each(function() {
+                      var playerInput = $(this).find('.playerInput');
+                      var playerIndex = Number($(playerInput).attr('id').replace('player','').replace('Input',''));
+                      var name = playerInput.val();
+                      var link = $(this).find('.playerTwitchInput').val();
+                      var member = {
+                        names: {
+                          international: name
+                        },
+                        twitch: {
+                          uri: link
+                        }
+                      }
+                      newGameData.teams[teamIndex].members.push(member);
+                      newGameData.players.push(member);
+                    });
                 });
-
-                $('.playerTwitchInput').each(function () {
-                    var index = Number($(this).attr('id').replace('player', '').replace('TwitchInput', ''));
-                    if (typeof gameData.players[index] !== 'undefined' &&
-                        typeof gameData.players[index].twitch !== 'undefined') {
-                        gameData.players[index].twitch.uri = $(this).val();
-                    }
-                });
-
-                $('.playerTeam').each( function() {
-                    var index = Number($(this).attr('id').replace('player','').replace('Team',''));
-                    var playerTeam = $(this).val();
-                    if( typeof teamObjs[playerTeam] === 'undefined') {
-                      teamObjs[playerTeam] = { members: new Array(), name: playerTeam };
-                    }
-                    teamObjs[playerTeam].members.push(gameData.players[index]);
-                    if( typeof gameData.players[index] !== 'undefined' ) {
-                        gameData.players[index].team = $(this).val();
-                    }
-                });
-
-                for( var key in teamObjs) {
-                  if( teamObjs.hasOwnProperty(key) ) {
-                    gameData.teams.push(teamObjs[key]);
-                  }
-                }
 
                 $('.screenInput').each( function(index, element) {
-                    gameData.screens[index].aspectRatio = $(this).val();
+                    newGameData.screens.push({aspectRatio: $(this).val()});
                 });
 
                 $('.cameraInput').each( function(index, element) {
-                    gameData.cameras[index].aspectRatio = $(this).val();
+                    newGameData.cameras.push({aspectRatio: $(this).val()});
                 });
 
                 var arrayIndex = getRunIndexInRunDataArrayReplicant(gameData.runID);
                 if (arrayIndex != -1) {
-                    gameArray[arrayIndex] = gameData;
+                    newGameData.runID = gameData.runID;
+                    gameArray[arrayIndex] = newGameData;
                     runDataArrayReplicant.value = gameArray;
                     if(typeof runDataActiveRunReplicant.value !== 'undefined' && gameData.runID == runDataActiveRunReplicant.value.runID) {
                         runDataActiveRunReplicant.value = gameData;
@@ -233,33 +240,36 @@
                 return -1;
             }
 
-            function getPlayerNameTwitchHtml(playerArray) {
+            function getTeamsHTML(teams) {
                 var HTML = '';
-                $.each(playerArray,function(index, player) {
-                    var playerName = player.names.international;
-                    var playerTwitch = '';
+                $.each(teams,function(index, team) {
+                  HTML += "<div class='teamContentContainer'>"+
+                      "<div class='teamText'>Team:</div>"+
+                      "<input id='team"+index+"Input' class='teamInput' value='"+team.name+"'>";
+                    $.each(team.members, function(index, player){
+                      var playerName = player.names.international;
+                      var playerTwitch = '';
 
-                    if(typeof player.twitch !=='undefined') {
-                        playerTwitch = player.twitch.uri;
-                    }
+                      if(typeof player.twitch !=='undefined') {
+                          playerTwitch = player.twitch.uri;
+                      }
 
-                    var playerTeam = "";
-                    if( typeof player.team !== 'undefined') {
-                        playerTeam = player.team;
-                    }
 
-                    HTML += "<div class='playerContentContainer'>"+
-                            "<div class='playerText'>" +
-                            "Player:"+
-                            "</div>" +
-                            "<input id='player"+index+"Input' class='playerInput' value='"+playerName+"'>"+
-                            "<div class='playerTwitchText'>" +
-                            "Link:"+
-                            "</div>" +
-                            "<input id='player"+index+"TwitchInput' class='playerTwitchInput' value='"+playerTwitch+"'>"+
-                            "<div>Team: <input id='player"+index+"Team' class='playerTeam' value='"+playerTeam+"'></div>"+
-                            "</div>";
+                      HTML += "<div class='playerContentContainer'>"+
+                              "<div class='playerText'>" +
+                              "Player:"+
+                              "</div>" +
+                              "<input id='player"+index+"Input' class='playerInput' value='"+playerName+"'>"+
+                              "<div class='playerTwitchText'>" +
+                              "Link:"+
+                              "</div>" +
+                              "<input id='player"+index+"TwitchInput' class='playerTwitchInput' value='"+playerTwitch+"'>"+
+                              "</div>";
+                   });
+                   HTML += "</div>";
                 });
+                HTML += "</div>";
+
                 return HTML;
             }
 
@@ -284,7 +294,8 @@
 <div id="operationResult">
 </div>
 <div id="runContainer">
-    <div id="playerContainer">
+    <div id="teamContainer">
+
     </div>
     <div id="game">
         <div id="gameName">
