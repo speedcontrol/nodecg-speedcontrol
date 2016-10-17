@@ -45,6 +45,7 @@ $(function () {
                 runData.category = $('#playerControlCategory').val();
                 runData.system = $('#playerControlSystem').val();
                 runData.region = $('#playerControlRegion').find('option:selected').val();
+                runData.teams = new Array();
 
                 // Go through all the player name input fields and lookup cached player data for each one,
                 // should never fail.
@@ -53,6 +54,12 @@ $(function () {
                     var found = false;
                     $.each(cachedRunner, function (i, v) {
                         if (v.names.international == selectedRunner && found != true) {
+                            var team = {
+                              members: new Array(),
+                              name: v.names.international
+                            };
+                            team.members.push(v);
+                            runData.teams.push(team);
                             runData.players.push(v);
                             found = true;
                         }
