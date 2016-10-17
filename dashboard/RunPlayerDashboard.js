@@ -242,20 +242,68 @@ $(function () {
             return;
         }
 
-        var requestObject = {};
-        requestObject.channel = {};
-        requestObject.channel.game = runData.game;
 
-		// Gets Twitch channel names from the runData and puts them in an array to send to the FFZ WS script.
-		var twitchNames = [];
-		for (var i = 0; i < runData.players.length; i++) {
-			var twitchName = (runData.players[i].twitch) ? runData.players[i].twitch.uri.replace('http://www.twitch.tv/', '') : undefined;
-			if (twitchName) {twitchNames.push(twitchName);}
-		}
+			getTwitchGameNameFromSRC(runData, function(twitchGameName) {
+	 			var requestObject = {};
+	 			requestObject.channel = {};
 
-		nodecg.sendMessage('updateFFZFollowing', twitchNames);
-        nodecg.sendMessage('updateChannel', requestObject);
+	 			if (twitchGameName) {
+	 				requestObject.channel.game = twitchGameName;
+	 			}
+
+	 			else {
+	 				requestObject.channel.game = runData.game;
+	 			}
+
+	 			// Gets Twitch channel names from the runData and puts them in an array to send to the FFZ WS script.
+	 			var twitchNames = [];
+	 			var playerNames = [];
+	 			for (var i = 0; i < runData.players.length; i++) {
+					var twitchName = (runData.players[i].twitch) ? runData.players[i].twitch.uri.replace(/https?:\/\/.*?\//, '') : undefined;
+					if (twitchName && !twitchName.match(/^http/)) {
+						twitchNames.push(twitchName);
+					}
+					playerNames.push(runData.players[i].names.international);
+	 			}
+
+				if (nodecg.bundleConfig && typeof nodecg.bundleConfig.streamTitle !== 'undefined') {
+					var newTitle = nodecg.bundleConfig.streamTitle
+														.replace("{{game}}",runData.game)
+														.replace("{{players}}", playerNames.join(', '))
+														.replace("{{category}}", runData.category );
+					requestObject.channel.status = newTitle;
+				}
+
+	 			nodecg.sendMessage('updateFFZFollowing', twitchNames);
+	 			nodecg.sendMessage('updateChannel', requestObject);
+
+	 			if (!twitchGameName) {
+	 				alert("Game not found on speedrun.com, check that the game set on Twitch is a game available in the directory.");
+	 			}
+	 		});
     }
+
+		function getTwitchGameNameFromSRC(runData, callback) {
+  		$.ajax({
+  			url: "https://www.speedrun.com/api/v1/games?name=" + runData.game + "&limit=1",
+  			dataType: "jsonp",
+  			data: {
+  				q: runData.game
+  			},
+  			success: function(result) {
+  				var twitchGameName;
+
+    			if (result.data.length > 0) {
+  					twitchGameName = result.data[0].names.twitch;
+  				}
+
+  				callback(twitchGameName);
+  			},
+  			error: function() {
+  				callback(undefined);
+  			}
+  		});
+  	}
 
     function runPlayer_playNextRun() {
         var activeGame = runDataActiveRunReplicant.value;

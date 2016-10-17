@@ -13,6 +13,14 @@ var ffzFollowButtonsReplicant;
 
 module.exports = function(nodecg) {
 	nodeCgExport = nodecg;
+	if (typeof nodecg.bundleConfig === 'undefined' || !nodecg.bundleConfig.enableFFZIntegration) {
+		nodecg.log.warn("FFZ Integration is disabled.  To enable, add ''\"enableFFZIntegration\": true' to the bundle config");
+		return;
+	}
+	else {
+		nodecg.log.info("FFZ Integration is enabled");
+	}
+
 	nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
 
 	// Used to store whatever the WS says are the current buttons on the page.

@@ -10,6 +10,13 @@ var twitchChannelID;
 var g4gDonationTotalReplicant;
 
 module.exports = function(nodecg) {
+	if (typeof nodecg.bundleConfig === 'undefined' || !nodecg.bundleConfig.enableG4GIntegration) {
+		nodecg.log.info("G4G Integration is disabled.  To enable, add '\"enableG4GIntegration\": true' to the bundle config");
+		return;
+	}
+	else {
+		nodecg.log.info("G4G Integration is enabled");
+	}
 	// Used to store whatever the API says is the current donation total is.
 	g4gDonationTotalReplicant = nodecg.Replicant('g4gDonationTotal', {persistent: false, defaultValue: '0.00'});
 
