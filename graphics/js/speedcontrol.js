@@ -21,7 +21,10 @@ $(function () {
     var currentTime = '';
     var displayTwitchforMilliseconds = 15000;
     var intervalToNextTwitchDisplay = 120000;
-    var timeoutTwitch = null;
+    var timeoutTwitch = new Array();
+    var timeoutName = new Array();
+
+    var teamRotationInterval = null;
 
     // sceneID must be unique for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
@@ -44,29 +47,124 @@ $(function () {
         setTime(time);
     });
 
+    var teamMemberIndices = new Array();
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun",speedcontrolBundle);
     runDataActiveRunReplicant.on("change", function (newValue, oldValue) {
+
         if(typeof newValue !== 'undefined' && newValue != '' ) {
+            teamMemberIndices = new Array();
+            for (var i=0; i < newValue.teams.length; i++) {
+              teamMemberIndices[i]=0;
+            }
+            setTeamData(newValue);
             updateSceneFields(newValue);
         }
     });
 
+
+    var teamIntervals = new Array();
+    function setTeamData( runData ) {
+      clearTimeouts();
+      $('.team').each( function(index, teamDiv) {
+        if (index >= runData.teams.length) {
+          $(teamDiv).find('.name').html('');
+          $(teamDiv).find('ul.teamList').html('');
+          $(teamDiv).find('.runnerInfo').html('');
+
+          return;
+        }
+        var team = runData.teams[index];
+        $(teamDiv).find('.name').html(team.name);
+        var teamList = $(teamDiv).find('ul.teamList');
+        if (teamList) {
+          $(teamList).html('');
+          team.members.forEach( function(member, j) {
+            var li = document.createElement("li");
+            $(li).html(member.names.international);
+            $(teamList).append(li);
+          });
+        }
+        rotateTeamMember(teamDiv, index, 0);
+        teamMemberIndices[index] = teamMemberIndices[index]+1;
+        if (teamMemberIndices[index] >= team.members.length) {
+          teamMemberIndices[index] = 0;
+        }
+      });
+
+      if (teamRotationInterval) {
+        clearInterval(teamRotationInterval);
+      }
+      teamRotationInterval = setInterval(rotateTeamMembers, 20000);
+    }
+
+
+
+
+    function rotateTeamMember( teamDiv, teamIndex, memberIndex ) {
+      if (typeof runDataActiveRunReplicant.value === 'undefined' ) {
+        return;
+      }
+      var nameDelay = 10;
+      var twitchDelay = 12000;
+      var runnerInfo = $(teamDiv).find('.playerContainer .runnerInfo');
+
+      timeoutName.push(setTimeout( animation_setGameFieldAlternate, nameDelay, runnerInfo,
+          runDataActiveRunReplicant.value.teams[teamIndex].members[memberIndex].names.international));
+
+      timeoutName.push(setTimeout(hideLinkIcon, nameDelay));
+      timeoutTwitch.push(setTimeout(animation_setGameFieldAlternate,  twitchDelay,runnerInfo,
+          runDataActiveRunReplicant.value.teams[teamIndex].members[memberIndex].twitch.uri.replace(/https?:\/\//,'')));
+      timeoutTwitch.push(setTimeout(showLinkIcon, twitchDelay));
+    }
+
+    function showLinkIcon() {
+      var tm = new TimelineMax({paused: true});
+      $twitchLogos.each( function(index, element) {
+         if($.inArray(index, []) == -1) {
+              animation_showZoomIn($(this));
+          }
+      });
+      tm.play();
+    }
+
+    function hideLinkIcon() {
+      var tm = new TimelineMax({paused: true});
+      $twitchLogos.each( function(index, element) {
+         if($.inArray(index, []) == -1) {
+              animation_hideZoomOut($(this));
+          }
+      });
+      tm.play();
+    }
+
+    function clearTimeouts() {
+
+      timeoutName.forEach( function(timeout, index) {
+        clearTimeout(timeout);
+      });
+      timeoutTwitch.forEach( function(timeout, index) {
+        clearTimeout(timeout);
+      });
+      timeoutName.length = 0;
+      timeoutTwitch.length = 0;
+    }
+
+    function rotateTeamMembers(immediate) {
+      if (typeof runDataActiveRunReplicant.value === 'undefined' ) {
+        return;
+      }
+      var teams = runDataActiveRunReplicant.value.teams;
+      clearTimeouts();
+      teams.forEach( function(team, index){
+        rotateTeamMember($('#team'+(index+1)), index, teamMemberIndices[index]);
+        teamMemberIndices[index] = teamMemberIndices[index]+1;
+        if (teamMemberIndices[index] >= team.members.length) {
+          teamMemberIndices[index] = 0;
+        }
+      });
+    }
+
     var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList",speedcontrolBundle);
-    runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
-        if(typeof newValue === 'undefined' || newValue == '') {
-            return;
-        }
-
-        $runnerInfoElements.each( function( index, element ) {
-            animation_setGameFieldAlternate($(this),getRunnerInformationName(newValue,index));
-        });
-
-        if(timeoutTwitch != null) {
-            clearTimeout(timeoutTwitch);
-        }
-
-        timeoutTwitch = setTimeout(displayTwitchInstead, 2000);
-    });
 
     // Replicant functions ###
 
@@ -155,26 +253,6 @@ $(function () {
 
         tm.play();
         timeoutTwitch = setTimeout(hideTwitch,displayTwitchforMilliseconds);
-    }
-
-    function hideTwitch() {
-        var indexesToNotUpdate = [];
-        $runnerInfoElements.each( function(index,element) {
-            if(getRunnerInformationTwitch(runDataActiveRunRunnerListReplicant.value,index) == '---') {
-                indexesToNotUpdate.push(index);
-            }
-            else {
-                animation_setGameFieldAlternate($(this), getRunnerInformationName(runDataActiveRunRunnerListReplicant.value, index));
-            }
-        });
-
-        $twitchLogos.each( function(index, element) {
-            if($.inArray(index, indexesToNotUpdate) == -1) {
-                animation_hideZoomOut($(this));
-            }
-        });
-
-        timeoutTwitch = setTimeout(displayTwitchInstead,intervalToNextTwitchDisplay);
     }
 
     function hideTimerFinished(index) {
