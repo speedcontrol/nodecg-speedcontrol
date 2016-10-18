@@ -47,6 +47,20 @@ In the prompt, type
 ‘nodecg install speedcontrol/nodecg-speedcontrol’
 ```
 
+To create a new bundle for your graphics
+```
+npm install -g yo
+npm install -g generator-speedcontrol
+cd bundles
+mkdir your-event-name
+cd your-event-name
+yo speedcontrol
+```
+
+And follow the prompts.
+
+At this time, only the single-scene generator is tested.
+
 Whenever you want to start NodeCG open the git bash prompt in the nodecg folder and type `nodecg start` (or `node index.js`). You can minimize the prompt if you'd like but it has to be running for NodeCG to work. If you get tired of doing this each time you want to start the server, you can make a shortcut to nodejs.exe in the nodejs installation folder and then in the properties of the shortcut, throw in the full path to nodecg/index.js. This will enable you to start the server with just a doubleclick!
 
 The above step set up a local server on your computer so you can now test it out! either in your browser (Chrome is the only one that gives the CORRECT result), or in OBS Studio.  For OBS you need the installer with the Browser plugin.  XSplit may or may not have a recent enough version of Chromium Embedded Framework, YMMV.  
