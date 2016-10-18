@@ -1,41 +1,63 @@
-<style>
-    .group {
-        width: 100%;
-        font-size: 12px;
-    }
-    #runItems {
-        list-style-type: none;
-        margin: 0px;
-        padding: 0px;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="components/jquery/dist/jquery.js"></script>
+    <script src="components/jquery-ui/jquery-ui.js"></script>
+    <script src="components/jquery.scrollto/jquery.scrollTo.js"></script>
+    <script src="RunControlDashboard.js"></script>
+    <link rel="stylesheet" href="components/jquery-ui/themes/redmond/jquery-ui.css"/>
 
-    button.removeButton {
-        width: 30px;
-        height: 30px;
-        float: right;
-    }
+    <title></title>
+    <style>
+        .group {
+            width: 100%;
+            font-size: 12px;
+        }
+        #runItems {
+            list-style-type: none;
+            margin: 0px;
+            padding: 0px;
+        }
 
-    button.changeButton{
-        width: 30px;
-        height: 30px;
-        float: right;
-    }
+        button.removeButton {
+            width: 30px;
+            height: 30px;
+            float: right;
+        }
 
-    td.rowTitle {
-        border-right: 1px solid black;
-        padding-right: 5px;
-    }
+        button.changeButton{
+            width: 30px;
+            height: 30px;
+            float: right;
+        }
 
-    td.rowContent {
-        padding-left: 10px;
-        width: 100%;
-    }
+        td.rowTitle {
+            border-right: 1px solid black;
+            padding-right: 5px;
+        }
 
-</style>
+        td.rowContent {
+            padding-left: 10px;
+            width: 100%;
+        }
+
+        #playerItems {
+            margin: 0;
+            padding: 0;
+            height: 304px;
+            overflow-y: scroll;
+        }
+
+    </style>
+</head>
+<body>
 <div id="run-control">
     <div id="run-control-container">
-        <h4>Runs</h4>
-        <div id="runItems">
+        <div id="playerItems">
+            <div id="runItems">
+            </div>
         </div>
     </div>
 </div>
+</body>

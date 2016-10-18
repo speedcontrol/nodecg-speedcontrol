@@ -1,3 +1,124 @@
 {
-  "name": "nodecg-speedcontrol"
+  "name": "nodecg-speedcontrol",
+  "version": "0.8.0",
+  "homepage": "http://twitch.tv/sethcharleon",
+  "author": "Tobias Palm Nerg <charleon@gmail.com>",
+  "contributors": [
+    "btrim <btrim.twitch@gmail.com"
+  ],
+  "dependencies": {
+    "async": "^2.0.0-rc.6",
+    "inherits": "^2.0.1",
+    "request": "^2.73.0",
+    "rieussec": "0.3.0",
+    "tmi.js": "^1.1.1",
+    "twitch-api": ">0.0.0",
+    "ws": "^1.1.1"
+  },
+  "description": "NodeCG Overlay engine for Speedrun Marathons",
+  "license": "MIT",
+  "nodecg": {
+    "compatibleRange": "~0.8.0",
+    "graphics": [ ],
+    "dashboardPanels": [
+      {
+        "name": "run-player",
+        "title": "Run Player",
+        "width": 3,
+        "file": "RunPlayerDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "run-control",
+        "title": "Run Editor",
+        "width": 3,
+        "file": "RunControlDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "player-control",
+        "title": "Add Runs",
+        "width": 2,
+        "file": "PlayerControlDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "run-timer",
+        "title": "Run Timer",
+        "width": 2,
+        "file": "PlayerTimerDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "player-layout",
+        "title": "Team Layout",
+        "width": 2,
+        "file": "PlayerLayoutDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "scene-layout",
+        "title": "Scene Layout",
+        "width": 2,
+        "file": "SceneLayoutDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "stream-control",
+        "title": "Twitch Control",
+        "width": 2,
+        "file": "StreamControlDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "horaro-import",
+        "title": "Horaro Schedule Import",
+        "width": 2,
+        "file": "HoraroImportDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "marquee-information",
+        "title": "Marquee Information",
+        "width": 2,
+        "file": "MarqueeInformationDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "intermission-hosts",
+        "title": "Intermission Hosts",
+        "width": 2,
+        "file": "IntermissionHostsDashboard.html",
+        "headerColor": "#008BB9"
+      },
+      {
+        "name": "twitch-alert",
+        "title": "Twitch Alert",
+        "width": 2,
+        "file": "TwitchAlertDialog.html",
+        "dialog": true
+      },
+      {
+        "name": "edit-game",
+        "title": "Edit Game",
+        "width": 5,
+        "file": "EditRunWindowDialog.html",
+        "dialog": true
+      },
+      {
+        "name": "add-run",
+        "title": "Add Game",
+        "width": 5,
+        "file": "AddRunWindowDialog.html",
+        "dialog": true
+      },
+      {
+        "name": "edit-hosts",
+        "title": "Edit Hosts",
+        "width": 5,
+        "file": "EditHostsWindowDialog.html",
+        "dialog": true
+      }
+    ]
+  }
 }

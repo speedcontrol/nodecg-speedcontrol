@@ -1,10 +1,28 @@
-<style>
-    #horaroImportCommit, #horaro-import, #horaroImportURL {
-        width: 100%;
-    }
-</style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="components/jquery/dist/jquery.js"></script>
+    <script src="components/jquery-ui/jquery-ui.js"></script>
+    <script src="HoraroImportDashboard.js"></script>
+    <link rel="stylesheet" href="components/jquery-ui/themes/redmond/jquery-ui.css"/>
+    <title></title>
+    <style>
+        #horaroImportCommit, #horaro-import {
+            width: 100%;
+        }
+
+        #horaroImportURL {
+            width: 100%;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
 <div id="horaro-import">
     <input id="horaroImportURL" placeholder="Horaro Schedule URL">
     <hr>
     <button type="button" id="horaroImportCommit">Import</button>
 </div>
+</body>

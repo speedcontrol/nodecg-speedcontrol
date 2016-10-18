@@ -1,6 +1,10 @@
 # Speedcontrol
+## READMES
+For specific information about how to customize and operate speedcontrol, please check the README files in the below location:
 
-**!!ATTENTION: This branch is now obsoleted, you should use the v0.7 instead!!!**
+[READMES](https://github.com/Charleon/nodecg-speedcontrol/tree/master/READMES)
+
+Please also give feedback on what more information you would like to be contained in the readme:s
 
 ## Introduction
 
@@ -18,13 +22,11 @@ that would before would have meant manual work for people working with the overl
 * All Items on the overlay is fully configurable during run-time, but should really be configured before the marathon, which means that you can change positions of the game-capture cutout of the background, moving timers, moving player nameplates, game information, etc, etc.
 * Oh no! Runner X and Runner Y nameplates are under the wrong gamefeed! No problem, the "Player Layout" element of speedcontrol lets you click and drag the player to the correct gamefeed.
 
-Speedcontrol will open up to open beta planned for late February, meaning that there might be bugs still lingering. It did run without crashing for the whole Pre-ESA marathon, with many minor bugs found that has since been taken care of. Please note that the current version of speedcontrol comes with the full setup of the PRE-ESA marathon, and that you should tailor the layouts for your own use. How to do this will be covered in instructional videos in the future.
-
 ## Installation (including installation of NodeCG)
 
 There are two prerequisites to get SpeedControl and NodeCG working.
 * Download and install git (https://git-scm.com/)
-* Download and install nodejs (v 4.2.4 or later) (https://nodejs.org/)
+* Download and install nodejs (v6 or later) (https://nodejs.org/)
 * Make a folder anywhere named nodecg (or whatever you want)
 *In the actual folder, rightclick and choose “open git bash”
 
@@ -37,25 +39,40 @@ To install NodeCG: type, in this order:
 ‘bower install’
 ```
 
+for the tech-savy, know that ’nodecg setup’ runs ’git clone’ under the hood, which means that the ’nodecg setup’ command needs to be executed from a fresh folder not containing anything.
+
 To install speedcontrol, do the following:
 In the prompt, type 
 ```
-‘nodecg install charleon/nodecg-speedcontrol’
-‘cd bundles/nodecg-speedcontrol’
-‘git checkout v0.7a’
+‘nodecg install speedcontrol/nodecg-speedcontrol’
 ```
 
-Whenever you want to start NodeCG open the git bash prompt in the nodecg folder and type `nodecg start`. You can minimize the prompt if you'd
-like but it has to be running for NodeCG to work.
+Whenever you want to start NodeCG open the git bash prompt in the nodecg folder and type `nodecg start` (or `node index.js`). You can minimize the prompt if you'd like but it has to be running for NodeCG to work. If you get tired of doing this each time you want to start the server, you can make a shortcut to nodejs.exe in the nodejs installation folder and then in the properties of the shortcut, throw in the full path to nodecg/index.js. This will enable you to start the server with just a doubleclick!
+
+The above step set up a local server on your computer so you can now test it out! either in your browser (Chrome is the only one that gives the CORRECT result), or in OBS Studio.  For OBS you need the installer with the Browser plugin.  XSplit may or may not have a recent enough version of Chromium Embedded Framework, YMMV.  
 
 If I make an update to speedcontrol, or whenever you want to be sure you have the latest version installed, open the git bash window in `nodecg/bundles/nodecg-speedcontrol` and type in “git pull” to fetch all the newest changes! (yes, it’s that easy)
 
-The above step set up a local server on your computer so you can now test it out! either in your browser (Chrome is the only one that gives the CORRECT result), or in xSplit or OBS For OBS you need the CLR Browser Plugin, but the latest xSplit version already has support to add web url:s using the "Add page URL.." option. 
+## Instructional Videos / Introduction
 
-## Instructional Videos
+https://www.youtube.com/watch?v=K7jTpFYiWNA&list=PLUCcl7X553EBMHRQWTmHwkX3z2QszIOD-
 
-To Come!
+## Used at marathons
+[Pre-ESA Marathon](https://www.youtube.com/watch?v=uQbREedGbhU&list=PLkd2f6JAHslJPSQ5a9zYL09Ie-LugT8eB)
+
+[BSG Monthly #1](http://www.twitch.tv/nlg_organisation/v/51152532)
+
+[BSG Monthly #2](http://www.twitch.tv/nlg_organisation/)
+
+[GTA Marathon 2016](https://www.twitch.tv/gtamarathon)
 
 ### Credits
 Developed by [Charleon](https://twitter.com/CharleonChan)
+
+Contributions by:
+- btrim
+- zoton2
+- Zephyyrr
 - With suggestions and feedback from the speedrunning community <3
+
+

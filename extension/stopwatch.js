@@ -155,7 +155,7 @@ module.exports = function (nodecg) {
         }
     }
 
-    if (nodecg.bundleConfig.enableRestApi) {
+    if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.enableRestApi) {
         nodecg.log.warn('"enableRestApi" is true, the stopwatch REST API will be active.');
         nodecg.log.warn('This API is COMPLETELY INSECURE. ONLY USE IT ON A SECURE LOCAL NETWORK.');
 
