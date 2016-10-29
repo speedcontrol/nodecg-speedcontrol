@@ -12,7 +12,7 @@ Speedcontrol is a nodecg bundle developed for the speedrunning scene which helps
 that would before would have meant manual work for people working with the overlay / stream side of things. Features include, but are not limited to:
 * Twitch Integration (Upon starting a new run it automatically changes the played game on twitch). You can also specify and update the stream title directly from the dashboard! this way you won't ahve any need to keep a twitch window open for managing stream title / game played
 * Horaro schedule import; paste a horaro schedule link and press import, and VOILAH! There will be no need to manually change any text fields on the overlay at all, Estimates, runners, game information will be pulled from horaro and put into a local database, so the only thing you'd need to do is press "Play next game" to update all the information on the overlay
-* Optionally you can add runs manually which comes in two flavors; 
+* Optionally you can add runs manually which comes in two flavors;
   1. The first alternative is to use an automatic sync with speedrun.com. All information is pulled from speedrun.com, which means when you add a runnername and choose it based on the runners speedrun.com name, you automatically get all the information such as twitch link, etc. This also works for games, getting the correct name, and cathegories for said game.
   2. Add games and runners by using free text (manual input for runner names and their twitch handles, if speedrun.com integration is not preferred)
 * Support for custom animations; in Pre-esa marathon we faded in an animated finish-flag with the finish-time whenever a person in the race finished. Also a twitchicon faded in and the runner name was exchanged to his twitchhandle every now and then (look at pre-esa twitch vods ( https://www.youtube.com/playlist?list=PLkd2f6JAHslJPSQ5a9zYL09Ie-LugT8eB)  for reference).
@@ -30,11 +30,11 @@ There are two prerequisites to get SpeedControl and NodeCG working.
 * Make a folder anywhere named nodecg (or whatever you want)
 *In the actual folder, rightclick and choose “open git bash”
 
-To install NodeCG: type, in this order: 
+To install NodeCG: type, in this order:
 ```
 ‘npm install nodecg-cli -g’
 ’nodecg setup’
-‘npm install’ 
+‘npm install’
 ‘npm install -g bower’
 ‘bower install’
 ```
@@ -42,9 +42,9 @@ To install NodeCG: type, in this order:
 for the tech-savy, know that ’nodecg setup’ runs ’git clone’ under the hood, which means that the ’nodecg setup’ command needs to be executed from a fresh folder not containing anything.
 
 To install speedcontrol, do the following:
-In the prompt, type 
+In the prompt, type
 ```
-‘nodecg install speedcontrol/nodecg-speedcontrol’
+‘nodecg install speedcontrol/nodecg-speedcontrol#0.8.0-beta’
 ```
 
 To create a new bundle for your graphics
@@ -88,5 +88,3 @@ Contributions by:
 - zoton2
 - Zephyyrr
 - With suggestions and feedback from the speedrunning community <3
-
-
