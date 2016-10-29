@@ -74,6 +74,7 @@ $(function () {
           return;
         }
         var team = runData.teams[index];
+        $(teamDiv).toggleClass('singleMember',team.members.length < 2);
         $(teamDiv).find('.name').html(team.name);
         var teamList = $(teamDiv).find('ul.teamList');
         if (teamList) {
