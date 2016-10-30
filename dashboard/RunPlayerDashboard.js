@@ -153,11 +153,12 @@ $(function () {
             if(runDataArrayReplicantPlayer.value == "") {
                 return;
             }
-            var displayString = "Are you sure that you want to activate the run\n " + $(this).text().replace("Play ", "");
-            if (confirm(displayString)) {
-                nodecg.sendMessage("resetTime", 0);
-                runPlayer_playNextRun();
-            }
+		// Resets the timer
+		nodecg.sendMessage("resetTime", 0);
+		
+		// Loads the next run
+		runPlayer_playNextRun();
+
         });
 
 
@@ -242,17 +243,28 @@ $(function () {
             return;
         }
 
-
+			// Grabs game metadata from speedrun.com to help with updating twitch
 			getTwitchGameNameFromSRC(runData, function(twitchGameName) {
 	 			var requestObject = {};
 	 			requestObject.channel = {};
 
 	 			if (twitchGameName) {
+					// This is the Twitch Game Name field on speedrun.com. You need supermod to update them (or give Pac some love)
 	 				requestObject.channel.game = twitchGameName;
 	 			}
 
 	 			else {
-	 				requestObject.channel.game = runData.game;
+					// Fallback if none was found. Uses defaultGame in bundle config if available, otherwise hard coded default
+					if (nodecg.bundleConfig.defaultGame) {
+						console.log("No twitch game found on Speedrun.com - using default from configuration");
+						requestObject.channel.game = nodecg.bundleConfig.defaultGame;
+					} else {
+						console.log("No twitch game found on Speedrun.com - please set defaultGame in nodecg-speedcontrol.json");
+						requestObject.channel.game = "Retro";
+					}
+					
+					// Slightly different message to the operator as their concern is just to fix the immediate problem at hand
+					alert("Twitch game has been set to default - please log onto the twitch dashboard and update this manually");
 	 			}
 
 	 			// Gets Twitch channel names from the runData and puts them in an array to send to the FFZ WS script.
@@ -277,9 +289,6 @@ $(function () {
 	 			nodecg.sendMessage('updateFFZFollowing', twitchNames);
 	 			nodecg.sendMessage('updateChannel', requestObject);
 
-	 			if (!twitchGameName) {
-	 				alert("Game not found on speedrun.com, check that the game set on Twitch is a game available in the directory.");
-	 			}
 	 		});
     }
 
