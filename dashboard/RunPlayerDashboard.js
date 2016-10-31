@@ -307,7 +307,7 @@ $(function () {
   			},
   			success: function(result) {
 				// We look for an exact match (case insensitive) here so games like super metroid fall back to twitch search instead
-    			if ((result.data.length > 0) && (runData.game.toLowerCase() == result.data[0].names.twitch.toLowerCase())) {
+    			if ((result.data.length > 0) && (runData.game.toLowerCase() == result.data[0].names.international.toLowerCase())) {
   					twitchGameName = result.data[0].names.twitch;
   				} else {
 					console.log ("No exact game match on speedrun.com for "+ runData.game);
