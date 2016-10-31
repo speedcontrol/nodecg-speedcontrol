@@ -19,6 +19,9 @@ module.exports = function (nodecg) {
         nodecg.listenFor('playTwitchAd',playTwitchAd);
 		accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
 		twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
+		
+		// Twitch search to and fro
+		nodecg.listenFor('twitchGameSearch',twitch_GameSearch);
 
         app.get('/nodecg-speedcontrol/twitchlogin', function (req, res) {
             console.log("intercepted a message!");
@@ -42,6 +45,30 @@ module.exports = function (nodecg) {
 function twitch_Login() {
     var URL = twitch.getAuthorizationUrl();
     nodeCgExport.sendMessage('twitchLoginAuthorization',URL);
+}
+
+function twitch_GameSearch(searchQuery, callback) {
+	var replyData = '';
+
+	// use this by sending a nodecg.sendMessage('twitchGameSearch', QUERY, function(reply) {
+	twitch.searchGames({query: searchQuery, type:'suggest'}, function(err, body) {
+		if (err){
+             console.log("Error occurred in communication with twitch, look below");
+             console.log(err);
+		} else {
+			// set the reply replicant with the first result
+			if ((body.games[0] != undefined) && (body.games[0].name != null)) {
+				replyData = body.games[0].name;
+				console.log("First result on twitch for \""+ searchQuery + "\" was \""+ replyData + "\"");
+				} else {
+				// return nothing if no results
+				replyData = '';
+				console.log("No matches on twitch for \""+ searchQuery +"\"");
+			}
+		}
+		// Pass reply back to web browser
+		callback(replyData);
+	})
 }
 
 function twitch_LoginForwardCode(code) {
