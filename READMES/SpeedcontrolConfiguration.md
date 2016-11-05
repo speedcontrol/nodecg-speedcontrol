@@ -17,7 +17,9 @@ named the erroneous name of "nodecg-speedcontrol.json.txt". The file should cont
 {
     "live": true,
     "enableTwitchApi": true,
-    "user": "<twitchchannel>"
+    "user": "<twitchchannel>",
+	"streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
+	"defaultGame": "Retro"
 }
 ```
 
@@ -27,3 +29,7 @@ it's adviced that you add this configuration.
 If `"enableTwitchApi": true` is defined, automatical and manual sync to your configured user can be used from the Stream Control dashboard panel, otherwise this panel doesn't do anything!
 
 "user": must be defined if "enableTwitchApi" is defined, otherwise bundle doesn't know which user to update. e.g: `"user": "sethcharleon"`
+
+"streamtitle": Set this if you want speedcontrol to update your title on twitch, {{game}} {{category}} and {{players}} are all replaced with data from the current run
+
+"defaultGame": This is used if the twitch game name isn't found on speedrun.com. It's important you always use a directory game on twitch - Retro is a good catch all.
