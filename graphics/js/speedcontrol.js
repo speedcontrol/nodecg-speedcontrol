@@ -114,7 +114,7 @@ $(function () {
 
       timeoutName.push(setTimeout(hideLinkIcon, nameDelay));
       timeoutTwitch.push(setTimeout(animation_setGameFieldAlternate,  twitchDelay,runnerInfo,
-          runDataActiveRunReplicant.value.teams[teamIndex].members[memberIndex].twitch.uri.replace(/https?:\/\//,'')));
+          runDataActiveRunReplicant.value.teams[teamIndex].members[memberIndex].twitch.uri.replace(/https?:\/\/(www\.)?/,'')));
       timeoutTwitch.push(setTimeout(showLinkIcon, twitchDelay));
     }
 

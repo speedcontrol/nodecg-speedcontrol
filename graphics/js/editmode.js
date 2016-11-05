@@ -138,13 +138,15 @@ $(function () {
             }
 
             $('.gameCapture').each(function() {
+              var alsoResize = $(this).attr('also-resize');
+
               $(this).resizable({
                 start: function (event, ui) {
                     $('#'+ui.helper[0].id).css('z-index','100');
                 },
                 aspectRatio: getAspectRatio($(this).attr('aspect-ratio')),
                 resize: updateDebugInformation,
-                //alsoResize: ".gameCapture",
+                alsoResize: alsoResize,
                 stop: function( event, ui ) {
                     $('#'+ui.helper[0].id).css('z-index','0');
                 }
