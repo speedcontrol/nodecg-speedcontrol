@@ -154,10 +154,12 @@ $(function () {
             });
 
             $('.resizable').each(function() {
+                var alsoResize = $(this).attr('also-resize');
                 var options = {
                     start: function (event, ui) {
                         $('#' + ui.helper[0].id).css('z-index', '100');
                     },
+                    alsoResize: alsoResize,
                     resize: updateDebugInformation,
                     stop: function (event, ui) {
                         $('#' + ui.helper[0].id).css('z-index', '0');
