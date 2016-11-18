@@ -17,9 +17,9 @@ function register_api(nodecg) {
 
     speedcontrolRouter.get("/timers", function(req, res) {
         var result = []
-        nodecg.readReplicant("runDataActiveRunRunnerList").forEach(function(runner, i) {
+        nodecg.readReplicant("runDataActiveRun").teams.forEach(function(team, i) {
             result[i] = {
-                name: runner.names.international,
+                name: team.name,
                 status: "waiting"
             };
         });
@@ -69,12 +69,14 @@ function register_api(nodecg) {
     });
 
     nodecg.listenFor("runEnded", "nodecg-speedcontrol", function(message) {
+        console.log(nodecg.readReplicant("runDataActiveRun"))
         var data = {
                 event:"run-ended",
                 game: nodecg.readReplicant("runDataActiveRun").game,
                 category: nodecg.readReplicant("runDataActiveRun").category,
                 console: nodecg.readReplicant("runDataActiveRun").console,
-                players: nodecg.readReplicant("runDataActiveRunRunnerList"),
+                teams: nodecg.readReplicant("runDataActiveRun").teams,
+                players: nodecg.readReplicant("runDataActiveRun").players,
                 time: nodecg.readReplicant("stopwatches")[0].time,
                 start: nodecg.readReplicant("activeRunStartTime"),
                 end: getTimeStamp()
