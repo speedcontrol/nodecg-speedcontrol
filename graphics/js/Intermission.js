@@ -143,6 +143,26 @@ $(function () {
         var cssLink = $("<link rel='stylesheet' type='text/css' href='"+href+"'>");
         $("head").append(cssLink);
     };
-
+	
+// force refresh intermission copied from esa2016
+nodecg.listenFor("forceRefreshIntermission", speedcontrolBundle, function() {
+	isInitialized = false;
+	console.log("hi");
+       if(typeof runDataActiveRunReplicant.value == 'undefined' || runDataActiveRunReplicant.value == "") {
+           //return;
+       }
+        var indexOfCurrentRun = findIndexInDataArrayOfRun(runDataActiveRunReplicant.value, runDataArrayReplicant.value);
+       var indexOfNextRun = Number(indexOfCurrentRun) + Number(1);
+       var comingUpRun = undefined;
+       if(indexOfNextRun >= runDataArrayReplicant.value.length) {
+       }
+       else {
+           comingUpRun = runDataArrayReplicant.value[indexOfNextRun];
+       }
+       if(!isInitialized) {
+           updateMissedComingUp(runDataActiveRunReplicant.value, comingUpRun);
+           isInitialized = true;
+       	}
+	});
     loadCSS("/graphics/nodecg-speedcontrol/css/editcss/"+sceneID+".css");
 });
