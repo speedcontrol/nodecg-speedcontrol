@@ -11,9 +11,9 @@ $(function () {
     var runPlayer_activeRunObject = undefined;
     var syncGamePlayedToTwitch = false;
     var blankSlateRunContainerHtml = $('#run-player-container').html();
-	
+
     // Initialize replicants we will use
- 
+
     var runDataArrayReplicantPlayer = nodecg.Replicant("runDataArray");
     runDataArrayReplicantPlayer.on("change", function (newValue, oldValue) {
         if (typeof newValue !== 'undefined' && newValue != "") {
@@ -46,31 +46,38 @@ $(function () {
     var stopWatchesReplicant = nodecg.Replicant('stopwatches');
     stopWatchesReplicant.on('change', function (newVal, oldVal) {
         if (!newVal) return;
-        switch (newVal[0].state) {
-            case 'paused':
-                disableRunChange();
-                break;
-            case 'finished':
-                enableRunChange();
-                break;
-            case 'running':
-                disableRunChange();
-                break;
-            case 'stopped':
-                enableRunChange();
-                break;
-            default:
-        }
+				var oldstate = "stopped";
+				if (oldVal) {
+					oldstate = oldVal[0].state;
+				}
+				if (oldstate != newVal[0].state) {
+	        switch (newVal[0].state) {
+	            case 'paused':
+	                disableRunChange();
+	                break;
+	            case 'finished':
+	                enableRunChange();
+	                break;
+	            case 'running':
+	                disableRunChange();
+	                break;
+	            case 'stopped':
+	                enableRunChange();
+	                break;
+	            default:
+							break;
+	        }
+			  }
     });
 
     function enableRunChange() {
-        $(".playRunButton").button({disabled: false});
-        $(".runPlayerNext").button({disabled: false});
-    }
+				$('.playRunButton').button( "option", "disabled", false );
+				$('.runPlayerNext').button( "option", "disabled", false );
+		}
 
     function disableRunChange() {
-        $(".playRunButton").button({disabled: true});
-        $(".runPlayerNext").button({disabled: true});
+				$('.playRunButton').button( "option", "disabled", true );
+        $('.runPlayerNext').button( "option", "disabled", true );
     }
 
 		function runPlayer_getPlayers(runData) {
@@ -157,7 +164,7 @@ $(function () {
             }
 		// Resets the timer
 		nodecg.sendMessage("resetTime", 0);
-		
+
 		// Loads the next run
 		runPlayer_playNextRun();
 
@@ -249,7 +256,7 @@ $(function () {
 		getTwitchGameName(runData, function(twitchGameName) {
 	 		var requestObject = {};
 	 		requestObject.channel = {};
-			
+
 			// Because this is a callback, the game name should have already been found (look at function (getTwitchGameName))
 	 		if (twitchGameName) {
 				requestObject.channel.game = twitchGameName;
@@ -262,11 +269,11 @@ $(function () {
 					console.log("No automatic game data found - please set defaultGame in nodecg-speedcontrol.json");
 					requestObject.channel.game = "Retro";
 				}
-				
+
 				// Alert the operator that a generic game name has been used
 				alert("Twitch game has been set to default - please log onto the twitch dashboard and update this manually");
  			}
-			
+
 	 		// Gets Twitch channel names from the runData and puts them in an array to send to the FFZ WS script.
  			var twitchNames = [];
  			var playerNames = [];
@@ -284,7 +291,7 @@ $(function () {
 													.replace("{{category}}", runData.category );
 				requestObject.channel.status = newTitle;
 			}
-			
+
 			// Fires off the arrays to the server to update FFZ and Twitch.
 	 		nodecg.sendMessage('updateFFZFollowing', twitchNames);
  			nodecg.sendMessage('updateChannel', requestObject);
@@ -293,10 +300,10 @@ $(function () {
 
 	function getTwitchGameName(runData, callback) {
 		// This routine searches Speedrun.com then Twitch APIs for an accurate directory name for a game.
-		
+
 		// Step 1: Speedrun.com exact match
 		// This is the Twitch Game Name field on speedrun.com. You need supermod to update them (or give Pac some love)
-		
+
 		var twitchGameName;
 
   		$.ajax({
@@ -320,16 +327,16 @@ $(function () {
   				console.log("Warning: Speedrun.com API call failed")
   			}
   		});
-		
+
 		// this is a dirty hard coded 1 second wait for SR.com data.
 		setTimeout(function(){
-			if (twitchGameName) { 
-				// If we found a result at step 1, call it back and stop  
-				console.log("Automatic game name data for "+ twitchGameName +" sourced from Speedrun.com API") 
-				callback(twitchGameName); 
-				return; 
-			 
-			} else { 
+			if (twitchGameName) {
+				// If we found a result at step 1, call it back and stop
+				console.log("Automatic game name data for "+ twitchGameName +" sourced from Speedrun.com API")
+				callback(twitchGameName);
+				return;
+
+			} else {
 				// Step 2: Twitch.
 				// APIV3 fuzzy search. Uses game name of first result.
 				// This is mostly a fallback to serve games like Super Metroid that aren't on SRcom at all.
@@ -338,7 +345,7 @@ $(function () {
 				var string = string.replace(/\s*\(.*?\)\s*/g, ''); // between brackets
 				var string = string.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // specified punctuation
 				var string = string.toLowerCase(); // like someone would type it manually
-				
+
 				console.log ("Twitch Search: " + string);
 				nodecg.sendMessage('twitchGameSearch', string, function(replyData) {
 					if (replyData) {
