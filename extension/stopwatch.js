@@ -23,7 +23,7 @@ module.exports = function (nodecg) {
             startMs = Date.UTC(1970, 0, 1, ts[0], ts[1], ts[2]);
         }
 
-        var rieussec = new Rieussec();
+        var rieussec = new Rieussec(1000);
         rieussec.setMilliseconds(startMs);
 
         rieussec.on('tick', function(ms) {

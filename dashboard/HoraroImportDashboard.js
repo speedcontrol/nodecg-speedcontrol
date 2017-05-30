@@ -59,7 +59,14 @@ $(function () {
 
                     }
                     var runData = createRunData();
-                    runData.game = run.data[0];
+					
+					// Checking to see if the game name is a link, if not use the whole field.
+					if (run.data[0].match(/\((.*?)\)/)) 
+						var gameName = run.data[0].match(/\[(.*?)\]/)[1];
+					else
+						var gameName = run.data[0];
+					
+                    runData.game = gameName;
                     runData.estimate = msToTime(run.length_t);
                     if(run.data[3] != null) {
                         runData.category = run.data[3];
@@ -103,7 +110,7 @@ $(function () {
                                 var playerName = members[i].match(/\[(.*?)\]/)[1];
                               }
                               else {
-                                console.log("Unable to parse "+members[i]);
+								  var playerName = members[i];
                               }
                               var member = {
                                   names: {

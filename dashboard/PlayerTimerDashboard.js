@@ -162,6 +162,7 @@ $(function () {
     }
 
     function setPlayButtonToPauseButton() {
+		$('#play').button();
         var options = {
             label: "pause",
             icons: {
@@ -350,7 +351,7 @@ $(function () {
     }
 
     function Initialize_EventListeners(nodecg) {
-        console.log(nodecg)
+        //console.log(nodecg)
         nodecg.listenFor("start_run", "nodecg-speedcontrol", function() {
             OnPlay();
         })
