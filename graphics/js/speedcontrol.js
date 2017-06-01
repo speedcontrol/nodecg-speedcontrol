@@ -35,15 +35,15 @@ $(function () {
     nodecg.listenFor('timerReset', speedcontrolBundle, resetTimer);
     nodecg.listenFor('timerSplit', speedcontrolBundle, splitTimer);
 
-    var stopWatchesReplicant = nodecg.Replicant('stopwatches',speedcontrolBundle);
-    stopWatchesReplicant.on("change", function (newValue, oldValue) {
+    var stopWatchReplicant = nodecg.Replicant('stopwatch',speedcontrolBundle);
+    stopWatchReplicant.on("change", function (newValue, oldValue) {
         if (!newValue) return;
-        var time  = newValue[0].time || '88:88:88';
+        var time  = newValue.time || '88:88:88';
         if( oldValue )
         {
-          $timerInfo.toggleClass('timer_'+oldValue[0].state,false);
+          $timerInfo.toggleClass('timer_'+oldValue.state,false);
         }
-        $timerInfo.toggleClass('timer_'+newValue[0].state,true);
+        $timerInfo.toggleClass('timer_'+newValue.state,true);
         setTime(time);
     });
 

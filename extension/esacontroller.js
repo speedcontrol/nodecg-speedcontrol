@@ -24,7 +24,7 @@ function register_api(nodecg) {
             };
         });
 
-        const stopwatch = nodecg.readReplicant('stopwatches')[0]
+        const stopwatch = nodecg.readReplicant('stopwatch')
         console.log(stopwatch);
         if (stopwatch.state == "running") {
             result.forEach(function(runner) {
@@ -77,7 +77,7 @@ function register_api(nodecg) {
                 console: nodecg.readReplicant("runDataActiveRun").console,
                 teams: nodecg.readReplicant("runDataActiveRun").teams,
                 players: nodecg.readReplicant("runDataActiveRun").players,
-                time: nodecg.readReplicant("stopwatches")[0].time,
+                time: nodecg.readReplicant("stopwatch").time,
                 start: nodecg.readReplicant("activeRunStartTime"),
                 end: getTimeStamp()
             }

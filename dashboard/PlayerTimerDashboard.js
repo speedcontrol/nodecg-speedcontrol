@@ -8,13 +8,13 @@ $(function () {
     var lastTimerState = "";
 // Replicant initialization
 
-    var stopWatchesReplicant = nodecg.Replicant('stopwatches');
-    stopWatchesReplicant.on('change', function (newVal, oldVal) {
+    var stopWatchReplicant = nodecg.Replicant('stopwatch');
+    stopWatchReplicant.on('change', function (newVal, oldVal) {
         if (!newVal) return;
-        var time = newVal[0].time || '88:88:88';
-        switch (newVal[0].state) {
+        var time = newVal.time || '88:88:88';
+        switch (newVal.state) {
             case 'paused':
-                if(lastTimerState != newVal[0].state) {
+                if(lastTimerState != newVal.state) {
                     $timer.css('color', '#555500');
                     disableMainTimerStopButton(true);
                     playerTimer_disablePersonalSplitButton(true);
@@ -23,7 +23,7 @@ $(function () {
                 }
                 break;
             case 'finished':
-                if(lastTimerState != newVal[0].state) {
+                if(lastTimerState != newVal.state) {
                     $timer.css('color', 'green');
                     disableMainTimerStopButton(true);
                     disableMainResetButton(false);
@@ -33,7 +33,7 @@ $(function () {
                 }
                 break;
             case 'running':
-                if(lastTimerState != newVal[0].state) {
+                if(lastTimerState != newVal.state) {
                     $timer.css('color', '#008BB9');
                     if (moreThanOneTeam) {
                         disableMainTimerStopButton(true);
@@ -48,7 +48,7 @@ $(function () {
                 }
                 break;
             case 'stopped':
-                if(lastTimerState != newVal[0].state) {
+                if(lastTimerState != newVal.state) {
                     disableMainTimerStopButton(true);
                     disableMainResetButton(true);
                     playerTimer_disablePersonalResetButton(false);
@@ -58,7 +58,7 @@ $(function () {
                 break;
             default:
         }
-        lastTimerState = newVal[0].state;
+        lastTimerState = newVal.state;
         playerTimer_SetTime(time);
     });
 
@@ -118,7 +118,7 @@ $(function () {
         $.each(splitTimes, function(index, value){
             if(value.index == splitIndex) {
                 found = true;
-                value.time = stopWatchesReplicant.value[0].time;
+                value.time = stopWatchReplicant.value.time;
             }
         });
         if(!found) {
@@ -128,7 +128,7 @@ $(function () {
         stoppedTimers = splitTimes.length;
 
         if (stoppedTimers >= splitsBeforeStoppingMainTimer) {
-            nodecg.sendMessage("finishTime", 0);
+            nodecg.sendMessage("finishTime");
             nodecg.sendMessage("runEnded")
         }
 
@@ -156,7 +156,7 @@ $(function () {
     function createSplitTime(index) {
         var splitTime = {};
         splitTime.index = index;
-        splitTime.time = stopWatchesReplicant.value[0].time;
+        splitTime.time = stopWatchReplicant.value.time;
         splitTime.name = runDataActiveRunReplicant.value.teams[index].name;
         return splitTime;
     }
@@ -240,9 +240,9 @@ $(function () {
             });
 
             var shouldBeDisabled = true;
-            if (typeof stopWatchesReplicant.value != 'undefined' &&
-                stopWatchesReplicant.value != '' &&
-                stopWatchesReplicant.value[0].state == "running") {
+            if (typeof stopWatchReplicant.value != 'undefined' &&
+                stopWatchReplicant.value != '' &&
+                stopWatchReplicant.value.state == "running") {
                 shouldBeDisabled = false;
             }
 
@@ -275,7 +275,7 @@ $(function () {
                 disabled: true
             });
 
-            nodecg.sendMessage("startTime", 0);
+            nodecg.sendMessage("startTime");
             if (activeRunStartTime.value === 0) {
                 nodecg.sendMessage("runStarted");
             }
@@ -286,7 +286,7 @@ $(function () {
                 }
             };
         } else {
-            nodecg.sendMessage("pauseTime", 0);
+            nodecg.sendMessage("pauseTime");
             options = {
                 label: "play",
                 icons: {
@@ -298,7 +298,7 @@ $(function () {
     }
 
     function OnReset() {
-        nodecg.sendMessage("resetTime", 0);
+        nodecg.sendMessage("resetTime");
         resetSplitTimes();
         if ($('#play').text() === "pause") {
             var options = {
@@ -312,7 +312,7 @@ $(function () {
     }
 
     function OnStop() {
-        nodecg.sendMessage("finishTime", 0);
+        nodecg.sendMessage("finishTime");
         nodecg.sendMessage("runEnded", 0);
         if ($('#play').text() === "pause") {
             var options = {

@@ -43,15 +43,15 @@ $(function () {
 
     var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
 
-    var stopWatchesReplicant = nodecg.Replicant('stopwatches');
-    stopWatchesReplicant.on('change', function (newVal, oldVal) {
+    var stopWatchReplicant = nodecg.Replicant('stopwatch');
+    stopWatchReplicant.on('change', function (newVal, oldVal) {
         if (!newVal) return;
 				var oldstate = "stopped";
 				if (oldVal) {
-					oldstate = oldVal[0].state;
+					oldstate = oldVal.state;
 				}
-				if (oldstate != newVal[0].state) {
-	        switch (newVal[0].state) {
+				if (oldstate != newVal.state) {
+	        switch (newVal.state) {
 	            case 'paused':
 	                disableRunChange();
 	                break;
@@ -149,7 +149,7 @@ $(function () {
             }
         })
             .click(function () {
-                nodecg.sendMessage("resetTime", 0);
+                nodecg.sendMessage("resetTime");
                 runPlayer_playRun($(this).attr('id'));
             });
 
@@ -163,7 +163,7 @@ $(function () {
                 return;
             }
 		// Resets the timer
-		nodecg.sendMessage("resetTime", 0);
+		nodecg.sendMessage("resetTime");
 
 		// Loads the next run
 		runPlayer_playNextRun();
@@ -407,7 +407,7 @@ $(function () {
         if(runDataArrayReplicantPlayer.value == "") {
             return;
         }
-        nodecg.sendMessage("resetTime", 0);
+        nodecg.sendMessage("resetTime");
         runPlayer_playNextRun()
     });
 
