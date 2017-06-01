@@ -50,8 +50,9 @@ module.exports = function(nodecg) {
 	});
 	
 	nodecg.listenFor('setTime', function(time) {
-		// Check to see if the time was given the correct format.
-		if (time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+		// Check to see if the time was given in the correct format and if it's stopped/paused.
+		if (stopwatch.value.state === 'stopped' || stopwatch.value.state === 'paused'
+		|| time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
 			// Pause the timer while this is being done.
 			rieussec._cachedState = rieussec._state;
 			rieussec.pause();
