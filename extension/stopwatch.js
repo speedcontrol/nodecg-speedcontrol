@@ -8,8 +8,8 @@ module.exports = function(nodecg) {
 	var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0};
 	var stopwatch = nodecg.Replicant('stopwatch', {defaultValue: defaultStopwatch});
 	
-	// Make sure the timer is set to "paused" if needed on startup (if it is above 0).
-	stopwatch.value.state = stopwatch.value.time === '00:00:00' ? 'stopped' : 'paused';
+	// If the timer was running when last closed, changes it to being paused.
+	if (stopwatch.value.state === 'running') stopwatch.value.state = 'paused';
 	
 	// Load the existing time and start the stopwatch at that if needed.
 	var startMS = 0;
