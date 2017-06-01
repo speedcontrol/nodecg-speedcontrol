@@ -20,6 +20,7 @@ $(function () {
                     playerTimer_disablePersonalSplitButton(true);
                     playerTimer_disablePersonalResetButton(false);
                     disableMainResetButton(true);
+					toggleEditButton(false);
                 }
                 break;
             case 'finished':
@@ -30,6 +31,7 @@ $(function () {
                     playerTimer_disablePersonalSplitButton(true);
                     playerTimer_disablePersonalResetButton(true);
 					nodecg.sendMessage("forceRefreshIntermission");
+					toggleEditButton(true);
                 }
                 break;
             case 'running':
@@ -45,6 +47,7 @@ $(function () {
                     playerTimer_disablePersonalResetButton(false);
                     playerTimer_disablePersonalSplitButton(false);
                     setPlayButtonToPauseButton();
+					toggleEditButton(true);
                 }
                 break;
             case 'stopped':
@@ -54,6 +57,7 @@ $(function () {
                     playerTimer_disablePersonalResetButton(false);
                     playerTimer_disablePersonalSplitButton(true);
                     $timer.css('color', 'gray');
+					toggleEditButton(false);
                 }
                 break;
             default:
@@ -195,6 +199,12 @@ $(function () {
             disabled: shouldDisable
         });
     }
+	
+	function toggleEditButton(option) {
+		$("#edit").button({
+			disabled: option
+		});
+	}
 
     nodecg.listenFor("resetTime", function () {
         var options = {
