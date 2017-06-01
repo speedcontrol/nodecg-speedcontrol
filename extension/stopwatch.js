@@ -11,12 +11,8 @@ module.exports = function(nodecg) {
 	// If the timer was running when last closed, changes it to being paused.
 	if (stopwatch.value.state === 'running') stopwatch.value.state = 'paused';
 	
-	// Load the existing time and start the stopwatch at that if needed.
-	var startMS = 0;
-	if (stopwatch.value.time) {
-		var ts = stopwatch.value.time.split(':');
-		startMS = Date.UTC(1970, 0, 1, ts[0], ts[1], ts[2]);
-	}
+	// Load the existing time and start the stopwatch at that if needed/possible.
+	var startMS = stopwatch.value.milliseconds | 0;
 	
 	// Set up the Rieussec timer.
 	var rieussec = new Rieussec(1000);
@@ -52,6 +48,20 @@ module.exports = function(nodecg) {
 	nodecg.listenFor('resetTime', function() {
 		rieussec.reset();
 	});
+	
+	nodecg.listenFor('setTime', function(time) {
+		// Check to see if the time was given the correct format.
+		if (time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+			// Pause the timer while this is being done.
+			rieussec._cachedState = rieussec._state;
+			rieussec.pause();
+			
+			rieussec.setMilliseconds(timeToMS(time));
+			
+			// If a timer was paused just for this, unpause it.
+			if (rieussec._cachedState === 'running') rieussec.start();
+		}
+	});
 };
 
 function msToTime(duration) {
@@ -64,4 +74,10 @@ function msToTime(duration) {
 	seconds = (seconds < 10) ? '0' + seconds : seconds;
 
 	return hours + ':' + minutes + ':' + seconds;
+}
+
+function timeToMS(duration) {
+	var ts = duration.split(':');
+	if (ts.length === 2) ts.unshift('00'); // Adds 0 hours if they are not specified.
+	return Date.UTC(1970, 0, 1, ts[0], ts[1], ts[2]);
 }

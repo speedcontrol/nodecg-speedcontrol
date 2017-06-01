@@ -300,7 +300,7 @@ $(function () {
     function OnReset() {
         nodecg.sendMessage("resetTime");
         resetSplitTimes();
-        if ($('#play').text() === "pause") {
+        if ($('#play').text().trim() === "pause") {
             var options = {
                 label: "play",
                 icons: {
@@ -314,7 +314,7 @@ $(function () {
     function OnStop() {
         nodecg.sendMessage("finishTime");
         nodecg.sendMessage("runEnded", 0);
-        if ($('#play').text() === "pause") {
+        if ($('#play').text().trim() === "pause") {
             var options = {
                 label: "play",
                 icons: {
@@ -324,6 +324,12 @@ $(function () {
             $('#play').button("option", options);
         }
     }
+	
+	function OnEdit() {
+		var time = prompt("Please enter new time in either HH:MM:SS or MM:SS format.", "00:00:00");
+		if (time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) nodecg.sendMessage("setTime", time);
+		else alert("The new time is in the wrong format.");
+	}
 
     function playerTimer_InitializeElements() {
 
@@ -348,6 +354,13 @@ $(function () {
             },
             disabled: true
         }).click(OnStop);
+		
+        $("#edit").button({
+            text: false,
+            icons: {
+                primary: "ui-icon-pencil"
+            }
+        }).click(OnEdit);
     }
 
     function Initialize_EventListeners(nodecg) {
