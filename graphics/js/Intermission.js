@@ -5,6 +5,11 @@ $(function () {
     // message needs to be used
 
     var speedcontrolBundle = 'nodecg-speedcontrol';
+	
+	// If you want to automatically run a twitch ad on scene visibility in OBS, make a 
+	// duplicate intermission scene with this special scene name
+	
+	var autoAdScene = 'Intermission [Advert]';
 
     // JQuery selector initialiation ###
 
