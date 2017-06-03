@@ -4,7 +4,7 @@
   "homepage": "http://twitch.tv/sethcharleon",
   "author": "Tobias Palm Nerg <charleon@gmail.com>",
   "contributors": [
-    "btrim <btrim.twitch@gmail.com"
+    "btrim <btrim.twitch@gmail.com>"
   ],
   "dependencies": {
     "async": "^2.0.0-rc.6",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "nodecg": {
     "compatibleRange": "~0.8.0",
-    "graphics": [ ],
+    "graphics": [],
     "dashboardPanels": [
       {
         "name": "run-player",
