@@ -5,6 +5,11 @@ $(function () {
     // message needs to be used
 
     var speedcontrolBundle = 'nodecg-speedcontrol';
+	
+	// If you want to automatically run a twitch ad on scene visibility in OBS, make a 
+	// duplicate intermission scene with this special scene name
+	
+	var autoAdScene = 'Intermission [Advert]';
 
     // JQuery selector initialiation ###
 
@@ -144,25 +149,43 @@ $(function () {
         $("head").append(cssLink);
     };
 	
-// force refresh intermission copied from esa2016
-nodecg.listenFor("forceRefreshIntermission", speedcontrolBundle, function() {
-	isInitialized = false;
-	console.log("hi");
-       if(typeof runDataActiveRunReplicant.value == 'undefined' || runDataActiveRunReplicant.value == "") {
-           //return;
-       }
-        var indexOfCurrentRun = findIndexInDataArrayOfRun(runDataActiveRunReplicant.value, runDataArrayReplicant.value);
-       var indexOfNextRun = Number(indexOfCurrentRun) + Number(1);
-       var comingUpRun = undefined;
-       if(indexOfNextRun >= runDataArrayReplicant.value.length) {
-       }
-       else {
-           comingUpRun = runDataArrayReplicant.value[indexOfNextRun];
-       }
-       if(!isInitialized) {
-           updateMissedComingUp(runDataActiveRunReplicant.value, comingUpRun);
-           isInitialized = true;
-       	}
-	});
     loadCSS("/graphics/nodecg-speedcontrol/css/editcss/"+sceneID+".css");
+	
+	// Listen for 'force refresh intermission' button
+	nodecg.listenFor("forceRefreshIntermission", speedcontrolBundle, function() {
+		isInitialized = false;
+		
+		if(typeof runDataActiveRunReplicant.value == 'undefined' || runDataActiveRunReplicant.value == "") {
+			   //return;
+		}
+		
+		var indexOfCurrentRun = findIndexInDataArrayOfRun(runDataActiveRunReplicant.value, runDataArrayReplicant.value);
+		var indexOfNextRun = Number(indexOfCurrentRun) + Number(1);
+		var comingUpRun = undefined;
+		
+		if(indexOfNextRun >= runDataArrayReplicant.value.length) {
+		}
+		else {
+			comingUpRun = runDataArrayReplicant.value[indexOfNextRun];
+		}
+		
+		if(!isInitialized) {
+			updateMissedComingUp(runDataActiveRunReplicant.value, comingUpRun);
+			isInitialized = true;
+		}
+	});
+	
+	// Twitch ad on scene load (by Planks)
+	// Configure autoAdScene at top of this file. An ad runs if the scene name matches this.
+	// This script uses the visibility callback documented on https://github.com/kc5nra/obs-browser/blob/master/README.md
+	// to call playTwitchAd in twitchapi.js 
+	
+	window.obsstudio.onVisibilityChange = function(visiblity) {
+		window.obsstudio.getCurrentScene(function(data) {
+			var sceneobj = JSON.parse(data);
+			if (sceneobj.name == autoAdScene) {
+				nodecg.sendMessageToBundle('playTwitchAd', 'nodecg-speedcontrol');
+			};
+		});
+	};
 });
