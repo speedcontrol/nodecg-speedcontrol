@@ -1,134 +1,115 @@
 'use strict';
+var needle = require('needle');
 
-var app = require('express')();
-var TwitchAPI = require('twitch-api');
-var twitch = '';
-var request = require("request");
-var nodeCgExport = ''
-var accessToken ='';
-var accessTokenReplicant;
-var twitchChannelInfoReplicant;
-
-module.exports = function (nodecg) {
-    if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.enableTwitchApi) {
-        nodecg.log.warn('"enableTwitchApi" is true, the twitch REST API will be active.');
-
-        nodecg.listenFor('twitchLogin',twitch_Login);
-        nodecg.listenFor('twitchLoginForwardCode',twitch_LoginForwardCode);
-        nodecg.listenFor('updateChannel',twitch_updateChannel);
-        nodecg.listenFor('playTwitchAd',playTwitchAd);
-		accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
-		twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
+module.exports = function(nodecg) {
+	// Default Twitch request options needed.
+	var requestOptions = {
+		headers: {
+			'Accept': 'application/vnd.twitchtv.v5+json',
+			'Content-Type': 'application/json'
+		}
+	};
+	
+	if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.enableTwitchApi
+		&& nodecg.bundleConfig.user && nodecg.bundleConfig.oauth) {
+		nodecg.log.info('"enableTwitchApi" is true, the Twitch REST API will be active.');
 		
-		// Twitch search to and fro
-		nodecg.listenFor('twitchGameSearch',twitch_GameSearch);
-
-        app.get('/nodecg-speedcontrol/twitchlogin', function (req, res) {
-            console.log("intercepted a message!");
-            res.status(200);
-        });
-
-        twitch = new TwitchAPI({
-            clientId: 'lrt9h6mot5gaf9lk62sea8u38lomfrc',
-            clientSecret: 'fprpfvriz56tjly2m8o9zxdcvo5nvmi',
-            redirectUri: 'http://localhost:9090/dashboard/',
-            scopes: ['channel_editor','user_read','chat_login','channel_commercial']
-        });
-
-        nodecg.mount(app);
-        nodeCgExport = nodecg;
-    } else {
-        nodecg.log.info('"enableTwitchApi" is false, the Twitch REST API will be unavailable');
-    }
-};
-
-function twitch_Login() {
-    var URL = twitch.getAuthorizationUrl();
-    nodeCgExport.sendMessage('twitchLoginAuthorization',URL);
-}
-
-function twitch_GameSearch(searchQuery, callback) {
-	var replyData = '';
-
-	// use this by sending a nodecg.sendMessage('twitchGameSearch', QUERY, function(reply) {
-	twitch.searchGames({query: searchQuery, type:'suggest'}, function(err, body) {
-		if (err){
-             console.log("Error occurred in communication with twitch, look below");
-             console.log(err);
-		} else {
-			// set the reply replicant with the first result
-			if ((body.games[0] != undefined) && (body.games[0].name != null)) {
-				replyData = body.games[0].name;
-				console.log("First result on twitch for \""+ searchQuery + "\" was \""+ replyData + "\"");
-				} else {
-				// return nothing if no results
-				replyData = '';
-				console.log("No matches on twitch for \""+ searchQuery +"\"");
+		// Setting up replicants.
+		var accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
+		var twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
+		var twitchChannelIDReplicant = nodecg.Replicant('twitchChannelID', {persistent: false});
+		
+		// Setting up listeners.
+		nodecg.listenFor('updateChannel', twitch_updateChannel);
+		nodecg.listenFor('playTwitchAd', playTwitchAd);
+		nodecg.listenFor('twitchGameSearch', twitch_GameSearch);
+		
+		// Store oauth and add to the request options.
+		accessTokenReplicant.value = nodecg.bundleConfig.oauth;
+		requestOptions.headers['Authorization'] = 'OAuth '+accessTokenReplicant.value;
+		
+		needle.get('https://api.twitch.tv/kraken', requestOptions, function(err, response) {
+			// If the OAuth token is valid, we can use it for our requests!
+			if (response.body.token.valid) {
+				// Get user ID from Twitch, because v5 requires this for everything.
+				twitchChannelIDReplicant.value = response.body.token['user_id'];
 			}
-		}
-		// Pass reply back to web browser
-		callback(replyData);
-	})
-}
-
-function twitch_LoginForwardCode(code) {
-     twitch.getAccessToken(code, function(err, body){
-         if (err){
-             console.log("Error occurred in communication with twitch, look below");
-             console.log(err);
-
-         } else {
-             console.log("We are Authorized to update Twitch Channel!");
-             accessToken = body.access_token;
-			 accessTokenReplicant.value = accessToken;
-             nodeCgExport.sendMessage("twitchLoginSuccessful");
-			 getCurrentChannelInfo();
-         }
-     });
-}
-
-function twitch_updateChannel(updatedValues) {
-    //console.log("user: " + nodeCgExport.bundleConfig.user + " accessToken: " + accessToken);
-    twitch.updateChannel(nodeCgExport.bundleConfig.user, accessToken, {
-        "channel": {
-            "status": updatedValues.channel.status,
-            "game":  updatedValues.channel.game,
-        }
-    }, twitch_updateChannelCallback);
-}
-
-function twitch_updateChannelCallback(err, body) {
-    if (err){
-        console.log("Error occurred in communication with twitch, look below");
-        console.log(err);
-
-    } else {
-        console.log("We Successfully updated the channel!");
-		twitchChannelInfoReplicant.value = body;
-    }
-}
-
-// Used to frequently get the details of the channel for use on the dashboard.
-function getCurrentChannelInfo() {
-	twitch.getChannel(nodeCgExport.bundleConfig.user, function(err, body) {
-		if (err) {
-			console.log("Error occurred in communication with twitch, look below");
+			
+			else nodecg.log.warn('Your Twitch OAuth is not valid!');
+			
+			getCurrentChannelInfo();
+		});
+	}
+	
+	else nodecg.log.info('"enableTwitchApi" is false (or you forgot user/oauth), the Twitch REST API will be unavailable');
+	
+	// Used to frequently get the details of the channel for use on the dashboard.
+	function getCurrentChannelInfo() {
+		var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelIDReplicant.value;
+		needle.get(url, requestOptions, function(err, response) {
+			if (handleResponse(err, response))
+				twitchChannelInfoReplicant.value = response.body;
+			
+			setTimeout(getCurrentChannelInfo, 60000);
+		});
+	}
+	
+	function twitch_updateChannel(updatedValues) {
+		var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelIDReplicant.value;
+		var data = {
+			'channel': {
+				'status': updatedValues.channel.status,
+				'game': updatedValues.channel.game
+			}
+		};
+		
+		needle.put(url, data, requestOptions, function(err, response) {
+			if (handleResponse(err, response)) {
+				console.log('We Successfully updated the channel!');
+				twitchChannelInfoReplicant.value = response.body;
+			}
+		});
+	}
+	
+	function playTwitchAd() {
+		var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelIDReplicant.value+'/commercial';
+		needle.post(url, {'duration':60}, requestOptions, function(err, response) {
+			handleResponse(err, response) // done
+		});
+	}
+	
+	// use this by sending a nodecg.sendMessage('twitchGameSearch', QUERY, function(reply) {
+	function twitch_GameSearch(searchQuery, callback) {
+		var replyData = '';
+		
+		var url = 'https://api.twitch.tv/kraken/search/games?query='+encodeURI(searchQuery);
+		needle.get(url, requestOptions, function(err, response) {
+			if (handleResponse(err, response)) {
+				// set the reply replicant with the first result
+				if (response.body.games.length > 0) {
+					replyData = response.body.games[0].name;
+					console.log("First result on twitch for \""+ searchQuery + "\" was \""+ replyData + "\"");
+					} else {
+					// return nothing if no results
+					console.log("No matches on twitch for \""+ searchQuery +"\"");
+				}
+			}
+			
+			// Pass reply back to web browser
+			callback(replyData);
+		});
+	}
+	
+	// Prints error details to the console if needed.
+	// true if no issues, false if there were any
+	function handleResponse(err, response) {
+		if (err || response.statusCode !== 200) {
+			console.log('Error occurred in communication with twitch, look below');
 			console.log(err);
+			console.log(response.body);
+			return false;
 		}
 		
-		else {
-			twitchChannelInfoReplicant.value = body;
-		}
-		
-		setTimeout(getCurrentChannelInfo, 60000);
-	});
-}
-
-function playTwitchAd() {
-	twitch.startCommercial(nodeCgExport.bundleConfig.user, accessToken, {length: 60}, function(err) {
-		if (err) {
-			console.log("Error occurred in communication with twitch, look below");
-			console.log(err);
-		}
-	});
-}
+		else return true;
+	}
+};

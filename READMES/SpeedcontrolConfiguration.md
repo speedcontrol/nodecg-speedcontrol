@@ -15,9 +15,11 @@ named the erroneous name of "nodecg-speedcontrol.json.txt". The file should cont
 
 ```
 {
-    "live": true,
-    "enableTwitchApi": true,
-    "user": "<twitchchannel>",
+	"live": true,
+	"enableTwitchApi": true,
+	"user": "<twitchchannel>",
+	"oauth": "<twitchoauth>",
+	"enableFFZIntegration": true,
 	"streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
 	"defaultGame": "Retro"
 }
@@ -29,6 +31,10 @@ it's adviced that you add this configuration.
 If `"enableTwitchApi": true` is defined, automatical and manual sync to your configured user can be used from the Stream Control dashboard panel, otherwise this panel doesn't do anything!
 
 "user": must be defined if "enableTwitchApi" is defined, otherwise bundle doesn't know which user to update. e.g: `"user": "sethcharleon"`
+
+"oauth": must be defined if "enableTwitchApi" is defined, otherwise the bundle won't have permission to update through the Twitch API. The OAuth has to be for the user specified above, and should have these scopes (otherwise errors may occur): channel_editor, user_read, chat_login, channel_commercial.
+
+If `"enableFFZIntegration": true` is defined, you can automatically and manually sync Twitch channel names to the FrankerFaceZ service as "featured" channels, which will also allow you to use their FFZ emotes in the chat if you have asked an FFZ owner to enable this.
 
 "streamtitle": Set this if you want speedcontrol to update your title on twitch, {{game}} {{category}} and {{players}} are all replaced with data from the current run
 

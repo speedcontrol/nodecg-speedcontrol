@@ -59,13 +59,15 @@ function connectToWS(callback) {
 	});
 
 	ffzWS.once('open', function() {
+		console.log('Connection to FFZ successful.');
 		ffzWS.send('1 hello ["nodecg-speedcontrol",false]');
 	});
 
 	// If we disconnect, just run this function again after a delay to reconnect.
 	ffzWS.once('close', function() {
+		console.log('Connection to FFZ closed, will reconnect in 10 seconds.');
 		ffzWSConnected = false;
-		setTimeout(connectToWS, 60000);
+		setTimeout(connectToWS, 10000);
 	});
 
 	ffzWS.once('message', function(data) {

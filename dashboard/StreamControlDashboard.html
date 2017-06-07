@@ -9,7 +9,7 @@
 
     <title></title>
     <style>
-        #streamControlInit,#streamControlSubmit,#playTwitchAdButton {
+        #streamControlSubmit,#playTwitchAdButton {
             width: 100%;
         }
 
@@ -27,7 +27,7 @@
 <div id="stream-control">
 	<span id="streamControlHideShow">
 	<button id="playTwitchAdButton">Play 60s Twitch Ad</button><br><br>
-    <p>Automatically synchronize active game to Twitch and Twitch names to FrankerFaceZ?</p>
+    <p id="helpMessage">Automatically synchronize active game to Twitch and Twitch names to FrankerFaceZ?</p>
 		<div id="enableTwitchSynchronization">
 			<input type="radio" name="enableTwitchSynchronizationRadio" id="enableTwitchSynchronizationRadioOn" value="On"> <label for="enableTwitchSynchronizationRadioOn">On</label>
 			<input type="radio" name="enableTwitchSynchronizationRadio" id="enableTwitchSynchronizationRadioOff" value="Off" checked> <label for="enableTwitchSynchronizationRadioOff">Off</label>
@@ -38,6 +38,6 @@
 		<input id="streamControlTwitchNames" placeholder="Twitch Names" data-validate="required">
 		<button type="button" id="streamControlSubmit">Manual Change</button>
 	</span>
-    <button type="button" id="streamControlInit">Log in to twitch</button>
+	<span id="streamControlInit">You have not enabled this!</span>
 </div>
 </body>

@@ -13,30 +13,16 @@
             font-size: 12px;
         }
 
-        #editModeField {
+        #editModeField, #backgroundTransparencyField {
             padding: 15px;
             margin-bottom: 10px;
             border: 1px solid #008BB9;
             border-radius: 15px;
-            height: 30px;
         }
-
-        #backgroundTransparencyField {
-            padding: 15px;
-            margin-bottom: 10px;
-            border: 1px solid #008BB9;
-            border-radius: 15px;
-            height: 30px;
-        }
-
-        #backgroundTransparencyRadios, #enableEditModeRadios {
-            vertical-align: middle;
-            float: right;
-        }
-
-        #saveConfigurationButton,#revertToDefaultButton {
-            width: 100%;
-        }
+		
+		#backgroundTransparencyOn, #backgroundTransparencyOff {
+			font-size: 10px;
+		}
     </style>
 </head>
 <body>
@@ -44,17 +30,17 @@
     <div id="scene-layout-container">
         <div id="sceneLayoutContainer">
             <div id="editModeField">
-                <label for="enableEditModeRadios"> Edit Mode: </label>
+                <label for="enableEditModeRadios">Edit Mode:</label><br>
                 <div id="enableEditModeRadios">
-                    <input type="radio" name="enableEditMode" id="enableEditModeOn" value="On"> <label for="enableEditModeOn">On</label>
-                    <input type="radio" name="enableEditMode" id="enableEditModeOff" value="Off" checked> <label for="enableEditModeOff">Off</label>
+                    <input type="radio" name="enableEditMode" id="enableEditModeOn" value="On"><label for="enableEditModeOn">On</label>
+                    <input type="radio" name="enableEditMode" id="enableEditModeOff" value="Off" checked><label for="enableEditModeOff">Off</label>
                 </div>
             </div>
             <div id="backgroundTransparencyField">
-                <label for="backgroundTransparencyRadios"> Transparency: </label>
+                <label for="backgroundTransparencyRadios">Transparency:</label><br>
                 <div id="backgroundTransparencyRadios">
-                    <input type="radio" name="backgroundTransparency" id="backgroundTransparencyOn" value="On"> <label for="backgroundTransparencyOn">On</label>
-                    <input type="radio" name="backgroundTransparency" id="backgroundTransparencyOff" value="Off" checked> <label for="backgroundTransparencyOff">Off</label>
+                    <input type="radio" name="backgroundTransparency" id="backgroundTransparencyOn" value="On"><label for="backgroundTransparencyOn">On</label>
+                    <input type="radio" name="backgroundTransparency" id="backgroundTransparencyOff" value="Off" checked><label for="backgroundTransparencyOff">Off</label>
                 </div>
             </div>
         </div>

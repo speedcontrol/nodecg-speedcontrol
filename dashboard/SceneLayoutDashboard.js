@@ -7,14 +7,13 @@ $(function () {
     sceneLayoutConfigurationReplicant.on('change', function (newVal, oldVal) {
         if (newVal != "" && typeof newVal != 'undefined') {
             if (newVal.editMode != null && newVal.editMode == true) {
-                var radio = $('#enableEditModeOn');
-                radio[0].checked = true;
-                radio.button("refresh");
+				$('#enableEditModeOn')[0].checked = true;
+				$('#enableEditModeRadios').buttonset('refresh');
+				
             }
-            if (newVal.editMode != null && newVal.backgroundTransparency == true) {
-                var radio = $('#backgroundTransparencyOn');
-                radio[0].checked = true;
-                radio.button("refresh");
+            if (newVal.backgroundTransparency != null && newVal.backgroundTransparency == true) {
+				$('#backgroundTransparencyOn')[0].checked = true;
+				$('#backgroundTransparencyRadios').buttonset('refresh');
             }
         }
     });
