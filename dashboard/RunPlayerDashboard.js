@@ -10,10 +10,11 @@ $(function () {
     var runPlayer_neighbourRuns = {};
     var runPlayer_activeRunObject = undefined;
     var syncGamePlayedToTwitch = false;
+	var changingEnabled = true;
     var blankSlateRunContainerHtml = $('#run-player-container').html();
-
+	
     // Initialize replicants we will use
-
+	
     var runDataArrayReplicantPlayer = nodecg.Replicant("runDataArray");
     runDataArrayReplicantPlayer.on("change", function (newValue, oldValue) {
         if (typeof newValue !== 'undefined' && newValue != "") {
@@ -69,16 +70,18 @@ $(function () {
 	        }
 			  }
     });
-
-    function enableRunChange() {
-				$('.playRunButton').button( "option", "disabled", false );
-				$('.runPlayerNext').button( "option", "disabled", false );
-		}
-
-    function disableRunChange() {
-				$('.playRunButton').button( "option", "disabled", true );
-        $('.runPlayerNext').button( "option", "disabled", true );
-    }
+	
+	function enableRunChange() {
+		$('.playRunButton').button( "option", "disabled", false );
+		$('.runPlayerNext').button( "option", "disabled", false );
+		changingEnabled = true;
+	}
+	
+	function disableRunChange() {
+		$('.playRunButton').button( "option", "disabled", true );
+		$('.runPlayerNext').button( "option", "disabled", true );
+		changingEnabled = false;
+	}
 
 		function runPlayer_getPlayers(runData) {
 				var shouldSayTeams = runData.teams.length > 1;
@@ -141,32 +144,34 @@ $(function () {
                 active: false,
                 heightStyle: "content"
             });
-
-        $(".playRunButton").button({
-            text: false,
-            icons: {
-                primary: "ui-icon-play"
-            }
-        })
-            .click(function () {
-                nodecg.sendMessage("resetTime");
-                runPlayer_playRun($(this).attr('id'));
-            });
-
+		
+		$(".playRunButton").button({
+			text: false,
+			icons: {
+				primary: "ui-icon-play"
+			}
+		}).click(function() {
+			if (changingEnabled) {
+				nodecg.sendMessage("resetTime");
+				runPlayer_playRun($(this).attr('id'));
+			}
+		});
+		
         $(".runPlayerNext").button({
             text: true,
             icons: {
                 primary: "ui-icon-seek-next"
             }
         }).click(function () {
-            if(runDataArrayReplicantPlayer.value == "") {
+            if(!changingEnabled || runDataArrayReplicantPlayer.value == "") {
                 return;
             }
-		// Resets the timer
-		nodecg.sendMessage("resetTime");
+			
+			// Resets the timer
+			nodecg.sendMessage("resetTime");
 
-		// Loads the next run
-		runPlayer_playNextRun();
+			// Loads the next run
+			runPlayer_playNextRun();
 
         });
 
@@ -404,7 +409,7 @@ $(function () {
     $(".runPlayerNext").button({
         text: true
     }).click(function () {
-        if(runDataArrayReplicantPlayer.value == "") {
+        if(!changingEnabled || runDataArrayReplicantPlayer.value == "") {
             return;
         }
         nodecg.sendMessage("resetTime");
