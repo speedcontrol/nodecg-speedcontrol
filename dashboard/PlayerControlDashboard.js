@@ -204,7 +204,7 @@ $(function () {
         $randomizeRunsButton.button({});
         $playerControlAddRunRawButton.button({});
         $estimateInputField = $('#playerControlEstimate');
-        $("#playerControlRegion").selectmenu();
+        $("#playerControlRegion").selectmenu({width:'100%'});
         $randomizeRunsButton = $('#playerControlRandomizeRunsButton');
         $removeRunsButton = $('#playerControlRemoveRunsButton');
 
