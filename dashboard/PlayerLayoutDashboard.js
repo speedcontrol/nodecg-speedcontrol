@@ -43,7 +43,11 @@ $(function() {
 	function playerLayout_CreateTeamListHtmlElements(teamArray) {
 		var runnerHtml = '';
 		$.each(teamArray, function (index, value) {
-			runnerHtml += '<li class="ui-state-default" id="' + value.name + '">' + value.name + '</li>';
+			var teamMembers = [];
+			if (value.members.length > 1) {
+				value.members.forEach(function(member) {teamMembers.push(member.names.international);});
+			}
+			runnerHtml += '<li class="ui-state-default" id="' + value.name + '" title="'+teamMembers.join(', ')+'">' + value.name + '</li>';
 		});
 		return runnerHtml;
 	}
