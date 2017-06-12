@@ -7,13 +7,13 @@
     "btrim <btrim.twitch@gmail.com>"
   ],
   "dependencies": {
-    "async": "^2.0.0-rc.6",
+    "async": "^2.4.1",
     "inherits": "^2.0.1",
-    "request": "^2.73.0",
+    "lodash": "^4.17.4",
     "needle": "^1.6.0",
+    "request": "^2.73.0",
     "rieussec": "0.3.0",
     "tmi.js": "^1.1.1",
-    "twitch-api": ">0.0.0",
     "ws": "^1.1.1"
   },
   "description": "NodeCG Overlay engine for Speedrun Marathons",
