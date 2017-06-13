@@ -148,6 +148,7 @@ module.exports = function(nodecg) {
 				
 				previousDonationIDs = currentDonationIDs.slice(0);
 				if (!initDonations) initDonations = true;
+				newDonations.reverse(); // This should hopefully make them go oldest to newest.
 				callback(newDonations);
 			}
 		);
