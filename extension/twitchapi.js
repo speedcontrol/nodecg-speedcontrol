@@ -6,6 +6,7 @@ module.exports = function(nodecg) {
 	var requestOptions = {
 		headers: {
 			'Accept': 'application/vnd.twitchtv.v5+json',
+			'Client-ID': 'lrt9h6mot5gaf9lk62sea8u38lomfrc',
 			'Content-Type': 'application/json'
 		}
 	};
@@ -30,7 +31,7 @@ module.exports = function(nodecg) {
 		
 		needle.get('https://api.twitch.tv/kraken', requestOptions, function(err, response) {
 			// If the OAuth token is valid, we can use it for our requests!
-			if (response.body.token.valid) {
+			if (response.body.token && response.body.token.valid) {
 				// Get user ID from Twitch, because v5 requires this for everything.
 				twitchChannelIDReplicant.value = response.body.token['user_id'];
 			}
@@ -73,7 +74,7 @@ module.exports = function(nodecg) {
 	
 	function playTwitchAd() {
 		var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelIDReplicant.value+'/commercial';
-		needle.post(url, {'duration':60}, requestOptions, function(err, response) {
+		needle.post(url, {'duration':180}, requestOptions, function(err, response) {
 			handleResponse(err, response) // done
 		});
 	}
@@ -86,7 +87,7 @@ module.exports = function(nodecg) {
 		needle.get(url, requestOptions, function(err, response) {
 			if (handleResponse(err, response)) {
 				// set the reply replicant with the first result
-				if (response.body.games.length > 0) {
+				if (response.body.games && response.body.games.length > 0) {
 					replyData = response.body.games[0].name;
 					console.log("First result on twitch for \""+ searchQuery + "\" was \""+ replyData + "\"");
 					} else {

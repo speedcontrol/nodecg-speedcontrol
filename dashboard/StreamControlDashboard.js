@@ -84,7 +84,7 @@ $(function() {
 		$playTwitchAdButton.button({disabled: true});
 		setTimeout(function() {
 			$playTwitchAdButton.button({disabled: false});
-		}, 60000);
+		}, 180000);
 	});
 
     function streamControl_GetOrCreateStreamControlConfiguration() {
