@@ -336,7 +336,8 @@ $(function () {
     }
 	
 	function OnEdit() {
-		var time = prompt("Please enter new time in either HH:MM:SS or MM:SS format.", "00:00:00");
+		var currentTime = stopWatchReplicant.value.time || '00:00:00'
+		var time = prompt("Please enter new time in either HH:MM:SS or MM:SS format.", currentTime);
 		if (time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) nodecg.sendMessage("setTime", time);
 		else alert("The new time is in the wrong format.");
 	}
