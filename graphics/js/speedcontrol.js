@@ -59,6 +59,10 @@ $(function () {
             setTeamData(newValue);
             updateSceneFields(newValue);
         }
+		
+		else {
+			animation_setGameField($runInformationName,'The Beginning');
+		}
     });
 
 

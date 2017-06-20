@@ -51,10 +51,6 @@ $(function () {
 
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun", speedcontrolBundle);
     runDataActiveRunReplicant.on("change", function (newValue, oldValue) {
-        if(typeof newValue == 'undefined' || newValue == "") {
-            return;
-        }
-
         var indexOfCurrentRun = findIndexInDataArrayOfRun(newValue, runDataArrayReplicant.value);
         var indexOfNextRun = Number(indexOfCurrentRun) + Number(1);
         var comingUpRun = undefined;
@@ -73,7 +69,7 @@ $(function () {
     function findIndexInDataArrayOfRun(run, runDataArray) {
         var indexOfRun = -1;
         $.each(runDataArray, function (index, value) {
-            if(value.runID == run.runID) {
+            if(run && value.runID == run.runID) {
                 indexOfRun = index;
             }
         });
@@ -87,7 +83,7 @@ $(function () {
 
     // Replicant functions ###
     function changeComingUpRunInformation(runData) {
-        var game = "END";
+        var game = "The End";
         var category = "";
         var system = "";
 
@@ -103,7 +99,7 @@ $(function () {
     }
 
     function changeJustMissedRunInformation(runData) {
-        var game = "END";
+        var game = "The Beginning";
         var category = "";
         var system = "";
 
