@@ -8,6 +8,10 @@ $(function () {
 // Local variables..
 
     $horaroCommitButton.button();
+	
+	// Fill in URL box with default if specified in the config file.
+	if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.defaultScheduleURL)
+		$horaroURLField.val(nodecg.bundleConfig.defaultScheduleURL);
 
     $horaroCommitButton.click(function () {
         if (!confirm("Importing will remove all the current runs added. Continue?")) {

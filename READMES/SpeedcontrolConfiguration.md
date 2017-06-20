@@ -21,7 +21,8 @@ named the erroneous name of "nodecg-speedcontrol.json.txt". The file should cont
 	"oauth": "<twitchoauth>",
 	"enableFFZIntegration": true,
 	"streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
-	"defaultGame": "Retro"
+	"defaultGame": "Retro",
+	"defaultScheduleURL": "https://horaro.org/esa/2016"
 }
 ```
 
@@ -39,3 +40,5 @@ If `"enableFFZIntegration": true` is defined, you can automatically and manually
 "streamtitle": Set this if you want speedcontrol to update your title on twitch, {{game}} {{category}} and {{players}} are all replaced with data from the current run
 
 "defaultGame": This is used if the twitch game name isn't found on speedrun.com. It's important you always use a directory game on twitch - Retro is a good catch all.
+
+"defaultScheduleURL": This will fill in the URL box in the "Horaro Schedule Import" panel with whatever schedule URL you set this too; you are usually only using one schedule for each marathon so having it pre-filled can be useful.
