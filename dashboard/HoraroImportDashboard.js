@@ -4,6 +4,7 @@ $(function() {
 	var $horaroCommitButton = $('#horaroImportCommit');
 	var runDataArray = [];
 	var runNumberIterator = 1;
+	var includeRegion = true; // Set to false if you don't need to waste time waiting for regions to be found.
 	
 	$horaroCommitButton.button();
 	
@@ -182,8 +183,50 @@ $(function() {
 	// Tries to find the specified user on speedrun.com and get their country/region.
 	// Only using username lookups for now, need to use both in case 1 doesn't work.
 	function getRegionFromSpeedrunCom(username, twitch, callback) {
+		if (includeRegion) {
+			var foundRegion;
+			
+			// Gets the actual "Twitch" username (should work for other sites too, not tested) from the URL.
+			twitch = twitch.split('/');
+			twitch = twitch[twitch.length-1];
+			
+			async.waterfall([
+				function(callback) {
+					if (twitch) {
+						var url = 'http://www.speedrun.com/api/v1/users?max=1&lookup='+twitch.toLowerCase();
+						querySRComForUserRegion(url, function(regionCode) {
+							if (regionCode) foundRegion = regionCode;
+							callback();
+						});
+					}
+					
+					else callback();
+				},
+				function(callback) {
+					if (!foundRegion && username) {
+						var url = 'http://www.speedrun.com/api/v1/users?max=1&lookup='+username.toLowerCase();
+						querySRComForUserRegion(url, function(regionCode) {
+							if (regionCode) foundRegion = regionCode;
+							callback();
+						});
+					}
+					
+					else callback();
+				}
+			], function(err, result) {
+				// 1 second delay on calling back so we don't stress the Speedrun.com API too much.
+				setTimeout(function() {callback(foundRegion);}, 1000);
+			});
+		}
+		
+		// If the variable in this file is set to not get regions, just callback.
+		else callback();
+	}
+	
+	// Helper function for the function above.
+	function querySRComForUserRegion(url, callback) {
 		$.ajax({
-			url: 'http://www.speedrun.com/api/v1/users?max=1&lookup='+username.toLowerCase(),
+			url: url,
 			dataType: "jsonp",
 			success: function(data) {
 				if (data.data.length > 0 && data.data[0].location) {
