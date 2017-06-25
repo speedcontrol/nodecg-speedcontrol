@@ -14,7 +14,7 @@
     "request": "^2.73.0",
     "rieussec": "0.3.0",
     "tmi.js": "^1.1.1",
-    "ws": "^1.1.1"
+    "ws": "^3.0.0"
   },
   "description": "NodeCG Overlay engine for Speedrun Marathons",
   "license": "MIT",
@@ -83,13 +83,6 @@
         "title": "Marquee Information",
         "width": 2,
         "file": "MarqueeInformationDashboard.html",
-        "headerColor": "#008BB9"
-      },
-      {
-        "name": "intermission-hosts",
-        "title": "Intermission Hosts",
-        "width": 2,
-        "file": "IntermissionHostsDashboard.html",
         "headerColor": "#008BB9"
       },
       {

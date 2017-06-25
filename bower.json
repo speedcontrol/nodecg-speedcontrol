@@ -1,11 +1,12 @@
 {
   "name": "nodecg-speedcontrol",
   "dependencies": {
-    "jquery": "^2.1.3",
-    "jquery-ui":">1.0.0",
+    "jquery": "^3.2.1",
+    "jquery-ui": ">1.0.0",
     "jquery.scrollTo": "2.1.2",
     "gsap": "^1.16.0",
     "SoundJS": "0.6.2",
-    "easeljs": "0.8.2"
+    "easeljs": "0.8.2",
+    "async": "^2.4.1"
   }
 }
