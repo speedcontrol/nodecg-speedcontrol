@@ -5,6 +5,7 @@ $(function() {
 	var runDataArray = [];
 	var runNumberIterator = 1;
 	var includeRegion = true; // Set to false if you don't need to waste time waiting for regions to be found.
+	var regionCache = {}; // This is a *very* temp cache; it's gone once the page is refreshed.
 	
 	$horaroCommitButton.button();
 	
@@ -191,42 +192,48 @@ $(function() {
 	
 	// Tries to find the specified user on speedrun.com and get their country/region.
 	// Only using username lookups for now, need to use both in case 1 doesn't work.
-	// TODO: add cache
 	function getRegionFromSpeedrunCom(username, twitch, callback) {
 		if (includeRegion) {
-			var foundRegion;
+			if (regionCache[username]) callback(regionCache[username]);
 			
-			// Gets the actual "Twitch" username (should work for other sites too, not tested) from the URL.
-			twitch = twitch.split('/');
-			twitch = twitch[twitch.length-1];
-			
-			async.waterfall([
-				function(callback) {
-					if (twitch) {
-						var url = 'http://www.speedrun.com/api/v1/users?max=1&lookup='+twitch.toLowerCase();
-						querySRComForUserRegion(url, function(regionCode) {
-							if (regionCode) foundRegion = regionCode;
-							callback();
-						});
+			else {
+				var foundRegion;
+				
+				// Gets the actual "Twitch" username (should work for other sites too, not tested) from the URL.
+				twitch = twitch.split('/');
+				twitch = twitch[twitch.length-1];
+				
+				async.waterfall([
+					function(callback) {
+						if (twitch) {
+							var url = 'http://www.speedrun.com/api/v1/users?max=1&lookup='+twitch.toLowerCase();
+							querySRComForUserRegion(url, function(regionCode) {
+								if (regionCode) foundRegion = regionCode;
+								callback();
+							});
+						}
+						
+						else callback();
+					},
+					function(callback) {
+						if (!foundRegion && username) {
+							var url = 'http://www.speedrun.com/api/v1/users?max=1&lookup='+username.toLowerCase();
+							querySRComForUserRegion(url, function(regionCode) {
+								if (regionCode) foundRegion = regionCode;
+								callback();
+							});
+						}
+						
+						else callback();
 					}
+				], function(err, result) {
+					// Store in the very temp cache if one is found.
+					if (foundRegion) regionCache[username] = foundRegion;
 					
-					else callback();
-				},
-				function(callback) {
-					if (!foundRegion && username) {
-						var url = 'http://www.speedrun.com/api/v1/users?max=1&lookup='+username.toLowerCase();
-						querySRComForUserRegion(url, function(regionCode) {
-							if (regionCode) foundRegion = regionCode;
-							callback();
-						});
-					}
-					
-					else callback();
-				}
-			], function(err, result) {
-				// 1 second delay on calling back so we don't stress the Speedrun.com API too much.
-				setTimeout(function() {callback(foundRegion);}, 1000);
-			});
+					// 1 second delay on calling back so we don't stress the Speedrun.com API too much.
+					setTimeout(function() {callback(foundRegion);}, 1000);
+				});
+			}
 		}
 		
 		// If the variable in this file is set to not get regions, just callback.
