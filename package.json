@@ -98,13 +98,6 @@
         "width": 5,
         "file": "AddRunWindowDialog.html",
         "dialog": true
-      },
-      {
-        "name": "edit-hosts",
-        "title": "Edit Hosts",
-        "width": 5,
-        "file": "EditHostsWindowDialog.html",
-        "dialog": true
       }
     ]
   }
