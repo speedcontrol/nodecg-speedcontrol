@@ -22,7 +22,8 @@ named the erroneous name of "nodecg-speedcontrol.json.txt". The file should cont
 	"enableFFZIntegration": true,
 	"streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
 	"defaultGame": "Retro",
-	"defaultScheduleURL": "https://horaro.org/esa/2016"
+	"defaultScheduleURL": "https://horaro.org/esa/2016",
+	"ignoreGamesWhileImportingSchedule": ["Setup", "Restream"]
 }
 ```
 
@@ -42,3 +43,5 @@ If `"enableFFZIntegration": true` is defined, you can automatically and manually
 "defaultGame": This is used if the twitch game name isn't found on speedrun.com. It's important you always use a directory game on twitch - Retro is a good catch all.
 
 "defaultScheduleURL": This will fill in the URL box in the "Horaro Schedule Import" panel with whatever schedule URL you set this too; you are usually only using one schedule for each marathon so having it pre-filled can be useful.
+
+"ignoreGamesWhileImportingSchedule": This should be an array of strings of any game names on your schedule you do not want while importing. For example, if you have any setup buffers in your schedule, which has no reason to be shown on the layouts. This does partial matches; "Setup Block" will be matched by "Setup".

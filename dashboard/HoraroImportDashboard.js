@@ -32,6 +32,15 @@ $(function() {
 				async.eachSeries(runItems, function(run, callback) {
 					itemCounter++;
 					
+					// Check if the game name is part of the ignore list in the config.
+					if (typeof run.data !== 'undefined' &&
+						run.data !== null &&
+						run.data[0] !== null &&
+						checkGameAgainstIgnoreList(run.data[0])) {
+						console.warn("Run Number " + itemCounter + " has a \"Game\" name that is blacklisted in your config file, will not import.");
+						return callback();
+					}
+					
 					// Checks to make sure this run isn't malformed in some way.
 					if(typeof run.data === 'undefined' ||
 						run.data == null ||
@@ -41,13 +50,13 @@ $(function() {
 						run.data[3] == null) {
 						if(run.data == null) {
 							console.error("Did not receive a valid response from horaro. Has the format changed?");
-							return;
+							return callback();
 						}
 						
 						// We won't import runs with no game name.
 						if(run.data[0] == null) {
 							console.error("Run Number " + itemCounter + " does not have any value for \"Game\". This is not ok, will not Import.");
-							return;
+							return callback();
 						}
 						
 						// User
@@ -182,6 +191,7 @@ $(function() {
 	
 	// Tries to find the specified user on speedrun.com and get their country/region.
 	// Only using username lookups for now, need to use both in case 1 doesn't work.
+	// TODO: add cache
 	function getRegionFromSpeedrunCom(username, twitch, callback) {
 		if (includeRegion) {
 			var foundRegion;
@@ -239,6 +249,20 @@ $(function() {
 				else callback();
 			}
 		});
+	}
+	
+	function checkGameAgainstIgnoreList(game) {
+		// Checking if we have a list of games to ignore on the schedule.
+		if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.ignoreGamesWhileImportingSchedule &&
+			$.isArray(nodecg.bundleConfig.ignoreGamesWhileImportingSchedule)) {
+			var ignoredGames = nodecg.bundleConfig.ignoreGamesWhileImportingSchedule;
+			for (var i = 0; i < ignoredGames.length; i++) {
+				var regex = new RegExp('\\b' + ignoredGames[i] + '\\b');
+				if (game.match(regex)) return true;
+			}
+		}
+		// If we reach here, the game is fine to be used.
+		return false;
 	}
 	
 	// Called as a process when pushing the "add run" button.
