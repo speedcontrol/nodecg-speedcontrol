@@ -3,6 +3,11 @@ $(function () {
     var $removeMarqueeInformationButton = $('#removeMarqueeInformationButton');
     var $temporarilyDisplayMarqueeInformationButton = $('#temporarilyDisplayMarqueeInformationButton');
     var textToDisplay = $('#textToDisplay');
+	
+	$('#horizontalButtons').controlgroup()
+	$('#horizontalButtons').controlgroup({
+		'direction': 'horizontal'
+	});
     $submitMarqueeInformationButton.button();
     $removeMarqueeInformationButton.button();
     $temporarilyDisplayMarqueeInformationButton.button();
