@@ -104,9 +104,12 @@ $(function() {
 						var vsList = playerLinksList.split(/vs\./);
 						async.eachSeries(vsList, function(rawTeam, callback) {
 							// Getting/setting the team name.
+							var customTeamName = false;
 							var cap = rawTeam.match(/(Team\s*)?(\S+):\s+\[/);
-							if (cap !== null && cap.length > 0)
+							if (cap !== null && cap.length > 0) {
+								customTeamName = true;
 								var teamName = cap[2];
+							}
 							else
 								var teamName = "Team "+(runData.teams.length+1);
 							
@@ -114,6 +117,7 @@ $(function() {
 							var members = rawTeam.split(",");
 							var team = {
 								name: teamName,
+								custom: customTeamName,
 								members: new Array()
 							};
 							
