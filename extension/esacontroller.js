@@ -63,34 +63,45 @@ function register_api(nodecg) {
     });
 
     var activeRunStartTime = nodecg.Replicant('activeRunStartTime', {defaultValue: 0});
+    var lastrundata = nodecg.Replicant("esaRunDataLastRun", {defaultValue: {}})
 
     nodecg.listenFor("runStarted", "nodecg-speedcontrol", function(message) {
         activeRunStartTime.value = getTimeStamp();
+        publish({
+            event: "runStarted",
+            data: getRunData(nodecg),
+            oldrun: nodecg.readReplicant("esaRunDataLastRun")
+        })
     });
 
     nodecg.listenFor("runEnded", "nodecg-speedcontrol", function(message) {
         console.log(nodecg.readReplicant("runDataActiveRun"))
-        var data = {
-                event:"run-ended",
-                game: nodecg.readReplicant("runDataActiveRun").game,
-                category: nodecg.readReplicant("runDataActiveRun").category,
-                console: nodecg.readReplicant("runDataActiveRun").console,
-                teams: nodecg.readReplicant("runDataActiveRun").teams,
-                players: nodecg.readReplicant("runDataActiveRun").players,
-                time: nodecg.readReplicant("stopwatch").time,
-                start: nodecg.readReplicant("activeRunStartTime"),
-                end: getTimeStamp()
-            }
+        var data = getRunData(nodecg)
+        lastrundata.value = data;
 
         nodecg.log.info(JSON.stringify(data));
-        publish(data);
+        publish({
+            event: "runEnded",
+            data: data
+        });
     });
 
     app.use('/speedcontrol', speedcontrolRouter);
     nodecg.mount(app);
 }
 
-
+function getRunData(nodecg) {
+    return {
+        game: nodecg.readReplicant("runDataActiveRun").game,
+        category: nodecg.readReplicant("runDataActiveRun").category,
+        console: nodecg.readReplicant("runDataActiveRun").console,
+        teams: nodecg.readReplicant("runDataActiveRun").teams,
+        players: nodecg.readReplicant("runDataActiveRun").players,
+        time: nodecg.readReplicant("stopwatch").time,
+        start: nodecg.readReplicant("activeRunStartTime"),
+        end: getTimeStamp()
+    }
+}
 
 function getTimeStamp() {
     return Date.now()/1000;
