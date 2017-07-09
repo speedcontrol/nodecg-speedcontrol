@@ -32,6 +32,7 @@ $(function() {
 				
 				async.eachSeries(runItems, function(run, callback) {
 					itemCounter++;
+					$horaroCommitButton.button({disabled: true, label:"Importing... ("+itemCounter+"/"+runItems.length+")"});
 					
 					// Check if the game name is part of the ignore list in the config.
 					if (typeof run.data !== 'undefined' &&
