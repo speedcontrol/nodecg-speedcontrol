@@ -28,6 +28,7 @@ $(function() {
 			dataType: "jsonp",
 			success: function(data) {
 				var runItems = data.schedule.items;
+				var defaultSetupTime = data.schedule.setup_t;
 				var itemCounter = 0;
 				
 				async.eachSeries(runItems, function(run, callback) {
@@ -87,7 +88,21 @@ $(function() {
 						runData.game = run.data[0];
 					
 					// Estimate
+					runData.estimateS = run.length_t;
 					runData.estimate = msToTime(run.length_t);
+					
+					// If the run has a custom setup time, use that.
+					if (run.options && run.options.setup) {
+						// Kinda dirty right now; assumes the format is Xm (e.g. 15m).
+						var setupSeconds = parseInt(run.options.setup.slice(0, -1))*60;
+						runData.setupTime = msToTime(setupSeconds);
+						runData.setupTimeS = setupSeconds;
+					}
+					
+					else {
+						runData.setupTime = msToTime(defaultSetupTime);
+						runData.setupTimeS = defaultSetupTime;
+					}
 					
 					// Category
 					if(run.data[3] !== null)
@@ -186,6 +201,9 @@ $(function() {
 		theRun.players = [];
 		theRun.game = "";
 		theRun.estimate = "";
+		theRun.estimateS = 0;
+		theRun.setupTime = "";
+		theRun.setupTimeS = 0;
 		theRun.system = "";
 		theRun.region = "";
 		theRun.category = "";
