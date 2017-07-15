@@ -82,8 +82,8 @@ $(function() {
 					
 					// Game Name
 					// Checking to see if the game name is a link, if not use the whole field.
-					if (run.data[0].match(/\((.*?)\)/)) 
-						runData.game = run.data[0].match(/\[(.*?)\]/)[1];
+					if (run.data[0].match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/))
+						runData.game = run.data[0].match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/)[1];
 					else
 						runData.game = run.data[0];
 					
@@ -140,7 +140,7 @@ $(function() {
 							// Going through the list of members.
 							async.eachSeries(members, function(member, callback) {
 								// Checking to see if the user is a link, if not use the whole field.
-								if (member.match(/\((.*?)\)/)) {
+								if (member.match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/)) {
 									var username = member.match(/\((.*?)\)/)[1];
 									var playerName = member.match(/\[(.*?)\]/)[1];
 								}
@@ -223,8 +223,10 @@ $(function() {
 				var foundRegion;
 				
 				// Gets the actual "Twitch" username (should work for other sites too, not tested) from the URL.
-				twitch = twitch.split('/');
-				twitch = twitch[twitch.length-1];
+				if (twitch) {
+					twitch = twitch.split('/');
+					twitch = twitch[twitch.length-1];
+				}
 				
 				async.waterfall([
 					function(callback) {
