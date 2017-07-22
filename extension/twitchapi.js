@@ -104,7 +104,7 @@ module.exports = function(nodecg) {
 	// Prints error details to the console if needed.
 	// true if no issues, false if there were any
 	function handleResponse(err, response) {
-		if (err || response.statusCode !== 200) {
+		if (err || response.statusCode !== 200 || !response.body) {
 			console.log('Error occurred in communication with twitch, look below');
 			console.log(err);
 			console.log(response.body);
