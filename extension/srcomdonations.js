@@ -34,7 +34,7 @@ module.exports = function(nodecg) {
 		var srcomDonationBidwarsReplicant = nodecg.Replicant('srcomDonationBidwars', {persistent:false, defaultValue:[]});
 		
 		var url = 'https://www.speedrun.com/api/v1/games/'+nodecg.bundleConfig.SRCEventSlug.toLowerCase();
-		needle.get(url, requestOptions, function(err, response) {
+		needleGET(url, requestOptions, function(err, response) {
 			// Checks to see if the slug exists on the site.
 			if (!err && response.statusCode === 200) {
 				// Gets the speedrun.com ID of the event.
@@ -100,7 +100,7 @@ module.exports = function(nodecg) {
 	// Used to frequently get the current donation total.
 	function checkDonationTotal(callback) {
 		var url = 'https://www.speedrun.com/api/v1/games/'+eventID+'/donations'
-		needle.get(url, requestOptions, function(err, response) {
+		needleGET(url, requestOptions, function(err, response) {
 			// Divided by 100 because the API returns the total in cents.
 			var donationTotal = response.body.data['total-donated']/100;
 			callback(donationTotal);
@@ -114,7 +114,7 @@ module.exports = function(nodecg) {
 		async.whilst(
 			function() {return url;},
 			function(asyncCallback) {
-				needle.get(url, requestOptions, function(err, response) {
+				needleGET(url, requestOptions, function(err, response) {
 					response.body.data.forEach(function(donation) {
 						// We have no reason to store non-accepted donations.
 						// We also need to only show them when they *are* accepted.
@@ -160,7 +160,7 @@ module.exports = function(nodecg) {
 		async.whilst(
 			function() {return url;},
 			function(asyncCallback) {
-				needle.get(url, requestOptions, function(err, response) {
+				needleGET(url, requestOptions, function(err, response) {
 					response.body.data.forEach(function(goal) {
 						// We are ignoring goals related to bidwars for this bit.
 						if (!goal.bidwar && goal.status === 'open')
@@ -187,7 +187,7 @@ module.exports = function(nodecg) {
 		async.whilst(
 			function() {return url;},
 			function(asyncCallback) {
-				needle.get(url, requestOptions, function(err, response) {
+				needleGET(url, requestOptions, function(err, response) {
 					response.body.data.forEach(function(bidwar) {
 						if (bidwar.status === 'open')
 							bidwars.push(bidwar);
@@ -203,6 +203,29 @@ module.exports = function(nodecg) {
 			},
 			function(err) {
 				callback(bidwars);
+			}
+		);
+	}
+	
+	function needleGET(url, requestOptions, callback) {
+		var success = true;
+		async.whilst(
+			function() { return success; },
+			function(callback) {
+				needle.get(url, requestOptions, function(err, response) {
+					if (err || response.statusCode !== 200 || !response || !response.body) {
+						console.log('sr.com api error, retrying in 5 secs');
+						setTimeout(callback, 5000);
+					}
+						
+					else {
+						success = false;
+						callback(false, {err: err, response: response});
+					}
+				});
+			},
+			function (err, values) {
+				callback(values.err, values.response);
 			}
 		);
 	}
