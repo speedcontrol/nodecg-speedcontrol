@@ -107,7 +107,7 @@ module.exports = function(nodecg) {
 		if (err || response.statusCode !== 200 || !response.body) {
 			console.log('Error occurred in communication with twitch, look below');
 			console.log(err);
-			console.log(response.body);
+			if (response && response.body) console.log(response.body);
 			return false;
 		}
 		
