@@ -12,6 +12,7 @@
 var needle = require('needle');
 var async = require('async');
 var _ = require('lodash');
+var moment = require('moment');
 
 module.exports = function(nodecg) {
 	var requestOptions = {
@@ -23,6 +24,7 @@ module.exports = function(nodecg) {
 	var eventID;
 	var previousDonationIDs = [];
 	var initDonations = false;
+	var donationCutOff = 3600; // If a donation hasn't been accepted after 1 hour, it will be ignored.
 	
 	if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.enableSRCDonations
 		&& nodecg.bundleConfig.SRCEventSlug) {
@@ -50,7 +52,7 @@ module.exports = function(nodecg) {
 				}
 				
 				if (donationsActive)
-					setInterval(runFrequentUpdates, 30000);
+					setInterval(runFrequentUpdates, 45000);
 				
 				else nodecg.log.warn('The SRCEventSlug doesn\'t have donations enabled on Speedrun.com!');
 			}
@@ -104,21 +106,34 @@ module.exports = function(nodecg) {
 			function() {return url;},
 			function(asyncCallback) {
 				needleGET(url, requestOptions, function(err, response) {
-					response.body.data.forEach(function(donation) {
+					var donations = response.body.data;
+					var stop = false;
+					for (var i = 0; i < donations.length; i++) {
+						var donation = donations[i];
+						
+						// Once donations reach 1 hour old, we stop checking.
+						if (initDonations && moment(donation.created).unix() < moment().unix()-donationCutOff) {
+							stop = true; break;
+						}
+						
 						// We have no reason to store non-accepted donations.
 						// We also need to only show them when they *are* accepted.
 						if (donation.status === 'accepted') {
 							currentDonationIDs.push(donation.id);
 							currentDonationList.push(donation);
 						}
-					});
+					}
 					
-					url = undefined;
-					response.body.pagination.links.forEach(function(link) {
-						if (link.rel === 'next')
-							url = link.uri;
-					});
-					asyncCallback();
+					if (!stop) {
+						url = undefined;
+						response.body.pagination.links.forEach(function(link) {
+							if (link.rel === 'next')
+								url = link.uri;
+						});
+						setTimeout(asyncCallback, 1000);
+					}
+					
+					else asyncCallback();
 				});
 			},
 			function(err) {
@@ -161,7 +176,7 @@ module.exports = function(nodecg) {
 						if (link.rel === 'next')
 							url = link.uri;
 					});
-					asyncCallback();
+					setTimeout(asyncCallback, 1000);
 				});
 			},
 			function(err) {
@@ -187,7 +202,7 @@ module.exports = function(nodecg) {
 						if (link.rel === 'next')
 							url = link.uri;
 					});
-					asyncCallback();
+					setTimeout(asyncCallback, 1000);
 				});
 			},
 			function(err) {
@@ -198,16 +213,19 @@ module.exports = function(nodecg) {
 	
 	function needleGET(url, requestOptions, callback) {
 		var success = true;
+		var errorOccured = false;
 		async.whilst(
 			function() { return success; },
 			function(callback) {
 				needle.get(url, requestOptions, function(err, response) {
-					if (err || response.statusCode !== 200 || !response || !response.body || !response.body.data) {
-						console.log('sr.com api error, retrying in 5 secs');
+					if (err || !response || response.statusCode !== 200 || !response.body || !response.body.data) {
+						console.log('['+Date()+'] sr.com api error, retrying in 5 secs, url: '+url+', err: '+err+((response && response.body)?', body: '+response.statusCode:''));
 						setTimeout(callback, 5000);
+						errorOccured = true;
 					}
-						
+					
 					else {
+						if (errorOccured) console.log('['+Date()+'] sr.com api error cleared, url: '+url)
 						success = false;
 						callback(false, {err: err, response: response});
 					}

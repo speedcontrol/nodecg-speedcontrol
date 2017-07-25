@@ -10,6 +10,7 @@
     "async": "^2.4.1",
     "inherits": "^2.0.1",
     "lodash": "^4.17.4",
+    "moment": "^2.18.1",
     "needle": "^1.6.0",
     "request": "^2.73.0",
     "rieussec": "0.3.0",
