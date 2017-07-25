@@ -48,10 +48,9 @@ module.exports = function(nodecg) {
 	function getCurrentChannelInfo() {
 		var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelIDReplicant.value;
 		needle.get(url, requestOptions, function(err, response) {
+			setTimeout(getCurrentChannelInfo, 60000);
 			if (handleResponse(err, response))
 				twitchChannelInfoReplicant.value = response.body;
-			
-			setTimeout(getCurrentChannelInfo, 60000);
 		});
 	}
 	
@@ -75,7 +74,11 @@ module.exports = function(nodecg) {
 	function playTwitchAd() {
 		var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelIDReplicant.value+'/commercial';
 		needle.post(url, {'duration':180}, requestOptions, function(err, response) {
-			handleResponse(err, response) // done
+			console.log('Requested a Twitch ad');
+			if (handleResponse(err, response)) {
+				console.log('Twitch ad started successfully');
+				nodecg.sendMessage('twitchAdStarted');
+			}
 		});
 	}
 	
@@ -104,7 +107,7 @@ module.exports = function(nodecg) {
 	// Prints error details to the console if needed.
 	// true if no issues, false if there were any
 	function handleResponse(err, response) {
-		if (err || response.statusCode !== 200 || !response.body) {
+		if (err || response.statusCode !== 200 || !response || !response.body) {
 			console.log('Error occurred in communication with twitch, look below');
 			console.log(err);
 			if (response && response.body) console.log(response.body);

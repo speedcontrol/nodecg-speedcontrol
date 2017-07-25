@@ -50,7 +50,7 @@ module.exports = function(nodecg) {
 				}
 				
 				if (donationsActive)
-					runFrequentUpdates();
+					setInterval(runFrequentUpdates, 30000);
 				
 				else nodecg.log.warn('The SRCEventSlug doesn\'t have donations enabled on Speedrun.com!');
 			}
@@ -62,38 +62,27 @@ module.exports = function(nodecg) {
 	else nodecg.log.info('"enableSRCDonations" is false (or you forgot the SRCEventSlug), Speedrun.com Donation integration is disabled');
 	
 	function runFrequentUpdates() {
-		var newDonations, donationTotal, goals, bidwars;
-		
-		async.waterfall([
-			function(asyncCallback) {
-				checkDonationTotal(function(total) {donationTotal = total; asyncCallback();});
-			},
-			function(asyncCallback) {
-				getNewDonations(function(donations) {newDonations = donations; asyncCallback();});
-			},
-			function(asyncCallback) {
-				getGoals(function(updatedGoals) {goals = updatedGoals; asyncCallback();});
-			},
-			function(asyncCallback) {
-				getBidwars(function(updatedBidwars) {bidwars = updatedBidwars; asyncCallback();});
-			}
-		], function(err) {
+		checkDonationTotal(function(total) {
 			// Update the total replicant if the donation total has actually changed.
-			if (srcomDonationTotalReplicant.value !== donationTotal)
-				srcomDonationTotalReplicant.value = donationTotal;
-			
+			if (srcomDonationTotalReplicant.value !== total)
+				srcomDonationTotalReplicant.value = total;
+		});
+		
+		getNewDonations(function(donations) {
 			// If there's any new donations, sends a message for each.
-			if (newDonations.length > 0) {
-				newDonations.forEach(function(donation) {
+			if (donations && donations.length > 0) {
+				donations.forEach(function(donation) {
 					nodecg.sendMessage('srcomNewDonation', donation);
 				});
 			}
-			
-			// Update goals/bidwars replicants.
-			srcomDonationGoalsReplicant.value = goals;
-			srcomDonationBidwarsReplicant.value = bidwars;
-			
-			setTimeout(runFrequentUpdates, 30000);
+		});
+		
+		// Update goals/bidwars replicants.
+		getGoals(function(updatedGoals) {
+			if (updatedGoals) srcomDonationGoalsReplicant.value = updatedGoals;
+		});
+		getBidwars(function(updatedBidwars) {
+			if (updatedBidwars) srcomDonationBidwarsReplicant.value = updatedBidwars;
 		});
 	}
 	
@@ -213,7 +202,7 @@ module.exports = function(nodecg) {
 			function() { return success; },
 			function(callback) {
 				needle.get(url, requestOptions, function(err, response) {
-					if (err || response.statusCode !== 200 || !response || !response.body) {
+					if (err || response.statusCode !== 200 || !response || !response.body || !response.body.data) {
 						console.log('sr.com api error, retrying in 5 secs');
 						setTimeout(callback, 5000);
 					}
