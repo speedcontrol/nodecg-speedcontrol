@@ -124,8 +124,8 @@ module.exports = function(nodecg) {
 						}
 					}
 					
+					url = undefined;
 					if (!stop) {
-						url = undefined;
 						response.body.pagination.links.forEach(function(link) {
 							if (link.rel === 'next')
 								url = link.uri;
