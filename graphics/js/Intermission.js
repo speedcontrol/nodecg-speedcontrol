@@ -140,12 +140,12 @@ $(function () {
         tm.play();
     }
 
-    function loadCSS (href) {
-        var cssLink = $("<link rel='stylesheet' type='text/css' href='"+href+"'>");
+    function loadCSS (css) {
+        var cssLink = $("<link rel='stylesheet' type='text/css' href='/bundles/"+speedcontrolBundle+"/graphics/css/editcss/"+css+".css'>");
         $("head").append(cssLink);
     };
 	
-    loadCSS("/graphics/nodecg-speedcontrol/css/editcss/"+sceneID+".css");
+    loadCSS(sceneID);
 	
 	// Listen for 'force refresh intermission' button
 	nodecg.listenFor("forceRefreshIntermission", speedcontrolBundle, function() {

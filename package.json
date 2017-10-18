@@ -1,6 +1,6 @@
 {
   "name": "nodecg-speedcontrol",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "homepage": "http://twitch.tv/sethcharleon",
   "author": "Tobias Palm Nerg <charleon@gmail.com>",
   "contributors": [
@@ -20,7 +20,7 @@
   "description": "NodeCG Overlay engine for Speedrun Marathons",
   "license": "MIT",
   "nodecg": {
-    "compatibleRange": "~0.8.0",
+    "compatibleRange": "~0.9.0",
     "graphics": [],
     "dashboardPanels": [
       {

@@ -264,8 +264,8 @@ $(function () {
         $runnerTimerFinishedContainers.eq(index).css("opacity","0");
     }
 
-    function loadCSS (href) {
-        var cssLink = $("<link rel='stylesheet' type='text/css' href='"+href+"'>");
+    function loadCSS (css) {
+        var cssLink = $("<link rel='stylesheet' type='text/css' href='/bundles/"+speedcontrolBundle+"/graphics/css/editcss/"+css+".css'>");
         $("head").append(cssLink);
     };
 
@@ -329,5 +329,5 @@ $(function () {
         });
     });
 
-    loadCSS("/graphics/nodecg-speedcontrol/css/editcss/"+sceneID+".css");
+    loadCSS(sceneID);
 });
