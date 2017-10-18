@@ -128,6 +128,7 @@ $(function () {
     function playerControl_CreateRunData() {
         var theRun = {};
         theRun.players = [];
+		theRun.teams = [];
         theRun.game = "";
         theRun.estimate = "";
         theRun.system = "";
@@ -245,7 +246,9 @@ $(function () {
                 runData.region = "Japan";
                 $.each(players, function (index, runner) {
                     runData.players.push(runner);
+					runData.teams.push({"name":runner.names.international,"custom":false,"members":[runner]});
                 });
+				
                 runs.push(runData);
                 runID++;
             }
