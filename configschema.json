@@ -1,0 +1,35 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"live": {"type": "boolean"},
+		"enableTwitchApi": {"type": "boolean"},
+		"user": {"type": "string"},
+		"oauth": {"type": "string"},
+		"enableFFZIntegration": {"type": "boolean"},
+		"enableG4GIntegration": {"type": "boolean"},
+		"enableSRCDonations": {"type": "boolean"},
+		"SRCEventSlug": {"type": "string"},
+		"useExternalTimer": {"type": "boolean"},
+		"streamTitle": {"type": "string"},
+		"defaultGame": {"type": "string"},
+		"defaultScheduleURL": {"type": "string"},
+		"ignoreGamesWhileImportingSchedule": {
+			"type": "array",
+			"uniqueItems": true,
+			"items": {"type": "string"}
+		},
+		"api": {
+			"type": "object",
+			"properties": {
+				"enable": {"type": "boolean"},
+				"sharedkey": {"type": "string"},
+				"hooks": {
+					"type": "array",
+					"uniqueItems": true,
+					"items": {"type": "string"}
+				}
+			}
+		}
+	}
+}
