@@ -231,7 +231,7 @@ $(function() {
 				async.waterfall([
 					function(callback) {
 						if (twitch) {
-							var url = 'http://www.speedrun.com/api/v1/users?max=1&lookup='+twitch.toLowerCase();
+							var url = 'https://www.speedrun.com/api/v1/users?max=1&lookup='+twitch.toLowerCase();
 							querySRComForUserRegion(url, function(regionCode) {
 								if (regionCode) foundRegion = regionCode;
 								callback();
@@ -242,7 +242,7 @@ $(function() {
 					},
 					function(callback) {
 						if (!foundRegion && username) {
-							var url = 'http://www.speedrun.com/api/v1/users?max=1&lookup='+username.toLowerCase();
+							var url = 'https://www.speedrun.com/api/v1/users?max=1&lookup='+username.toLowerCase();
 							querySRComForUserRegion(url, function(regionCode) {
 								if (regionCode) foundRegion = regionCode;
 								callback();
