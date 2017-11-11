@@ -272,13 +272,9 @@ $(function() {
 			dataType: "jsonp",
 			success: function(data) {
 				if (data.data.length > 0 && data.data[0].location) {
-					if (data.data[0].location.region)
-						callback(data.data[0].location.region.code);
-					else
-						callback(data.data[0].location.country.code);
-				}
-				
-				else callback();
+					callback(data.data[0].location.country.code);
+				else
+					callback();
 			}
 		});
 	}
