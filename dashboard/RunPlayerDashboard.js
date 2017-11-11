@@ -23,6 +23,7 @@ $(function () {
         }
         else {
             $('#runPlayerItems').html('');
+			defaultNextRunButton();
         }
     });
 
@@ -405,18 +406,23 @@ $(function () {
         });
         return Number(foundIndex);
     }
-
-    $(".runPlayerNext").button({
-        text: true
-    }).click(function () {
+	
+    $(".runPlayerNext").click(function () {
         if(!changingEnabled || runDataArrayReplicantPlayer.value == "") {
             return;
         }
         nodecg.sendMessage("resetTime");
         runPlayer_playNextRun()
     });
-
-    $(".runPlayerNext").button({
-        disabled: true
-    });
-})
+	
+	function defaultNextRunButton() {
+		$(".runPlayerNext").button({
+            text: true,
+            label: 'No runs to play',
+            icons: {
+                primary: "ui-icon-seek-next"
+            },
+			disabled: true
+        });
+	}
+});

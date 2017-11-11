@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
+		<script src="RunInfoDialog.js"></script>
+		<style>
+			#gameDetailsInputs input {
+				width: 95%;
+			}
+		</style>
+	</head>
+	<body>
+		<span id="gameDetailsInputs">
+			<input id="gameInput" placeholder="Game Name">
+			<input id="categoryInput" placeholder="Category">
+			<input id="estimateInput" placeholder="Estimate (HH:MM)">
+			<input id="systemInput" placeholder="System/Platform">
+			<input id="regionInput" placeholder="Region">
+			<input id="setupTimeInput" placeholder="Setup Time (HH:MM)">
+			<br><br>
+			<span id="allPlayersInput">
+				<!--<span class="playerInput">
+					<input class="playerNameInput" placeholder="Player\'s Username">
+					<input class="playerStreamInput" placeholder="Player\'s Stream URL (e.g. https://twitch.tv/trihex)">
+					<input class="playerRegionInput" placeholder="Player\'s Country Code (e.g. SE)">
+				</span>-->
+			</span>
+			<br><br>
+			<button type="button" id="addExtraRunnerButton">+ Add Extra Runner</button>
+		</span>
+	</body>
+</html>

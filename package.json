@@ -40,7 +40,7 @@
       },
       {
         "name": "player-control",
-        "title": "Add Runs",
+        "title": "Add/Remove Runs",
         "width": 2,
         "file": "PlayerControlDashboard.html",
         "headerColor": "#008BB9"
@@ -54,7 +54,7 @@
       },
       {
         "name": "player-layout",
-        "title": "Team Layout",
+        "title": "Player Layout",
         "width": 2,
         "file": "PlayerLayoutDashboard.html",
         "headerColor": "#008BB9"
@@ -88,18 +88,21 @@
         "headerColor": "#008BB9"
       },
       {
-        "name": "edit-game",
-        "title": "Edit Game",
+        "name": "run-info",
+        "title": "Add/Edit Run Info",
         "width": 5,
-        "file": "EditRunWindowDialog.html",
-        "dialog": true
-      },
-      {
-        "name": "add-run",
-        "title": "Add Game",
-        "width": 5,
-        "file": "AddRunWindowDialog.html",
-        "dialog": true
+        "file": "RunInfoDialog.html",
+        "dialog": true,
+		"dialogButtons": [
+          {
+            "name": "add/edit run",
+            "type": "confirm"
+          },
+          {
+            "name": "cancel/close",
+            "type": "dismiss"
+          }
+        ]
       }
     ]
   }

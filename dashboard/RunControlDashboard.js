@@ -1,7 +1,8 @@
 $(function () {
     var lastItemSize = 0;
     var blankSlateContainerHtml = $('#run-control-container').html();
-// Initialize replicants we will use
+	
+	// Initialize replicants we will use
     var runDataArrayReplicant = nodecg.Replicant("runDataArray");
     runDataArrayReplicant.on("change", function (newValue, oldValue) {
         if (typeof newValue !== 'undefined' && newValue != '') {
@@ -12,7 +13,7 @@ $(function () {
         }
     });
 
-    var runDataEditRunReplicant = nodecg.Replicant("runDataEditRun",{persistent: false});
+    var runDataEditRunReplicant = nodecg.Replicant('runDataEditRun', {defaultValue: -1, persistent: false});
 
     function runControl_GetPlayers(runData) {
         var shouldSayTeams = runData.teams.length > 1;
@@ -69,7 +70,7 @@ $(function () {
                 '<div>' +
                 runControl_GetRunBodyHtml(runData) +
                 '<button class="removeButton" id="' + buttonRemoveIDString + '"></button>' +
-                '<button class="changeButton" nodecg-dialog="edit-game" id="' + buttonChangeIDString + '"></button>' +
+                '<button class="changeButton" nodecg-dialog="run-info" id="' + buttonChangeIDString + '"></button>' +
                 '</div>' +
                 '</div>';
         });
@@ -95,7 +96,7 @@ $(function () {
 
         $.each(buttonChangeIDs, function (index, buttonID) {
             $('#' + buttonID).click(function () {
-                runDataEditRunReplicant.value = runControl_GetRun(index);
+                runDataEditRunReplicant.value = runControl_GetRun(index).runID;
             });
 
             $('#' + buttonID).button({
@@ -148,4 +149,4 @@ $(function () {
         var runContainer = runDataArrayReplicant.value;
         return runContainer[ID];
     }
-})
+});

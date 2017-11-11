@@ -1,27 +1,14 @@
 'use strict';
 $(function () {
 // JQuery selectors..
-    var $addRunButton = $('#playerControlAddRunButton');
+	var $addRunButton = $('#playerControlAddRunButton');
     var $removeRunsButton = $('#playerControlRemoveRunsButton');
     var $randomizeRunsButton = $('#playerControlRandomizeRunsButton');
-    var $playerControlAddRunRawButton = $('#playerControlAddRunRawButton');
-    var $addPlayerButton = $('#playerControlAddPlayerButton');
-    var $estimateInputField = $('#playerControlEstimate');
-    var $panelLayout = $('#player-control');
-
-// Local variables..
-// Used to keep track of data in a http response from speedrun.com
-    var cachedRunnerSearch = [];
-    var cachedRunner = [];
-    var cachedGameSearch = undefined;
-    var cachedGame = undefined;
-    var cachedGameCathegories = undefined;
-
-    var runnerNumberIterator = 1;
-    var runnerContainerHTML = $("#player-control-run-container").html();
 
 // Initialize replicants we will use
     var runDataArrayReplicant = nodecg.Replicant("runDataArray");
+	var runDataEditRunReplicant = nodecg.Replicant('runDataEditRun', {defaultValue: -1, persistent: false});
+	var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
 
     var runDataLastIDReplicant = nodecg.Replicant("runDataLastID");
     runDataLastIDReplicant.on("change", function (newValue, oldValue) {
@@ -29,102 +16,8 @@ $(function () {
             runDataLastIDReplicant.value = 1;
         }
     });
-
-    var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
-
-// Used for input field validation (the "nice" tooltips you get when something is wrong
-    $.verify({
-        hideErrorOnChange: true,
-        debug: false,
-        beforeSubmit: function (form, result) {
-            // Happens when you click the "add run" button. If something is wrong then we don't create e new run
-            if (result != false) {
-                var runData = playerControl_CreateRunData();
-                runData.game = $('#playerControlGame').val();
-                runData.estimate = $('#playerControlEstimate').val();
-                runData.category = $('#playerControlCategory').val();
-                runData.system = $('#playerControlSystem').val();
-                runData.region = $('#playerControlRegion').find('option:selected').val();
-                runData.teams = new Array();
-
-                // Go through all the player name input fields and lookup cached player data for each one,
-                // should never fail.
-                $('.playerControlRunnerClass').each(function () {
-                    var selectedRunner = $(this).val();
-                    var found = false;
-                    $.each(cachedRunner, function (i, v) {
-                        if (v.names.international == selectedRunner && found != true) {
-                            var team = {
-                              members: new Array(),
-                              name: v.names.international
-                            };
-                            team.members.push(v);
-                            runData.teams.push(team);
-                            runData.players.push(v);
-                            found = true;
-                        }
-                    });
-                    if (found == false) {
-                        console.error("Did not find cached player data when adding run. Should NEVER happen");
-                    }
-                });
-
-                playerControl_AddRun(runData, true);
-                playerControl_ClearAllFields();
-            }
-            else {
-            }
-        }
-    });
-
-// Empties all the fields of the form
-    function playerControl_ClearAllFields() {
-        cachedRunnerSearch = [];
-        cachedRunner = [];
-        cachedGameSearch = undefined;
-        cachedGame = undefined;
-        cachedGameCathegories = undefined;
-        runnerNumberIterator = 1;
-        $('#playerControlGame').val("");
-        $('#playerControlEstimate').val("");
-        $('#playerControlCategory').val("");
-        $('#playerControlSystem').val("");
-        $("#player-control-run-container").html(runnerContainerHTML);
-        playerControl_InitializePlayerElements();
-    }
-
-// Called as a process when pushing the "add run" button
-    function playerControl_AddRun(runData, assignRunID) {
-        if (typeof runDataArrayReplicant.value !== 'undefined') {
-            var runContainer = runDataArrayReplicant.value;
-            if(assignRunID) {
-                runData.runID = playerControl_GetSetLastID();
-            }
-            runContainer.push(runData);
-            console.log(runData);
-            runDataArrayReplicant.value = runContainer;
-        }
-        else {
-            var runContainer = [];
-            if(assignRunID) {
-                runData.runID = playerControl_GetSetLastID();
-            }
-            console.log(runData);
-            runContainer.push(runData);
-            runDataArrayReplicant.value = runContainer;
-        }
-    }
-
-// All the runs have a uniqe ID attached to them
-    function playerControl_GetSetLastID() {
-        var runID = runDataLastIDReplicant.value;
-        var runIDIncremented = Number(runDataLastIDReplicant.value);
-        runIDIncremented++;
-        runDataLastIDReplicant.value = runIDIncremented;
-        return runID;
-    }
-
-// Returns an empty run object
+	
+	// Returns an empty run object
     function playerControl_CreateRunData() {
         var theRun = {};
         theRun.players = [];
@@ -136,78 +29,16 @@ $(function () {
         theRun.category = "";
         return theRun;
     }
-
-// Function that sets up autocompletion
-    function playerControl_InitializeFieldAutoCompletion() {
-        $addRunButton = $('#playerControlAddRunButton');
-        $panelLayout = $('#player-control');
-
-        $("#playerControlGame").autocomplete({
-            source: function (request, response) {
-                var urlRequest = "https://www.speedrun.com/api/v1/games?name=" + request.term;
-                $.ajax({
-                    url: urlRequest,
-                    dataType: "jsonp",
-                    data: {
-                        q: request.term
-                    },
-                    success: function (data) {
-                        cachedGameSearch = data;
-                        var result = data;
-                        var gameArray = [];
-                        for (var i = 0; i < result.data.length; i++) {
-                            gameArray.push(result.data[i].names.international);
-                        }
-                        response(gameArray);
-                    }
-                });
-            },
-            minLength: 3,
-            delay: 500,
-            select: function (event, ui) {
-                $.each(cachedGameSearch.data, function (i, v) {
-                    if (v.names.international == ui.item.label) {
-                        cachedGame = v;
-                        var urlRequest = "https://www.speedrun.com/api/v1/games/" + v.id + "/categories";
-                        $.ajax({
-                            url: urlRequest,
-                            dataType: "jsonp",
-                            data: {
-                                q: '{"some":"json"}'
-                            },
-                            success: function (data) {
-                                cachedGameCathegories = data;
-                                var cathegoryArray = [];
-                                for (var i = 0; i < cachedGameCathegories.data.length; i++) {
-                                    cathegoryArray.push(cachedGameCathegories.data[i].name);
-                                }
-                                $("#playerControlCategory").autocomplete({
-                                    source: cathegoryArray
-                                });
-                            }
-                        });
-                    }
-                });
-            },
-            open: function () {
-                $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-            },
-            close: function () {
-                $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-            }
-        });
-    }
-
-// Initializes logic for buttons, fields, and validation
+	
+	// Initializes logic for buttons, fields, and validation
     function playerControl_InitializeElements() {
-        $addRunButton.button({});
+		$addRunButton.button({});
         $removeRunsButton.button({});
         $randomizeRunsButton.button({});
-        $playerControlAddRunRawButton.button({});
-        $estimateInputField = $('#playerControlEstimate');
-        $("#playerControlRegion").selectmenu({width:'100%'});
-        $randomizeRunsButton = $('#playerControlRandomizeRunsButton');
-        $removeRunsButton = $('#playerControlRemoveRunsButton');
+		
+		$addRunButton.click(function() {
+			runDataEditRunReplicant.value = -1;
+		});
 
         $removeRunsButton.click(function () {
             if (confirm("Really remove all runs?")) {
@@ -234,7 +65,7 @@ $(function () {
                     player.names = {};
                     player.names.international = runnerNames[Math.floor(Math.random() * runnerNames.length)];
                     player.twitch = {};
-                    player.twitch.uri = "http://www.twitch.tv/" + player.names.international + "Chan";
+                    player.twitch.uri = "https://www.twitch.tv/" + player.names.international + "Chan";
                     players.push(player);
                 }
 
@@ -251,51 +82,13 @@ $(function () {
 				
                 runs.push(runData);
                 runID++;
+				runDataLastIDReplicant.value = runID;
             }
 
             var runContainer = runDataArrayReplicant.value;
             runContainer = runs;
             runDataArrayReplicant.value = runContainer;
 
-        });
-        $estimateInputField.on('input', function (e) {
-            if ($(this).val().length == 4) {
-                var formattedString = $(this).val().substr(0, 2) + ":" + $(this).val().substr(2, 3)
-                $(this).val(formattedString);
-            }
-        });
-
-        $.verify.addRules({
-            runnerValidation: function (r) {
-                var foundPlayer = jQuery.grep(cachedRunner, function (a) {
-                    return a.names.international == r.field.context.value;
-                });
-
-                if (foundPlayer.length > 0) {
-                    return true;
-                }
-
-                var urlRequest = "https://www.speedrun.com/api/v1/users?name=" + r.field.context.value;
-                $.ajax({
-                    url: urlRequest,
-                    dataType: "jsonp",
-                    data: {
-                        q: ""
-                    },
-                    success: function (players) {
-                        r.prompt(r.field, "Checking user on Speedrun.com..", "blue");
-                        cachedRunnerSearch = players;
-                        var playerFound = "Player not found on Speedrun.com! please enter a valid user";
-                        for (var i = 0; i < players.data.length; i++) {
-                            if (players.data[i].names.international == r.field.context.value) {
-                                playerFound = true;
-                                cachedRunner.push(players.data[i]);
-                            }
-                        }
-                        r.callback(playerFound);
-                    }
-                });
-            }
         });
     }
 
@@ -307,99 +100,13 @@ $(function () {
                 primary: "ui-icon-plusthick"
             },
             text: false
-        })
-
-        $addPlayerButton.click(function () {
-            runnerNumberIterator++;
-            var newInputHtmlText = '<input id="playerControlRunner' + runnerNumberIterator + '" class="playerControlRunnerClass" placeholder="Player ' + runnerNumberIterator + ' Nick" data-validate="runnerValidation,required">';
-            $('#runnerContainer').append(newInputHtmlText);
-
-            $("#playerControlRunner" + runnerNumberIterator).autocomplete({
-                source: function (request, response) {
-                    var urlRequest = "https://www.speedrun.com/api/v1/users?name=" + request.term;
-                    $.ajax({
-                        url: urlRequest,
-                        dataType: "jsonp",
-                        data: {
-                            q: request.term
-                        },
-                        success: function (data) {
-                            cachedRunnerSearch = data;
-                            var result = data;
-                            var playerArray = [];
-                            for (var i = 0; i < result.data.length; i++) {
-                                playerArray.push(result.data[i].names.international);
-                            }
-                            response(playerArray);
-                        }
-                    });
-                },
-                minLength: 3,
-                delay: 500,
-                select: function (event, ui) {
-                    $.each(cachedRunnerSearch.data, function (i, v) {
-                        if (v.names.international == ui.item.label) {
-                            cachedRunner.push(v);
-                        }
-                    });
-                },
-                open: function () {
-                    $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-                },
-                close: function () {
-                    $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-                }
-            });
         });
-
-        $("#playerControlRunner1").autocomplete({
-            source: function (request, response) {
-                var urlRequest = "https://www.speedrun.com/api/v1/users?name=" + request.term;
-                $.ajax({
-                    url: urlRequest,
-                    dataType: "jsonp",
-                    data: {
-                        q: request.term
-                    },
-                    success: function (data) {
-                        cachedRunnerSearch = data;
-                        var result = data;
-                        var playerArray = [];
-                        for (var i = 0; i < result.data.length; i++) {
-                            playerArray.push(result.data[i].names.international);
-                        }
-                        response(playerArray);
-                    }
-                });
-            },
-            minLength: 3,
-            delay: 500,
-            select: function (event, ui) {
-                $.each(cachedRunnerSearch.data, function (i, v) {
-                    if (v.names.international == ui.item.label) {
-                        cachedRunner.push(v);
-                    }
-                });
-            },
-            open: function () {
-                $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
-            },
-            close: function () {
-                $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
-            }
-        });
-    }
+	}
 
     // Initialize dashboard panel, only runs once
-    playerControl_InitializeFieldAutoCompletion();
     playerControl_InitializeElements();
-    playerControl_ClearAllFields();
 
     if (nodecg.bundleConfig && (typeof nodecg.bundleConfig.live !== 'undefined' && nodecg.bundleConfig.live === true)) {
-        $addRunButton.button({disabled: true});
-        $removeRunsButton.button({disabled: true});
         $randomizeRunsButton.button({disabled: true});
-        $addPlayerButton.button({disabled: true});
     }
-
 });
