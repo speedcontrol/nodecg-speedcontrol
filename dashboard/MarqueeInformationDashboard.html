@@ -24,13 +24,16 @@
 </head>
 <body>
 <div id="marquee-information">
-    <div id="marquee-information-container">
-        <textarea id="textToDisplay" placeholder="Type text to display here..."></textarea>
-		<div id="horizontalButtons">
-			<button id="submitMarqueeInformationButton">Display</button>
-			<button id="removeMarqueeInformationButton">Hide</button>
+	<span id="marqueeControlHideShow">
+		<div id="marquee-information-container">
+			<textarea id="textToDisplay" placeholder="Type text to display here..."></textarea>
+			<div id="horizontalButtons">
+				<button id="submitMarqueeInformationButton">Display</button>
+				<button id="removeMarqueeInformationButton">Hide</button>
+			</div>
+			<button id="temporarilyDisplayMarqueeInformationButton">Display for 30s</button>
 		</div>
-        <button id="temporarilyDisplayMarqueeInformationButton">Display for 30s</button>
-    </div>
+	</span>
+	<span id="marqueeControlInit">This feature is not applicable for this event.</span>
 </div>
 </body>

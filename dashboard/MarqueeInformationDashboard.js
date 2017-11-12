@@ -23,4 +23,10 @@ $(function () {
     $removeMarqueeInformationButton.click(function () {
         nodecg.sendMessage("removeMarqueeInformation");
     });
+	
+	// If enableMarqueePanel is undefined, we still want it to appear (default is true).
+	if (nodecg.bundleConfig && nodecg.bundleConfig.enableMarqueePanel === false)
+		$('#marqueeControlHideShow').hide();
+	else
+		$('#marqueeControlInit').hide();
 })

@@ -11,6 +11,7 @@
 		"enableSRCDonations": {"type": "boolean"},
 		"SRCEventSlug": {"type": "string"},
 		"useExternalTimer": {"type": "boolean"},
+		"enableMarqueePanel": {"type": "boolean"},
 		"streamTitle": {"type": "string"},
 		"defaultGame": {"type": "string"},
 		"defaultScheduleURL": {"type": "string"},
