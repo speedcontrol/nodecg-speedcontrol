@@ -36,14 +36,16 @@
         "title": "Run Editor",
         "width": 3,
         "file": "RunControlDashboard.html",
-        "headerColor": "#008BB9"
+        "headerColor": "#008BB9",
+		"workspace": "Run Modifications"
       },
       {
         "name": "player-control",
         "title": "Add/Remove Runs",
         "width": 2,
         "file": "PlayerControlDashboard.html",
-        "headerColor": "#008BB9"
+        "headerColor": "#008BB9",
+		"workspace": "Run Modifications"
       },
       {
         "name": "run-timer",
@@ -57,14 +59,16 @@
         "title": "Player Layout",
         "width": 2,
         "file": "PlayerLayoutDashboard.html",
-        "headerColor": "#008BB9"
+        "headerColor": "#008BB9",
+		"workspace": "Scene Editing"
       },
       {
         "name": "scene-layout",
         "title": "Scene Layout",
         "width": 2,
         "file": "SceneLayoutDashboard.html",
-        "headerColor": "#008BB9"
+        "headerColor": "#008BB9",
+		"workspace": "Scene Editing"
       },
       {
         "name": "stream-control",
@@ -78,14 +82,16 @@
         "title": "Horaro Schedule Import",
         "width": 2,
         "file": "HoraroImportDashboard.html",
-        "headerColor": "#008BB9"
+        "headerColor": "#008BB9",
+		"workspace": "Run Modifications"
       },
       {
         "name": "marquee-information",
         "title": "Marquee Information",
         "width": 2,
         "file": "MarqueeInformationDashboard.html",
-        "headerColor": "#008BB9"
+        "headerColor": "#008BB9",
+		"workspace": "Scene Editing"
       },
       {
         "name": "run-info",
