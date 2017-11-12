@@ -4,8 +4,9 @@ $(function() {
 	var $horaroCommitButton = $('#horaroImportCommit');
 	var runDataArray = [];
 	var runNumberIterator = 1;
-	var includeRegion = true; // Set to false if you don't need to waste time waiting for regions to be found.
-	var regionCache = {}; // This is a *very* temp cache; it's gone once the page is refreshed.
+	var userDataCache = {}; // This is a *very* temp cache; it's gone once the page is refreshed.
+	
+	var defaultSetupTimeReplicant = nodecg.Replicant('defaultSetupTime', {defaultValue: 0});
 	
 	$horaroCommitButton.button();
 	
@@ -29,6 +30,7 @@ $(function() {
 			success: function(data) {
 				var runItems = data.schedule.items;
 				var defaultSetupTime = data.schedule.setup_t;
+				defaultSetupTimeReplicant.value = defaultSetupTime;
 				var itemCounter = 0;
 				
 				async.eachSeries(runItems, function(run, callback) {
@@ -141,20 +143,20 @@ $(function() {
 							async.eachSeries(members, function(member, callback) {
 								// Checking to see if the user is a link, if not use the whole field.
 								if (member.match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/)) {
-									var username = member.match(/\((.*?)\)/)[1];
+									var URI = member.match(/\((.*?)\)/)[1];
 									var playerName = member.match(/\[(.*?)\]/)[1];
 								}
 								else
 									var playerName = member;
 								
-								getRegionFromSpeedrunCom(playerName, username, function(regionCode) {
+								getDataFromSpeedrunCom(playerName, URI, function(regionCode, twitchURI) {
 									// Creating the member object.
 									var memberObj = {
 										names: {
 											international: playerName
 										},
 										twitch: {
-											uri: username
+											uri: twitchURI
 										},
 										team: team.name,
 										region: regionCode
@@ -213,70 +215,104 @@ $(function() {
 		return theRun;
 	}
 	
-	// Tries to find the specified user on speedrun.com and get their country/region.
-	// Only using username lookups for now, need to use both in case 1 doesn't work.
-	function getRegionFromSpeedrunCom(username, twitch, callback) {
-		if (includeRegion) {
-			if (regionCache[username]) callback(regionCache[username]);
-			
-			else {
-				var foundRegion;
-				
-				// Gets the actual "Twitch" username (should work for other sites too, not tested) from the URL.
-				if (twitch) {
-					twitch = twitch.split('/');
-					twitch = twitch[twitch.length-1];
-				}
-				
-				async.waterfall([
-					function(callback) {
-						if (twitch) {
-							var url = 'https://www.speedrun.com/api/v1/users?max=1&lookup='+twitch.toLowerCase();
-							querySRComForUserRegion(url, function(regionCode) {
-								if (regionCode) foundRegion = regionCode;
-								callback();
-							});
-						}
-						
-						else callback();
-					},
-					function(callback) {
-						if (!foundRegion && username) {
-							var url = 'https://www.speedrun.com/api/v1/users?max=1&lookup='+username.toLowerCase();
-							querySRComForUserRegion(url, function(regionCode) {
-								if (regionCode) foundRegion = regionCode;
-								callback();
-							});
-						}
-						
-						else callback();
-					}
-				], function(err, result) {
-					// Store in the very temp cache if one is found.
-					if (foundRegion) regionCache[username] = foundRegion;
-					
-					// 1 second delay on calling back so we don't stress the Speedrun.com API too much.
-					setTimeout(function() {callback(foundRegion);}, 1000);
-				});
-			}
+	// Tries to find the specified user on speedrun.com and get their country/region and Twitch if needed.
+	function getDataFromSpeedrunCom(username, twitch, callback) {
+		if (userDataCache[username]) {
+			extractInfoFromSRComUserData(userDataCache[username], (SRComRegion, SRComTwitch) => {
+				callback(SRComRegion, SRComTwitch);
+			});
 		}
 		
-		// If the variable in this file is set to not get regions, just callback.
-		else callback();
+		else {
+			var foundUserData;
+			
+			// Gets the actual "Twitch" username (should work for other sites too, not tested) from the URL.
+			if (twitch) {
+				twitch = twitch.split('/');
+				twitch = twitch[twitch.length-1];
+			}
+			
+			async.waterfall([
+				function(callback) {
+					if (twitch) {
+						var url = 'https://www.speedrun.com/api/v1/users?max=1&lookup='+twitch.toLowerCase();
+						
+						querySRComForUserData(url, function(data) {
+							if (data) foundUserData = data;
+							callback();
+						});
+					}
+					
+					else callback();
+				},
+				function(callback) {
+					if (!foundUserData) {
+						var url = 'https://www.speedrun.com/api/v1/users?max=1&lookup='+username.toLowerCase();
+						
+						querySRComForUserData(url, function(data) {
+							if (data) foundUserData = data;
+							callback();
+						});
+					}
+					
+					else callback();
+				}
+			], function(err, result) {
+				var foundRegion, foundTwitch;
+				
+				if (foundUserData) {
+					// Store in the very temp cache if the user was found.
+					userDataCache[username] = foundUserData;
+					
+					extractInfoFromSRComUserData(foundUserData, (SRComRegion, SRComTwitch) => {
+						foundRegion = SRComRegion;
+						foundTwitch = SRComTwitch;
+					});
+				}
+				
+				// 1 second delay on calling back so we don't stress the Speedrun.com API too much.
+				setTimeout(function() {callback(foundRegion, foundTwitch);}, 1000);
+			});
+		}
 	}
 	
-	// Helper function for the function above.
-	function querySRComForUserRegion(url, callback) {
+	// Helper function for above.
+	function extractInfoFromSRComUserData(data, callback) {
+		var regionCode = getUserRegionFromSRComUserData(data);
+		var twitchURI = getTwitchFromSRComUserData(data);
+		if (regionCode) var foundRegion = regionCode;
+		if (twitchURI) var foundTwitch = twitchURI;
+		callback(foundRegion, foundTwitch);
+	}
+	
+	// Helper function for above.
+	function querySRComForUserData(url, callback) {
 		$.ajax({
 			url: url,
 			dataType: "jsonp",
 			success: function(data) {
-				if (data.data.length > 0 && data.data[0].location) {
-					callback(data.data[0].location.country.code);
+				if (data.data.length > 0)
+					callback(data.data[0]);
 				else
 					callback();
 			}
 		});
+	}
+	
+	// Helper function for above.
+	function getUserRegionFromSRComUserData(data) {
+		if (data.location)
+			return data.location.country.code;
+		else
+			return false;
+	}
+	
+	// Helper function for above.
+	function getTwitchFromSRComUserData(data) {
+		if (data.twitch && data.twitch.uri)
+			return data.twitch.uri;
+		else
+			return false;
 	}
 	
 	function checkGameAgainstIgnoreList(game) {

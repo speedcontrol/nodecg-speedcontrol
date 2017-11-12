@@ -3,6 +3,7 @@ $(function() {
 	var runDataArrayReplicant = nodecg.Replicant('runDataArray');
 	var runDataActiveRunReplicant = nodecg.Replicant('runDataActiveRun');
 	var runDataLastIDReplicant = nodecg.Replicant('runDataLastID');
+	var defaultSetupTimeReplicant = nodecg.Replicant('defaultSetupTime', {defaultValue: 0});
 	var runInfo = {};
 	var currentRunID = -1;
 	
@@ -141,6 +142,8 @@ $(function() {
 	function resetInputs() {
 		$('#gameDetailsInputs input').val('');
 		$('#allPlayersInput').html('');
+		if (defaultSetupTimeReplicant.value > 0)
+			$('#setupTimeInput').val(msToTime(defaultSetupTimeReplicant.value*1000));
 		addRunnerFields();
 	}
 	
