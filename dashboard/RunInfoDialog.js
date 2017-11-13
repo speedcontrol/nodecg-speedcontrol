@@ -1,25 +1,28 @@
 'use strict';
 $(function() {
+	// Declaring variables/replicants.
 	var runDataArrayReplicant = nodecg.Replicant('runDataArray');
 	var runDataActiveRunReplicant = nodecg.Replicant('runDataActiveRun');
 	var runDataLastIDReplicant = nodecg.Replicant('runDataLastID');
 	var defaultSetupTimeReplicant = nodecg.Replicant('defaultSetupTime', {defaultValue: 0});
+	var runDataEditRunReplicant = nodecg.Replicant('runDataEditRun', {defaultValue: -1, persistent: false});
 	var runInfo = {};
 	var currentRunID = -1;
 	
-	var runDataEditRunReplicant = nodecg.Replicant('runDataEditRun', {defaultValue: -1, persistent: false});
+	// When the replicant used to store the run we want to edit is changed.
 	runDataEditRunReplicant.on('change', (newVal, oldVal) => {
 		if (newVal === undefined || newVal === null) return;
+		currentRunID = newVal;
 		
-		if (newVal < 0) {
+		// If we want to add a new run, the value is -1.
+		if (newVal < 0)
 			resetInputs();
-		}
 		
 		else {
-			currentRunID = newVal;
 			runInfo = runDataArrayReplicant.value[getRunIndexInRunDataArray(newVal)];
 			$('#allPlayersInput').html(''); // Remove blank player data fields.
 			
+			// Populate fields with relevant data.
 			$('#gameInput').val(runInfo.game);
 			$('#categoryInput').val(runInfo.category);
 			$('#estimateInput').val(runInfo.estimate);
@@ -37,17 +40,38 @@ $(function() {
 		}
 	});
 	
+	// For when the "add/edit run" button is pressed.
 	document.addEventListener('dialog-confirmed', () => {
-		var estimateInMS = timeToMS($('#estimateInput').val());
-		var setupTimeInMS = ($('#setupTimeInput').val().length) ? timeToMS($('#setupTimeInput').val()) : 0;
+		// Pulling data from the form to construct the run data object.
+		var newRunData = {};
 		
-		var newRunData = {}
 		newRunData.game = $('#gameInput').val();
 		newRunData.category = $('#categoryInput').val();
-		newRunData.estimate = msToTime(estimateInMS);
-		newRunData.estimateS = estimateInMS/1000;
-		newRunData.setupTime = msToTime(setupTimeInMS);
-		newRunData.setupTimeS = setupTimeInMS/1000;
+		
+		// Estimate processing.
+		var estimate = $('#estimateInput').val();
+		if (estimate.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/) || !isNaN(estimate)) {
+			var estimateInMS = timeToMS($('#estimateInput').val());
+			newRunData.estimate = msToTime(estimateInMS);
+			newRunData.estimateS = estimateInMS/1000;
+		}
+		else {
+			newRunData.estimate = msToTime(0);
+			newRunData.estimateS = 0;
+		}
+		
+		// Setup time processing.
+		var setupTime = $('#setupTimeInput').val();
+		if (setupTime.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/) || !isNaN(setupTime)) {
+			var setupTimeInMS = timeToMS($('#setupTimeInput').val());
+			newRunData.setupTime = msToTime(setupTimeInMS);
+			newRunData.setupTimeS = setupTimeInMS/1000;
+		}
+		else {
+			newRunData.setupTime = msToTime(0);
+			newRunData.setupTimeS = 0;
+		}
+		
 		newRunData.system = $('#systemInput').val();
 		newRunData.region = $('#regionInput').val();
 		newRunData.teams = [];
@@ -55,9 +79,14 @@ $(function() {
 		newRunData.screens = []; // unused
 		newRunData.cameras = []; // unused
 		
+		// Going through all the player detail inputs to continue the above.
 		$('#allPlayersInput .playerInput').each(function(index) {
 			var playerName = $(this).find('.playerNameInput').val();
 			if (!playerName.length) return true; // Skip this player.
+			
+			// At some point we will try and pull these from speedrun.com.
+			var twitchURI = $(this).find('.playerStreamInput').val();
+			var region = $(this).find('.playerRegionInput').val();
 			
 			var team = {
 				name: playerName,
@@ -70,10 +99,10 @@ $(function() {
 					international: playerName
 				},
 				twitch: {
-					uri: ($(this).find('.playerStreamInput').val().length)?$(this).find('.playerStreamInput').val():undefined
+					uri: (twitchURI.length)?twitchURI:undefined
 				},
 				team: team.name,
-				region: ($(this).find('.playerRegionInput').val().length)?$(this).find('.playerRegionInput').val():undefined
+				region: (region.length)?region:undefined
 			};
 			
 			team.members.push(memberObj);
@@ -81,11 +110,18 @@ $(function() {
 			newRunData.teams.push(team);
 		});
 		
+		// Ghetto prompt if verification fails (for now).
+		// Only picks up on checking if a game name is set; other things are just dropped for now.
+		if (!newRunData.game.length) {
+			alert('Run not added/edited because there was no game name provided.');
+			return;
+		}
+		
 		// If we're adding a new run.
 		if (currentRunID < 0) {
 			newRunData.runID = runDataLastIDReplicant.value;
 			runDataLastIDReplicant.value++;
-			if (!runDataArrayReplicant.value)
+			if (!runDataArrayReplicant.value) // If there we no runs yet, make the array.
 				runDataArrayReplicant.value = [newRunData];
 			else
 				runDataArrayReplicant.value.push(newRunData);
@@ -95,6 +131,8 @@ $(function() {
 		else {
 			newRunData.runID = runInfo.runID;
 			runDataArrayReplicant.value[getRunIndexInRunDataArray(runInfo.runID)] = newRunData;
+			
+			// If the run being edited is the currently active run, update those details too.
 			if (runDataActiveRunReplicant.value && runInfo.runID == runDataActiveRunReplicant.value.runID)
 				runDataActiveRunReplicant.value = newRunData;
 		}
@@ -103,11 +141,14 @@ $(function() {
 		resetInputs();
 	});
 	
+	// When the cancel/close button is pressed.
 	document.addEventListener('dialog-dismissed', () => {
 		runDataEditRunReplicant.value = -1;
 		resetInputs();
 	});
 	
+	// Needs moving to a seperate file; this is copy/pasted in a few places.
+	// Gets index of the run in the array by the unique ID given to the run.
 	function getRunIndexInRunDataArray(runID) {
 		if (!runDataArrayReplicant.value) return -1;
 		for (var i = 0; i < runDataArrayReplicant.value.length; i++) {
@@ -139,6 +180,7 @@ $(function() {
 		$('#allPlayersInput').append($playerInputs);
 	}
 	
+	// Reset form and inputs back to default.
 	function resetInputs() {
 		$('#gameDetailsInputs input').val('');
 		$('#allPlayersInput').html('');
@@ -147,6 +189,7 @@ $(function() {
 		addRunnerFields();
 	}
 	
+	// Needs moving to a seperate file; this is copy/pasted in a few places.
 	function msToTime(duration) {
 		var minutes = parseInt((duration/(1000*60))%60),
 			hours = parseInt((duration/(1000*60*60))%24);
@@ -156,7 +199,8 @@ $(function() {
 		
 		return hours + ':' + minutes;
 	}
-
+	
+	// Needs moving to a seperate file; this is copy/pasted in a few places.
 	function timeToMS(duration) {
 		var ts = duration.split(':');
 		if (ts.length === 1) ts.unshift('00'); // Adds 0 hours if they are not specified.

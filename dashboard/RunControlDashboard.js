@@ -12,6 +12,18 @@ $(function () {
             $('#runItems').html('');
         }
     });
+	
+	$('#editCurrentRunButton').button();
+	
+	var runDataActiveRunReplicant = nodecg.Replicant('runDataActiveRun');
+	runDataActiveRunReplicant.on('change', (newVal, oldVal) => {
+		if (!newVal) $('#editCurrentRunButton').button({disabled: true});
+		else $('#editCurrentRunButton').button({disabled: false});
+	});
+	
+	$('#editCurrentRunButton').click(() => {
+		runDataEditRunReplicant.value = runDataActiveRunReplicant.value.runID;
+	});
 
     var runDataEditRunReplicant = nodecg.Replicant('runDataEditRun', {defaultValue: -1, persistent: false});
 
