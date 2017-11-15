@@ -9,6 +9,7 @@ var accessToken;
 var messageNumber;
 var ffzWS;
 var ffzWSConnected = false;
+var pingTimeout;
 var ffzFollowButtonsReplicant;
 
 module.exports = function(nodecg) {
@@ -67,6 +68,7 @@ function connectToWS(callback) {
 	ffzWS.once('close', function() {
 		console.log('Connection to FFZ closed, will reconnect in 10 seconds.');
 		ffzWSConnected = false;
+		clearTimeout(pingTimeout);
 		setTimeout(connectToWS, 10000);
 	});
 
@@ -83,7 +85,11 @@ function connectToWS(callback) {
 						if (message === 'ok') {i++; callback();}
 					});
 				},
-				function(err) {ffzWSConnected = true; if (callback) {callback();}}
+				function(err) {
+					ffzWSConnected = true;
+					pingTimeout = setTimeout(ping, 60000); // PING every minute
+					if (callback) {callback();}
+				}
 			);
 		}
 	});
@@ -129,6 +135,25 @@ function sendMessage(message, callback) {
 			if (callback) {callback(data.substr(data.indexOf(' ')+1));}
 		}
 	});
+}
+
+function ping() {
+	var pongWaitTimeout;
+	ffzWS.ping();
+
+	var listenerFunc = function(data) {
+		clearTimeout(pongWaitTimeout);
+		pingTimeout = setTimeout(ping, 60000); // PING every minute
+		ffzWS.removeListener('pong', listenerFunc);
+	}
+	ffzWS.on('pong', listenerFunc);
+	
+	// Disconnect if a PONG was not received within 10 seconds.
+	pongWaitTimeout = setTimeout(function() {
+		console.log('FFZ PING/PONG failed, terminating connection.');
+		ffzWS.removeListener('pong', listenerFunc);
+		ffzWS.terminate();
+	}, 10000);
 }
 
 // Used to send the auth code for updating the following buttons/emotes when needed.
