@@ -1,199 +1,197 @@
 'use strict';
 $(function() {
-	var $horaroURLField = $('#horaroImportURL');
-	var $horaroCommitButton = $('#horaroImportCommit');
+	var scheduleData;
+	var $importSchedule = $('#importSchedule');
 	var runDataArray = [];
 	var runNumberIterator = 1;
 	var userDataCache = {}; // This is a *very* temp cache; it's gone once the page is refreshed.
-	
 	var defaultSetupTimeReplicant = nodecg.Replicant('defaultSetupTime', {defaultValue: 0});
 	
-	$horaroCommitButton.button();
+	$importSchedule.button();
 	
 	// Fill in URL box with default if specified in the config file.
-	if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.defaultScheduleURL)
-		$horaroURLField.val(nodecg.bundleConfig.defaultScheduleURL);
+	if (nodecg.bundleConfig && nodecg.bundleConfig.defaultScheduleURL)
+		$('#scheduleURL').val(nodecg.bundleConfig.defaultScheduleURL);
+	
+	$('#loadScheduleData').click(() => {
+		$.ajax({
+			url: $('#scheduleURL').val()+".json",
+			dataType: 'jsonp',
+			success: function(data) {
+				scheduleData = data;
+				var columns = data.schedule.columns;
+				
+				$('#columnsDropdownsWrapper select').append($('<option>', { 
+					value: -1,
+					text : 'N/A'
+				}));
+				
+				$.each(columns, (i, column) => {
+					$('#columnsDropdownsWrapper select').append($('<option>', { 
+						value: i,
+						text : column
+					}));
+				});
+			}
+		});
+	});
 	
 	// This is all of the importing stuff that happens when the button is pressed.
-	$horaroCommitButton.click(function() {
+	$importSchedule.click(() => {
 		if (!confirm("Importing will remove all the current runs added. Continue?"))
 			return;
 		
 		// Disable button and reset some variables.
-		$horaroCommitButton.button({disabled: true, label:"Importing..."});
+		$importSchedule.button({disabled: true, label:"Importing..."});
 		runDataArray = [];
 		runNumberIterator = 1;
 		
-		$.ajax({
-			url: $horaroURLField.val() + ".json",
-			dataType: "jsonp",
-			success: function(data) {
-				var runItems = data.schedule.items;
-				var defaultSetupTime = data.schedule.setup_t;
-				defaultSetupTimeReplicant.value = defaultSetupTime;
-				var itemCounter = 0;
+		// Get column numbers from the dropdowns selected by the user.
+		var gameColumn = parseInt($('#gameColumns').val());
+		var categoryColumn = parseInt($('#categoryColumns').val());
+		var systemColumn = parseInt($('#systemColumns').val());
+		var regionColumn = parseInt($('#regionColumns').val());
+		var playerColumn = parseInt($('#playerColumns').val());
+		
+		var runItems = scheduleData.schedule.items;
+		var defaultSetupTime = scheduleData.schedule.setup_t;
+		defaultSetupTimeReplicant.value = defaultSetupTime;
+		var itemCounter = 0;
+		
+		async.eachSeries(runItems, function(run, callback) {
+			itemCounter++;
+			$importSchedule.button({disabled: true, label:"Importing... ("+itemCounter+"/"+runItems.length+")"});
+			
+			// Check if the game name is part of the ignore list in the config.
+			if (run.data && run.data.length && gameColumn >= 0 && run.data[gameColumn] && checkGameAgainstIgnoreList(run.data[gameColumn])) {
+				console.warn("Run Number " + itemCounter + " has a \"Game\" name that is blacklisted in your config file, will not import.");
+				return callback();
+			}
 				
-				async.eachSeries(runItems, function(run, callback) {
-					itemCounter++;
-					$horaroCommitButton.button({disabled: true, label:"Importing... ("+itemCounter+"/"+runItems.length+")"});
-					
-					// Check if the game name is part of the ignore list in the config.
-					if (typeof run.data !== 'undefined' &&
-						run.data !== null &&
-						run.data[0] !== null &&
-						checkGameAgainstIgnoreList(run.data[0])) {
-						console.warn("Run Number " + itemCounter + " has a \"Game\" name that is blacklisted in your config file, will not import.");
-						return callback();
+			// We won't import runs with no game name.
+			if(!run.data[gameColumn] || run.data[gameColumn] === '') {
+				console.error("Run Number " + itemCounter + " does not have any value for \"Game\". This is not ok, will not Import.");
+				return callback();
+			}
+			
+			var runData = createRunData();
+			
+			// Game Name
+			if (gameColumn >= 0 && run.data[gameColumn]) {
+				// Checking to see if the game name is a link, if not use the whole field.
+				if (run.data[gameColumn].match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/))
+					runData.game = run.data[gameColumn].match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/)[1];
+				else
+					runData.game = run.data[gameColumn];
+			}
+			
+			// Estimate
+			runData.estimateS = run.length_t;
+			runData.estimate = msToTime(run.length_t);
+			
+			// If the run has a custom setup time, use that.
+			if (run.options && run.options.setup) {
+				// Kinda dirty right now; assumes the format is Xm (e.g. 15m).
+				var setupSeconds = parseInt(run.options.setup.slice(0, -1))*60;
+				runData.setupTime = msToTime(setupSeconds);
+				runData.setupTimeS = setupSeconds;
+			}
+			
+			else {
+				runData.setupTime = msToTime(defaultSetupTime);
+				runData.setupTimeS = defaultSetupTime;
+			}
+			
+			// Category
+			if(categoryColumn >= 0 && run.data[categoryColumn])
+				runData.category = run.data[categoryColumn];
+			
+			// System
+			if(systemColumn >= 0 && run.data[systemColumn])
+				runData.system = run.data[systemColumn];
+			
+			// Region
+			if (regionColumn >= 0 && run.data[regionColumn])
+				runData.region = run.data[regionColumn];
+			
+			// Teams/Players (there's a lot of stuff here!)
+			if (playerColumn >= 0 && run.data[playerColumn]) {
+				var playerLinksList = run.data[1];
+				
+				// Splitting by 'vs.' in case this is a race.
+				var vsList = playerLinksList.split(/vs\./);
+				async.eachSeries(vsList, function(rawTeam, callback) {
+					// Getting/setting the team name.
+					var customTeamName = false;
+					var cap = rawTeam.match(/(Team\s*)?(\S+):\s+\[/);
+					if (cap !== null && cap.length > 0) {
+						customTeamName = true;
+						var teamName = cap[2];
 					}
-					
-					// Checks to make sure this run isn't malformed in some way.
-					if(typeof run.data === 'undefined' ||
-						run.data == null ||
-						run.data[0] == null ||
-						run.data[1] == null ||
-						run.data[2] == null ||
-						run.data[3] == null) {
-						if(run.data == null) {
-							console.error("Did not receive a valid response from horaro. Has the format changed?");
-							return callback();
-						}
-						
-						// We won't import runs with no game name.
-						if(run.data[0] == null) {
-							console.error("Run Number " + itemCounter + " does not have any value for \"Game\". This is not ok, will not Import.");
-							return callback();
-						}
-						
-						// User
-						if(run.data[1] == null) {
-							console.warn("Run Number " + itemCounter + " does not have any value for \"User\". This might be ok, continuing import");
-						}
-						
-						// System
-						if(run.data[2] == null) {
-							console.warn("Run Number " + itemCounter + " does not have any value for \"System\". This might be ok, continuing import");
-						}
-						
-						// Category
-						if(run.data[3] == null) {
-							console.warn("Run Number " + itemCounter + " does not have any value for \"Category\". This might be ok, continuing import");
-						}
-					}
-					
-					var runData = createRunData();
-					
-					// Game Name
-					// Checking to see if the game name is a link, if not use the whole field.
-					if (run.data[0].match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/))
-						runData.game = run.data[0].match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/)[1];
 					else
-						runData.game = run.data[0];
+						var teamName = "Team "+(runData.teams.length+1);
 					
-					// Estimate
-					runData.estimateS = run.length_t;
-					runData.estimate = msToTime(run.length_t);
+					// Getting the members of this team.
+					var members = rawTeam.split(",");
+					var team = {
+						name: teamName,
+						custom: customTeamName,
+						members: new Array()
+					};
 					
-					// If the run has a custom setup time, use that.
-					if (run.options && run.options.setup) {
-						// Kinda dirty right now; assumes the format is Xm (e.g. 15m).
-						var setupSeconds = parseInt(run.options.setup.slice(0, -1))*60;
-						runData.setupTime = msToTime(setupSeconds);
-						runData.setupTimeS = setupSeconds;
-					}
-					
-					else {
-						runData.setupTime = msToTime(defaultSetupTime);
-						runData.setupTimeS = defaultSetupTime;
-					}
-					
-					// Category
-					if(run.data[3] !== null)
-						runData.category = run.data[3];
-					
-					// System
-					if(run.data[2] !== null)
-						runData.system = run.data[2];
-					
-					// Teams/Players (there's a lot of stuff here!)
-					var playerLinksList = run.data[1];
-					
-					if (playerLinksList !== null) {
-						// Splitting by 'vs.' in case this is a race.
-						var vsList = playerLinksList.split(/vs\./);
-						async.eachSeries(vsList, function(rawTeam, callback) {
-							// Getting/setting the team name.
-							var customTeamName = false;
-							var cap = rawTeam.match(/(Team\s*)?(\S+):\s+\[/);
-							if (cap !== null && cap.length > 0) {
-								customTeamName = true;
-								var teamName = cap[2];
-							}
-							else
-								var teamName = "Team "+(runData.teams.length+1);
-							
-							// Getting the members of this team.
-							var members = rawTeam.split(",");
-							var team = {
-								name: teamName,
-								custom: customTeamName,
-								members: new Array()
+					// Going through the list of members.
+					async.eachSeries(members, function(member, callback) {
+						// Checking to see if the user is a link, if not use the whole field.
+						if (member.match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/)) {
+							var URI = member.match(/\((.*?)\)/)[1];
+							var playerName = member.match(/\[(.*?)\]/)[1];
+						}
+						else
+							var playerName = member;
+						
+						getDataFromSpeedrunCom(playerName, URI, function(regionCode, twitchURI) {
+							// Creating the member object.
+							var memberObj = {
+								names: {
+									international: playerName
+								},
+								twitch: {
+									uri: twitchURI
+								},
+								team: team.name,
+								region: regionCode
 							};
 							
-							// Going through the list of members.
-							async.eachSeries(members, function(member, callback) {
-								// Checking to see if the user is a link, if not use the whole field.
-								if (member.match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/)) {
-									var URI = member.match(/\((.*?)\)/)[1];
-									var playerName = member.match(/\[(.*?)\]/)[1];
-								}
-								else
-									var playerName = member;
-								
-								getDataFromSpeedrunCom(playerName, URI, function(regionCode, twitchURI) {
-									// Creating the member object.
-									var memberObj = {
-										names: {
-											international: playerName
-										},
-										twitch: {
-											uri: twitchURI
-										},
-										team: team.name,
-										region: regionCode
-									};
-									
-									// Push this object to the relevant arrays where it is stored.
-									team.members.push(memberObj);
-									runData.players.push(memberObj);
-									callback();
-								});
-							}, function(err) {
-								// If there's only 1 member in the team, set the team name as their name.
-								if (members.length === 1) {
-									team.name = team.members[0].names.international;
-									team.members[0].team = team.name;
-								}
-								
-								runData.teams.push(team);
-								callback();
-							});
-						}, function(err) {
-							// Adding run if we have player(s) and we've checked them all.
-							horaro_AddRun(runData);
+							// Push this object to the relevant arrays where it is stored.
+							team.members.push(memberObj);
+							runData.players.push(memberObj);
 							callback();
 						});
-					}
-					
-					else {
-						// Adding run if we have no players.
-						horaro_AddRun(runData);
+					}, function(err) {
+						// If there's only 1 member in the team, set the team name as their name.
+						if (members.length === 1) {
+							team.name = team.members[0].names.international;
+							team.members[0].team = team.name;
+						}
+						
+						runData.teams.push(team);
 						callback();
-					}
+					});
 				}, function(err) {
-					horaro_finalizeRunList();
-					$horaroCommitButton.button({disabled: false, label:"Import"});
+					// Adding run if we have player(s) and we've checked them all.
+					horaro_AddRun(runData);
+					callback();
 				});
 			}
+			
+			else {
+				// Adding run if we have no players.
+				horaro_AddRun(runData);
+				callback();
+			}
+		}, function(err) {
+			horaro_finalizeRunList();
+			$importSchedule.button({disabled: false, label:"Import"});
 		});
 	});
 	

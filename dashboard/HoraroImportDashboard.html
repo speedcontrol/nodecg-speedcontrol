@@ -1,27 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<script src="../bower_components/jquery/dist/jquery.js"></script>
-	<script src="../bower_components/jquery-ui/jquery-ui.js"></script>
-	<script src="../bower_components/async/dist/async.min.js"></script>
-	<script src="HoraroImportDashboard.js"></script>
-	<link rel="stylesheet" href="../bower_components/jquery-ui/themes/redmond/jquery-ui.css"/>
-	<style>
-		#horaroImportCommit, #horaro-import {
-			width: 100%;
-		}
-		
-		#horaroImportURL {
-			width: 100%;
-			height: 30px;
-		}
-	</style>
-</head>
-<body>
-<div id="horaro-import">
-	<input id="horaroImportURL" placeholder="Horaro Schedule URL">
-	<hr>
-	<button type="button" id="horaroImportCommit">Import</button>
-</div>
-</body>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
+		<script src="../bower_components/jquery-ui/jquery-ui.js"></script>
+		<script src="../bower_components/async/dist/async.min.js"></script>
+		<script src="HoraroImportDashboard.js"></script>
+	</head>
+	<body>
+		<input id="scheduleURL" placeholder="Horaro Schedule URL">
+		<button type="button" id="loadScheduleData">Load</button>
+		<br><br>
+		<span id="columnsDropdownsWrapper">
+			Game: <select id="gameColumns"></select>
+			<br>Category: <select id="categoryColumns"></select>
+			<br>System: <select id="systemColumns"></select>
+			<br>Region: <select id="regionColumns"></select>
+			<br>Players: <select id="playerColumns"></select>
+		</span>
+		<br><br><button type="button" id="importSchedule">Import</button>
+	</body>
+</html>
