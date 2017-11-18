@@ -5,19 +5,63 @@
 		<script src="../bower_components/jquery/dist/jquery.js"></script>
 		<script src="../bower_components/jquery-ui/jquery-ui.js"></script>
 		<script src="../bower_components/async/dist/async.min.js"></script>
+		<link rel="stylesheet" href="../bower_components/jquery-ui/themes/redmond/jquery-ui.css"/>
 		<script src="HoraroImportDashboard.js"></script>
+		<style>
+			#scheduleURL, #loadScheduleData, #importSchedule {
+				width: 100%;
+			}
+			
+			#scheduleURL {
+				height: 30px;
+			}
+			
+			.selectWrapper {
+				display: flex;
+				align-items: center;
+				width: 100%;
+			}
+			
+			.selectWrapper .selectName {
+				width: 80px;
+			}
+			
+			.selectWrapper .selectDropdown {
+				flex: 1;
+			}
+			
+			.selectWrapper .selectDropdown select {
+				width: 100%;
+			}
+		</style>
 	</head>
 	<body>
 		<input id="scheduleURL" placeholder="Horaro Schedule URL">
-		<button type="button" id="loadScheduleData">Load</button>
+		<button type="button" id="loadScheduleData">Load Schedule Data</button>
 		<br><br>
-		<span id="columnsDropdownsWrapper">
-			Game: <select id="gameColumns"></select>
-			<br>Category: <select id="categoryColumns"></select>
-			<br>System: <select id="systemColumns"></select>
-			<br>Region: <select id="regionColumns"></select>
-			<br>Players: <select id="playerColumns"></select>
-		</span>
-		<br><br><button type="button" id="importSchedule">Import</button>
+		<div id="loadHelpPrompt"></div>
+		<div id="columnsDropdownsWrapper">
+			<!--<div class="selectWrapper">
+				<span class="selectName">Game:</span>
+				<span class="selectDropdown"><select id="gameColumns"></select></span>
+			</div>
+			<div class="selectWrapper">
+				<span class="selectName">Category:</span>
+				<span class="selectDropdown"><select id="categoryColumns"></select></span>
+			</div>
+			<div class="selectWrapper">
+				<span class="selectName">System:</span>
+				<span class="selectDropdown"><select id="systemColumns"></select></span>
+			</div>
+			<div class="selectWrapper">
+				<span class="selectName">Region:</span>
+				<span class="selectDropdown"><select id="regionColumns"></select></span>
+			</div>
+			<div class="selectWrapper">
+				<span class="selectName">Players:</span>
+				<span class="selectDropdown"><select id="playerColumns"></select></span>
+			</div>-->
+		</div>
+		<br><button type="button" id="importSchedule">Import Schedule Data</button>
 	</body>
 </html>
