@@ -40,6 +40,7 @@ $(function () {
             setActiveRun(newValue.runID);
         }
         else {
+			runPlayer_activeRunID = -1;
         }
     });
 
@@ -83,32 +84,32 @@ $(function () {
 		$('.runPlayerNext').button( "option", "disabled", true );
 		changingEnabled = false;
 	}
+	
+	function runPlayer_getPlayers(runData) {
+			var shouldSayTeams = runData.teams.length > 1;
+			// if any teams have more than 1 player, we should say teams
+			runData.teams.forEach( function(team, index) {
+				shouldSayTeams = team.members.length > 1;
+			});
+			var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
+			$.each(runData.teams, function (index, team) {
+				if (index > 0) {
+					playerString += '<tr><td class="rowTitle"</td>';
+				}
+				playerString += '<td class="rowContent">' + team.name;
+				if (team.members.length > 1) {
+					playerString += '<ul>';
 
-		function runPlayer_getPlayers(runData) {
-				var shouldSayTeams = runData.teams.length > 1;
-				// if any teams have more than 1 player, we should say teams
-				runData.teams.forEach( function(team, index) {
-					shouldSayTeams = team.members.length > 1;
-				});
-				var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
-				$.each(runData.teams, function (index, team) {
-					if (index > 0) {
-						playerString += '<tr><td class="rowTitle"</td>';
-					}
-					playerString += '<td class="rowContent">' + team.name;
-					if (team.members.length > 1) {
-						playerString += '<ul>';
-
-						$.each(team.members, function (index, member) {
-							playerString += '<li>' + member.names.international + '</li>';
-						});
-						playerString += '</ul>'
-					}
-					playerString += '</td></tr>';
-				});
-				return playerString;
-		}
-
+					$.each(team.members, function (index, member) {
+						playerString += '<li>' + member.names.international + '</li>';
+					});
+					playerString += '</ul>'
+				}
+				playerString += '</td></tr>';
+			});
+			return playerString;
+	}
+	
     function runPlayer_getRunBodyHtml(runData) {
         var players = runPlayer_getPlayers(runData);
         var bodyHtml = '<table class="table-striped">' +
