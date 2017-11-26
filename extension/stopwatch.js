@@ -54,8 +54,11 @@ module.exports = function(nodecg) {
 		// What to do on every "tick" (every 1s).
 		// Updates the stored time in both formats.
 		rieussec.on('tick', ms => {
-			stopwatch.value.time = msToTime(ms);
-			stopwatch.value.milliseconds = ms;
+			// "Workaround" for a bug that causes the time to appear slow.
+			setTimeout(() => {
+				stopwatch.value.time = msToTime(ms);
+				stopwatch.value.milliseconds = ms;
+			}, 0);
 		});
 		
 		// Update the state of the timer whenever it changes.
