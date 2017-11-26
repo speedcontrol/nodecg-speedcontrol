@@ -26,9 +26,13 @@ module.exports = function(nodecg) {
 	var initDonations = false;
 	var donationCutOff = 3600; // If a donation hasn't been accepted after 1 hour, it will be ignored.
 	
-	if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.enableSRCDonations
-		&& nodecg.bundleConfig.SRCEventSlug) {
-		nodecg.log.info('"enableSRCDonations" is true, Speedrun.com Donation integration is enabled');
+	if (nodecg.bundleConfig && nodecg.bundleConfig.enableSRCDonations) {
+		if (!nodecg.bundleConfig.SRCEventSlug) {
+			nodecg.log.warn('enableSRCDonations is set to true, but you forgot the SRCEventSlug.');
+			return;
+		}
+		
+		nodecg.log.info('Speedrun.com Donation integration is enabled.');
 		
 		// Setting up replicants.
 		var srcomDonationTotalReplicant = nodecg.Replicant('srcomDonationTotal', {persistent:false, defaultValue:0});
@@ -60,8 +64,6 @@ module.exports = function(nodecg) {
 			else nodecg.log.warn('The SRCEventSlug does not exist on Speedrun.com!');
 		});
 	}
-	
-	else nodecg.log.info('"enableSRCDonations" is false (or you forgot the SRCEventSlug), Speedrun.com Donation integration is disabled');
 	
 	function runFrequentUpdates() {
 		checkDonationTotal(function(total) {

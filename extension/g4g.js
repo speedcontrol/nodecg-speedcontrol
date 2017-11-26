@@ -10,25 +10,21 @@ var twitchChannelID;
 var g4gDonationTotalReplicant;
 
 module.exports = function(nodecg) {
-	if (typeof nodecg.bundleConfig === 'undefined' || !nodecg.bundleConfig.enableG4GIntegration) {
-		nodecg.log.info("G4G Integration is disabled.  To enable, add '\"enableG4GIntegration\": true' to the bundle config");
-		return;
-	}
-	else {
-		nodecg.log.info("G4G Integration is enabled");
-	}
-	// Used to store whatever the API says is the current donation total is.
-	g4gDonationTotalReplicant = nodecg.Replicant('g4gDonationTotal', {persistent: false, defaultValue: '0.00'});
+	if (nodecg.bundleConfig && nodecg.bundleConfig.enableG4GIntegration) {
+		nodecg.log.info("G4G Integration is enabled.");
+		
+		// Used to store whatever the API says is the current donation total is.
+		g4gDonationTotalReplicant = nodecg.Replicant('g4gDonationTotal', {persistent: false, defaultValue: '0.00'});
 
-	// Waits until we have the Twitch channel info before doing anything.
-	var twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
-	twitchChannelInfoReplicant.on('change', function(newValue, oldValue) {
-		if (!oldValue && newValue) {
-			twitchChannelID = newValue['_id'];
-			checkDonationTotal();
-		}
-	});
-
+		// Waits until we have the Twitch channel info before doing anything.
+		var twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
+		twitchChannelInfoReplicant.on('change', function(newValue, oldValue) {
+			if (!oldValue && newValue) {
+				twitchChannelID = newValue['_id'];
+				checkDonationTotal();
+			}
+		});
+	}
 }
 
 // Used to frequently get the current donation total from G4G and if it's changed, update the replicant.

@@ -16,25 +16,22 @@ var twitchChannelName;
 module.exports = function(nodecg) {
 	nodeCgExport = nodecg;
 	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled && nodecg.bundleConfig.twitch.ffzIntegration) {
-		nodecg.log.info("FFZ Integration is enabled");
-	}
-	else {
-		nodecg.log.warn("FFZ Integration is disabled.  To enable, add ''\"enableFFZIntegration\": true' to the bundle config");
-	}
+		nodecg.log.info("FFZ Integration is enabled.");
 
-	nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
-	
-	// Used to store whatever the WS says are the current buttons on the page.
-	ffzFollowButtonsReplicant = nodecg.Replicant('ffzFollowButtons', {persistent: false});
-	
-	// Waits until we have the Twitch access code before doing anything.
-	twitchChannelName = nodecg.Replicant('twitchChannelName');
-	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken');
-	accessTokenReplicant.on('change', function(newValue, oldValue) {
-		accessToken = newValue;
-		if (newValue && !oldValue)
-			connectToWS(() => {/* connection to ws done */});
-	});
+		nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
+		
+		// Used to store whatever the WS says are the current buttons on the page.
+		ffzFollowButtonsReplicant = nodecg.Replicant('ffzFollowButtons', {persistent: false});
+		
+		// Waits until we have the Twitch access code before doing anything.
+		twitchChannelName = nodecg.Replicant('twitchChannelName');
+		var accessTokenReplicant = nodecg.Replicant('twitchAccessToken');
+		accessTokenReplicant.on('change', function(newValue, oldValue) {
+			accessToken = newValue;
+			if (newValue && !oldValue)
+				connectToWS(() => {/* connection to ws done */});
+		});
+	}
 }
 
 function connectToWS(callback) {

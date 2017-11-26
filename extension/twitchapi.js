@@ -14,15 +14,15 @@ module.exports = function(nodecg) {
 		}
 	};
 	
+	// Setting up replicants.
+	var accessToken = nodecg.Replicant('twitchAccessToken');
+	var refreshToken = nodecg.Replicant('twitchRefreshToken');
+	var twitchChannelInfo = nodecg.Replicant('twitchChannelInfo');
+	var twitchChannelID = nodecg.Replicant('twitchChannelID');
+	var twitchChannelName = nodecg.Replicant('twitchChannelName');
+	
 	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled) {
-		nodecg.log.info('"enableTwitchApi" is true, the Twitch REST API will be active.');
-		
-		// Setting up replicants.
-		var accessToken = nodecg.Replicant('twitchAccessToken');
-		var refreshToken = nodecg.Replicant('twitchRefreshToken');
-		var twitchChannelInfo = nodecg.Replicant('twitchChannelInfo');
-		var twitchChannelID = nodecg.Replicant('twitchChannelID');
-		var twitchChannelName = nodecg.Replicant('twitchChannelName');
+		nodecg.log.info('Twitch API integration is enabled.');
 		
 		requestOptions.headers['Client-ID'] = nodecg.bundleConfig.twitch.clientID;
 		if (accessToken.value) requestOptions.headers['Authorization'] = 'OAuth '+accessToken.value;
@@ -72,8 +72,6 @@ module.exports = function(nodecg) {
 		});
 		nodecg.mount(app);
 	}
-	
-	else nodecg.log.info('"enableTwitchApi" is false (or you forgot user), the Twitch REST API will be unavailable');
 	
 	// Having to do a check every time before using the API is sloppy, need to improve flow.
 	function checkTokenValidity(callback) {

@@ -11,12 +11,6 @@ $(function() {
     var $enableTwitchSynchronizationRadios = $('#enableTwitchSynchronization');
     var $enableTwitchSynchronizationRadio = $('input[name=enableTwitchSynchronizationRadio]');
 	var $playTwitchAdButton = $('#playTwitchAdButton');
-    var errorMessage = "If you want to use the twitch functionality, you need to create a file called nodecg-speedcontrol.json in nodecg/cfg and fill it with:\n" +
-        "{\n" +
-        "\"enableTwitchApi\": true\n" +
-        "\"user\": \"twitchusername\"\n" +
-        "}\n" +
-        "exchange username with the twitch username which you want to access"
 		
 	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled) {
 		$streamControlInit.hide();
@@ -106,7 +100,7 @@ $(function() {
 	// If not, gets one, if it has already got one, changes the buttons.
 	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken');
 	accessTokenReplicant.on('change', function(newValue, oldValue) {
-		if (newValue) {
+		if (newValue && nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled) {
 			$streamControlHideShow.show();
 			$('#twitchAuthLink').hide();
 			

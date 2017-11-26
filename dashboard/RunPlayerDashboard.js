@@ -249,16 +249,6 @@ $(function () {
     }
 
 	function runPlayer_setTwitchChannelData(runData) {
-		if (!nodecg.bundleConfig || typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') {
-			alert("If you want to use the twitch functionality, you need to create a file called nodecg-speedcontrol.json in nodecg/cfg and fill it with:\n" +
-				"{\n" +
-				"\"enableTwitchApi\": \"true\"," +
-				"\"user\": \"twitchusername\"\n" +
-				"}\n" +
-				"exchange username with the twitch username which you want to access");
-			return;
-		}
-
 		// Handles getting twitch directory metadata for the game
 		getTwitchGameName(runData, function(twitchGameName) {
 	 		var requestObject = {};
