@@ -1,4 +1,12 @@
 $(function () {
+	var $forceRefreshIntermissionButton = $('#forceRefreshIntermissionButton');
+    $forceRefreshIntermissionButton.button();
+
+	$forceRefreshIntermissionButton.click(function () {
+        nodecg.sendMessage("forceRefreshIntermission");
+    });
+
+	
     var $editModeRadio = $('input[name=enableEditMode]');
     var $backgroundTransparanceRadio = $('input[name=backgroundTransparency]');
     var toggle = false;
