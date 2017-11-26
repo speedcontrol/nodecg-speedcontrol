@@ -215,19 +215,13 @@ module.exports = function(nodecg) {
 	
 	function needleGET(url, requestOptions, callback) {
 		var success = true;
-		var errorOccured = false;
 		async.whilst(
-			function() { return success; },
+			function() {return success;},
 			function(callback) {
 				needle.get(url, requestOptions, function(err, response) {
-					if (err || !response || response.statusCode !== 200 || !response.body || !response.body.data) {
-						console.log('['+Date()+'] sr.com api error, retrying in 5 secs, url: '+url+', err: '+err+((response && response.body)?', body: '+response.statusCode:''));
+					if (err || !response || response.statusCode !== 200 || !response.body || !response.body.data)
 						setTimeout(callback, 5000);
-						errorOccured = true;
-					}
-					
 					else {
-						if (errorOccured) console.log('['+Date()+'] sr.com api error cleared, url: '+url)
 						success = false;
 						callback(false, {err: err, response: response});
 					}

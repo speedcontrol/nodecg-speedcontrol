@@ -25,7 +25,7 @@ function register_api(nodecg) {
         });
 
         const stopwatch = nodecg.readReplicant('stopwatch')
-        console.log(stopwatch);
+        nodecg.log.info(stopwatch);
         if (stopwatch.state == "running") {
             result.forEach(function(runner) {
                 runner.status = "running";
@@ -75,7 +75,7 @@ function register_api(nodecg) {
     });
 
     nodecg.listenFor("runEnded", "nodecg-speedcontrol", function(message) {
-        console.log(nodecg.readReplicant("runDataActiveRun"))
+        nodecg.log.info(nodecg.readReplicant("runDataActiveRun"))
         var data = getRunData(nodecg)
         lastrundata.value = data;
 

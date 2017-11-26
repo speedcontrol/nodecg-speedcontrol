@@ -40,7 +40,7 @@ function checkDonationTotal() {
 		}
 
 		else {
-			console.log("Error occurred when requesting donation total from G4G.");
+			nodecg.log.warn("Error occurred when requesting donation total from G4G.");
 		}
 
 		setTimeout(checkDonationTotal, 30000);

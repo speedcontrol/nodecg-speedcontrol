@@ -20,7 +20,7 @@ $(function() {
 		$('#twitchAuthLink').attr('href', 'https://api.twitch.tv/kraken/oauth2/authorize?client_id='+nodecg.bundleConfig.twitch.clientID+'&redirect_uri='+nodecg.bundleConfig.twitch.redirectURI+'&response_type=code&scope=channel_editor+user_read+chat_login+channel_commercial&force_verify=true');
 	}
 	
-	$enableTwitchSynchronizationRadios.buttonset();
+	$enableTwitchSynchronizationRadios.controlgroup();
     $streamControlSubmit.button();
 	$playTwitchAdButton.button();
 	
@@ -107,7 +107,7 @@ $(function() {
 			// Removes FFZ related stuff from the panel if that feature is not enabled.
 			if (!nodecg.bundleConfig.twitch.ffzIntegration) {
 				$streamControlTwitchNames.hide();
-				$helpMessage.text('Automatically synchronize active game to Twitch?');
+				$helpMessage.text('Auto-sync title/game?');
 			}
 		}
 	});

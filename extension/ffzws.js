@@ -16,7 +16,7 @@ var twitchChannelName;
 module.exports = function(nodecg) {
 	nodeCgExport = nodecg;
 	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled && nodecg.bundleConfig.twitch.ffzIntegration) {
-		nodecg.log.info("FFZ Integration is enabled.");
+		nodecg.log.info("FFZ integration is enabled.");
 
 		nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
 		
@@ -49,18 +49,18 @@ function connectToWS(callback) {
 
 	// Catching any errors with the connection. The "close" event is also fired if it's a disconnect.
 	ffzWS.on('error', function(error) {
-		console.log("Error occurred on the FFZ connection, see below:");
-		console.log(error);
+		nodecg.log.warn("Error occurred on the FFZ connection, see below:");
+		nodecg.log.warn(error);
 	});
 
 	ffzWS.once('open', function() {
-		console.log('Connection to FFZ successful.');
+		nodecg.log.info('Connection to FFZ successful.');
 		ffzWS.send('1 hello ["nodecg-speedcontrol",false]');
 	});
 
 	// If we disconnect, just run this function again after a delay to reconnect.
 	ffzWS.once('close', function() {
-		console.log('Connection to FFZ closed, will reconnect in 10 seconds.');
+		nodecg.log.warn('Connection to FFZ closed, will reconnect in 10 seconds.');
 		ffzWSConnected = false;
 		clearTimeout(pingTimeout);
 		setTimeout(connectToWS, 10000);
@@ -113,7 +113,7 @@ function setFFZFollowing(usernames) {
 	if (ffzWSConnected) {
 		sendMessage('update_follow_buttons ' + JSON.stringify([twitchChannelName.value,usernames]), function(message) {
 			var updatedClients = JSON.parse(message.substr(3))['updated_clients'];
-			console.log('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
+			nodecg.log.info('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
 		});
 	}
 }
@@ -144,7 +144,7 @@ function ping() {
 	
 	// Disconnect if a PONG was not received within 10 seconds.
 	pongWaitTimeout = setTimeout(function() {
-		console.log('FFZ PING/PONG failed, terminating connection.');
+		nodecg.log.warn('FFZ PING/PONG failed, terminating connection.');
 		ffzWS.removeListener('pong', listenerFunc);
 		ffzWS.terminate();
 	}, 10000);

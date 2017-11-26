@@ -122,7 +122,7 @@ module.exports = function(nodecg) {
 			
 			needle.put(url, data, requestOptions, (err, resp) => {
 				if (handleResponse(err, resp)) {
-					console.log('We Successfully updated the channel!');
+					nodecg.log.info('We Successfully updated the channel!');
 					twitchChannelInfo.value = resp.body;
 				}
 			});
@@ -133,9 +133,9 @@ module.exports = function(nodecg) {
 		checkTokenValidity(() => {
 			var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelID.value+'/commercial';
 			needle.post(url, {'duration':180}, requestOptions, (err, resp) => {
-				console.log('Requested a Twitch ad');
+				nodecg.log.info('Requested a Twitch ad');
 				if (handleResponse(err, resp)) {
-					console.log('Twitch ad started successfully');
+					nodecg.log.info('Twitch ad started successfully');
 					nodecg.sendMessage('twitchAdStarted');
 				}
 			});
@@ -153,10 +153,10 @@ module.exports = function(nodecg) {
 					// set the reply replicant with the first result
 					if (resp.body.games && resp.body.games.length > 0) {
 						replyData = resp.body.games[0].name;
-						console.log("First result on twitch for \""+ searchQuery + "\" was \""+ replyData + "\"");
+						nodecg.log.info("First result on twitch for \""+ searchQuery + "\" was \""+ replyData + "\"");
 						} else {
 						// return nothing if no results
-						console.log("No matches on twitch for \""+ searchQuery +"\"");
+						nodecg.log.warn("No matches on twitch for \""+ searchQuery +"\"");
 					}
 				}
 				
@@ -170,9 +170,9 @@ module.exports = function(nodecg) {
 	// true if no issues, false if there were any
 	function handleResponse(err, resp) {
 		if (err || resp.statusCode !== 200 || !resp || !resp.body) {
-			console.log('Error occurred in communication with twitch, look below');
-			console.log(err);
-			if (resp && resp.body) console.log(resp.body);
+			nodecg.log.warn('Error occurred in communication with twitch, look below');
+			nodecg.log.warn(err);
+			if (resp && resp.body) nodecg.log.warn(resp.body);
 			return false;
 		}
 		
