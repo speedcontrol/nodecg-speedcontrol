@@ -32,10 +32,14 @@ $(function() {
 			
 			// Currently only supporting the first runner in a team.
 			var teamData = runInfo.teams;
-			for (var i = 0; i < teamData.length; i++) {
-				var teamMembers = teamData[i].members;
-				if (!teamMembers.length) continue;
-				addRunnerFields(teamMembers[0]);
+			if (teamData.length === 0)
+				$('#allPlayersInput').html('No Players');
+			else {
+				for (var i = 0; i < teamData.length; i++) {
+					var teamMembers = teamData[i].members;
+					if (!teamMembers.length) continue;
+					addRunnerFields(teamMembers[0]);
+				}
 			}
 		}
 	});
@@ -164,11 +168,15 @@ $(function() {
 	});
 	
 	function addRunnerFields(runnerInfo) {
+		var $playerInputs = '<span class="playerInput">';
+		
 		// Add line breaks if there is already more than 0 players.
-		if ($('#allPlayersInput').html().length) $('#allPlayersInput').append('<br><br>');
+		if ($('.playerInput').length > 0) $playerInputs += '<br><br>';
 		
 		// HTML for fields.
-		var $playerInputs = $('<span class="playerInput"><input class="playerNameInput" placeholder="Player\'s Username"><input class="playerStreamInput" placeholder="Player\'s Stream URL (e.g. https://twitch.tv/trihex)"><input class="playerRegionInput" placeholder="Player\'s Country Code (e.g. SE)"></span>');
+		$playerInputs += '<button type="button" class="removeRunnerButton">- Remove Player</button><input class="playerNameInput" placeholder="Player\'s Username"><input class="playerStreamInput" placeholder="Player\'s Stream URL (e.g. https://twitch.tv/trihex)"><input class="playerRegionInput" placeholder="Player\'s Country Code (e.g. SE)"></span>';
+		
+		$playerInputs = $($playerInputs);
 		
 		// If runner info was supplied to this function, fill it in.
 		if (runnerInfo) {
@@ -176,6 +184,13 @@ $(function() {
 			$playerInputs.find('.playerStreamInput').val(runnerInfo.twitch.uri);
 			$playerInputs.find('.playerRegionInput').val(runnerInfo.region);
 		}
+		
+		// Action to do when the "Remove Player" button is clicked.
+		$('.removeRunnerButton', $playerInputs).click(event => {
+			$(event.target).parent().remove();
+			if ($('.playerInput').length === 0) $('#allPlayersInput').html('No Players');
+			else if ($('.playerInput').length >= 1) $('.playerInput').first().find('br').remove();
+		});
 		
 		$('#allPlayersInput').append($playerInputs);
 	}
