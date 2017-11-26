@@ -13,7 +13,7 @@ $(function() {
 	
 	$loadScheduleData.button();
 	$importSchedule.button({disabled: true});
-	$helpText.html('Insert the Horaro schedule URL above and press the "Load Schedule Info" button to continue.');
+	$helpText.html('Insert the Horaro schedule URL above and press the "Load Schedule Data" button to continue.');
 	
 	// Fill in URL box with default if specified in the config file.
 	if (nodecg.bundleConfig && nodecg.bundleConfig.defaultScheduleURL)
@@ -232,7 +232,7 @@ $(function() {
 					horaro_finalizeRunList();
 					$importSchedule.button({disabled: true, label:'Import'});
 					$('#columnsDropdownsWrapper').html('');
-					$helpText.html('Insert the Horaro schedule URL above and press the "Load Schedule Info" button to continue.');
+					$helpText.html('Insert the Horaro schedule URL above and press the "Load Schedule Data" button to continue.');
 					$loadScheduleData.button({disabled: false});
 				});
 			//}
