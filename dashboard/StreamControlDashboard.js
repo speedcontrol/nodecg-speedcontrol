@@ -123,8 +123,12 @@ $(function() {
 	var twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
 	twitchChannelInfoReplicant.on('change', function(newValue, oldValue) {
 		if (newValue && autoUpdateTwitchBoxes) {
-			if (newValue['status']) {$streamControlTitle.val(newValue['status']);}
-			if (newValue['game']) {$streamControlGame.val(newValue['game']);}
+			if (newValue.status) {$streamControlTitle.val(newValue.status);}
+			if (newValue.game) {$streamControlGame.val(newValue.game);}
+			
+			// Remove ad button if the channel isn't partnered.
+			if (newValue.partner) $playTwitchAdButton.show();
+			else $playTwitchAdButton.hide();
 		}
 	});
 });

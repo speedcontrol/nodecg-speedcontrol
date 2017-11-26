@@ -49,18 +49,18 @@ function connectToWS(callback) {
 
 	// Catching any errors with the connection. The "close" event is also fired if it's a disconnect.
 	ffzWS.on('error', function(error) {
-		nodecg.log.warn("Error occurred on the FFZ connection, see below:");
-		nodecg.log.warn(error);
+		nodeCgExport.log.warn("Error occurred on the FFZ connection, see below:");
+		nodeCgExport.log.warn(error);
 	});
 
 	ffzWS.once('open', function() {
-		nodecg.log.info('Connection to FFZ successful.');
+		nodeCgExport.log.info('Connection to FFZ successful.');
 		ffzWS.send('1 hello ["nodecg-speedcontrol",false]');
 	});
 
 	// If we disconnect, just run this function again after a delay to reconnect.
 	ffzWS.once('close', function() {
-		nodecg.log.warn('Connection to FFZ closed, will reconnect in 10 seconds.');
+		nodeCgExport.log.warn('Connection to FFZ closed, will reconnect in 10 seconds.');
 		ffzWSConnected = false;
 		clearTimeout(pingTimeout);
 		setTimeout(connectToWS, 10000);
@@ -113,7 +113,7 @@ function setFFZFollowing(usernames) {
 	if (ffzWSConnected) {
 		sendMessage('update_follow_buttons ' + JSON.stringify([twitchChannelName.value,usernames]), function(message) {
 			var updatedClients = JSON.parse(message.substr(3))['updated_clients'];
-			nodecg.log.info('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
+			nodeCgExport.log.info('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
 		});
 	}
 }
@@ -144,7 +144,7 @@ function ping() {
 	
 	// Disconnect if a PONG was not received within 10 seconds.
 	pongWaitTimeout = setTimeout(function() {
-		nodecg.log.warn('FFZ PING/PONG failed, terminating connection.');
+		nodeCgExport.log.warn('FFZ PING/PONG failed, terminating connection.');
 		ffzWS.removeListener('pong', listenerFunc);
 		ffzWS.terminate();
 	}, 10000);
