@@ -155,10 +155,10 @@ $(function() {
 					
 					// Teams/Players (there's a lot of stuff here!)
 					if (playerColumn >= 0 && run.data[playerColumn]) {
-						var playerLinksList = run.data[1];
+						var playerLinksList = run.data[playerColumn];
 						
-						// Splitting by 'vs.' in case this is a race.
-						var vsList = playerLinksList.split(/vs\./);
+						// Splitting by ' vs. ' or ' vs ' in case this is a race.
+						var vsList = playerLinksList.split(/\s+vs\.?\s+/);
 						async.eachSeries(vsList, function(rawTeam, callback) {
 							// Getting/setting the team name.
 							var customTeamName = false;
@@ -171,7 +171,7 @@ $(function() {
 								var teamName = 'Team '+(runData.teams.length+1);
 							
 							// Getting the members of this team.
-							var members = rawTeam.split(',');
+							var members = rawTeam.split(/\s*,\s*/);
 							var team = {
 								name: teamName,
 								custom: customTeamName,
