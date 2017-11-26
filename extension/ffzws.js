@@ -11,41 +11,38 @@ var ffzWS;
 var ffzWSConnected = false;
 var pingTimeout;
 var ffzFollowButtonsReplicant;
+var twitchChannelName;
 
 module.exports = function(nodecg) {
 	nodeCgExport = nodecg;
-	if (typeof nodecg.bundleConfig === 'undefined' || !nodecg.bundleConfig.enableFFZIntegration) {
-		nodecg.log.warn("FFZ Integration is disabled.  To enable, add ''\"enableFFZIntegration\": true' to the bundle config");
-		return;
+	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled && nodecg.bundleConfig.twitch.ffzIntegration) {
+		nodecg.log.info("FFZ Integration is enabled");
 	}
 	else {
-		nodecg.log.info("FFZ Integration is enabled");
+		nodecg.log.warn("FFZ Integration is disabled.  To enable, add ''\"enableFFZIntegration\": true' to the bundle config");
 	}
 
 	nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
-
+	
 	// Used to store whatever the WS says are the current buttons on the page.
 	ffzFollowButtonsReplicant = nodecg.Replicant('ffzFollowButtons', {persistent: false});
-
+	
 	// Waits until we have the Twitch access code before doing anything.
-	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
+	twitchChannelName = nodecg.Replicant('twitchChannelName');
+	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken');
 	accessTokenReplicant.on('change', function(newValue, oldValue) {
-		if (!oldValue && newValue) {
-			accessToken = newValue;
-
-			connectToWS(function() {
-				// connection to ws done
-			});
-		}
+		accessToken = newValue;
+		if (newValue && !oldValue)
+			connectToWS(() => {/* connection to ws done */});
 	});
 }
 
 function connectToWS(callback) {
 	// Initial messages to send on connection.
 	var messagesToSend = [
-		'setuser "' + nodeCgExport.bundleConfig.user + '"',
-		'sub "room.' + nodeCgExport.bundleConfig.user + '"',
-		'sub "channel.' + nodeCgExport.bundleConfig.user + '"',
+		'setuser "' + twitchChannelName.value + '"',
+		'sub "room.' + twitchChannelName.value + '"',
+		'sub "channel.' + twitchChannelName.value + '"',
 		'ready 0'
 	];
 
@@ -106,7 +103,7 @@ function connectToWS(callback) {
 
 			// This is returned when the follower buttons are updated (including through this script).
 			else if (data.indexOf('-1 follow_buttons') === 0) {
-				ffzFollowButtonsReplicant.value = JSON.parse(data.substr(18))[nodeCgExport.bundleConfig.user];
+				ffzFollowButtonsReplicant.value = JSON.parse(data.substr(18))[twitchChannelName.value];
 			}
 		}
 	});
@@ -117,7 +114,7 @@ function connectToWS(callback) {
 function setFFZFollowing(usernames) {
 	// Checks to make sure we are connected and can do this.
 	if (ffzWSConnected) {
-		sendMessage('update_follow_buttons ' + JSON.stringify([nodeCgExport.bundleConfig.user,usernames]), function(message) {
+		sendMessage('update_follow_buttons ' + JSON.stringify([twitchChannelName.value,usernames]), function(message) {
 			var updatedClients = JSON.parse(message.substr(3))['updated_clients'];
 			console.log('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
 		});
@@ -167,7 +164,7 @@ function sendAuthThroughTwitchChat(auth) {
 			secure: true
 		},
 		identity: {
-			username: nodeCgExport.bundleConfig.user,
+			username: twitchChannelName.value,
 			password: accessToken
 		}
 	};

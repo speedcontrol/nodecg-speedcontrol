@@ -268,13 +268,13 @@ $(function () {
 	 		if (twitchGameName) {
 				requestObject.channel.game = twitchGameName;
 			} else {
-				// Fallback to config default. Uses defaultGame in bundle config if available, otherwise hard coded
-				if (nodecg.bundleConfig.defaultGame) {
+				// Fallback to config default. Uses streamDefaultGame in bundle config if available, otherwise hard coded
+				if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.streamDefaultGame) {
 					console.log("No automatic game data found - using default from configuration");
-					requestObject.channel.game = nodecg.bundleConfig.defaultGame;
+					requestObject.channel.game = nodecg.bundleConfig.twitch.streamDefaultGame;
 				} else {
-					console.log("No automatic game data found - please set defaultGame in nodecg-speedcontrol.json");
-					requestObject.channel.game = "Retro";
+					console.log("No automatic game data found - please set streamDefaultGame in nodecg-speedcontrol.json");
+					requestObject.channel.game = "Games + Demos";
 				}
 
 				// Alert the operator that a generic game name has been used
@@ -291,8 +291,8 @@ $(function () {
 				}
 				playerNames.push(runData.players[i].names.international);
  			}
-			if (nodecg.bundleConfig && typeof nodecg.bundleConfig.streamTitle !== 'undefined') {
-				var newTitle = nodecg.bundleConfig.streamTitle
+			if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.streamTitle) {
+				var newTitle = nodecg.bundleConfig.twitch.streamTitle
 													.replace("{{game}}",runData.game)
 													.replace("{{players}}", playerNames.join(', '))
 													.replace("{{category}}", runData.category );

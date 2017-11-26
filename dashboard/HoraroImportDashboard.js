@@ -16,8 +16,8 @@ $(function() {
 	$helpText.html('Insert the Horaro schedule URL above and press the "Load Schedule Data" button to continue.');
 	
 	// Fill in URL box with default if specified in the config file.
-	if (nodecg.bundleConfig && nodecg.bundleConfig.defaultScheduleURL)
-		$('#scheduleURL').val(nodecg.bundleConfig.defaultScheduleURL);
+	if (nodecg.bundleConfig && nodecg.bundleConfig.schedule && nodecg.bundleConfig.schedule.defaultURL)
+		$('#scheduleURL').val(nodecg.bundleConfig.schedule.defaultURL);
 	
 	// Initial load of the schedule data so the user can select the correct columns.
 	$loadScheduleData.click(() => {
@@ -363,9 +363,8 @@ $(function() {
 	
 	function checkGameAgainstIgnoreList(game) {
 		// Checking if we have a list of games to ignore on the schedule.
-		if (typeof nodecg.bundleConfig !== 'undefined' && nodecg.bundleConfig.ignoreGamesWhileImportingSchedule &&
-			$.isArray(nodecg.bundleConfig.ignoreGamesWhileImportingSchedule)) {
-			var ignoredGames = nodecg.bundleConfig.ignoreGamesWhileImportingSchedule;
+		if (nodecg.bundleConfig && nodecg.bundleConfig.schedule && nodecg.bundleConfig.schedule.ignoreGamesWhileImporting) {
+			var ignoredGames = nodecg.bundleConfig.schedule.ignoreGamesWhileImporting;
 			for (var i = 0; i < ignoredGames.length; i++) {
 				var regex = new RegExp('\\b' + ignoredGames[i] + '\\b');
 				if (game.match(regex)) return true;

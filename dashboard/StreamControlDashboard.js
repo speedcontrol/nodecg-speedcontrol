@@ -18,6 +18,14 @@ $(function() {
         "}\n" +
         "exchange username with the twitch username which you want to access"
 		
+	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled) {
+		$streamControlInit.hide();
+		$('#twitchAuthLink').show();
+		
+		// Change "Connect with Twitch" button link to be correct to the config settings.
+		$('#twitchAuthLink').attr('href', 'https://api.twitch.tv/kraken/oauth2/authorize?client_id='+nodecg.bundleConfig.twitch.clientID+'&redirect_uri='+nodecg.bundleConfig.twitch.redirectURI+'&response_type=code&scope=channel_editor+user_read+chat_login+channel_commercial&force_verify=true');
+	}
+	
 	$enableTwitchSynchronizationRadios.buttonset();
     $streamControlSubmit.button();
 	$playTwitchAdButton.button();
@@ -47,10 +55,6 @@ $(function() {
 	});
 
     $streamControlSubmit.click(function () {
-        if (typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') {
-            alert(errorMessage);
-            return;
-        }
         var title = $streamControlTitle.val();
         var game = $streamControlGame.val();
         var twitch = $streamControlTwitchNames.val();
@@ -75,11 +79,6 @@ $(function() {
     });
 	
 	$playTwitchAdButton.click(function() {
-		if (typeof nodecg.bundleConfig.user === 'undefined' || typeof nodecg.bundleConfig.enableTwitchApi === 'undefined') {
-            alert(errorMessage);
-            return;
-        }
-		
 		nodecg.sendMessage('playTwitchAd');
 		$playTwitchAdButton.button({disabled: true});
 		setTimeout(function() {
@@ -105,14 +104,14 @@ $(function() {
 
 	// Checks if the access token has been set yet or not on page load.
 	// If not, gets one, if it has already got one, changes the buttons.
-	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken', {persistent: false});
+	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken');
 	accessTokenReplicant.on('change', function(newValue, oldValue) {
 		if (newValue) {
-			$streamControlInit.hide();
 			$streamControlHideShow.show();
+			$('#twitchAuthLink').hide();
 			
 			// Removes FFZ related stuff from the panel if that feature is not enabled.
-			if (!nodecg.bundleConfig.enableFFZIntegration) {
+			if (!nodecg.bundleConfig.twitch.ffzIntegration) {
 				$streamControlTwitchNames.hide();
 				$helpMessage.text('Automatically synchronize active game to Twitch?');
 			}

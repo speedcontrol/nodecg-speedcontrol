@@ -5,6 +5,8 @@ This README will go through how to create the configuration and how it should lo
 
 ## Creating the configuration file
 
+**This documentation is incomplete/out of date. It will be updated in the future, but for now you can use the [configschema.json](https://github.com/speedcontrol/nodecg-speedcontrol/blob/master/configschema.json) as reference on what things can be set.**
+
 Firstly, make sure that the nodecg server is not running, you will need to restart it otherwise to load
 the speedcontrol configuration.
 

@@ -18,15 +18,16 @@
             height: 30px;
         }
 		
-		#streamControlHideShow {
+		#streamControlHideShow, #twitchAuthLink {
 			display: none;
 		}
     </style>
 </head>
 <body>
 <div id="stream-control">
+	<a id="twitchAuthLink" target="_blank"><img src="images/twitch-login.png"></a>
 	<span id="streamControlHideShow">
-	<button id="playTwitchAdButton">Play 3m Twitch Ad</button><br><br>
+	<button id="playTwitchAdButton">Play 3m Twitch Ad</button><br>
     <p id="helpMessage">Automatically synchronize active game to Twitch and Twitch names to FrankerFaceZ?</p>
 		<div id="enableTwitchSynchronization">
 			<input type="radio" name="enableTwitchSynchronizationRadio" id="enableTwitchSynchronizationRadioOn" value="On"> <label for="enableTwitchSynchronizationRadioOn">On</label>

@@ -3,23 +3,34 @@
 	"type": "object",
 	"properties": {
 		"live": {"type": "boolean"},
-		"enableTwitchApi": {"type": "boolean"},
-		"user": {"type": "string"},
-		"oauth": {"type": "string"},
-		"enableFFZIntegration": {"type": "boolean"},
+		"twitch": {
+			"type": "object",
+			"properties": {
+				"enable": {"type": "boolean"},
+				"clientID": {"type": "string"},
+				"clientSecret": {"type": "string"},
+				"redirectURI": {"type": "string"},
+				"ffzIntegration": {"type": "boolean"},
+				"streamTitle": {"type": "string"},
+				"streamDefaultGame": {"type": "string"}
+			}
+		},
+		"schedule": {
+			"type": "object",
+			"properties": {
+				"defaultURL": {"type": "string"},
+				"ignoreGamesWhileImporting": {
+					"type": "array",
+					"uniqueItems": true,
+					"items": {"type": "string"}
+				}
+			}
+		},
 		"enableG4GIntegration": {"type": "boolean"},
 		"enableSRCDonations": {"type": "boolean"},
 		"SRCEventSlug": {"type": "string"},
 		"useExternalTimer": {"type": "boolean"},
 		"enableMarqueePanel": {"type": "boolean"},
-		"streamTitle": {"type": "string"},
-		"defaultGame": {"type": "string"},
-		"defaultScheduleURL": {"type": "string"},
-		"ignoreGamesWhileImportingSchedule": {
-			"type": "array",
-			"uniqueItems": true,
-			"items": {"type": "string"}
-		},
 		"api": {
 			"type": "object",
 			"properties": {
