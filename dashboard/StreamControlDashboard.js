@@ -12,7 +12,7 @@ $(function() {
     var $enableTwitchSynchronizationRadio = $('input[name=enableTwitchSynchronizationRadio]');
 	var $playTwitchAdButton = $('#playTwitchAdButton');
 		
-	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable && false) {
+	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable) {
 		$streamControlInit.hide();
 		$('#twitchAuthLink').show();
 		
