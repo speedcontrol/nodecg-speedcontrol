@@ -12,7 +12,7 @@ $(function() {
     var $enableTwitchSynchronizationRadio = $('input[name=enableTwitchSynchronizationRadio]');
 	var $playTwitchAdButton = $('#playTwitchAdButton');
 		
-	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled) {
+	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable && false) {
 		$streamControlInit.hide();
 		$('#twitchAuthLink').show();
 		
@@ -100,7 +100,7 @@ $(function() {
 	// If not, gets one, if it has already got one, changes the buttons.
 	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken');
 	accessTokenReplicant.on('change', function(newValue, oldValue) {
-		if (newValue && nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled) {
+		if (newValue && nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable) {
 			$streamControlHideShow.show();
 			$('#twitchAuthLink').hide();
 			

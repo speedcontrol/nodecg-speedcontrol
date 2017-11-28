@@ -15,8 +15,8 @@ var twitchChannelName;
 
 module.exports = function(nodecg) {
 	nodeCgExport = nodecg;
-	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled && nodecg.bundleConfig.twitch.ffzIntegration) {
-		nodecg.log.info("FFZ integration is enabled.");
+	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable && nodecg.bundleConfig.twitch.ffzIntegration) {
+		nodecg.log.info("FrankerFaceZ integration is enabled.");
 
 		nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
 		
@@ -49,18 +49,18 @@ function connectToWS(callback) {
 
 	// Catching any errors with the connection. The "close" event is also fired if it's a disconnect.
 	ffzWS.on('error', function(error) {
-		nodeCgExport.log.warn("Error occurred on the FFZ connection, see below:");
+		nodeCgExport.log.warn("Error occurred on the FrankerFaceZ connection, see below:");
 		nodeCgExport.log.warn(error);
 	});
 
 	ffzWS.once('open', function() {
-		nodeCgExport.log.info('Connection to FFZ successful.');
+		nodeCgExport.log.info('Connection to FrankerFaceZ successful.');
 		ffzWS.send('1 hello ["nodecg-speedcontrol",false]');
 	});
 
 	// If we disconnect, just run this function again after a delay to reconnect.
 	ffzWS.once('close', function() {
-		nodeCgExport.log.warn('Connection to FFZ closed, will reconnect in 10 seconds.');
+		nodeCgExport.log.warn('Connection to FrankerFaceZ closed, will reconnect in 10 seconds.');
 		ffzWSConnected = false;
 		clearTimeout(pingTimeout);
 		setTimeout(connectToWS, 10000);
@@ -144,7 +144,7 @@ function ping() {
 	
 	// Disconnect if a PONG was not received within 10 seconds.
 	pongWaitTimeout = setTimeout(function() {
-		nodeCgExport.log.warn('FFZ PING/PONG failed, terminating connection.');
+		nodeCgExport.log.warn('FrankerFaceZ PING/PONG failed, terminating connection.');
 		ffzWS.removeListener('pong', listenerFunc);
 		ffzWS.terminate();
 	}, 10000);
