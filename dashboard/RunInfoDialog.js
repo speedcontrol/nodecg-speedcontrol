@@ -201,7 +201,7 @@ $(function() {
 		$('#allPlayersInput').html('');
 		if (defaultSetupTimeReplicant.value > 0)
 			$('#setupTimeInput').val(msToTime(defaultSetupTimeReplicant.value*1000));
-		addRunnerFields();
+		$('#allPlayersInput').html('No Players');
 	}
 	
 	// Needs moving to a seperate file; this is copy/pasted in a few places.

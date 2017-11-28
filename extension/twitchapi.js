@@ -21,7 +21,7 @@ module.exports = function(nodecg) {
 	var twitchChannelID = nodecg.Replicant('twitchChannelID');
 	var twitchChannelName = nodecg.Replicant('twitchChannelName');
 	
-	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enabled) {
+	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable) {
 		nodecg.log.info('Twitch API integration is enabled.');
 		
 		requestOptions.headers['Client-ID'] = nodecg.bundleConfig.twitch.clientID;

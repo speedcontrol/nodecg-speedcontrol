@@ -26,6 +26,13 @@
 				}
 			}
 		},
+		"tiltify": {
+			"type": "object",
+			"properties": {
+				"enable": {"type": "boolean"},
+				"key": {"type": "string"}
+			}
+		},
 		"enableG4GIntegration": {"type": "boolean"},
 		"enableSRCDonations": {"type": "boolean"},
 		"SRCEventSlug": {"type": "string"},

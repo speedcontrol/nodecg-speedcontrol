@@ -49,4 +49,11 @@ module.exports = function(nodecg) {
         nodecg.log.error('Failed to load "srcomdonations" lib:', e.stack);
         process.exit(1);
     }
+	
+	try {
+        require('./tiltify')(nodecg);
+    } catch (e) {
+        nodecg.log.error('Failed to load "tiltify" lib:', e.stack);
+        process.exit(1);
+    }
 };
