@@ -17,7 +17,7 @@ $(function() {
 		$('#twitchAuthLink').show();
 		
 		// Change "Connect with Twitch" button link to be correct to the config settings.
-		$('#twitchAuthLink').attr('href', 'https://api.twitch.tv/kraken/oauth2/authorize?client_id='+nodecg.bundleConfig.twitch.clientID+'&redirect_uri='+nodecg.bundleConfig.twitch.redirectURI+'&response_type=code&scope=channel_editor+user_read+chat_login+channel_commercial&force_verify=true');
+		$('#twitchAuthLink a').attr('href', 'https://api.twitch.tv/kraken/oauth2/authorize?client_id='+nodecg.bundleConfig.twitch.clientID+'&redirect_uri='+nodecg.bundleConfig.twitch.redirectURI+'&response_type=code&scope=channel_editor+user_read+chat_login+channel_commercial&force_verify=true');
 	}
 	
 	$enableTwitchSynchronizationRadios.controlgroup();

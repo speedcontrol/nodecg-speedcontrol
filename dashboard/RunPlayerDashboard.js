@@ -36,6 +36,16 @@ $(function () {
 			runPlayer_activeRunID = -1;
         }
     });
+	
+	$('#resetMarathonButton').button();
+	$('#resetMarathonButton').click(() => {
+		if (!confirm('Are you sure you want to return to the start?'))
+			return;
+		
+		runDataActiveRunReplicant.value = undefined;
+		runPlayer_activeRunID = -1;
+		setActiveRun(runPlayer_activeRunID);
+	});
 
     var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
 
