@@ -8,6 +8,7 @@ $(function() {
 	var runDataEditRunReplicant = nodecg.Replicant('runDataEditRun', {defaultValue: -1, persistent: false});
 	var runInfo = {};
 	var currentRunID = -1;
+	var disableTeamEditing = false;
 	
 	// When the replicant used to store the run we want to edit is changed.
 	runDataEditRunReplicant.on('change', (newVal, oldVal) => {
@@ -31,9 +32,14 @@ $(function() {
 			$('#setupTimeInput').val(runInfo.setupTime);
 			
 			// Currently only supporting the first runner in a team.
+			disableTeamEditing = false;
 			var teamData = runInfo.teams;
 			if (teamData.length === 0)
 				$('#allPlayersInput').html('No Players');
+			else if (teamData.length > 0 && teamData[0].members.length > 1) {
+				disableTeamEditing = true;
+				$('#allPlayersInput').html('Editing disabled for your safety while features are in development.');
+			}
 			else {
 				for (var i = 0; i < teamData.length; i++) {
 					var teamMembers = teamData[i].members;
@@ -83,36 +89,43 @@ $(function() {
 		newRunData.screens = []; // unused
 		newRunData.cameras = []; // unused
 		
-		// Going through all the player detail inputs to continue the above.
-		$('#allPlayersInput .playerInput').each(function(index) {
-			var playerName = $(this).find('.playerNameInput').val();
-			if (!playerName.length) return true; // Skip this player.
-			
-			// At some point we will try and pull these from speedrun.com.
-			var twitchURI = $(this).find('.playerStreamInput').val();
-			var region = $(this).find('.playerRegionInput').val();
-			
-			var team = {
-				name: playerName,
-				custom: false,
-				members: []
-			};
-			
-			var memberObj = {
-				names: {
-					international: playerName
-				},
-				twitch: {
-					uri: (twitchURI.length)?twitchURI:undefined
-				},
-				team: team.name,
-				region: (region.length)?region:undefined
-			};
-			
-			team.members.push(memberObj);
-			newRunData.players.push(memberObj);
-			newRunData.teams.push(team);
-		});
+		if (!disableTeamEditing) {
+			// Going through all the player detail inputs to continue the above.
+			$('#allPlayersInput .playerInput').each(function(index) {
+				var playerName = $(this).find('.playerNameInput').val();
+				if (!playerName.length) return true; // Skip this player.
+				
+				// At some point we will try and pull these from speedrun.com.
+				var twitchURI = $(this).find('.playerStreamInput').val();
+				var region = $(this).find('.playerRegionInput').val();
+				
+				var team = {
+					name: playerName,
+					custom: false,
+					members: []
+				};
+				
+				var memberObj = {
+					names: {
+						international: playerName
+					},
+					twitch: {
+						uri: (twitchURI.length)?twitchURI:undefined
+					},
+					team: team.name,
+					region: (region.length)?region:undefined
+				};
+				
+				team.members.push(memberObj);
+				newRunData.players.push(memberObj);
+				newRunData.teams.push(team);
+			});
+		}
+		
+		else {
+			newRunData.players = runInfo.players;
+			newRunData.teams = runInfo.teams;
+		}
 		
 		// Ghetto prompt if verification fails (for now).
 		// Only picks up on checking if a game name is set; other things are just dropped for now.
@@ -166,6 +179,10 @@ $(function() {
 	$('#addExtraRunnerButton').click(function() {
 		addRunnerFields();
 	});
+	
+	function addTeam(teamMembers) {
+		
+	}
 	
 	function addRunnerFields(runnerInfo) {
 		var $playerInputs = '<span class="playerInput">';
