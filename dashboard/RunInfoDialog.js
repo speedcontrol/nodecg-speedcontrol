@@ -180,10 +180,6 @@ $(function() {
 		addRunnerFields();
 	});
 	
-	function addTeam(teamMembers) {
-		
-	}
-	
 	function addRunnerFields(runnerInfo) {
 		var $playerInputs = '<span class="playerInput">';
 		

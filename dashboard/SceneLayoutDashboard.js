@@ -63,5 +63,6 @@ $(function () {
     // If we are live, disable editmode
     if (nodecg.bundleConfig && (typeof nodecg.bundleConfig.live !== 'undefined' && nodecg.bundleConfig.live === true)) {
         $("#enableEditModeRadios").buttonset({disabled: true});
+        $("#backgroundTransparencyRadios").buttonset({disabled: true});
     }
 })
