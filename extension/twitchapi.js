@@ -75,16 +75,20 @@ module.exports = function(nodecg) {
 	
 	// Having to do a check every time before using the API is sloppy, need to improve flow.
 	function checkTokenValidity(callback) {
+		nodecg.log.info('Checking Twitch token validity...');
 		needle.get('https://api.twitch.tv/kraken', requestOptions, (err, resp) => {
 			// If the OAuth token is valid, we can use it for our requests!
-			if (resp.body.token && resp.body.token.valid)
+			if (resp.body.token && resp.body.token.valid) {
+				nodecg.log.info('Twitc token is valid.');
 				if (callback) callback();
+			}
 			else
 				updateToken(() => {if (callback) callback();});
 		});
 	}
 	
 	function updateToken(callback) {
+		nodecg.log.info('Twitch API token being refreshed...');
 		needle.post('https://api.twitch.tv/kraken/oauth2/token', {
 			'grant_type': 'refresh_token',
 			'refresh_token': encodeURI(refreshToken.value),
@@ -94,23 +98,28 @@ module.exports = function(nodecg) {
 			accessToken.value = resp.body.access_token;
 			refreshToken.value = resp.body.refresh_token;
 			requestOptions.headers['Authorization'] = 'OAuth '+resp.body.access_token;
+			nodecg.log.info('Twitch API token successfully refreshed.');
 			callback();
 		});
 	}
 	
 	// Used to frequently get the details of the channel for use on the dashboard.
 	function getCurrentChannelInfo() {
+		nodecg.log.info('Trying to get channel information.');
 		checkTokenValidity(() => {
 			var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelID.value;
 			needle.get(url, requestOptions, (err, resp) => {
 				channelInfoTimeout = setTimeout(getCurrentChannelInfo, 60000);
-				if (handleResponse(err, resp))
+				if (handleResponse(err, resp)) {
+					nodecg.log.info('Successfully got channel information.');
 					twitchChannelInfo.value = resp.body;
+				}
 			});
 		});
 	}
 	
 	function updateChannel(updatedValues) {
+		nodecg.log.info('Trying to update channel information.');
 		checkTokenValidity(() => {
 			var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelID.value;
 			var data = {
@@ -146,6 +155,7 @@ module.exports = function(nodecg) {
 	function gameSearch(searchQuery, callback) {
 		var replyData = '';
 		
+		nodecg.log.info('Trying to search for game name on Twitch: '+searchQuery);
 		checkTokenValidity(() => {
 			var url = 'https://api.twitch.tv/kraken/search/games?query='+encodeURI(searchQuery);
 			needle.get(url, requestOptions, (err, resp) => {

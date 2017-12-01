@@ -79,12 +79,14 @@ $(function () {
 	function enableRunChange() {
 		$('.playRunButton').button( "option", "disabled", false );
 		$('.runPlayerNext').button( "option", "disabled", false );
+		$('#resetMarathonButton').button( "option", "disabled", false );
 		changingEnabled = true;
 	}
 	
 	function disableRunChange() {
 		$('.playRunButton').button( "option", "disabled", true );
 		$('.runPlayerNext').button( "option", "disabled", true );
+		$('#resetMarathonButton').button( "option", "disabled", true );
 		changingEnabled = false;
 	}
 	
