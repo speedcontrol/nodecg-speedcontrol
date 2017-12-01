@@ -280,7 +280,8 @@ $(function () {
  			var twitchNames = [];
  			var playerNames = [];
  			for (var i = 0; i < runData.players.length; i++) {
-				var twitchName = (runData.players[i].twitch) ? runData.players[i].twitch.uri.replace(/https?:\/\/.*?\//, '') : undefined;
+				var twitchData = runData.players[i].twitch;
+				var twitchName = (twitchData && twitchData.uri) ? twitchData.uri.replace(/https?:\/\/.*?\//, '') : undefined;
 				if (twitchName && !twitchName.match(/^http/)) {
 					twitchNames.push(twitchName);
 				}

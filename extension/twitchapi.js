@@ -106,10 +106,10 @@ module.exports = function(nodecg) {
 	// Used to frequently get the details of the channel for use on the dashboard.
 	function getCurrentChannelInfo() {
 		nodecg.log.info('Trying to get channel information.');
+		channelInfoTimeout = setTimeout(getCurrentChannelInfo, 60000); //outside of request so if that breaks this doesn't break, should be improved
 		checkTokenValidity(() => {
 			var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelID.value;
 			needle.get(url, requestOptions, (err, resp) => {
-				channelInfoTimeout = setTimeout(getCurrentChannelInfo, 60000);
 				if (handleResponse(err, resp)) {
 					nodecg.log.info('Successfully got channel information.');
 					twitchChannelInfo.value = resp.body;

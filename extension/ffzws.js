@@ -100,6 +100,7 @@ function connectToWS(callback) {
 
 			// This is returned when the follower buttons are updated (including through this script).
 			else if (data.indexOf('-1 follow_buttons') === 0) {
+				nodeCgExport.log.info('Got follow_buttons from FrankerFaceZ connection.');
 				ffzFollowButtonsReplicant.value = JSON.parse(data.substr(18))[twitchChannelName.value];
 			}
 		}
@@ -109,8 +110,10 @@ function connectToWS(callback) {
 // Used to update the following buttons/emoticons on Twitch.
 // usernames is an array of Twitch usernames; if blank it will remove any channels already there.
 function setFFZFollowing(usernames) {
+	nodeCgExport.log.info('Attempting to set FrankerFaceZ Twitch names.');
 	// Checks to make sure we are connected and can do this.
 	if (ffzWSConnected) {
+		nodeCgExport.log.info('Sent FrankerFaceZ Twitch names.');
 		sendMessage('update_follow_buttons ' + JSON.stringify([twitchChannelName.value,usernames]), function(message) {
 			var updatedClients = JSON.parse(message.substr(3))['updated_clients'];
 			nodeCgExport.log.info('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
@@ -152,6 +155,8 @@ function ping() {
 
 // Used to send the auth code for updating the following buttons/emotes when needed.
 function sendAuthThroughTwitchChat(auth) {
+	nodeCgExport.log.info('Attempting to authenticate with FrankerFaceZ.');
+	
 	// Settings for the temporary Twitch chat connection.
 	var options = {
 		options: {
@@ -170,6 +175,7 @@ function sendAuthThroughTwitchChat(auth) {
 	client.connect();
 
 	client.once('connected', function(address, port) {
+		nodeCgExport.log.info('Connected to Twitch chat to auth with FrankerFaceZ.');
 		// Send the auth code to the specific Twitch channel.
 		client.say('frankerfacezauthorizer', 'AUTH ' + auth);
 
