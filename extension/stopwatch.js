@@ -74,13 +74,13 @@ module.exports = function(nodecg) {
 	}
 	
 	function reset() {
-		pause();
+		timer.pause();
 		timer.reset(true);
 		stopwatch.value = defaultStopwatch; // Resets stopwatch to it's defaults.
 	}
 	
 	function finish() {
-		pause(); // For now this just pauses the timer.
+		timer.pause(); // For now this just pauses the timer.
 		stopwatch.value.state = 'finished';
 	}
 	
