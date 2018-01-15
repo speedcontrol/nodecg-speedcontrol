@@ -36,7 +36,6 @@
 		"enableG4GIntegration": {"type": "boolean"},
 		"enableSRCDonations": {"type": "boolean"},
 		"SRCEventSlug": {"type": "string"},
-		"useExternalTimer": {"type": "boolean"},
 		"enableMarqueePanel": {"type": "boolean"},
 		"api": {
 			"type": "object",

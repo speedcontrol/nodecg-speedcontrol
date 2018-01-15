@@ -1,112 +1,106 @@
-// Code based off of stuff used for the SGDQ15 layouts.
+// Code based off of stuff used for GamesDoneQuick.
 // https://github.com/GamesDoneQuick/sgdq15-layouts/blob/master/extension/stopwatches.js
+// https://github.com/GamesDoneQuick/agdq18-layouts/blob/master/extension/timekeeping.js
 
 'use strict';
 module.exports = function(nodecg) {
+	// Cross references for LiveSplit's TimerPhases.
+	const LS_TIMER_PHASE = {
+		NotRunning: 0,
+		Running: 1,
+		Ended: 2,
+		Paused: 3
+	};
+	
 	// Storage for the stopwatch data.
 	var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0};
 	var stopwatch = nodecg.Replicant('stopwatch', {defaultValue: defaultStopwatch});
+
+	// If the timer was running when last closed, changes it to being paused.
+	if (stopwatch.value.state === 'running') stopwatch.value.state = 'paused';
 	
-	// If the setting exists to use the external timer server.
-	if (nodecg.bundleConfig && nodecg.bundleConfig.useExternalTimer) {
-		nodecg.log.info('External timer server will be used.')
-		var externalTimer = true;
+	// Load the existing time and start the stopwatch at that if needed/possible.
+	var startMS = stopwatch.value.milliseconds || 0;
+	
+	// Sets up the timer with a single split.
+	const liveSplit = require('livesplit-core');
+	var liveSplitRun = liveSplit.Run.new();
+	liveSplitRun.pushSegment(liveSplit.Segment.new('finish'));
+	var timer = liveSplit.Timer.new(liveSplitRun);
+	
+	// Return timer to existing time from above.
+	timer.start();
+	timer.pause();
+	initGameTime(startMS);
+	
+	// Listeners, redirected to functions below.
+	nodecg.listenFor('startTime', start);
+	nodecg.listenFor('pauseTime', pause);
+	nodecg.listenFor('finishTime', finish);
+	nodecg.listenFor('resetTime', reset);
+	nodecg.listenFor('setTime', edit);
+	
+	// This stuff runs every 1/10th a second to keep the time updated.
+	setInterval(tick, 100);
+	function tick() {
+		// Will not run if timer isn't running or game time doesn't exist.
+		if (stopwatch.value.state !== 'running' || !timer.currentTime().gameTime())
+			return;
 		
-		// Set up a connection to the server.
-		var ipc = require('node-ipc');
-		ipc.config.id = 'nodecg-speedcontrol';
-		ipc.config.silent = true;
-		ipc.connectTo('timer-speedcontrol', () => {
-			ipc.of['timer-speedcontrol'].on('connect', () => {
-				// Request the initial stopwatch object so we have an accurate one to start with.
-				ipc.of['timer-speedcontrol'].emit('getStopwatchObj');
-				ipc.of['timer-speedcontrol'].once('stopwatchObj', stopwatchObj => {
-					stopwatchObj = JSON.parse(stopwatchObj);
-					stopwatch.value = stopwatchObj;
-				});
-			});
-			
-			// Ticks are received every second, and contain the whole stopwatch object.
-			ipc.of['timer-speedcontrol'].on('tick', stopwatchObj => {
-				stopwatchObj = JSON.parse(stopwatchObj);
-				stopwatch.value = stopwatchObj;
-			});
-			
-			// If we are indicated of a state change in the timer, update that locally.
-			ipc.of['timer-speedcontrol'].on('state', state => {
-				stopwatch.value.state = state;
-			});
-		});
+		// Calculates the milliseconds the timer has been running for and updates the stopwatch.
+		var ms = Math.floor((timer.currentTime().gameTime().totalSeconds())*1000);
+		stopwatch.value.time = msToTime(ms);
+		stopwatch.value.milliseconds = ms;
 	}
 	
-	else {
-		// If the timer was running when last closed, changes it to being paused.
-		if (stopwatch.value.state === 'running') stopwatch.value.state = 'paused';
+	function start() {
+		// Catch if timer is running and we called this function.
+		if (stopwatch.value.state === 'running')
+			return;
 		
-		// Load the existing time and start the stopwatch at that if needed/possible.
-		var startMS = stopwatch.value.milliseconds || 0;
-		
-		// Set up the Rieussec timer.
-		var Rieussec = require('rieussec');
-		var rieussec = new Rieussec(1000);
-		rieussec.setMilliseconds(startMS);
-		
-		// What to do on every "tick" (every 1s).
-		// Updates the stored time in both formats.
-		rieussec.on('tick', ms => {
-			// "Workaround" for a bug that causes the time to appear slow.
-			setTimeout(() => {
-				stopwatch.value.time = msToTime(ms);
-				stopwatch.value.milliseconds = ms;
-			}, 0);
-		});
-		
-		// Update the state of the timer whenever it changes.
-		rieussec.on('state', state => {
-			stopwatch.value.state = state;
-		});
-	}
-	
-	nodecg.listenFor('startTime', () => {
-		if (externalTimer) ipc.of['timer-speedcontrol'].emit('startTime');
-		else rieussec.start();
-	});
-	
-	nodecg.listenFor('pauseTime', () => {
-		if (externalTimer) ipc.of['timer-speedcontrol'].emit('pauseTime');
-		else rieussec.pause();
-	});
-	
-	nodecg.listenFor('finishTime', () => {
-		if (externalTimer) ipc.of['timer-speedcontrol'].emit('finishTime');
-		else {
-			rieussec.pause();
-			stopwatch.value.state = 'finished'; // Manually set a "finished" state when done.
+		// Start/resume the timer depending on which is needed.
+		stopwatch.value.state = 'running';
+		if (timer.currentPhase() === LS_TIMER_PHASE.NotRunning) {
+			timer.start();
+			initGameTime(0);
 		}
-	});
+		else
+			timer.resume();
+	}
 	
-	nodecg.listenFor('resetTime', () => {
-		if (externalTimer) ipc.of['timer-speedcontrol'].emit('resetTime');
-		else rieussec.reset();
-	});
+	function pause() {
+		timer.pause();
+		stopwatch.value.state = 'paused';
+	}
 	
-	nodecg.listenFor('setTime', time => {
+	function reset() {
+		pause();
+		timer.reset(true);
+		stopwatch.value = defaultStopwatch; // Resets stopwatch to it's defaults.
+	}
+	
+	function finish() {
+		pause(); // For now this just pauses the timer.
+		stopwatch.value.state = 'finished';
+	}
+	
+	function edit(time) {
 		// Check to see if the time was given in the correct format and if it's stopped/paused.
 		if (stopwatch.value.state === 'stopped' || stopwatch.value.state === 'paused'
 		|| time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-			if (externalTimer) ipc.of['timer-speedcontrol'].emit('setTime', time);
-			else {
-				// Pause the timer while this is being done.
-				rieussec._cachedState = rieussec._state;
-				rieussec.pause();
-				
-				rieussec.setMilliseconds(timeToMS(time));
-				
-				// If a timer was paused just for this, unpause it.
-				if (rieussec._cachedState === 'running') rieussec.start();
-			}
+			var ms = timeToMS(time);
+			liveSplit.TimeSpan.fromSeconds((ms/1000)).with(t => timer.setGameTime(t));
+			stopwatch.value.time = msToTime(ms);
+			stopwatch.value.milliseconds = ms;
 		}
-	});
+	}
+	
+	// Game Time is used so we can edit the timer easily.
+	function initGameTime(ms) {
+		liveSplit.TimeSpan.fromSeconds(0).with(t => timer.setLoadingTimes(t));
+		timer.initializeGameTime();
+		liveSplit.TimeSpan.fromSeconds((ms/1000)).with(t => timer.setGameTime(t));
+	}
 };
 
 function msToTime(duration) {

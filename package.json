@@ -9,6 +9,7 @@
   "dependencies": {
     "async": "^2.4.1",
     "inherits": "^2.0.1",
+    "livesplit-core": "^0.8.1",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "needle": "^1.6.0",
@@ -37,7 +38,7 @@
         "width": 3,
         "file": "RunControlDashboard.html",
         "headerColor": "#008BB9",
-		"workspace": "Run Modifications"
+        "workspace": "Run Modifications"
       },
       {
         "name": "player-control",
@@ -45,7 +46,7 @@
         "width": 2,
         "file": "PlayerControlDashboard.html",
         "headerColor": "#008BB9",
-		"workspace": "Run Modifications"
+        "workspace": "Run Modifications"
       },
       {
         "name": "run-timer",
@@ -60,7 +61,7 @@
         "width": 2,
         "file": "PlayerLayoutDashboard.html",
         "headerColor": "#008BB9",
-		"workspace": "Scene Editing"
+        "workspace": "Scene Editing"
       },
       {
         "name": "scene-layout",
@@ -68,7 +69,7 @@
         "width": 2,
         "file": "SceneLayoutDashboard.html",
         "headerColor": "#008BB9",
-		"workspace": "Scene Editing"
+        "workspace": "Scene Editing"
       },
       {
         "name": "stream-control",
@@ -83,7 +84,7 @@
         "width": 2,
         "file": "HoraroImportDashboard.html",
         "headerColor": "#008BB9",
-		"workspace": "Run Modifications"
+        "workspace": "Run Modifications"
       },
       {
         "name": "marquee-information",
@@ -91,7 +92,7 @@
         "width": 2,
         "file": "MarqueeInformationDashboard.html",
         "headerColor": "#008BB9",
-		"workspace": "Scene Editing"
+        "workspace": "Scene Editing"
       },
       {
         "name": "run-info",
@@ -99,7 +100,7 @@
         "width": 5,
         "file": "RunInfoDialog.html",
         "dialog": true,
-		"dialogButtons": [
+        "dialogButtons": [
           {
             "name": "add/edit run",
             "type": "confirm"
