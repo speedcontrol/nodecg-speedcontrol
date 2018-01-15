@@ -10,16 +10,29 @@ $(function() {
 	var currentRunID = -1;
 	var disableTeamEditing = false;
 	
+	// Dialog related elements for ease of access to change parts later.
+	var dialogElement = $(nodecg.getDialog('run-info'));
+	var dialogTitle = $('h2', dialogElement);
+	var dialogConfirmButton = $('paper-button[dialog-confirm]', dialogElement);
+	var dialogDismissButton = $('paper-button[dialog-dismiss]', dialogElement);
+	
 	// When the replicant used to store the run we want to edit is changed.
 	runDataEditRunReplicant.on('change', (newVal, oldVal) => {
+		disableTeamEditing = false;
 		if (newVal === undefined || newVal === null) return;
 		currentRunID = newVal;
 		
 		// If we want to add a new run, the value is -1.
-		if (newVal < 0)
+		if (newVal < 0) {
 			resetInputs();
+			dialogTitle.text('Add New Run');
+			dialogConfirmButton.text('add run');
+		}
 		
 		else {
+			dialogTitle.text('Edit Run');
+			dialogConfirmButton.text('save changes');
+			
 			runInfo = runDataArrayReplicant.value[getRunIndexInRunDataArray(newVal)];
 			$('#allPlayersInput').html(''); // Remove blank player data fields.
 			
@@ -32,7 +45,6 @@ $(function() {
 			$('#setupTimeInput').val(runInfo.setupTime);
 			
 			// Currently only supporting the first runner in a team.
-			disableTeamEditing = false;
 			var teamData = runInfo.teams;
 			if (teamData.length === 0)
 				$('#allPlayersInput').html('No Players');
@@ -56,6 +68,14 @@ $(function() {
 		var newRunData = {};
 		
 		newRunData.game = $('#gameInput').val();
+		
+		// Ghetto prompt if verification fails (for now).
+		// Only picks up on checking if a game name is set; other things are just dropped for now.
+		if (!newRunData.game.length) {
+			alert('Run not saved because there was no game name provided.');
+			return;
+		}
+		
 		newRunData.category = $('#categoryInput').val();
 		
 		// Estimate processing.
@@ -125,13 +145,6 @@ $(function() {
 		else {
 			newRunData.players = runInfo.players;
 			newRunData.teams = runInfo.teams;
-		}
-		
-		// Ghetto prompt if verification fails (for now).
-		// Only picks up on checking if a game name is set; other things are just dropped for now.
-		if (!newRunData.game.length) {
-			alert('Run not added/edited because there was no game name provided.');
-			return;
 		}
 		
 		// If we're adding a new run.

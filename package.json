@@ -105,7 +105,7 @@
             "type": "confirm"
           },
           {
-            "name": "cancel/close",
+            "name": "cancel",
             "type": "dismiss"
           }
         ]
