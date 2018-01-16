@@ -13,14 +13,8 @@ module.exports = function(nodecg) {
 	};
 	
 	// Storage for the stopwatch data.
-	var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0};
+	var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0, timestamp: 0};
 	var stopwatch = nodecg.Replicant('stopwatch', {defaultValue: defaultStopwatch});
-
-	// If the timer was running when last closed, changes it to being paused.
-	if (stopwatch.value.state === 'running') stopwatch.value.state = 'paused';
-	
-	// Load the existing time and start the stopwatch at that if needed/possible.
-	var startMS = stopwatch.value.milliseconds || 0;
 	
 	// Sets up the timer with a single split.
 	const liveSplit = require('livesplit-core');
@@ -31,7 +25,18 @@ module.exports = function(nodecg) {
 	// Return timer to existing time from above.
 	timer.start();
 	timer.pause();
-	initGameTime(startMS);
+	
+	// If the timer was running when last closed, tries to resume it at the correct time.
+	if (stopwatch.value.state === 'running') {
+		var missedTime = Date.now() - stopwatch.value.timestamp;
+		var previousTime = stopwatch.value.milliseconds;
+		var timeOffset = previousTime + missedTime;
+		nodecg.log.info('Recovered %s seconds of lost time.', (missedTime/1000).toFixed(2));
+		start(true);
+		initGameTime(timeOffset);
+	}
+	else
+		initGameTime(0);
 	
 	// Listeners, redirected to functions below.
 	nodecg.listenFor('startTime', start);
@@ -51,11 +56,12 @@ module.exports = function(nodecg) {
 		var ms = Math.floor((timer.currentTime().gameTime().totalSeconds())*1000);
 		stopwatch.value.time = msToTime(ms);
 		stopwatch.value.milliseconds = ms;
+		stopwatch.value.timestamp = Date.now();
 	}
 	
-	function start() {
+	function start(force) {
 		// Catch if timer is running and we called this function.
-		if (stopwatch.value.state === 'running')
+		if (!force && stopwatch.value.state === 'running')
 			return;
 		
 		// Start/resume the timer depending on which is needed.
