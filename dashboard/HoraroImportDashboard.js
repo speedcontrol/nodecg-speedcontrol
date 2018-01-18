@@ -343,12 +343,8 @@ $(function() {
 	
 	// Helper function for above.
 	function getUserRegionFromSRComUserData(data) {
-		if (data.location) {
-			// For some reason the returned country sometimes includes something more precise which we don't really want, this strips that unless it's GB.
-			var region = data.location.country.code;
-			region = (region.indexOf('/') >= 0 && region.indexOf('GB') < 0) ? region.substr(0, region.indexOf('/')) : region;
-			return region;
-		}
+		if (data.location)
+			return data.location.country.code;
 		else
 			return false;
 	}
