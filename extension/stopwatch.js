@@ -82,7 +82,7 @@ module.exports = function(nodecg) {
 	function reset() {
 		timer.pause();
 		timer.reset(true);
-		stopwatch.value = defaultStopwatch; // Resets stopwatch to it's defaults.
+		resetStopwatchToDefault();
 	}
 	
 	function finish() {
@@ -106,6 +106,15 @@ module.exports = function(nodecg) {
 		liveSplit.TimeSpan.fromSeconds(0).with(t => timer.setLoadingTimes(t));
 		timer.initializeGameTime();
 		liveSplit.TimeSpan.fromSeconds((ms/1000)).with(t => timer.setGameTime(t));
+	}
+	
+	// Resets stopwatch to it's defaults.
+	// Seems over the top but just assigning the value the object doesn't seem to work sometimes(?).
+	function resetStopwatchToDefault() {
+		stopwatch.value.time = defaultStopwatch.time;
+		stopwatch.value.state = defaultStopwatch.state;
+		stopwatch.value.milliseconds = defaultStopwatch.milliseconds;
+		stopwatch.value.timestamp = defaultStopwatch.timestamp;
 	}
 };
 
