@@ -124,6 +124,10 @@ $(function() {
 							runData.game = run.data[gameColumn];
 					}
 					
+					// Scheduled date/time.
+					runData.scheduled = run.scheduled;
+					runData.scheduledS = run.schedule_t;
+					
 					// Estimate
 					runData.estimateS = run.length_t;
 					runData.estimate = msToTime(run.length_t);
@@ -248,6 +252,8 @@ $(function() {
 		theRun.estimateS = 0;
 		theRun.setupTime = '';
 		theRun.setupTimeS = 0;
+		theRun.scheduled = '';
+		theRun.scheduledS = 0;
 		theRun.system = '';
 		theRun.region = '';
 		theRun.category = '';
