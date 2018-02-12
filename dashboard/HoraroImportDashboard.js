@@ -125,8 +125,8 @@ $(function() {
 					}
 					
 					// Scheduled date/time.
+					runData.scheduledS = run.scheduled_t;
 					runData.scheduled = run.scheduled;
-					runData.scheduledS = run.schedule_t;
 					
 					// Estimate
 					runData.estimateS = run.length_t;
