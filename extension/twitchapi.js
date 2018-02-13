@@ -75,11 +75,11 @@ module.exports = function(nodecg) {
 	
 	// Having to do a check every time before using the API is sloppy, need to improve flow.
 	function checkTokenValidity(callback) {
-		nodecg.log.info('Checking Twitch token validity...');
+		//nodecg.log.info('Checking Twitch token validity...');
 		needle.get('https://api.twitch.tv/kraken', requestOptions, (err, resp) => {
 			// If the OAuth token is valid, we can use it for our requests!
 			if (resp.body.token && resp.body.token.valid) {
-				nodecg.log.info('Twitch token is valid.');
+				//nodecg.log.info('Twitch token is valid.');
 				if (callback) callback();
 			}
 			else
@@ -111,7 +111,7 @@ module.exports = function(nodecg) {
 			var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelID.value;
 			needle.get(url, requestOptions, (err, resp) => {
 				if (handleResponse(err, resp)) {
-					nodecg.log.info('Successfully got channel information.');
+					//nodecg.log.info('Successfully got channel information.');
 					twitchChannelInfo.value = resp.body;
 				}
 			});
@@ -131,22 +131,25 @@ module.exports = function(nodecg) {
 			
 			needle.put(url, data, requestOptions, (err, resp) => {
 				if (handleResponse(err, resp)) {
-					nodecg.log.info('We Successfully updated the channel!');
+					nodecg.log.info('Successfully updated channel information.');
 					twitchChannelInfo.value = resp.body;
 				}
 			});
 		});
 	}
 	
-	function playTwitchAd() {
+	function playTwitchAd(callback) {
 		checkTokenValidity(() => {
 			var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelID.value+'/commercial';
 			needle.post(url, {'duration':180}, requestOptions, (err, resp) => {
-				nodecg.log.info('Requested a Twitch ad');
+				nodecg.log.info('Requested a Twitch ad.');
 				if (handleResponse(err, resp)) {
-					nodecg.log.info('Twitch ad started successfully');
-					nodecg.sendMessage('twitchAdStarted');
+					nodecg.log.info('Twitch ad started successfully.');
+					//nodecg.sendMessage('twitchAdStarted');
+					callback(false); // Calls back successfully.
 				}
+				else
+					callback(true); // Call back with an error.
 			});
 		});
 	}

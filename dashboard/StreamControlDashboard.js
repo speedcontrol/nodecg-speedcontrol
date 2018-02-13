@@ -73,11 +73,14 @@ $(function() {
     });
 	
 	$playTwitchAdButton.click(function() {
-		nodecg.sendMessage('playTwitchAd');
-		$playTwitchAdButton.button({disabled: true});
-		setTimeout(function() {
-			$playTwitchAdButton.button({disabled: false});
-		}, 180000);
+		nodecg.sendMessage('playTwitchAd', err => {
+			if (!err) {
+				$playTwitchAdButton.button({disabled: true});
+				setTimeout(function() {
+					$playTwitchAdButton.button({disabled: false});
+				}, 180000);
+			}
+		});
 	});
 
     function streamControl_GetOrCreateStreamControlConfiguration() {
