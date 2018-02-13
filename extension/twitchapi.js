@@ -79,7 +79,7 @@ module.exports = function(nodecg) {
 		needle.get('https://api.twitch.tv/kraken', requestOptions, (err, resp) => {
 			// If the OAuth token is valid, we can use it for our requests!
 			if (resp.body.token && resp.body.token.valid) {
-				nodecg.log.info('Twitc token is valid.');
+				nodecg.log.info('Twitch token is valid.');
 				if (callback) callback();
 			}
 			else
