@@ -4,3 +4,4 @@ node_modules/
 
 graphics/css/editcss
 .idea/
+package-lock.json
