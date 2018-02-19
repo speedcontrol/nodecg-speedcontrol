@@ -72,8 +72,8 @@ $(function() {
         if (title != '' || game != '') {nodecg.sendMessage('updateChannel',requestObject);}
     });
 	
-	$playTwitchAdButton.click(function() {
-		nodecg.sendMessage('playTwitchAd', err => {
+	$playTwitchAdButton.click(() => {
+		nodecg.sendMessage('playTwitchAd', null, err => {
 			if (!err) {
 				$playTwitchAdButton.button({disabled: true});
 				setTimeout(function() {

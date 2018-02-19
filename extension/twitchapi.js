@@ -138,7 +138,7 @@ module.exports = function(nodecg) {
 		});
 	}
 	
-	function playTwitchAd(callback) {
+	function playTwitchAd(data, callback) {
 		checkTokenValidity(() => {
 			var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelID.value+'/commercial';
 			needle.post(url, {'duration':180}, requestOptions, (err, resp) => {
@@ -185,7 +185,7 @@ module.exports = function(nodecg) {
 		if (err || resp.statusCode !== 200 || !resp || !resp.body) {
 			nodecg.log.warn('Error occurred in communication with twitch, look below');
 			nodecg.log.warn(err);
-			if (resp && resp.body) nodecg.log.warn(resp.body);
+			if (resp && resp.body) nodecg.log.warn(JSON.stringify(resp.body));
 			return false;
 		}
 		
