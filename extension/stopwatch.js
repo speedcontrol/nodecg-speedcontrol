@@ -12,6 +12,9 @@ module.exports = function(nodecg) {
 		Paused: 3
 	};
 	
+	var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
+	var runFinishTimes = nodecg.Replicant('runFinishTimes', {defaultValue: {}});
+	
 	// Storage for the stopwatch data.
 	var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0, timestamp: 0};
 	var stopwatch = nodecg.Replicant('stopwatch', {defaultValue: defaultStopwatch});
@@ -88,6 +91,7 @@ module.exports = function(nodecg) {
 	function finish() {
 		timer.pause(); // For now this just pauses the timer.
 		stopwatch.value.state = 'finished';
+		runFinishTimes.value[runDataActiveRun.value.runID] = stopwatch.value.time;
 	}
 	
 	function edit(time) {
