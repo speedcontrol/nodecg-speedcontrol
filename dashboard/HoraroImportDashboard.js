@@ -335,16 +335,25 @@ $(function() {
 	
 	// Helper function for above.
 	function querySRComForUserData(url, callback) {
-		$.ajax({
-			url: url,
-			dataType: 'jsonp',
-			success: function(data) {
-				if (data.data.length > 0)
-					callback(data.data[0]);
-				else
-					callback();
-			}
-		});
+		var success = false;
+		async.whilst(
+			function() {return !success},
+			function(cb) {
+				$.ajax({
+					url: url,
+					dataType: 'jsonp',
+					success: function(data) {
+						success = true;
+						if (data.data.length > 0)
+							cb(data.data[0]);
+						else
+							cb();
+					},
+					error: cb
+				});
+			},
+			callback
+		);
 	}
 	
 	// Helper function for above.
