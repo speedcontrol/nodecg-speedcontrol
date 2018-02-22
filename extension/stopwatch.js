@@ -91,7 +91,8 @@ module.exports = function(nodecg) {
 	function finish() {
 		timer.pause(); // For now this just pauses the timer.
 		stopwatch.value.state = 'finished';
-		runFinishTimes.value[runDataActiveRun.value.runID] = stopwatch.value.time;
+		if (runDataActiveRun.value)
+			runFinishTimes.value[runDataActiveRun.value.runID] = stopwatch.value.time;
 	}
 	
 	function edit(time) {
