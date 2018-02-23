@@ -5,6 +5,7 @@ var request = require('request');
 var _nodecg;
 
 function register_api(nodecg) {
+	nodecg.log.info("Activating API.");
     var speedcontrolRouter = require('express').Router();
 
     speedcontrolRouter.use(function(req, res, next) {
@@ -77,7 +78,7 @@ function register_api(nodecg) {
     nodecg.listenFor("runEnded", "nodecg-speedcontrol", function(message) {
         nodecg.log.info(nodecg.readReplicant("runDataActiveRun"))
         var data = getRunData(nodecg)
-        lastrundata.value = data;
+        lastrundata.value = JSON.parse(JSON.stringify(data));
 
         nodecg.log.info(JSON.stringify(data));
         publish({
