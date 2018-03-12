@@ -51,12 +51,38 @@ $(function() {
 				$importSchedule.button({disabled: false});
 				
 				// Here's where we try to lazily guess the correct columns using common names.
+				var foundColumns = {
+					game: false,
+					category: false,
+					system: false,
+					region: false,
+					player: false
+				}
 				for (var i = 0; i < columns.length; i++) {
-					if (columns[i].toLowerCase().indexOf('game') >= 0) $('#gameColumns').val(i);
-					if (columns[i].toLowerCase().indexOf('category') >= 0) $('#categoryColumns').val(i);
-					if (columns[i].toLowerCase().indexOf('system') >= 0 || columns[i].toLowerCase().indexOf('platform') >= 0) $('#systemColumns').val(i);
-					if (columns[i].toLowerCase().indexOf('region') >= 0) $('#regionColumns').val(i);
-					if (columns[i].toLowerCase().indexOf('player') >= 0 || columns[i].toLowerCase().indexOf('runner') >= 0) $('#playerColumns').val(i);
+					if (columns[i].toLowerCase().indexOf('game') >= 0 && !foundColumns.game) {
+						$('#gameColumns').val(i);
+						foundColumns.game = true;
+					}
+					
+					if (columns[i].toLowerCase().indexOf('category') >= 0 && !foundColumns.category) {
+						$('#categoryColumns').val(i);
+						foundColumns.category = true;
+					}
+					
+					if ((columns[i].toLowerCase().indexOf('system') >= 0 || columns[i].toLowerCase().indexOf('platform') >= 0) && !foundColumns.system) {
+						$('#systemColumns').val(i);
+						foundColumns.system = true;
+					}
+					
+					if (columns[i].toLowerCase().indexOf('region') >= 0 && !foundColumns.region) {
+						$('#regionColumns').val(i);
+						foundColumns.region = true;
+					}
+					
+					if ((columns[i].toLowerCase().indexOf('player') >= 0 || columns[i].toLowerCase().indexOf('runner') >= 0) && !foundColumns.player) {
+						$('#playerColumns').val(i);
+						foundColumns.player = true;
+					}
 				}
 			}
 		});
