@@ -32,7 +32,7 @@ $(function() {
 				$helpText.html('Select the correct columns that match the data type below, if the one auto-selected is wrong.<br><br>');
 				
 				// What a nice mess.
-				$('#columnsDropdownsWrapper').html('<div class="selectWrapper"><span class="selectName">Game:</span><span class="selectDropdown"><select id="gameColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Category:</span><span class="selectDropdown"><select id="categoryColumns"></select></span></div><div class="selectWrapper"><span class="selectName">System:</span><span class="selectDropdown"><select id="systemColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Region:</span><span class="selectDropdown"><select id="regionColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Players:</span><span class="selectDropdown"><select id="playerColumns"></select></span></div>');
+				$('#columnsDropdownsWrapper').html('<div class="selectWrapper"><span class="selectName">Game:</span><span class="selectDropdown"><select id="gameColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Game (Short):</span><span class="selectDropdown"><select id="gameShortColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Game (Twitch):</span><span class="selectDropdown"><select id="gameTwitchColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Category:</span><span class="selectDropdown"><select id="categoryColumns"></select></span></div><div class="selectWrapper"><span class="selectName">System:</span><span class="selectDropdown"><select id="systemColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Region:</span><span class="selectDropdown"><select id="regionColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Players:</span><span class="selectDropdown"><select id="playerColumns"></select></span></div>');
 				
 				// Adds a -1 N/A selection for if the column isn't on their schedule.
 				$('#columnsDropdownsWrapper select').append($('<option>', { 
@@ -113,6 +113,8 @@ $(function() {
 				
 				// Get column numbers from the dropdowns selected by the user.
 				var gameColumn = parseInt($('#gameColumns').val());
+				var gameShortColumn = parseInt($('#gameShortColumns').val());
+				var gameTwitchColumn = parseInt($('#gameTwitchColumns').val());
 				var categoryColumn = parseInt($('#categoryColumns').val());
 				var systemColumn = parseInt($('#systemColumns').val());
 				var regionColumn = parseInt($('#regionColumns').val());
@@ -149,6 +151,14 @@ $(function() {
 						else
 							runData.game = run.data[gameColumn];
 					}
+					
+					// Game Shorthand Name
+					if (gameShortColumn >= 0 && run.data[gameShortColumn])
+						runData.gameShort = run.data[gameShortColumn];
+					
+					// Game Twitch Name
+					if (gameTwitchColumn >= 0 && run.data[gameTwitchColumn])
+						runData.gameTwitch = run.data[gameTwitchColumn];
 					
 					// Scheduled date/time.
 					runData.scheduledS = run.scheduled_t;
@@ -274,6 +284,8 @@ $(function() {
 		var theRun = {};
 		theRun.players = [];
 		theRun.game = '';
+		theRun.gameShort = '';
+		theRun.gameTwitch = '';
 		theRun.estimate = '';
 		theRun.estimateS = 0;
 		theRun.setupTime = '';

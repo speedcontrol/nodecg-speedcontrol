@@ -308,34 +308,40 @@ $(function () {
 		// This is the Twitch Game Name field on speedrun.com. You need supermod to update them (or give Pac some love)
 
 		var twitchGameName;
+		
+		// If the imported data has a specified twitch game name, use that.
+		if (runData.gameTwitch) {
+			twitchGameName = runData.gameTwitch
+		}
+		else {
+			$.ajax({
+				url: "https://www.speedrun.com/api/v1/games?name=" + runData.game + "&limit=1",
+				dataType: "jsonp",
+				data: {
+					q: runData.game
+				},
+				success: function(result) {
+					// We look for an exact match (case insensitive) here so games like super metroid fall back to twitch search instead
+					if ((result.data.length > 0) && (runData.game.toLowerCase() == result.data[0].names.international.toLowerCase())) {
+						twitchGameName = result.data[0].names.twitch;
+					} else {
+						console.log ("No exact game match on speedrun.com for "+ runData.game);
+						twitchGameName = '';
+					}
 
-  		$.ajax({
-  			url: "https://www.speedrun.com/api/v1/games?name=" + runData.game + "&limit=1",
-  			dataType: "jsonp",
-  			data: {
-  				q: runData.game
-  			},
-  			success: function(result) {
-				// We look for an exact match (case insensitive) here so games like super metroid fall back to twitch search instead
-    			if ((result.data.length > 0) && (runData.game.toLowerCase() == result.data[0].names.international.toLowerCase())) {
-  					twitchGameName = result.data[0].names.twitch;
-  				} else {
-					console.log ("No exact game match on speedrun.com for "+ runData.game);
-					twitchGameName = '';
+
+				},
+				error: function() {
+					console.log("Warning: Speedrun.com API call failed")
 				}
+			});
+		}
 
-
-  			},
-  			error: function() {
-  				console.log("Warning: Speedrun.com API call failed")
-  			}
-  		});
-
-		// this is a dirty hard coded 1 second wait for SR.com data.
+		// this is a dirty hard coded 2 second wait for SR.com data.
 		setTimeout(function(){
 			if (twitchGameName) {
 				// If we found a result at step 1, call it back and stop
-				console.log("Automatic game name data for "+ twitchGameName +" sourced from Speedrun.com API")
+				console.log("Automatic game name data for "+ twitchGameName +" sourced from Speedrun.com API/schedule data.")
 				callback(twitchGameName);
 				return;
 
@@ -363,7 +369,7 @@ $(function () {
 					}
 				});
 			}
-		},1000);
+		},2000);
   	}
 
     function runPlayer_playNextRun() {
