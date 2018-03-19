@@ -235,7 +235,7 @@ $(function() {
 											international: playerName
 										},
 										twitch: {
-											uri: twitchURI
+											uri: twitchURI || URI
 										},
 										team: team.name,
 										region: regionCode
@@ -281,24 +281,24 @@ $(function() {
 	
 	// Returns an empty run object.
 	function createRunData() {
-		var theRun = {};
-		theRun.players = [];
-		theRun.game = '';
-		theRun.gameShort = '';
-		theRun.gameTwitch = '';
-		theRun.estimate = '';
-		theRun.estimateS = 0;
-		theRun.setupTime = '';
-		theRun.setupTimeS = 0;
-		theRun.scheduled = '';
-		theRun.scheduledS = 0;
-		theRun.system = '';
-		theRun.region = '';
-		theRun.category = '';
-		theRun.screens = new Array();
-		theRun.cameras = new Array();
-		theRun.teams = new Array();
-		return theRun;
+		var runData = {};
+		runData.players = [];
+		runData.game = undefined;
+		runData.gameShort = undefined;
+		runData.gameTwitch = undefined;
+		runData.estimate = undefined;
+		runData.estimateS = 0;
+		runData.setupTime = undefined;
+		runData.setupTimeS = 0;
+		runData.scheduled = undefined;
+		runData.scheduledS = 0;
+		runData.system = undefined;
+		runData.region = undefined;
+		runData.category = undefined;
+		runData.screens = [];
+		runData.cameras = [];
+		runData.teams = [];
+		return runData;
 	}
 	
 	// Tries to find the specified user on speedrun.com and get their country/region and Twitch if needed.
