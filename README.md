@@ -1,4 +1,7 @@
 # Speedcontrol
+
+**NOTICE: The READMEs in this repository are currently somewhat outdated, they will be updated soon.**
+
 ## READMES
 For specific information about how to customize and operate speedcontrol, please check the README files in the below location:
 
