@@ -221,7 +221,7 @@ $(function() {
 							// Going through the list of members.
 							async.eachSeries(members, function(member, callback) {
 								// Checking to see if the user is a link, if not use the whole field.
-								if (member.match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/)) {
+								if (member.match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/) && member.match(/\((.*?)\)/)) {
 									var URI = member.match(/\((.*?)\)/)[1];
 									var playerName = member.match(/\[(.*?)\]/)[1];
 								}
