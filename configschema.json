@@ -53,7 +53,13 @@
 				"slug": {"type": "string", "default": "SRC_SLUG"}
 			}
 		},
-		"enableG4GIntegration": {"type": "boolean"},
+		"gaming4Good": {
+			"type": ["object", "null"],
+			"properties": {
+				"enable": {"type": "boolean", "default": false},
+				"twitchChannelID": {"type": "string", "default": "TWITCH_ID"}
+			}
+		},
 		"api": {
 			"type": ["object", "null"],
 			"properties": {
