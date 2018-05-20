@@ -33,7 +33,7 @@ $(function() {
 				$helpText.html('Select the correct columns that match the data type below, if the one auto-selected is wrong.<br><br>');
 				
 				// What a nice mess.
-				var dropdownsHTML = '<div class="selectWrapper"><span class="selectName">Game:</span><span class="selectDropdown"><select id="gameColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Game (Short):</span><span class="selectDropdown"><select id="gameShortColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Game (Twitch):</span><span class="selectDropdown"><select id="gameTwitchColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Category:</span><span class="selectDropdown"><select id="categoryColumns"></select></span></div><div class="selectWrapper"><span class="selectName">System:</span><span class="selectDropdown"><select id="systemColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Region:</span><span class="selectDropdown"><select id="regionColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Players:</span><span class="selectDropdown"><select id="playerColumns"></select></span></div>';
+				var dropdownsHTML = '<div class="selectWrapper"><span class="selectName">Game:</span><span class="selectDropdown"><select id="gameColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Game (Twitch):</span><span class="selectDropdown"><select id="gameTwitchColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Category:</span><span class="selectDropdown"><select id="categoryColumns"></select></span></div><div class="selectWrapper"><span class="selectName">System:</span><span class="selectDropdown"><select id="systemColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Region:</span><span class="selectDropdown"><select id="regionColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Players:</span><span class="selectDropdown"><select id="playerColumns"></select></span></div>';
 				
 				// Add dropdowns for custom data as specified in the config.
 				customData.forEach((customDataElem) => {
@@ -122,7 +122,6 @@ $(function() {
 				
 				// Get column numbers from the dropdowns selected by the user.
 				var gameColumn = parseInt($('#gameColumns').val());
-				var gameShortColumn = parseInt($('#gameShortColumns').val());
 				var gameTwitchColumn = parseInt($('#gameTwitchColumns').val());
 				var categoryColumn = parseInt($('#categoryColumns').val());
 				var systemColumn = parseInt($('#systemColumns').val());
@@ -165,10 +164,6 @@ $(function() {
 						else
 							runData.game = run.data[gameColumn];
 					}
-					
-					// Game Shorthand Name
-					if (gameShortColumn >= 0 && run.data[gameShortColumn])
-						runData.gameShort = run.data[gameShortColumn];
 					
 					// Game Twitch Name
 					if (gameTwitchColumn >= 0 && run.data[gameTwitchColumn])
@@ -306,7 +301,6 @@ $(function() {
 		var runData = {};
 		runData.players = [];
 		runData.game = undefined;
-		runData.gameShort = undefined;
 		runData.gameTwitch = undefined;
 		runData.estimate = undefined;
 		runData.estimateS = 0;
