@@ -1,52 +1,55 @@
 # Configuration
 
-There are a couple of features in speedcontrol that needs predefined configuration to work.
-This README will go through how to create the configuration and how it should look like.
+Speedcontrol can be used without an configuration, but you will need to do this to get most features to work, such as Twitch integration.
 
-## Creating the configuration file
+We use the normal [NodeCG bundle configuraiton](https://nodecg.com/tutorial-bundle-configuration.html) so see that page for some basic details on where the configuration file should go. *tl;dr:* put a JSON file called `nodecg-speedcontrol.json` in your NodeCG installation's `cfg` folder.
 
-**This documentation is incomplete/out of date. It will be updated in the future, but for now you can use the [configschema.json](https://github.com/speedcontrol/nodecg-speedcontrol/blob/master/configschema.json) as reference on what things can be set.**
+If you haven't, I would recommend installing [nodecg-cli](https://github.com/nodecg/nodecg-cli), then you can do either do `nodecg defaultconfig` in the bundle's directory or `nodecg defaultconfig nodecg-speedcontrol` in the NodeCG installation folder and this will create a default configuration file in the correct place with *some* of the settings you can configure already partially filled out, although you will still need to tweak this. See below for what can go in this file in more detail.
 
-Firstly, make sure that the nodecg server is not running, you will need to restart it otherwise to load
-the speedcontrol configuration.
+As normal with NodeCG, you will need to restart your instance of the NodeCG server when you change the config for them to be applied.
 
-In your nodecg root folder, locate the `cfg` folder and navigate inside. Create a nodecg-speedcontrol.json file here
-which will contain your information. Be wary that the filename NEEDS to be exactly this, otherwise configuration won't work.
-Some people has for instance forgotten to disable the windows function to hide filenames, so their configurationfiles was actually 
-named the erroneous name of "nodecg-speedcontrol.json.txt". The file should contain the following:
+If you are experienced you can also check out the [configschema.json here](https://github.com/speedcontrol/nodecg-speedcontrol/blob/master/configschema.json).
+
+Below is an example configuration file contents with everything that is available:
 
 ```
 {
-	"live": true,
-	"enableTwitchApi": true,
-	"user": "<twitchchannel>",
-	"oauth": "<twitchoauth>",
-	"enableFFZIntegration": true,
-	"streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
-	"defaultGame": "Retro",
-	"defaultScheduleURL": "https://horaro.org/esa/2016",
-	"ignoreGamesWhileImportingSchedule": ["Setup", "Restream"],
-	"enableMarqueePanel": false
+	"live": false,
+	"twitch": {
+		"enable": false,
+		"clientID": "CLIENT_ID",
+		"clientSecret": "CLIENT_SECRET",
+		"redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
+		"ffzIntegration": false,
+		"streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
+		"streamDefaultGame": "Retro"
+	},
+	"schedule": {
+		"defaultURL": "https://horaro.org/event/schedule",
+		"ignoreGamesWhileImporting": ["Setup"],
+		"customData": [
+			{
+				"name": "Game (Short)",
+				"key": "gameShort"
+			}
+		]
+	},
+	"tiltify": {
+		"enable": false,
+		"key": "API_KEY"
+	},
+	"speedrunComMarathon": {
+		"enable": false,
+		"slug": "SRC_SLUG"
+	},
+	"gaming4Good": {
+		"enable": false,
+		"twitchChannelID": "TWITCH_ID"
+	},
+	"api": {
+		"enable": false,
+		"sharedKey": "TWITCH_ID",
+		"hooks": ["HOOK_URL"]
+	}
 }
 ```
-
-If `"live": true` is defined, editmode divs are stripped from layouts to make it more clean and give better performance, and certain buttons on the dashboard will be disabled that should not be pressed when a marathon is going on. Before you start the actual marathon, 
-it's adviced that you add this configuration.
-
-If `"enableTwitchApi": true` is defined, automatical and manual sync to your configured user can be used from the Stream Control dashboard panel, otherwise this panel doesn't do anything!
-
-"user": must be defined if "enableTwitchApi" is defined, otherwise bundle doesn't know which user to update. e.g: `"user": "sethcharleon"`
-
-"oauth": must be defined if "enableTwitchApi" is defined, otherwise the bundle won't have permission to update through the Twitch API. The OAuth has to be for the user specified above, and should have these scopes (otherwise errors may occur): channel_editor, user_read, chat_login, channel_commercial.
-
-If `"enableFFZIntegration": true` is defined, you can automatically and manually sync Twitch channel names to the FrankerFaceZ service as "featured" channels, which will also allow you to use their FFZ emotes in the chat if you have asked an FFZ owner to enable this.
-
-"streamtitle": Set this if you want speedcontrol to update your title on twitch, {{game}} {{category}} and {{players}} are all replaced with data from the current run
-
-"defaultGame": This is used if the twitch game name isn't found on speedrun.com. It's important you always use a directory game on twitch - Retro is a good catch all.
-
-"defaultScheduleURL": This will fill in the URL box in the "Horaro Schedule Import" panel with whatever schedule URL you set this too; you are usually only using one schedule for each marathon so having it pre-filled can be useful.
-
-"ignoreGamesWhileImportingSchedule": This should be an array of strings of any game names on your schedule you do not want while importing. For example, if you have any setup buffers in your schedule, which has no reason to be shown on the layouts. This does partial matches; "Setup Block" will be matched by "Setup".
-
-"enableMarqueePanel": If this is set to `false`, the options in the "Marquee Information" panel will be removed, if you don't have a marquee and don't want to confuse users. Defaults to `true`.
