@@ -1,5 +1,7 @@
 # Creating New Overlays
 
+***NOTE: This file is very out of date, it is probably not applicable anymore. I would advise you have a look at the [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext) bundle for a good example on how you would create your own bundle.***
+
 So! You have some basic template files in your speedcontrol directory, but you want to 
 make some custom overlays for your Marathon! All overlays are created with HTML, which 
 is a prerequisite to create a customized look & feel. If you don't know HTML, know that 
