@@ -9,7 +9,7 @@ function register_api(nodecg) {
     var speedcontrolRouter = require('express').Router();
 
     speedcontrolRouter.use(function(req, res, next) {
-        if (req.get('API-Key') !== _nodecg.bundleConfig.api.sharedkey) {
+        if (req.get('API-Key') !== _nodecg.bundleConfig.api.sharedKey) {
             res.status(403).json("Invalid key.");
         } else {
             next();
@@ -116,7 +116,7 @@ function publish(event) {
                     json: event, 
                     timeout: 1500,
                     headers: {
-                        'API-Key': _nodecg.bundleConfig.api.sharedkey
+                        'API-Key': _nodecg.bundleConfig.api.sharedKey
                     }
                 }, 
                 function(err) {

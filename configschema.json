@@ -47,7 +47,7 @@
 			"type": ["object", "null"],
 			"properties": {
 				"enable": {"type": "boolean"},
-				"sharedkey": {"type": "string"},
+				"sharedKey": {"type": "string"},
 				"hooks": {
 					"type": "array",
 					"uniqueItems": true,
