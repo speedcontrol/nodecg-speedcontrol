@@ -1,5 +1,7 @@
 # EDIT-Mode
 
+***NOTE: This file is very out of date, it is probably not applicable anymore. I would advise you have a look at the [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext) bundle for a good example on how you would create your own bundle.***
+
 So! You've defined the look & feel of your overlay with player-panels, logos, and everything!
 You should at this stage have a HTML document with everything you need, so now it's time to learn
 how to design your HTML to take edit-mode into account! the recommended workflow is to first create your
