@@ -28,7 +28,7 @@ module.exports = function(nodecg) {
 	
 	if (nodecg.bundleConfig && nodecg.bundleConfig.speedrunComMarathon && nodecg.bundleConfig.speedrunComMarathon.enable) {
 		if (!nodecg.bundleConfig.speedrunComMarathon.slug) {
-			nodecg.log.warn('speedrunComMarathon is enabled, but you forgot to set the slug correctly.');
+			nodecg.log.warn('sSpeedrun.com marathon integration is enabled, but the slug has not been set.');
 			return;
 		}
 		
@@ -58,10 +58,10 @@ module.exports = function(nodecg) {
 				if (donationsActive)
 					setInterval(runFrequentUpdates, 45000);
 				
-				else nodecg.log.warn('The Speedrun.com marathon slug does not have donations enabled!');
+				else nodecg.log.warn('This Speedrun.com marathon slug does not have donations enabled.');
 			}
 			
-			else nodecg.log.warn('The Speedrun.com marathon slug does not exist!');
+			else nodecg.log.warn('The Speedrun.com marathon slug does not exist.');
 		});
 	}
 	

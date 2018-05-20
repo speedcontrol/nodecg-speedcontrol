@@ -10,7 +10,7 @@ module.exports = function(nodecg) {
 	
 	if (nodecg.bundleConfig && nodecg.bundleConfig.tiltify && nodecg.bundleConfig.tiltify.enable) {
 		if (!nodecg.bundleConfig.tiltify.key) {
-			nodecg.log.warn('You enabled Tiltify support but forgot to set the API key.');
+			nodecg.log.warn('Tiltify support is enabled but no API key is set.');
 			return;
 		}
 		

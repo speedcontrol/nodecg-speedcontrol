@@ -22,7 +22,7 @@ module.exports = function(nodecg) {
 	var twitchChannelName = nodecg.Replicant('twitchChannelName');
 	
 	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable) {
-		nodecg.log.info('Twitch API integration is enabled.');
+		nodecg.log.info('Twitch integration is enabled.');
 		
 		requestOptions.headers['Client-ID'] = nodecg.bundleConfig.twitch.clientID;
 		if (accessToken.value) requestOptions.headers['Authorization'] = 'OAuth '+accessToken.value;
@@ -119,7 +119,7 @@ module.exports = function(nodecg) {
 	}
 	
 	function updateChannel(updatedValues) {
-		nodecg.log.info('Trying to update channel information.');
+		nodecg.log.info('Trying to update Twitchchannel information.');
 		checkTokenValidity(() => {
 			var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelID.value;
 			var data = {
@@ -131,7 +131,7 @@ module.exports = function(nodecg) {
 			
 			needle.put(url, data, requestOptions, (err, resp) => {
 				if (handleResponse(err, resp)) {
-					nodecg.log.info('Successfully updated channel information.');
+					nodecg.log.info('Successfully updated Twitch channel information.');
 					twitchChannelInfo.value = resp.body;
 				}
 			});
@@ -142,7 +142,7 @@ module.exports = function(nodecg) {
 		checkTokenValidity(() => {
 			var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelID.value+'/commercial';
 			needle.post(url, {'duration':180}, requestOptions, (err, resp) => {
-				nodecg.log.info('Requested a Twitch ad.');
+				nodecg.log.info('Requested a Twitch ad be played.');
 				if (handleResponse(err, resp)) {
 					nodecg.log.info('Twitch ad started successfully.');
 					//nodecg.sendMessage('twitchAdStarted');
