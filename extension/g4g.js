@@ -4,8 +4,8 @@
 
 var request = require('request');
 
-var statsAPI = 'https://funds-api.gamingforgood.net/d/stats/fund/';
-var donationsAPI = 'https://funds-api.gamingforgood.net/d/donations/fund/';  // not used in this code yet
+var statsAPI = 'https://api.gamingforgood.net/d/stats/fund/';
+var donationsAPI = 'https://api.gamingforgood.net/d/donations/fund/';  // not used in this code yet
 var twitchChannelID;
 var g4gDonationTotalReplicant;
 

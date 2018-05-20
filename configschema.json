@@ -13,8 +13,7 @@
 				"ffzIntegration": {"type": "boolean", "default": true},
 				"streamTitle": {"type": "string", "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"},
 				"streamDefaultGame": {"type": "string", "default": "Retro"}
-			},
-			"required": ["clientID", "clientSecret", "redirectURI"]
+			}
 		},
 		"schedule": {
 			"type": "object",
