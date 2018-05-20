@@ -2,50 +2,52 @@
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"type": "object",
 	"properties": {
-		"live": {"type": "boolean"},
+		"live": {"type": "boolean", "default": false},
 		"twitch": {
 			"type": "object",
 			"properties": {
-				"enable": {"type": "boolean"},
-				"clientID": {"type": "string"},
-				"clientSecret": {"type": "string"},
-				"redirectURI": {"type": "string"},
-				"ffzIntegration": {"type": "boolean"},
-				"streamTitle": {"type": "string"},
-				"streamDefaultGame": {"type": "string"}
+				"enable": {"type": "boolean", "default": false},
+				"clientID": {"type": "string", "default": "CLIENT_ID"},
+				"clientSecret": {"type": "string", "default": "CLIENT_SECRET"},
+				"redirectURI": {"type": "string", "default": "http://localhost:9090/nodecg-speedcontrol/twitchauth"},
+				"ffzIntegration": {"type": "boolean", "default": true},
+				"streamTitle": {"type": "string", "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"},
+				"streamDefaultGame": {"type": "string", "default": "Retro"}
 			}
 		},
 		"schedule": {
 			"type": "object",
 			"properties": {
-				"defaultURL": {"type": "string"},
+				"defaultURL": {"type": "string", "default": "https://horaro.org/event/schedule"},
 				"ignoreGamesWhileImporting": {
-					"type": "array",
+					"type": ["array", "null"],
 					"uniqueItems": true,
-					"items": {"type": "string"}
+					"items": {"type": "string"},
+					"minItems": 1
 				}
 			}
 		},
 		"tiltify": {
 			"type": "object",
 			"properties": {
-				"enable": {"type": "boolean"},
-				"key": {"type": "string"}
+				"enable": {"type": "boolean", "default": false},
+				"key": {"type": "string", "default": "API_KEY"}
 			}
 		},
 		"enableG4GIntegration": {"type": "boolean"},
-		"enableSRCDonations": {"type": "boolean"},
-		"SRCEventSlug": {"type": "string"},
+		"enableSRCDonations": {"type": "boolean", "default": false},
+		"SRCEventSlug": {"type": "string", "default": "SRC_SLUG"},
 		"enableMarqueePanel": {"type": "boolean"},
 		"api": {
-			"type": "object",
+			"type": ["object", "null"],
 			"properties": {
 				"enable": {"type": "boolean"},
 				"sharedkey": {"type": "string"},
 				"hooks": {
 					"type": "array",
 					"uniqueItems": true,
-					"items": {"type": "string"}
+					"items": {"type": "string"},
+					"minItems": 1
 				}
 			}
 		}
