@@ -24,6 +24,18 @@
 					"uniqueItems": true,
 					"items": {"type": "string"},
 					"minItems": 1
+				},
+				"customData": {
+					"type": ["array", "null"],
+					"uniqueItems": true,
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {"type": "string"},
+							"key": {"type": "string"}
+						}
+					},
+					"minItems": 1
 				}
 			}
 		},

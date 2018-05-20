@@ -7,6 +7,7 @@ $(function() {
 	var runNumberIterator = 1;
 	var scheduleData;
 	var defaultSetupTimeReplicant = nodecg.Replicant('defaultSetupTime', {defaultValue: 0});
+	var customData = nodecg.bundleConfig.schedule.customData;
 	
 	// Temp cache for the user data from SR.com that is kept until the server is restarted.
 	var userDataCache = nodecg.Replicant('horaroImportUserDataCache', {defaultValue: {}, persistent: false});
@@ -32,7 +33,15 @@ $(function() {
 				$helpText.html('Select the correct columns that match the data type below, if the one auto-selected is wrong.<br><br>');
 				
 				// What a nice mess.
-				$('#columnsDropdownsWrapper').html('<div class="selectWrapper"><span class="selectName">Game:</span><span class="selectDropdown"><select id="gameColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Game (Short):</span><span class="selectDropdown"><select id="gameShortColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Game (Twitch):</span><span class="selectDropdown"><select id="gameTwitchColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Category:</span><span class="selectDropdown"><select id="categoryColumns"></select></span></div><div class="selectWrapper"><span class="selectName">System:</span><span class="selectDropdown"><select id="systemColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Region:</span><span class="selectDropdown"><select id="regionColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Players:</span><span class="selectDropdown"><select id="playerColumns"></select></span></div>');
+				var dropdownsHTML = '<div class="selectWrapper"><span class="selectName">Game:</span><span class="selectDropdown"><select id="gameColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Game (Short):</span><span class="selectDropdown"><select id="gameShortColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Game (Twitch):</span><span class="selectDropdown"><select id="gameTwitchColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Category:</span><span class="selectDropdown"><select id="categoryColumns"></select></span></div><div class="selectWrapper"><span class="selectName">System:</span><span class="selectDropdown"><select id="systemColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Region:</span><span class="selectDropdown"><select id="regionColumns"></select></span></div><div class="selectWrapper"><span class="selectName">Players:</span><span class="selectDropdown"><select id="playerColumns"></select></span></div>';
+				
+				// Add dropdowns for custom data as specified in the config.
+				customData.forEach((customDataElem) => {
+					if (customDataElem.key && customDataElem.name)
+						dropdownsHTML += '<div class="selectWrapper"><span class="selectName">'+customDataElem.name+':</span><span class="selectDropdown"><select id="'+customDataElem.key+'Columns"></select></span></div>';
+				});
+				
+				$('#columnsDropdownsWrapper').html(dropdownsHTML);
 				
 				// Adds a -1 N/A selection for if the column isn't on their schedule.
 				$('#columnsDropdownsWrapper select').append($('<option>', { 
@@ -119,6 +128,11 @@ $(function() {
 				var systemColumn = parseInt($('#systemColumns').val());
 				var regionColumn = parseInt($('#regionColumns').val());
 				var playerColumn = parseInt($('#playerColumns').val());
+				var customColumns = {};
+				customData.forEach((customDataElem) => {
+					if (customDataElem.key && customDataElem.name)
+						customColumns[customDataElem.key] = parseInt($('#'+customDataElem.key+'Columns').val());
+				});
 				
 				var runItems = scheduleData.schedule.items;
 				var defaultSetupTime = scheduleData.schedule.setup_t;
@@ -192,6 +206,14 @@ $(function() {
 					// Region
 					if (regionColumn >= 0 && run.data[regionColumn])
 						runData.region = run.data[regionColumn];
+					
+					// Custom Data
+					// These are stored within the own object in the runData: "customData".
+					Object.keys(customColumns).forEach((col) => {
+						runData.customData[col] = null; // Make sure the key is set for all runs.
+						if (customColumns[col] >= 0 && run.data[customColumns[col]])
+							runData.customData[col] = run.data[customColumns[col]];
+					});
 					
 					// Teams/Players (there's a lot of stuff here!)
 					if (playerColumn >= 0 && run.data[playerColumn]) {
@@ -298,6 +320,7 @@ $(function() {
 		runData.screens = [];
 		runData.cameras = [];
 		runData.teams = [];
+		runData.customData = {};
 		return runData;
 	}
 	
