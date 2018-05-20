@@ -56,23 +56,6 @@ body {
     width: 400px;
 }
 
-
-#informationMarquee {
-    font-family: FFFForward;
-    color: #856899;
-    position: absolute;
-    top: 500px;
-    left: 0px;
-    height: 0px;
-    width: 1280px;
-    overflow:hidden;
-    white-space: nowrap;
-    background-color: rgba(0,0,0,0.5);
-    opacity: 0;
-    font-size: 15px;
-    text-align: center;
-}
-
 #comingUpGame {
     padding: 2px;
     color: #856899;

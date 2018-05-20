@@ -85,14 +85,6 @@
         "workspace": "Run Modifications"
       },
       {
-        "name": "marquee-information",
-        "title": "Marquee Information",
-        "width": 2,
-        "file": "MarqueeInformationDashboard.html",
-        "headerColor": "#008BB9",
-        "workspace": "Scene Editing"
-      },
-      {
         "name": "run-info",
         "title": "Add/Edit Run Info",
         "width": 5,

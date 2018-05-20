@@ -25,16 +25,9 @@ $(function () {
 
     var isInitialized = false;
 
-	var marqueeTimeout;
-
     // sceneID must be uniqe for this view, it's used in positioning of elements when using edit mode
     // if there are two views with the same sceneID all the elements will not have the correct positions
     var sceneID = $('html').attr('data-sceneid');
-
-    // NodeCG Message subscription ###
-    nodecg.listenFor("displayMarqueeInformation", speedcontrolBundle, function(text) {displayMarquee(text);});
-    nodecg.listenFor("displayMarqueeInformationTemp", speedcontrolBundle, function(text) {displayMarquee(text, 30);});
-    nodecg.listenFor("removeMarqueeInformation", speedcontrolBundle, removeMarquee);
 
     // Replicants ###
     var sceneLayoutConfigurationReplicant = nodecg.Replicant('sceneLayoutConfiguration', speedcontrolBundle);
@@ -123,21 +116,6 @@ $(function () {
         else if (value == 'Off') {
             $('#window-container').css('opacity',1.0);
         }
-    }
-
-    function displayMarquee(text, seconds) {
-        $('#informationMarquee').html(text);
-        var tm = new TimelineMax({paused: true});
-        tm.to($('#informationMarquee'), 1.0, {opacity: '1', height: "50px",  ease: Quad.easeOut },'0');
-        tm.play();
-		if (seconds) {marqueeTimeout = setTimeout(removeMarquee, seconds*1000);}
-    }
-
-    function removeMarquee() {
-		clearTimeout(marqueeTimeout);
-        var tm = new TimelineMax({paused: true});
-        tm.to($('#informationMarquee'), 1.0, {opacity: '0', height: "0px",  ease: Quad.easeOut },'0');
-        tm.play();
     }
 
     function loadCSS (css) {

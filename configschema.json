@@ -40,9 +40,8 @@
 				"enable": {"type": "boolean", "default": false},
 				"slug": {"type": "string", "default": "SRC_SLUG"}
 			}
-		}
+		},
 		"enableG4GIntegration": {"type": "boolean"},
-		"enableMarqueePanel": {"type": "boolean"},
 		"api": {
 			"type": ["object", "null"],
 			"properties": {
