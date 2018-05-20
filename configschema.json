@@ -13,7 +13,8 @@
 				"ffzIntegration": {"type": "boolean", "default": true},
 				"streamTitle": {"type": "string", "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"},
 				"streamDefaultGame": {"type": "string", "default": "Retro"}
-			}
+			},
+			"required": ["clientID", "clientSecret", "redirectURI"]
 		},
 		"schedule": {
 			"type": "object",
@@ -34,9 +35,14 @@
 				"key": {"type": "string", "default": "API_KEY"}
 			}
 		},
+		"speedrunComMarathon": {
+			"type": "object",
+			"properties": {
+				"enable": {"type": "boolean", "default": false},
+				"slug": {"type": "string", "default": "SRC_SLUG"}
+			}
+		}
 		"enableG4GIntegration": {"type": "boolean"},
-		"enableSRCDonations": {"type": "boolean", "default": false},
-		"SRCEventSlug": {"type": "string", "default": "SRC_SLUG"},
 		"enableMarqueePanel": {"type": "boolean"},
 		"api": {
 			"type": ["object", "null"],

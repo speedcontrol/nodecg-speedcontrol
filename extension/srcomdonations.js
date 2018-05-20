@@ -26,27 +26,27 @@ module.exports = function(nodecg) {
 	var initDonations = false;
 	var donationCutOff = 3600; // If a donation hasn't been accepted after 1 hour, it will be ignored.
 	
-	if (nodecg.bundleConfig && nodecg.bundleConfig.enableSRCDonations) {
-		if (!nodecg.bundleConfig.SRCEventSlug) {
-			nodecg.log.warn('enableSRCDonations is set to true, but you forgot the SRCEventSlug.');
+	if (nodecg.bundleConfig && nodecg.bundleConfig.speedrunComMarathon && nodecg.bundleConfig.speedrunComMarathon.enable) {
+		if (!nodecg.bundleConfig.speedrunComMarathon.slug) {
+			nodecg.log.warn('speedrunComMarathon is enabled, but you forgot to set the slug correctly.');
 			return;
 		}
 		
-		nodecg.log.info('Speedrun.com Donation integration is enabled.');
+		nodecg.log.info('Speedrun.com marathon integration is enabled.');
 		
 		// Setting up replicants.
 		var srcomDonationTotalReplicant = nodecg.Replicant('srcomDonationTotal', {persistent:false, defaultValue:0});
 		var srcomDonationGoalsReplicant = nodecg.Replicant('srcomDonationGoals', {persistent:false, defaultValue:[]});
 		var srcomDonationBidwarsReplicant = nodecg.Replicant('srcomDonationBidwars', {persistent:false, defaultValue:[]});
 		
-		var url = 'https://www.speedrun.com/api/v1/games/'+nodecg.bundleConfig.SRCEventSlug.toLowerCase();
+		var url = 'https://www.speedrun.com/api/v1/games/'+nodecg.bundleConfig.speedrunComMarathon.slug.toLowerCase();
 		needleGET(url, requestOptions, function(err, response) {
 			// Checks to see if the slug exists on the site.
 			if (!err && response.statusCode === 200) {
-				// Gets the speedrun.com ID of the event.
+				// Gets the speedrun.com ID of the marathon.
 				eventID = response.body.data.id;
 				
-				// Loops through the information links to see if this event is donations enabled.
+				// Loops through the information links to see if this marathon has donations enabled.
 				var links = response.body.data.links;
 				var donationsActive = false;
 				for (var i = 0; i < links.length; i++) {
@@ -58,10 +58,10 @@ module.exports = function(nodecg) {
 				if (donationsActive)
 					setInterval(runFrequentUpdates, 45000);
 				
-				else nodecg.log.warn('The SRCEventSlug doesn\'t have donations enabled on Speedrun.com!');
+				else nodecg.log.warn('The Speedrun.com marathon slug does not have donations enabled!');
 			}
 			
-			else nodecg.log.warn('The SRCEventSlug does not exist on Speedrun.com!');
+			else nodecg.log.warn('The Speedrun.com marathon slug does not exist!');
 		});
 	}
 	
