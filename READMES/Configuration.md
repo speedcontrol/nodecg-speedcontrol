@@ -1,6 +1,6 @@
 # Configuration
 
-Speedcontrol can be used without an configuration, but you will need to do this to get most features to work, such as Twitch integration.
+Speedcontrol can be used without any configuration, but you will need to do this to get most features to work, such as Twitch integration.
 
 We use the normal [NodeCG bundle configuration](https://nodecg.com/tutorial-bundle-configuration.html) so see that page for some basic details on where the configuration file should go. *tl;dr:* put a JSON file called `nodecg-speedcontrol.json` in your NodeCG installation's `cfg` folder.
 
