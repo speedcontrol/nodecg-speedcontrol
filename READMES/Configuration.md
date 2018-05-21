@@ -113,7 +113,7 @@ Once the Twitch integration settings are fully set up and your NodeCG server has
 }
 ```
 
-Once enabled and a key is specified from Tiltify (which should be in your Tiltify settings/dashboard), the donation total for your event will be stored and frequently updated in the `tiltifyDonationTotal` replicant of this bundle. The source for the Tiltify code can be found in the [./extension/tiltify.js](extension/tiltify.js) file.
+Once enabled and a key is specified from Tiltify (which should be in your Tiltify settings/dashboard), the donation total for your event will be stored and frequently updated in the `tiltifyDonationTotal` replicant of this bundle. The source for the Tiltify code can be found in the [./extension/tiltify.js](../extension/tiltify.js) file.
 
 ### Speedrun.com Marathons
 
@@ -124,7 +124,7 @@ Once enabled and a key is specified from Tiltify (which should be in your Tiltif
 }
 ```
 
-Once enabled and a slug is specified of a marathon page on Speedrun.com (this is the part of the URL after the 1st forward slash), if it has donations activated, you will be able to access some information about the marathon's donation information via replicants. No extra README for this yet; see the  [./extension/srcomdonations.js](extension/srcomdonations.js) file if you're an advanced user and wish to use this functionality in your graphics bundles.
+Once enabled and a slug is specified of a marathon page on Speedrun.com (this is the part of the URL after the 1st forward slash), if it has donations activated, you will be able to access some information about the marathon's donation information via replicants. No extra README for this yet; see the  [./extension/srcomdonations.js](../extension/srcomdonations.js) file if you're an advanced user and wish to use this functionality in your graphics bundles.
 
 ### Gaming4Good
 
@@ -137,7 +137,7 @@ Once enabled and a slug is specified of a marathon page on Speedrun.com (this is
 
 ***NOTE: This hasn't been fully tested in a while, it may not work correctly.***
 
-Once enabled and you either have Twitch integration enabled *or* a Twitch channel ID is specified in `twitchChannelID`, the donation total for your event will be stored and frequently updated in the `g4gDonationTotal` replicant of this bundle. The source for the Gaming4Good code can be found in the [./extension/g4g.js](extension/g4g.js) file.
+Once enabled and you either have Twitch integration enabled *or* a Twitch channel ID is specified in `twitchChannelID`, the donation total for your event will be stored and frequently updated in the `g4gDonationTotal` replicant of this bundle. The source for the Gaming4Good code can be found in the [./extension/g4g.js](../extension/g4g.js) file.
 
 ### API
 
@@ -149,4 +149,4 @@ Once enabled and you either have Twitch integration enabled *or* a Twitch channe
 }
 ```
 
-This is a undocumented API that can be used to send data to an external server when runs are completed. It was written and mainly intended for use for the European Speedrunner Assembly events. The source for all this can be found in the [./extension/esacontroller.js](extension/esacontroller.js) file, if you want to use it for some reason.
+This is a undocumented API that can be used to send data to an external server when runs are completed. It was written and mainly intended for use for the European Speedrunner Assembly events. The source for all this can be found in the [./extension/esacontroller.js](../extension/esacontroller.js) file, if you want to use it for some reason.
