@@ -34,3 +34,20 @@ nodecg setup
 nodecg install speedcontrol/nodecg-speedcontrol
 nodecg start
 ```
+
+## Where has this bundle been used before?
+
+- All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons starting from the Pre-ESA Marathon 2016, including the Dreamhack speedrunning events in Sweden.
+- All [GTA Marathons](https://www.twitch.tv/gtamarathon) starting from GTA Marathon 2016.
+- [SpeedSouls Charity Marathon 2017](https://www.twitch.tv/speedsouls)
+- [Themeathon Pre-Marathon 2018](https://www.twitch.tv/themeathon)
+- Several [Voltathon](https://www.twitch.tv/voltagegg) marathons.
+
+## Authors/Contributors
+
+Originally developed by Charleon, now mainly developed by zoton2.
+
+With help from:
+- btrim
+- Zephyyrr
+- Planks
