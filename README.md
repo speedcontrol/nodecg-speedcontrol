@@ -1,5 +1,7 @@
 # nodecg-speedcontrol
 
+![Screenshot](README-screenshot.png)
+
 *This is a bundle for [NodeCG](https://nodecg.com/); if you do not understand what that is, we advise you read their website first for more information.*
 
 nodecg-speedcontrol, usually known as just "Speedcontrol", is a bundle for the [NodeCG](https://nodecg.com/) broadcast graphics framework/application developed for automating tasks for speedrunning marathons, mainly changing information on overlays and updating the Twitch information.
@@ -21,7 +23,7 @@ You will need [Node.js](https://nodejs.org) and [git](https://git-scm.com/) inst
 
 - `nodecg install speedcontrol/nodecg-speedcontrol` to install the latest version of nodecg-speedcontrol
 
-This bundle can run without any extra configuration, but it's needed to use all of the functionality. Please see [Configuration.md](https://github.com/speedcontrol/nodecg-speedcontrol/blob/master/READMES/Configuration.md) for more information.
+This bundle can run without any extra configuration, but it's needed to use all of the functionality. Please see [Configuration.md](READMES/Configuration.md) for more information.
 
 ### tl;dr installation
 
