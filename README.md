@@ -44,6 +44,7 @@ nodecg start
 - [SpeedSouls Charity Marathon 2017](https://www.twitch.tv/speedsouls)
 - [Themeathon Pre-Marathon 2018](https://www.twitch.tv/themeathon)
 - Several [Voltathon](https://www.twitch.tv/voltagegg) marathons.
+- Several [DegenDash](https://www.twitch.tv/degendash) marathons.
 
 ## Authors/Contributors
 
