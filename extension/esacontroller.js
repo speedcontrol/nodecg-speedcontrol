@@ -2,6 +2,7 @@
 
 var app = require('express')();
 var request = require('request');
+var clone = require('clone');
 var _nodecg;
 
 function register_api(nodecg) {
@@ -78,7 +79,7 @@ function register_api(nodecg) {
     nodecg.listenFor("runEnded", "nodecg-speedcontrol", function(message) {
         nodecg.log.info(nodecg.readReplicant("runDataActiveRun"))
         var data = getRunData(nodecg)
-        lastrundata.value = JSON.parse(JSON.stringify(data));
+        lastrundata.value = clone(data);
 
         nodecg.log.info(JSON.stringify(data));
         publish({

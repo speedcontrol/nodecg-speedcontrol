@@ -3,6 +3,8 @@
 // https://github.com/GamesDoneQuick/agdq18-layouts/blob/master/extension/timekeeping.js
 
 'use strict';
+var clone = require('clone');
+
 module.exports = function(nodecg) {
 	// Cross references for LiveSplit's TimerPhases.
 	const LS_TIMER_PHASE = {
@@ -17,7 +19,7 @@ module.exports = function(nodecg) {
 	
 	// Storage for the stopwatch data.
 	var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0, timestamp: 0};
-	var stopwatch = nodecg.Replicant('stopwatch', {defaultValue: defaultStopwatch});
+	var stopwatch = nodecg.Replicant('stopwatch', {defaultValue: clone(defaultStopwatch)});
 	
 	// Sets up the timer with a single split.
 	const liveSplit = require('livesplit-core');
@@ -114,12 +116,8 @@ module.exports = function(nodecg) {
 	}
 	
 	// Resets stopwatch to it's defaults.
-	// Seems over the top but just assigning the value the object doesn't seem to work sometimes(?).
 	function resetStopwatchToDefault() {
-		stopwatch.value.time = defaultStopwatch.time;
-		stopwatch.value.state = defaultStopwatch.state;
-		stopwatch.value.milliseconds = defaultStopwatch.milliseconds;
-		stopwatch.value.timestamp = defaultStopwatch.timestamp;
+		stopwatch.value = clone(defaultStopwatch);
 	}
 };
 
