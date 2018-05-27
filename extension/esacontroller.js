@@ -3,14 +3,20 @@
 var app = require('express')();
 var request = require('request');
 var clone = require('clone');
-var _nodecg;
+var nodecg = require('./utils/nodecg-api-context').get();
 
-function register_api(nodecg) {
+if (typeof(nodecg.bundleConfig) !== 'undefined' && 
+	typeof(nodecg.bundleConfig.api) !== 'undefined' && 
+	nodecg.bundleConfig.api.enable) {
+		register_api()
+}
+
+function register_api() {
 	nodecg.log.info("Activating API.");
     var speedcontrolRouter = require('express').Router();
 
     speedcontrolRouter.use(function(req, res, next) {
-        if (req.get('API-Key') !== _nodecg.bundleConfig.api.sharedKey) {
+        if (req.get('API-Key') !== nodecg.bundleConfig.api.sharedKey) {
             res.status(403).json("Invalid key.");
         } else {
             next();
@@ -92,7 +98,7 @@ function register_api(nodecg) {
     nodecg.mount(app);
 }
 
-function getRunData(nodecg) {
+function getRunData() {
     return {
         game: nodecg.readReplicant("runDataActiveRun").game,
         category: nodecg.readReplicant("runDataActiveRun").category,
@@ -110,33 +116,23 @@ function getTimeStamp() {
 }
 
 function publish(event) {
-    if (_nodecg.bundleConfig.api.hooks) {
-        _nodecg.bundleConfig.api.hooks.forEach(function(sub) {
+    if (nodecg.bundleConfig.api.hooks) {
+        nodecg.bundleConfig.api.hooks.forEach(function(sub) {
             request.post({
                     uri: sub, 
                     json: event, 
                     timeout: 1500,
                     headers: {
-                        'API-Key': _nodecg.bundleConfig.api.sharedKey
+                        'API-Key': nodecg.bundleConfig.api.sharedKey
                     }
                 }, 
                 function(err) {
                     if (err) {
-                        _nodecg.log.error(
+                        nodecg.log.error(
                             "Error publishing event " + event.event + " to " + sub + ".", 
                             err);
                 }
             })
         });
-    }
-}
-
-module.exports = function (nodecg) {
-    _nodecg = nodecg;
-    
-    if (typeof(nodecg.bundleConfig) !== 'undefined' && 
-        typeof(nodecg.bundleConfig.api) !== 'undefined' && 
-        nodecg.bundleConfig.api.enable) {
-        register_api(nodecg)
     }
 }

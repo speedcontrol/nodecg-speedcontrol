@@ -4,7 +4,7 @@ var WebSocket = require('ws');
 var tmi = require('tmi.js');
 var async = require('async');
 
-var nodeCgExport;
+var nodecg = require('./utils/nodecg-api-context').get();
 var accessToken;
 var messageNumber;
 var ffzWS;
@@ -13,25 +13,22 @@ var pingTimeout;
 var ffzFollowButtonsReplicant;
 var twitchChannelName;
 
-module.exports = function(nodecg) {
-	nodeCgExport = nodecg;
-	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable && nodecg.bundleConfig.twitch.ffzIntegration) {
-		nodecg.log.info("FrankerFaceZ integration is enabled.");
+if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable && nodecg.bundleConfig.twitch.ffzIntegration) {
+	nodecg.log.info("FrankerFaceZ integration is enabled.");
 
-		nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
-		
-		// Used to store whatever the WS says are the current buttons on the page.
-		ffzFollowButtonsReplicant = nodecg.Replicant('ffzFollowButtons', {persistent: false});
-		
-		// Waits until we have the Twitch access code before doing anything.
-		twitchChannelName = nodecg.Replicant('twitchChannelName');
-		var accessTokenReplicant = nodecg.Replicant('twitchAccessToken');
-		accessTokenReplicant.on('change', function(newValue, oldValue) {
-			accessToken = newValue;
-			if (newValue && !oldValue)
-				connectToWS(() => {/* connection to ws done */});
-		});
-	}
+	nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
+	
+	// Used to store whatever the WS says are the current buttons on the page.
+	ffzFollowButtonsReplicant = nodecg.Replicant('ffzFollowButtons', {persistent: false});
+	
+	// Waits until we have the Twitch access code before doing anything.
+	twitchChannelName = nodecg.Replicant('twitchChannelName');
+	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken');
+	accessTokenReplicant.on('change', function(newValue, oldValue) {
+		accessToken = newValue;
+		if (newValue && !oldValue)
+			connectToWS(() => {/* connection to ws done */});
+	});
 }
 
 function connectToWS(callback) {
@@ -47,22 +44,22 @@ function connectToWS(callback) {
 	messageNumber = 1;
 	var serverURL = pickServer();
 	ffzWS = new WebSocket(serverURL);
-	nodeCgExport.log.info('Connecting to FrankerFaceZ ('+serverURL+').');
+	nodecg.log.info('Connecting to FrankerFaceZ ('+serverURL+').');
 
 	// Catching any errors with the connection. The "close" event is also fired if it's a disconnect.
 	ffzWS.on('error', function(error) {
-		nodeCgExport.log.warn("Error occurred on the FrankerFaceZ connection, see below:");
-		nodeCgExport.log.warn(error);
+		nodecg.log.warn("Error occurred on the FrankerFaceZ connection, see below:");
+		nodecg.log.warn(error);
 	});
 
 	ffzWS.once('open', function() {
-		nodeCgExport.log.info('Connection to FrankerFaceZ successful.');
+		nodecg.log.info('Connection to FrankerFaceZ successful.');
 		ffzWS.send('1 hello ["nodecg-speedcontrol",false]');
 	});
 
 	// If we disconnect, just run this function again after a delay to reconnect.
 	ffzWS.once('close', function() {
-		nodeCgExport.log.warn('Connection to FrankerFaceZ closed, will reconnect in 10 seconds.');
+		nodecg.log.warn('Connection to FrankerFaceZ closed, will reconnect in 10 seconds.');
 		ffzWSConnected = false;
 		clearTimeout(pingTimeout);
 		setTimeout(connectToWS, 10000);
@@ -102,7 +99,7 @@ function connectToWS(callback) {
 
 			// This is returned when the follower buttons are updated (including through this script).
 			else if (data.indexOf('-1 follow_buttons') === 0) {
-				nodeCgExport.log.info('Got follow_buttons from FrankerFaceZ connection.');
+				nodecg.log.info('Got follow_buttons from FrankerFaceZ connection.');
 				ffzFollowButtonsReplicant.value = JSON.parse(data.substr(18))[twitchChannelName.value];
 			}
 		}
@@ -112,13 +109,13 @@ function connectToWS(callback) {
 // Used to update the following buttons/emoticons on Twitch.
 // usernames is an array of Twitch usernames; if blank it will remove any channels already there.
 function setFFZFollowing(usernames) {
-	nodeCgExport.log.info('Attempting to set FrankerFaceZ Twitch names.');
+	nodecg.log.info('Attempting to set FrankerFaceZ Twitch names.');
 	// Checks to make sure we are connected and can do this.
 	if (ffzWSConnected) {
-		nodeCgExport.log.info('Sent FrankerFaceZ Twitch names.');
+		nodecg.log.info('Sent FrankerFaceZ Twitch names.');
 		sendMessage('update_follow_buttons ' + JSON.stringify([twitchChannelName.value,usernames]), function(message) {
 			var updatedClients = JSON.parse(message.substr(3))['updated_clients'];
-			nodeCgExport.log.info('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
+			nodecg.log.info('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
 		});
 	}
 }
@@ -149,7 +146,7 @@ function ping() {
 	
 	// Disconnect if a PONG was not received within 10 seconds.
 	pongWaitTimeout = setTimeout(function() {
-		nodeCgExport.log.warn('FrankerFaceZ PING/PONG failed, terminating connection.');
+		nodecg.log.warn('FrankerFaceZ PING/PONG failed, terminating connection.');
 		ffzWS.removeListener('pong', listenerFunc);
 		ffzWS.terminate();
 	}, 10000);
@@ -157,7 +154,7 @@ function ping() {
 
 // Used to send the auth code for updating the following buttons/emotes when needed.
 function sendAuthThroughTwitchChat(auth) {
-	nodeCgExport.log.info('Attempting to authenticate with FrankerFaceZ.');
+	nodecg.log.info('Attempting to authenticate with FrankerFaceZ.');
 	
 	// Settings for the temporary Twitch chat connection.
 	var options = {
@@ -177,7 +174,7 @@ function sendAuthThroughTwitchChat(auth) {
 	client.connect();
 
 	client.once('connected', function(address, port) {
-		nodeCgExport.log.info('Connected to Twitch chat to auth with FrankerFaceZ.');
+		nodecg.log.info('Connected to Twitch chat to auth with FrankerFaceZ.');
 		// Send the auth code to the specific Twitch channel.
 		client.say('frankerfacezauthorizer', 'AUTH ' + auth);
 

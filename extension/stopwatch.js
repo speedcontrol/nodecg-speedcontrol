@@ -4,122 +4,121 @@
 
 'use strict';
 var clone = require('clone');
+var nodecg = require('./utils/nodecg-api-context').get();
 
-module.exports = function(nodecg) {
-	// Cross references for LiveSplit's TimerPhases.
-	const LS_TIMER_PHASE = {
-		NotRunning: 0,
-		Running: 1,
-		Ended: 2,
-		Paused: 3
-	};
+// Cross references for LiveSplit's TimerPhases.
+const LS_TIMER_PHASE = {
+	NotRunning: 0,
+	Running: 1,
+	Ended: 2,
+	Paused: 3
+};
+
+var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
+var runFinishTimes = nodecg.Replicant('runFinishTimes', {defaultValue: {}});
+
+// Storage for the stopwatch data.
+var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0, timestamp: 0};
+var stopwatch = nodecg.Replicant('stopwatch', {defaultValue: clone(defaultStopwatch)});
+
+// Sets up the timer with a single split.
+const liveSplit = require('livesplit-core');
+var liveSplitRun = liveSplit.Run.new();
+liveSplitRun.pushSegment(liveSplit.Segment.new('finish'));
+var timer = liveSplit.Timer.new(liveSplitRun);
+
+// Return timer to existing time from above.
+timer.start();
+timer.pause();
+
+// If the timer was running when last closed, tries to resume it at the correct time.
+if (stopwatch.value.state === 'running') {
+	var missedTime = Date.now() - stopwatch.value.timestamp;
+	var previousTime = stopwatch.value.milliseconds;
+	var timeOffset = previousTime + missedTime;
+	nodecg.log.info('Recovered %s seconds of lost time.', (missedTime/1000).toFixed(2));
+	start(true);
+	initGameTime(timeOffset);
+}
+else
+	initGameTime(0);
+
+// Listeners, redirected to functions below.
+nodecg.listenFor('startTime', start);
+nodecg.listenFor('pauseTime', pause);
+nodecg.listenFor('finishTime', finish);
+nodecg.listenFor('resetTime', reset);
+nodecg.listenFor('setTime', edit);
+
+// This stuff runs every 1/10th a second to keep the time updated.
+setInterval(tick, 100);
+function tick() {
+	// Will not run if timer isn't running or game time doesn't exist.
+	if (stopwatch.value.state !== 'running' || !timer.currentTime().gameTime())
+		return;
 	
-	var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
-	var runFinishTimes = nodecg.Replicant('runFinishTimes', {defaultValue: {}});
+	// Calculates the milliseconds the timer has been running for and updates the stopwatch.
+	var ms = Math.floor((timer.currentTime().gameTime().totalSeconds())*1000);
+	stopwatch.value.time = msToTime(ms);
+	stopwatch.value.milliseconds = ms;
+	stopwatch.value.timestamp = Date.now();
+}
+
+function start(force) {
+	// Catch if timer is running and we called this function.
+	if (!force && stopwatch.value.state === 'running')
+		return;
 	
-	// Storage for the stopwatch data.
-	var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0, timestamp: 0};
-	var stopwatch = nodecg.Replicant('stopwatch', {defaultValue: clone(defaultStopwatch)});
-	
-	// Sets up the timer with a single split.
-	const liveSplit = require('livesplit-core');
-	var liveSplitRun = liveSplit.Run.new();
-	liveSplitRun.pushSegment(liveSplit.Segment.new('finish'));
-	var timer = liveSplit.Timer.new(liveSplitRun);
-	
-	// Return timer to existing time from above.
-	timer.start();
-	timer.pause();
-	
-	// If the timer was running when last closed, tries to resume it at the correct time.
-	if (stopwatch.value.state === 'running') {
-		var missedTime = Date.now() - stopwatch.value.timestamp;
-		var previousTime = stopwatch.value.milliseconds;
-		var timeOffset = previousTime + missedTime;
-		nodecg.log.info('Recovered %s seconds of lost time.', (missedTime/1000).toFixed(2));
-		start(true);
-		initGameTime(timeOffset);
+	// Start/resume the timer depending on which is needed.
+	stopwatch.value.state = 'running';
+	if (timer.currentPhase() === LS_TIMER_PHASE.NotRunning) {
+		timer.start();
+		initGameTime(0);
 	}
 	else
-		initGameTime(0);
-	
-	// Listeners, redirected to functions below.
-	nodecg.listenFor('startTime', start);
-	nodecg.listenFor('pauseTime', pause);
-	nodecg.listenFor('finishTime', finish);
-	nodecg.listenFor('resetTime', reset);
-	nodecg.listenFor('setTime', edit);
-	
-	// This stuff runs every 1/10th a second to keep the time updated.
-	setInterval(tick, 100);
-	function tick() {
-		// Will not run if timer isn't running or game time doesn't exist.
-		if (stopwatch.value.state !== 'running' || !timer.currentTime().gameTime())
-			return;
-		
-		// Calculates the milliseconds the timer has been running for and updates the stopwatch.
-		var ms = Math.floor((timer.currentTime().gameTime().totalSeconds())*1000);
+		timer.resume();
+}
+
+function pause() {
+	timer.pause();
+	stopwatch.value.state = 'paused';
+}
+
+function reset() {
+	timer.pause();
+	timer.reset(true);
+	resetStopwatchToDefault();
+}
+
+function finish() {
+	timer.pause(); // For now this just pauses the timer.
+	stopwatch.value.state = 'finished';
+	if (runDataActiveRun.value)
+		runFinishTimes.value[runDataActiveRun.value.runID] = stopwatch.value.time;
+}
+
+function edit(time) {
+	// Check to see if the time was given in the correct format and if it's stopped/paused.
+	if (stopwatch.value.state === 'stopped' || stopwatch.value.state === 'paused'
+	|| time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+		var ms = timeToMS(time);
+		liveSplit.TimeSpan.fromSeconds((ms/1000)).with(t => timer.setGameTime(t));
 		stopwatch.value.time = msToTime(ms);
 		stopwatch.value.milliseconds = ms;
-		stopwatch.value.timestamp = Date.now();
 	}
-	
-	function start(force) {
-		// Catch if timer is running and we called this function.
-		if (!force && stopwatch.value.state === 'running')
-			return;
-		
-		// Start/resume the timer depending on which is needed.
-		stopwatch.value.state = 'running';
-		if (timer.currentPhase() === LS_TIMER_PHASE.NotRunning) {
-			timer.start();
-			initGameTime(0);
-		}
-		else
-			timer.resume();
-	}
-	
-	function pause() {
-		timer.pause();
-		stopwatch.value.state = 'paused';
-	}
-	
-	function reset() {
-		timer.pause();
-		timer.reset(true);
-		resetStopwatchToDefault();
-	}
-	
-	function finish() {
-		timer.pause(); // For now this just pauses the timer.
-		stopwatch.value.state = 'finished';
-		if (runDataActiveRun.value)
-			runFinishTimes.value[runDataActiveRun.value.runID] = stopwatch.value.time;
-	}
-	
-	function edit(time) {
-		// Check to see if the time was given in the correct format and if it's stopped/paused.
-		if (stopwatch.value.state === 'stopped' || stopwatch.value.state === 'paused'
-		|| time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-			var ms = timeToMS(time);
-			liveSplit.TimeSpan.fromSeconds((ms/1000)).with(t => timer.setGameTime(t));
-			stopwatch.value.time = msToTime(ms);
-			stopwatch.value.milliseconds = ms;
-		}
-	}
-	
-	// Game Time is used so we can edit the timer easily.
-	function initGameTime(ms) {
-		liveSplit.TimeSpan.fromSeconds(0).with(t => timer.setLoadingTimes(t));
-		timer.initializeGameTime();
-		liveSplit.TimeSpan.fromSeconds((ms/1000)).with(t => timer.setGameTime(t));
-	}
-	
-	// Resets stopwatch to it's defaults.
-	function resetStopwatchToDefault() {
-		stopwatch.value = clone(defaultStopwatch);
-	}
-};
+}
+
+// Game Time is used so we can edit the timer easily.
+function initGameTime(ms) {
+	liveSplit.TimeSpan.fromSeconds(0).with(t => timer.setLoadingTimes(t));
+	timer.initializeGameTime();
+	liveSplit.TimeSpan.fromSeconds((ms/1000)).with(t => timer.setGameTime(t));
+}
+
+// Resets stopwatch to it's defaults.
+function resetStopwatchToDefault() {
+	stopwatch.value = clone(defaultStopwatch);
+}
 
 function msToTime(duration) {
 	var seconds = parseInt((duration/1000)%60),

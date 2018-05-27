@@ -1,59 +1,20 @@
 'use strict';
 
+// Referencing other files.
+var nodecgAPIContext = require('./utils/nodecg-api-context');
+
 module.exports = function(nodecg) {
-    try {
-        require('./stopwatch')(nodecg);
-    } catch (e) {
-        nodecg.log.error('Failed to load "stopwatch" lib:', e.stack);
-        process.exit(1);
-    }
-	
-    try {
-        require('./twitchapi')(nodecg);
-    } catch (e) {
-        nodecg.log.error('Failed to load "twitchapi" lib:', e.stack);
-        process.exit(1);
-    }
-	
-    try {
-        require('./csscreater')(nodecg);
-    } catch (e) {
-        nodecg.log.error('Failed to load "csscreater" lib:', e.stack);
-        process.exit(1);
-    }
-	
-    try {
-        require('./esacontroller')(nodecg);
-    } catch (e) {
-        nodecg.log.error('Failed to load "esacontroller" lib:', e.stack);
-        process.exit(1);
-    }
-	
-	try {
-        require('./ffzws')(nodecg);
-    } catch (e) {
-        nodecg.log.error('Failed to load "ffzws" lib:', e.stack);
-        process.exit(1);
-    }
-	
-	try {
-        require('./g4g')(nodecg);
-    } catch (e) {
-        nodecg.log.error('Failed to load "g4g" lib:', e.stack);
-        process.exit(1);
-    }
-	
-	try {
-        require('./srcomdonations')(nodecg);
-    } catch (e) {
-        nodecg.log.error('Failed to load "srcomdonations" lib:', e.stack);
-        process.exit(1);
-    }
-	
-	try {
-        require('./tiltify')(nodecg);
-    } catch (e) {
-        nodecg.log.error('Failed to load "tiltify" lib:', e.stack);
-        process.exit(1);
-    }
-};
+	// Store a reference to this NodeCG API context in a place where other libs can easily access it.
+	// This must be done before any other files are `require`d.
+	nodecgAPIContext.set(nodecg);
+
+	// Other extension files we need to load.
+	require('./stopwatch');
+	require('./twitchapi');
+	require('./csscreater');
+	require('./esacontroller');
+	require('./ffzws');
+	require('./g4g');
+	require('./srcomdonations');
+	require('./tiltify');
+}
