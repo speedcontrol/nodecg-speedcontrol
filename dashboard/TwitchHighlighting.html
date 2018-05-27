@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="../bower_components/jquery/dist/jquery.js"></script>
+	<script src="../bower_components/jquery-ui/jquery-ui.js"></script>
+	<script src="TwitchHighlighting.js"></script>
+	<link rel="stylesheet" href="../bower_components/jquery-ui/themes/redmond/jquery-ui.css"/>
+	<style>
+		#startHighlight, #stopHighlight {
+			width: 100%;
+		}
+
+		#notEnabledText {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<span id="notEnabledText">You have not enabled this!</span>
+	<span id="controlWrapper">
+		<button type="button" id="startHighlight">Start Highlight</button>
+		<button type="button" id="stopHighlight">Stop Highlight</button>
+	</span>
+</body>

@@ -12,7 +12,14 @@
 				"redirectURI": {"type": "string", "default": "http://localhost:9090/nodecg-speedcontrol/twitchauth"},
 				"ffzIntegration": {"type": "boolean", "default": false},
 				"streamTitle": {"type": "string", "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"},
-				"streamDefaultGame": {"type": "string", "default": "Retro"}
+				"streamDefaultGame": {"type": "string", "default": "Retro"},
+				"highlighting": {
+					"type": ["object", "null"],
+					"properties": {
+						"enable": {"type": "boolean", "default": false},
+						"gqlOAuth":  {"type": "string", "default": "SITE_OAUTH_KEY"}
+					}
+				}
 			}
 		},
 		"schedule": {

@@ -37,6 +37,7 @@ module.exports = function(nodecg) {
 				requestOptions.headers['Authorization'] = 'OAuth '+accessToken.value;
 				
 				getCurrentChannelInfo();
+				require('./twitch-highlighting')(nodecg)
 			});
 		}
 		
@@ -67,6 +68,8 @@ module.exports = function(nodecg) {
 					nodecg.listenFor('updateChannel', updateChannel);
 					nodecg.listenFor('playTwitchAd', playTwitchAd);
 					nodecg.listenFor('twitchGameSearch', gameSearch);
+					
+					require('./twitch-highlighting')(nodecg)
 				});
 			});
 		});
