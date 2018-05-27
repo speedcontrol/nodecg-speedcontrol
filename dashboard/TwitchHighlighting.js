@@ -12,9 +12,11 @@ $(() => {
 
 	var startHighlightButton = $('#startHighlight');
 	var stopHighlightButton = $('#stopHighlight');
+	var cancelHighlightButton = $('#cancelHighlight');
 
 	startHighlightButton.button();
 	stopHighlightButton.button();
+	cancelHighlightButton.button();
 
 	highlightRecording.on('change', (newVal) => {
 		// Only change buttons if run is currently not ongoing.
@@ -27,6 +29,7 @@ $(() => {
 		if (newVal.state === 'running' || newVal.state === 'paused') {
 			startHighlightButton.button({disabled:true});
 			stopHighlightButton.button({disabled:true});
+			cancelHighlightButton.button({disabled:true});
 		}
 
 		// If the timer isn't running, set the buttons to what they should be.
@@ -38,11 +41,13 @@ $(() => {
 		if (recording) {
 			startHighlightButton.button({disabled:true});
 			stopHighlightButton.button({disabled:false});
+			cancelHighlightButton.button({disabled:false});
 		}
 
 		else {
 			startHighlightButton.button({disabled:false});
 			stopHighlightButton.button({disabled:true});
+			cancelHighlightButton.button({disabled:true});
 		}
 	}
 
@@ -51,5 +56,8 @@ $(() => {
 	});
 	stopHighlightButton.click(() => {
 		nodecg.sendMessage('stopTwitchHighlight');
+	});
+	cancelHighlightButton.click(() => {
+		nodecg.sendMessage('cancelTwitchHighlight');
 	});
 });

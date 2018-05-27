@@ -13,6 +13,7 @@ module.exports = function(nodecg) {
 	var stopwatch = nodecg.Replicant('stopwatch');
 	var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
 
+	// Ability to start the Twitch highlight recording.
 	// Listens for a message, either from the dashboard buttons or somewhere else.
 	nodecg.listenFor('startTwitchHighlight', () => {
 		// Cannot start a highlight if one is already being recorded.
@@ -25,6 +26,7 @@ module.exports = function(nodecg) {
 		nodecg.log.debug('[twitch-highlighting] highlight start timestamp is '+startTimestamp.value);
 	});
 
+	// Ability to stop the Twitch highlight recording.
 	// Listens for a message, either from the dashboard buttons or somewhere else.
 	nodecg.listenFor('stopTwitchHighlight', () => {
 		// Cannot stop a highlight if one isn't being recorded, or if the timer is running/paused.
@@ -33,12 +35,26 @@ module.exports = function(nodecg) {
 
 		nodecg.log.debug('[twitch-highlighting] stopping highlight');
 		highlightRecording.value = false;
+
+		if (!highlightRunData.value) {
+			nodecg.log.debug('[twitch-highlighting] no run data was set during highlight, ignoring');
+			return;
+		}
+
 		var endTimestamp = Math.floor(Date.now()/1000);
 		nodecg.log.debug('[twitch-highlighting] highlight start timestamp is '+startTimestamp.value);
 		nodecg.log.debug('[twitch-highlighting] highlight end timestamp is '+endTimestamp);
 		nodecg.log.debug('[twitch-highlighting] highlight run is '+JSON.stringify(highlightRunData.value));
 		nodecg.log.debug('[twitch-highlighting] highlight length is '+(endTimestamp-startTimestamp.value));
 
+		cleanUp();
+	});
+
+	// Ability to cancel the Twitch highlight recording.
+	// Listens for a message, either from the dashboard buttons or somewhere else.
+	nodecg.listenFor('cancelTwitchHighlight', () => {
+		nodecg.log.debug('[twitch-highlighting] cancelling highlight');
+		highlightRecording.value = false;
 		cleanUp();
 	});
 
