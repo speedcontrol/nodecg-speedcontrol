@@ -37,7 +37,7 @@ if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twi
 			requestOptions.headers['Authorization'] = 'OAuth '+accessToken.value;
 			
 			getCurrentChannelInfo();
-			require('./twitch-highlighting')(nodecg)
+			require('./twitch-highlighting');
 			require('./twitch-gql');
 		});
 	}
@@ -70,7 +70,7 @@ if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twi
 				nodecg.listenFor('playTwitchAd', playTwitchAd);
 				nodecg.listenFor('twitchGameSearch', gameSearch);
 				
-				require('./twitch-highlighting')(nodecg)
+				require('./twitch-highlighting');
 				require('./twitch-gql');
 			});
 		});
