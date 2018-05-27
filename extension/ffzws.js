@@ -45,7 +45,9 @@ function connectToWS(callback) {
 
 	// Reset message number and connect.
 	messageNumber = 1;
-	ffzWS = new WebSocket(pickServer());
+	var serverURL = pickServer();
+	ffzWS = new WebSocket(serverURL);
+	nodeCgExport.log.info('Connecting to FrankerFaceZ ('+serverURL+').');
 
 	// Catching any errors with the connection. The "close" event is also fired if it's a disconnect.
 	ffzWS.on('error', function(error) {
@@ -184,9 +186,9 @@ function sendAuthThroughTwitchChat(auth) {
 	});
 }
 
-// Picks a server randomly, 1-2-2 split in which it picks.
+// Picks a server randomly, 1-2-2-2 split in which it picks.
 function pickServer() {
-	switch(randomInt(0, 5)) {
+	switch(randomInt(0, 7)) {
 		case 0:
 			return 'wss://catbag.frankerfacez.com/';
 		case 1:
@@ -195,6 +197,9 @@ function pickServer() {
 		case 3:
 		case 4:
 			return 'wss://tuturu.frankerfacez.com/';
+		case 5:
+		case 6:
+			return 'wss://lilz.frankerfacez.com/';
 	}
 }
 
