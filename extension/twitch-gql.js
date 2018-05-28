@@ -9,6 +9,19 @@ var client = new GraphQLClient('https://api.twitch.tv/gql', {
 	}
 });
 
+// Gets the OAuth user's ID. Calls back an error and the ID.
+exports.getCurrentUserID = function(callback) {
+	var query = `query() {
+		currentUser {
+			id
+		}
+	}`;
+	
+	client.request(query)
+		.then(data => callback(null, data.currentUser.id))
+		.catch(err => callback(err.response.status, null));
+}
+
 // Gets the time the OAuth user's stream was created at.
 exports.getStreamCreatedTime = function(callback) {
 	var query = `query() {

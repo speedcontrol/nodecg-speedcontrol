@@ -5,60 +5,78 @@ var async = require('async');
 var gql = require('./twitch-gql');
 var nodecg = require('./utils/nodecg-api-context').get();
 
-// Don't run the code if the feature is not enabled or the OAuth isn't set in the config.
-if (!nodecg.bundleConfig.twitch.highlighting || !nodecg.bundleConfig.twitch.highlighting.enable || !nodecg.bundleConfig.twitch.highlighting.gqlOAuth)
+// Don't run the code if the feature is not enabled in the config.
+if (!nodecg.bundleConfig.twitch.highlighting || !nodecg.bundleConfig.twitch.highlighting.enable)
 	return;
 
-// Setting up replicants.
-var highlightRecording = nodecg.Replicant('twitchHighlightRecording', {defaultValue:false});
-var startTimestamp = nodecg.Replicant('twitchHighlightStartTimestamp', {defaultValue:null});
-var highlightRunData = nodecg.Replicant('twitchHighlightRunData', {defaultValue:null});
-var stopwatch = nodecg.Replicant('stopwatch');
-var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
+// Don't run the code if the config is not set or is set incorrectly in the config.
+if (!nodecg.bundleConfig.twitch.highlighting.gqlOAuth || nodecg.bundleConfig.twitch.highlighting.gqlOAuth === '') {
+	nodecg.log.warn('Twitch highlights will not be active due to your OAuth not being set correctly in the config.');
+	return;
+}
 
-// Ability to start the Twitch highlight recording.
-// Listens for a message, either from the dashboard buttons or somewhere else.
-nodecg.listenFor('startTwitchHighlight', () => {
-	// Cannot start a highlight if one is already being recorded.
-	if (highlightRecording.value)
-		return;
-
-	highlightRecording.value = true;
-	startTimestamp.value = Math.floor(Date.now()/1000); // Store the current timestamp in seconds.
+// Get the OAuth user's ID to check the OAuth actually works.
+gql.getCurrentUserID((err, ID) => {
+	if (err)
+		nodecg.log.warn('Twitch highlights will not be active due to an issue with your OAuth.');
+	else
+		setUp();
 });
 
-// Ability to stop the Twitch highlight recording.
-// Listens for a message, either from the dashboard buttons or somewhere else.
-nodecg.listenFor('stopTwitchHighlight', () => {
-	// Cannot stop a highlight if one isn't being recorded, or if the timer is running/paused.
-	if (!highlightRecording.value || stopwatch.value.state === 'running' || stopwatch.value.state === 'paused')
-		return;
+function setUp() {
+	nodecg.log.info('Twitch highlighting is enabled.');
 
-	highlightRecording.value = false;
+	// Setting up replicants.
+	var highlightRecording = nodecg.Replicant('twitchHighlightRecording', {defaultValue:false});
+	var startTimestamp = nodecg.Replicant('twitchHighlightStartTimestamp', {defaultValue:null});
+	var highlightRunData = nodecg.Replicant('twitchHighlightRunData', {defaultValue:null});
+	var stopwatch = nodecg.Replicant('stopwatch');
+	var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
 
-	// If no run data was set during the recording, don't process it.
-	if (!highlightRunData.value) {
-		nodecg.log.warn('Twitch highlight will not be made due to no run being done during the recording.');
-		return;
-	}
+	// Ability to start the Twitch highlight recording.
+	// Listens for a message, either from the dashboard buttons or somewhere else.
+	nodecg.listenFor('startTwitchHighlight', () => {
+		// Cannot start a highlight if one is already being recorded.
+		if (highlightRecording.value)
+			return;
 
-	var endTimestamp = Math.floor(Date.now()/1000);
-	createHighlight(startTimestamp.value, endTimestamp, clone(highlightRunData.value));
-	cleanUp();
-});
+		highlightRecording.value = true;
+		startTimestamp.value = Math.floor(Date.now()/1000); // Store the current timestamp in seconds.
+	});
 
-// Ability to cancel the Twitch highlight recording.
-// Listens for a message, either from the dashboard buttons or somewhere else.
-nodecg.listenFor('cancelTwitchHighlight', () => {
-	highlightRecording.value = false;
-	cleanUp();
-});
+	// Ability to stop the Twitch highlight recording.
+	// Listens for a message, either from the dashboard buttons or somewhere else.
+	nodecg.listenFor('stopTwitchHighlight', () => {
+		// Cannot stop a highlight if one isn't being recorded, or if the timer is running/paused.
+		if (!highlightRecording.value || stopwatch.value.state === 'running' || stopwatch.value.state === 'paused')
+			return;
 
-// Store the currently set run when the timer starts, which we will use for the highlight info.
-stopwatch.on('change', (newVal, oldVal) => {
-	if (!highlightRunData.value && oldVal && oldVal.state === 'stopped' && newVal.state === 'running')
-		highlightRunData.value = clone(runDataActiveRun.value);
-});
+		highlightRecording.value = false;
+
+		// If no run data was set during the recording, don't process it.
+		if (!highlightRunData.value) {
+			nodecg.log.warn('Twitch highlight will not be made due to no run being done during the recording.');
+			return;
+		}
+
+		var endTimestamp = Math.floor(Date.now()/1000);
+		createHighlight(startTimestamp.value, endTimestamp, clone(highlightRunData.value));
+		cleanUp();
+	});
+
+	// Ability to cancel the Twitch highlight recording.
+	// Listens for a message, either from the dashboard buttons or somewhere else.
+	nodecg.listenFor('cancelTwitchHighlight', () => {
+		highlightRecording.value = false;
+		cleanUp();
+	});
+
+	// Store the currently set run when the timer starts, which we will use for the highlight info.
+	stopwatch.on('change', (newVal, oldVal) => {
+		if (!highlightRunData.value && oldVal && oldVal.state === 'stopped' && newVal.state === 'running')
+			highlightRunData.value = clone(runDataActiveRun.value);
+	});
+}
 
 // General clean up stuff, getting ready for the next highlight.
 function cleanUp() {

@@ -99,7 +99,7 @@ function connectToWS(callback) {
 
 			// This is returned when the follower buttons are updated (including through this script).
 			else if (data.indexOf('-1 follow_buttons') === 0) {
-				nodecg.log.info('Got follow_buttons from FrankerFaceZ connection.');
+				//nodecg.log.info('Got follow_buttons from FrankerFaceZ connection.');
 				ffzFollowButtonsReplicant.value = JSON.parse(data.substr(18))[twitchChannelName.value];
 			}
 		}
