@@ -16,22 +16,23 @@ if (!nodecg.bundleConfig.twitch.highlighting.gqlOAuth || nodecg.bundleConfig.twi
 }
 
 // Get the OAuth user's ID to check the OAuth actually works.
-gql.getCurrentUserID((err, ID) => {
+gql.getCurrentUserID((err, id) => {
 	if (err)
 		nodecg.log.warn('Twitch highlights will not be active due to an issue with your OAuth.');
 	else
 		setUp();
 });
 
+// Setting up replicants.
+var highlightRecording = nodecg.Replicant('twitchHighlightRecording', {defaultValue:false});
+var startTimestamp = nodecg.Replicant('twitchHighlightStartTimestamp', {defaultValue:null});
+var highlightRunData = nodecg.Replicant('twitchHighlightRunData', {defaultValue:null});
+var highlightHistory = nodecg.Replicant('twitchHighlightHistory', {defaultValue:[]});
+var stopwatch = nodecg.Replicant('stopwatch');
+var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
+
 function setUp() {
 	nodecg.log.info('Twitch highlighting is enabled.');
-
-	// Setting up replicants.
-	var highlightRecording = nodecg.Replicant('twitchHighlightRecording', {defaultValue:false});
-	var startTimestamp = nodecg.Replicant('twitchHighlightStartTimestamp', {defaultValue:null});
-	var highlightRunData = nodecg.Replicant('twitchHighlightRunData', {defaultValue:null});
-	var stopwatch = nodecg.Replicant('stopwatch');
-	var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
 
 	// Ability to start the Twitch highlight recording.
 	// Listens for a message, either from the dashboard buttons or somewhere else.
@@ -67,6 +68,10 @@ function setUp() {
 	// Ability to cancel the Twitch highlight recording.
 	// Listens for a message, either from the dashboard buttons or somewhere else.
 	nodecg.listenFor('cancelTwitchHighlight', () => {
+		// Cannot cancel a highlight if one isn't being recorded, or if the timer is running/paused.
+		if (!highlightRecording.value || stopwatch.value.state === 'running' || stopwatch.value.state === 'paused')
+			return;
+
 		highlightRecording.value = false;
 		cleanUp();
 	});
@@ -140,17 +145,49 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 
 		var startInPastBroadcast = (startTimestamp-pastBroadcastRecordedAt.unix())-10; // 10s padding.
 		var endInPastBroadcast = (endTimestamp-pastBroadcastRecordedAt.unix())+10; // 10s padding.
-		var highlightTitle = runData.game+' - '+runData.category; // TODO: Allow this to be customised.
-		
+		var highlightTitle = 'Game: {{game}} - Category: {{category}} - Players: {{players}}';
+
+		if (nodecg.bundleConfig.twitch.highlighting.title)
+			highlightTitle = nodecg.bundleConfig.twitch.highlighting.title;
+
+		var playerNames = [];
+		for (var i = 0; i < runData.players.length; i++) {
+			playerNames.push(runData.players[i].names.international);
+		}
+
+		// Fill in the wildcards in the title.
+		highlightTitle = highlightTitle
+			.replace("{{game}}", runData.game)
+			.replace("{{players}}", playerNames.join(', '))
+			.replace("{{category}}", runData.category );
+			
 		// Create highlight after a 30s delay to make sure Twitch has caught up.
 		nodecg.log.info('Twitch highlight will be made in 30s.');
+		nodecg.sendMessage('twitchHighlightProcessing', highlightTitle);
 		setTimeout(() => {
 			gql.createHighlight(pastBroadcastID, startInPastBroadcast, endInPastBroadcast, highlightTitle, (id) => {
-				if (id)
+				if (id) {
 					nodecg.log.info('Twitch highlight created successfully (ID: '+id+').');
+					addHighlightToHistory(highlightTitle, id);
+					nodecg.sendMessage('twitchHighlightProcessing', null);
+				}
 				else
 					nodecg.log.warn('Twitch highlight was not created successfully.');
 			});
 		}, 30000);
 	});
+}
+
+// Used to add a created highlight to the history array.
+function addHighlightToHistory(title, id) {
+	// Add run to front of array.
+	var run = {
+		title: title,
+		url: 'https://www.twitch.tv/videos/'+id
+	};
+	var highlightHistoryCopy = highlightHistory.value.slice(0);
+	highlightHistoryCopy.unshift(run);
+
+	// Make sure the array stays capped at 4 highlights.
+	highlightHistory.value = highlightHistoryCopy.slice(0, 4);
 }

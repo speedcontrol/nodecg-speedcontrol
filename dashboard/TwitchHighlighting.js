@@ -2,18 +2,25 @@
 $(() => {
 	// If this feature is not enabled, do not display the controls.
 	if (!nodecg.bundleConfig.twitch.highlighting || !nodecg.bundleConfig.twitch.highlighting.enable) {
-		$('#controlWrapper').hide();
+		$('#wrapper').hide();
 		$('#notEnabledText').show();
 		return;
 	}
 
+	// Setting up replicants.
 	var highlightRecording = nodecg.Replicant('twitchHighlightRecording');
 	var stopwatch = nodecg.Replicant('stopwatch');
+	var highlightHistory = nodecg.Replicant('twitchHighlightHistory');
 
+	// JQuery elements.
 	var startHighlightButton = $('#startHighlight');
 	var stopHighlightButton = $('#stopHighlight');
 	var cancelHighlightButton = $('#cancelHighlight');
+	var historyList = $('#history');
+	var processingElem = $('#processing');
+	var processingTitle = $('#processingTitle');
 
+	// Turn the buttons into JQueryUI buttons.
 	startHighlightButton.button();
 	stopHighlightButton.button();
 	cancelHighlightButton.button();
@@ -51,6 +58,7 @@ $(() => {
 		}
 	}
 
+	// Sending messages using the buttons.
 	startHighlightButton.click(() => {
 		nodecg.sendMessage('startTwitchHighlight');
 	});
@@ -59,5 +67,27 @@ $(() => {
 	});
 	cancelHighlightButton.click(() => {
 		nodecg.sendMessage('cancelTwitchHighlight');
+	});
+
+	// Message that tells us when a highlight is being processed (and also removed when done).
+	nodecg.listenFor('twitchHighlightProcessing', title => {
+		if (!title)
+			processingElem.hide(); // this does not work for some reason?
+		else
+			processingTitle.html(title);
+			processingElem.show();
+	});
+	
+	// Updates the highlight history list when needed.
+	highlightHistory.on('change', (newVal, oldVal) => {
+		if (!newVal.length)
+			historyList.html('<br>None yet.');
+		else {
+			var html = '';
+			newVal.forEach(highlight => {
+				html += '<br><a href="'+highlight.url+'">'+highlight.title+'</a><br>';
+			});
+			historyList.html(html);
+		}
 	});
 });

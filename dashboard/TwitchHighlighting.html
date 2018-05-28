@@ -12,16 +12,24 @@
 			width: 100%;
 		}
 
-		#notEnabledText {
+		#notEnabledText, #processing {
 			display: none;
 		}
 	</style>
 </head>
 <body>
 	<span id="notEnabledText">You have not enabled this!</span>
-	<span id="controlWrapper">
+	<span id="wrapper">
 		<button type="button" id="startHighlight">Start Highlight</button>
 		<button type="button" id="stopHighlight">Stop Highlight</button>
 		<button type="button" id="cancelHighlight">Cancel Highlight</button>
+		<div id="processing">
+			<hr>
+			<b>Currently Processing:</b>
+			<br><span id="processingTitle"></span>
+		</div>
+		<hr>
+		<span><b>Hightlight History:</b></span><br>
+		<span id="history"><br>None yet.</span>
 	</span>
 </body>

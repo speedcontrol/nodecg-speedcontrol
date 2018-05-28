@@ -17,7 +17,8 @@
 					"type": ["object", "null"],
 					"properties": {
 						"enable": {"type": "boolean", "default": false},
-						"gqlOAuth":  {"type": "string", "default": "SITE_OAUTH_KEY"}
+						"gqlOAuth":  {"type": "string", "default": "SITE_OAUTH_KEY"},
+						"title": {"type": "string", "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"}
 					}
 				}
 			}
