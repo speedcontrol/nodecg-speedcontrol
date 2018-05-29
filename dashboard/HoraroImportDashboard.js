@@ -7,7 +7,7 @@ $(function() {
 	var runNumberIterator = 1;
 	var scheduleData;
 	var defaultSetupTimeReplicant = nodecg.Replicant('defaultSetupTime', {defaultValue: 0});
-	var customData = nodecg.bundleConfig.schedule.customData;
+	var customData = nodecg.bundleConfig.schedule.customData || [];
 	
 	// Temp cache for the user data from SR.com that is kept until the server is restarted.
 	var userDataCache = nodecg.Replicant('horaroImportUserDataCache', {defaultValue: {}, persistent: false});
