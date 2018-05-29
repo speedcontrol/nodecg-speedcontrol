@@ -41,7 +41,7 @@ if (stopwatch.value.state === 'running') {
 	initGameTime(timeOffset);
 }
 else
-	initGameTime(0);
+	initGameTime(stopwatch.value.milliseconds);
 
 // Listeners, redirected to functions below.
 nodecg.listenFor('startTime', start);
@@ -73,7 +73,7 @@ function start(force) {
 	stopwatch.value.state = 'running';
 	if (timer.currentPhase() === LS_TIMER_PHASE.NotRunning) {
 		timer.start();
-		initGameTime(0);
+		initGameTime(stopwatch.value.milliseconds);
 	}
 	else
 		timer.resume();
