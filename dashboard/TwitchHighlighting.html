@@ -15,11 +15,20 @@
 		#notEnabledText {
 			display: none;
 		}
+
+		#fieldWarning {
+			padding-bottom: 7px;
+			font-size: 13px;
+			font-style: italic;
+		}
 	</style>
 </head>
 <body>
 	<span id="notEnabledText">You have not enabled this!</span>
 	<span id="wrapper">
+		<!-- TODO: Replace this message with something more custom when we include automatic highlighting in speedcontrol proper. -->
+		<div id="fieldWarning">You should not need to touch these buttons if your highlighting is done automatically.</div>
+		
 		<button type="button" id="startHighlight">Start Highlight</button>
 		<button type="button" id="stopHighlight">Stop Highlight</button>
 		<button type="button" id="cancelHighlight">Cancel Highlight</button>
