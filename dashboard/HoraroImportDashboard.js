@@ -175,18 +175,18 @@ $(function() {
 					
 					// Estimate
 					runData.estimateS = run.length_t;
-					runData.estimate = msToTime(run.length_t);
+					runData.estimate = secondsToTime(run.length_t);
 					
 					// If the run has a custom setup time, use that.
 					if (run.options && run.options.setup && run.options.setup.indexOf('m') > 0) {
 						// Kinda dirty right now; assumes the format is Xm (e.g. 15m).
 						var setupSeconds = parseInt(run.options.setup.slice(0, -1))*60;
-						runData.setupTime = msToTime(setupSeconds);
+						runData.setupTime = secondsToTime(setupSeconds);
 						runData.setupTimeS = setupSeconds;
 					}
 					
 					else {
-						runData.setupTime = msToTime(defaultSetupTime);
+						runData.setupTime = secondsToTime(defaultSetupTime);
 						runData.setupTimeS = defaultSetupTime;
 					}
 					
@@ -467,13 +467,15 @@ $(function() {
 		}
 	});
 	
-	function msToTime(duration) {
+	function secondsToTime(duration) {
+		var seconds = parseInt(duration % 60);
 		var minutes = parseInt((duration / 60) % 60);
 		var hours = parseInt(duration / (3600));
 		
 		hours = (hours < 10) ? '0' + hours : hours;
 		minutes = (minutes < 10) ? '0' + minutes : minutes;
+		seconds = (seconds < 10) ? '0' + seconds : seconds;
 		
-		return hours + ':' + minutes;
+		return hours + ':' + minutes + ':' + seconds;
 	}
 });

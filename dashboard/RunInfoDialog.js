@@ -237,18 +237,20 @@ $(function() {
 	// Needs moving to a seperate file; this is copy/pasted in a few places.
 	function msToTime(duration) {
 		var minutes = parseInt((duration/(1000*60))%60),
-			hours = parseInt((duration/(1000*60*60))%24);
+			hours = parseInt((duration/(1000*60*60))%24),
+			seconds = parseInt((duration/1000)%60);
 		
 		hours = (hours < 10) ? '0' + hours : hours;
 		minutes = (minutes < 10) ? '0' + minutes : minutes;
-		
-		return hours + ':' + minutes;
+		seconds = (seconds < 10) ? '0' + seconds : seconds;
+
+		return hours + ':' + minutes + ':' + seconds;
 	}
 	
 	// Needs moving to a seperate file; this is copy/pasted in a few places.
 	function timeToMS(duration) {
 		var ts = duration.split(':');
-		if (ts.length === 1) ts.unshift('00'); // Adds 0 hours if they are not specified.
-		return Date.UTC(1970, 0, 1, ts[0], ts[1], 0);
+		if (ts.length === 2) ts.unshift('00'); // Adds 0 hours if they are not specified.
+		return Date.UTC(1970, 0, 1, ts[0], ts[1], ts[2]);
 	}
 });
