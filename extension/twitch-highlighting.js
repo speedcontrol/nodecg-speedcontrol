@@ -28,6 +28,7 @@ var highlightRecording = nodecg.Replicant('twitchHighlightRecording', {defaultVa
 var startTimestamp = nodecg.Replicant('twitchHighlightStartTimestamp', {defaultValue:null});
 var highlightRunData = nodecg.Replicant('twitchHighlightRunData', {defaultValue:null});
 var highlightHistory = nodecg.Replicant('twitchHighlightHistory', {defaultValue:[]});
+var highlightProcessing = nodecg.Replicant('twitchHighlightProcessing', {defaultValue:null, persistent:false});
 var stopwatch = nodecg.Replicant('stopwatch');
 var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
 
@@ -163,13 +164,13 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 			
 		// Create highlight after a 30s delay to make sure Twitch has caught up.
 		nodecg.log.info('Twitch highlight will be made in 30s.');
-		nodecg.sendMessage('twitchHighlightProcessing', highlightTitle);
+		highlightProcessing.value = highlightTitle;
 		setTimeout(() => {
 			gql.createHighlight(pastBroadcastID, startInPastBroadcast, endInPastBroadcast, highlightTitle, (id) => {
 				if (id) {
 					nodecg.log.info('Twitch highlight created successfully (ID: '+id+').');
 					addHighlightToHistory(highlightTitle, id);
-					nodecg.sendMessage('twitchHighlightProcessing', null);
+					highlightProcessing.value = highlightTitle;
 				}
 				else
 					nodecg.log.warn('Twitch highlight was not created successfully.');

@@ -11,6 +11,7 @@ $(() => {
 	var highlightRecording = nodecg.Replicant('twitchHighlightRecording');
 	var stopwatch = nodecg.Replicant('stopwatch');
 	var highlightHistory = nodecg.Replicant('twitchHighlightHistory');
+	var highlightProcessing = nodecg.Replicant('twitchHighlightProcessing');
 
 	// JQuery elements.
 	var startHighlightButton = $('#startHighlight');
@@ -69,13 +70,13 @@ $(() => {
 		nodecg.sendMessage('cancelTwitchHighlight');
 	});
 
-	// Message that tells us when a highlight is being processed (and also removed when done).
-	nodecg.listenFor('twitchHighlightProcessing', title => {
-		if (!title)
-			processingElem.hide(); // this does not work for some reason?
+	// Replicant that tells us when a highlight is being processed/not being processed.
+	// TODO: Remove element when value is null/undefined.
+	highlightProcessing.on('change', (newVal, oldVal) => {
+		if (!newVal)
+			processingTitle.html('None');
 		else
-			processingTitle.html(title);
-			processingElem.show();
+			processingTitle.html(newVal);
 	});
 	
 	// Updates the highlight history list when needed.
