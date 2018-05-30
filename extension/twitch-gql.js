@@ -67,9 +67,29 @@ exports.getMostRecentBroadcastData = function(callback) {
 		.catch(err => callback(null));
 }
 
+// Gets an ID of a game from the name, calls back the ID if it can be found.
+exports.getGameID = function(name, callback) {
+	var query = `query($gameName: String) {
+		game(name: $gameName) {
+			id
+		}
+	}`;
+	var variables = {
+		gameName: name
+	};
+	
+	client.request(query, variables)
+		.then(data => {
+			if (data.game)
+				callback(data.game.id)
+			else
+				callback(null);
+		})
+		.catch(err => callback(null));
+}
+
 // Make a highlight, calls back the ID of the highlight.
-// TODO: Add game ID
-exports.createHighlight = function(ID, start, end, title, callback) {
+exports.createHighlight = function(videoID, start, end, title, gameID, callback) {
 	var query = `mutation($createVideoHighlightInput: CreateVideoHighlightInput!) {
 		createVideoHighlight(input: $createVideoHighlightInput) {
 			highlight {
@@ -79,11 +99,12 @@ exports.createHighlight = function(ID, start, end, title, callback) {
 	}`;
 	var variables = {
 		createVideoHighlightInput: {
-			sourceVideoID: ID,
+			sourceVideoID: videoID,
 			startOffsetSeconds: start,
 			endOffsetSeconds: end,
 			metadata: {
-				title: title
+				title: title,
+				game: gameID
 			}
 		}
 	};

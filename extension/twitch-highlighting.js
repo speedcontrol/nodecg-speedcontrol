@@ -95,6 +95,7 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 	var streamCreatedAt;
 	var pastBroadcastRecordedAt;
 	var pastBroadcastID;
+	var gameID;
 	
 	async.waterfall([
 		function(callback) {
@@ -116,6 +117,16 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 				else {
 					pastBroadcastRecordedAt = moment.utc(data.recordedAt);
 					pastBroadcastID = data.id;
+					callback();
+				}
+			});
+		},
+		function(callback) {
+			// Get ID of game on Twitch if possible.
+			// TODO: Use Twitch name from speedrun.com/schedule import too.
+			gql.getGameID(runData.game, id => {
+				if (id) {
+					gameID = id;
 					callback();
 				}
 			});
@@ -166,7 +177,7 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 		nodecg.log.info('Twitch highlight will be made in 30s.');
 		highlightProcessing.value = highlightTitle;
 		setTimeout(() => {
-			gql.createHighlight(pastBroadcastID, startInPastBroadcast, endInPastBroadcast, highlightTitle, (id) => {
+			gql.createHighlight(pastBroadcastID, startInPastBroadcast, endInPastBroadcast, highlightTitle, gameID, (id) => {
 				if (id) {
 					nodecg.log.info('Twitch highlight created successfully (ID: '+id+').');
 					addHighlightToHistory(highlightTitle, id);
