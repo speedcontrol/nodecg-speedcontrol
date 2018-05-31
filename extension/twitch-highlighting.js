@@ -129,6 +129,8 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 					gameID = id;
 					callback();
 				}
+				else
+					callback();
 			});
 		}
 	], function(err) {
@@ -181,7 +183,7 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 				if (id) {
 					nodecg.log.info('Twitch highlight created successfully (ID: '+id+').');
 					addHighlightToHistory(highlightTitle, id);
-					highlightProcessing.value = highlightTitle;
+					highlightProcessing.value = null;
 				}
 				else
 					nodecg.log.warn('Twitch highlight was not created successfully.');
