@@ -124,7 +124,7 @@ function getCurrentChannelInfo() {
 }
 
 function updateChannel(updatedValues) {
-	nodecg.log.info('Trying to update Twitchchannel information.');
+	nodecg.log.info('Trying to update Twitch channel information.');
 	checkTokenValidity(() => {
 		var url = 'https://api.twitch.tv/kraken/channels/'+twitchChannelID.value;
 		var data = {

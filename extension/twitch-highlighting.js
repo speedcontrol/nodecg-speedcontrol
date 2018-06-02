@@ -38,8 +38,8 @@ function setUp() {
 	// Ability to start the Twitch highlight recording.
 	// Listens for a message, either from the dashboard buttons or somewhere else.
 	nodecg.listenFor('startTwitchHighlight', () => {
-		// Cannot start a highlight if one is already being recorded.
-		if (highlightRecording.value)
+		// Cannot start a highlight if one is already being recorded, or if the timer is running/paused.
+		if (highlightRecording.value || stopwatch.value.state === 'running' || stopwatch.value.state === 'paused')
 			return;
 
 		highlightRecording.value = true;
@@ -77,9 +77,9 @@ function setUp() {
 		cleanUp();
 	});
 
-	// Store the currently set run when the timer starts, which we will use for the highlight info.
+	// Store the currently set run when the timer first starts if a highlight is being recorded, which we will use for the highlight info.
 	stopwatch.on('change', (newVal, oldVal) => {
-		if (!highlightRunData.value && oldVal && oldVal.state === 'stopped' && newVal.state === 'running')
+		if (highlightRecording.value && !highlightRunData.value && oldVal && oldVal.state === 'stopped' && newVal.state === 'running')
 			highlightRunData.value = clone(runDataActiveRun.value);
 	});
 }
