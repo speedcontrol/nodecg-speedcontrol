@@ -22,7 +22,7 @@ Below is an example configuration file contents with everything that is availabl
 		"redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
 		"ffzIntegration": false,
 		"streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
-		"streamDefaultGame": "Retro"
+		"streamDefaultGame": "Games + Demos"
 	},
 	"schedule": {
 		"defaultURL": "https://horaro.org/event/schedule",
@@ -72,7 +72,7 @@ By default this boolean is false, changing it to true disables a few dashboard b
 	"redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
 	"ffzIntegration": false,
 	"streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
-	"streamDefaultGame": "Retro"
+	"streamDefaultGame": "Games + Demos"
 }
 ```
 

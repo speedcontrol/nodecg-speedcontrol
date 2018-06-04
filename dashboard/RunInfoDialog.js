@@ -38,7 +38,6 @@ $(function() {
 			
 			// Populate fields with relevant data.
 			$('#gameInput').val(runInfo.game);
-			$('#gameShortInput').val(runInfo.gameShort);
 			$('#gameTwitchInput').val(runInfo.gameTwitch);
 			$('#categoryInput').val(runInfo.category);
 			$('#estimateInput').val(runInfo.estimate);
@@ -78,7 +77,6 @@ $(function() {
 			return;
 		}
 		
-		newRunData.gameShort = $('#gameShortInput').val();
 		newRunData.gameTwitch = $('#gameTwitchInput').val();
 		newRunData.category = $('#categoryInput').val();
 		
