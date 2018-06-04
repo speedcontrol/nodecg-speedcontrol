@@ -10,6 +10,7 @@ module.exports = function(nodecg) {
 
 	// Other extension files we need to load.
 	require('./stopwatch');
+	require('./horaro-import');
 	require('./twitchapi');
 	require('./csscreater');
 	require('./esacontroller');
