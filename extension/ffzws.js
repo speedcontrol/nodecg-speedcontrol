@@ -112,7 +112,7 @@ function setFFZFollowing(usernames) {
 	nodecg.log.info('Attempting to set FrankerFaceZ Twitch names.');
 	// Checks to make sure we are connected and can do this.
 	if (ffzWSConnected) {
-		nodecg.log.info('Sent FrankerFaceZ Twitch names.');
+		//nodecg.log.info('Sent FrankerFaceZ Twitch names.');
 		sendMessage('update_follow_buttons ' + JSON.stringify([twitchChannelName.value,usernames]), function(message) {
 			var updatedClients = JSON.parse(message.substr(3))['updated_clients'];
 			nodecg.log.info('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
@@ -174,7 +174,7 @@ function sendAuthThroughTwitchChat(auth) {
 	client.connect();
 
 	client.once('connected', function(address, port) {
-		nodecg.log.info('Connected to Twitch chat to auth with FrankerFaceZ.');
+		nodecg.log.info('Connected to Twitch chat to authenticate with FrankerFaceZ.');
 		// Send the auth code to the specific Twitch channel.
 		client.say('frankerfacezauthorizer', 'AUTH ' + auth);
 
