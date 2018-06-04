@@ -45,6 +45,8 @@ nodecg start
 - [Themeathon Pre-Marathon 2018](https://www.twitch.tv/themeathon)
 - Several [Voltathon](https://www.twitch.tv/voltagegg) marathons.
 - Several [DegenDash](https://www.twitch.tv/degendash) marathons.
+- Some marathons on [The Fast Force](https://www.twitch.tv/thefastforce) Twitch channel.
+- [A Race Against Time 3](https://www.twitch.tv/araceagainsttime) marathon.
 
 ## Authors/Contributors
 
