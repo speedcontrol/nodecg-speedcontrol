@@ -74,7 +74,7 @@
       {
         "name": "stream-control",
         "title": "Twitch Control",
-        "width": 2,
+        "width": 3,
         "file": "StreamControlDashboard.html",
         "headerColor": "#008BB9"
       },
@@ -83,7 +83,8 @@
         "title": "Twitch Highlighting",
         "width": 2,
         "file": "TwitchHighlighting.html",
-        "headerColor": "#008BB9"
+        "headerColor": "#008BB9",
+        "workspace": "Twitch Highlighting"
       },
       {
         "name": "horaro-import",

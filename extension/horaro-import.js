@@ -355,7 +355,6 @@ function horaro_SetLastID() {
 	horaroRunDataLastIDReplicant.value = runNumberIterator;
 }
 
-
 var horaroRunDataLastIDReplicant = nodecg.Replicant('runDataLastID');
 horaroRunDataLastIDReplicant.on('change', function(newValue, oldValue) {
 	if (typeof newValue === 'undefined') {
