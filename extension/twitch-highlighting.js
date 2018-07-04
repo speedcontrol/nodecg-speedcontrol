@@ -48,26 +48,22 @@ function setUp() {
 
 	// Ability to stop the Twitch highlight recording.
 	// Listens for a message, either from the dashboard buttons or somewhere else.
-	nodecg.listenFor('stopTwitchHighlight', (data, callback) => {
+	nodecg.listenFor('stopTwitchHighlight', () => {
 		// Cannot stop a highlight if one isn't being recorded, or if the timer is running/paused.
-		if (!highlightRecording.value || stopwatch.value.state === 'running' || stopwatch.value.state === 'paused') {
-			if (callback) callback(true);
+		if (!highlightRecording.value || stopwatch.value.state === 'running' || stopwatch.value.state === 'paused')
 			return;
-		}
 
 		highlightRecording.value = false;
 
 		// If no run data was set during the recording, don't process it.
 		if (!highlightRunData.value) {
 			nodecg.log.warn('Twitch highlight will not be made due to no run being done during the recording.');
-			if (callback) callback(true);
 			return;
 		}
 
 		var endTimestamp = Math.floor(Date.now()/1000);
 		createHighlight(startTimestamp.value, endTimestamp, clone(highlightRunData.value));
 		cleanUp();
-		if (callback) callback(null);
 	});
 
 	// Ability to cancel the Twitch highlight recording.
@@ -156,17 +152,12 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 
 		// If the most recent past broadcast started *after* the highlight was started, we want to stop.
 		// TODO: Actually support this and make 2 highlights?
-		/*if (pastBroadcastRecordedAt.unix() > startTimestamp) {
+		if (pastBroadcastRecordedAt.unix() > startTimestamp) {
 			nodecg.log.warn('Twitch highlight will not be made because the last past broadcast started after the highlight recording.');
 			return;
-		}*/
-
-		// Highlight starts from beginning of past broadcast if needed.
-		// Temporary "fix".
-		var startInPastBroadcast = 0;
-		if (pastBroadcastRecordedAt.unix() < startTimestamp) {
-			startInPastBroadcast = (startTimestamp-pastBroadcastRecordedAt.unix())-10; // 10s padding.
 		}
+
+		var startInPastBroadcast = (startTimestamp-pastBroadcastRecordedAt.unix())-10; // 10s padding.
 		var endInPastBroadcast = (endTimestamp-pastBroadcastRecordedAt.unix())+10; // 10s padding.
 		var highlightTitle = 'Game: {{game}} - Category: {{category}} - Players: {{players}}';
 
