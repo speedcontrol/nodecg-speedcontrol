@@ -24,11 +24,12 @@ exports.getCurrentUserID = function(callback) {
 }
 
 // Gets the time the stored user's stream was created at.
-exports.getStreamCreatedTime = function(callback) {
+exports.getStreamInfo = function(callback) {
 	var query = `query($userId: ID, $userLogin: String) {
 		user(id: $userId, login: $userLogin) {
 			stream {
 				createdAt
+				id
 			}
 		}
 	}`;
@@ -38,8 +39,8 @@ exports.getStreamCreatedTime = function(callback) {
 	};
 
 	client.request(query, variables)
-		.then(data => callback(data.user.stream.createdAt))
-		.catch(err => callback(null));
+		.then(data => callback(false, data.user.stream.createdAt, data.user.stream.id))
+		.catch(err => callback(true));
 }
 
 // Gets the stored user's most recent past broadcast ID/recorded timestamp.
@@ -119,6 +120,34 @@ exports.createHighlight = function(videoID, start, end, title, gameID, callback)
 		.then(data => {
 			if (data && data.createVideoHighlight && data.createVideoHighlight.highlight)
 				callback(data.createVideoHighlight.highlight.id);
+			else
+				callback(null);
+		})
+		.catch(err => callback(null));
+}
+
+// Creates a bookmark at the current moment in time, calls back the ID of the bookmark.
+exports.createBookmark = function(streamID, desc, callback) {
+	var query = `mutation($createVideoBookmarkInput: CreateVideoBookmarkInput!) {
+		createVideoBookmark(input: $createVideoBookmarkInput) {
+			videoBookmark {
+				id
+			}
+		}
+	}`;
+	var variables = {
+		createVideoBookmarkInput: {
+			broadcastID: streamID.toString(),
+			description: desc,
+			medium: 'chat',
+			platform: 'web'
+		}
+	};
+
+	client.request(query, variables)
+		.then(data => {
+			if (data && data.createVideoBookmark && data.createVideoBookmark.videoBookmark)
+				callback(data.createVideoBookmark.videoBookmark.id);
 			else
 				callback(null);
 		})

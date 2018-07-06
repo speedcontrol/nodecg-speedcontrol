@@ -97,6 +97,7 @@ function cleanUp() {
 // Once the data is collected, it's passed to this function to do the main work.
 function createHighlight(startTimestamp, endTimestamp, runData) {
 	var streamCreatedAt;
+	var streamID;
 	var pastBroadcastRecordedAt;
 	var pastBroadcastID;
 	var gameID;
@@ -104,11 +105,12 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 	async.waterfall([
 		function(callback) {
 			// Get the time the current stream was started.
-			gql.getStreamCreatedTime(createdAt => {
+			gql.getStreamInfo((err, createdAt, id) => {
 				if (!createdAt)
 					callback('no_stream');
 				else {
 					streamCreatedAt = moment.utc(createdAt);
+					streamID = id;
 					callback();
 				}
 			});
@@ -198,6 +200,14 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 					nodecg.log.warn('Twitch highlight was not created successfully.');
 			});
 		}, 30000);
+
+		// Also make a bookmark (currently being tested).
+		gql.createBookmark(streamID, '[END OF] '+highlightTitle, (id) => {
+			if (id)
+				nodecg.log.info('Twitch bookmark created successfully (ID: '+id+').');
+			else
+				nodecg.log.warn('Twitch bookmark was not created successfully.');
+		});
 	});
 }
 
