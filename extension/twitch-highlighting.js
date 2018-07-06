@@ -28,6 +28,7 @@ var highlightRecording = nodecg.Replicant('twitchHighlightRecording', {defaultVa
 var startTimestamp = nodecg.Replicant('twitchHighlightStartTimestamp', {defaultValue:null});
 var highlightRunData = nodecg.Replicant('twitchHighlightRunData', {defaultValue:null});
 var highlightHistory = nodecg.Replicant('twitchHighlightHistory', {defaultValue:[]});
+var highlightHistoryRaw = nodecg.Replicant('twitchHighlightHistoryRaw', {defaultValue:[]});
 var highlightProcessing = nodecg.Replicant('twitchHighlightProcessing', {defaultValue:null, persistent:false});
 var stopwatch = nodecg.Replicant('stopwatch');
 var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
@@ -200,6 +201,15 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 					nodecg.log.warn('Twitch highlight was not created successfully.');
 			});
 		}, 30000);
+
+		// Also puts the highlight information into this permenant array, in case we fail to make it and need a reference.
+		highlightHistoryRaw.value.push({
+			pastBroadcastID: pastBroadcastID,
+			startTimestamp: startInPastBroadcast,
+			endTimestamp: endInPastBroadcast,
+			title: highlightTitle,
+			gameID: gameID
+		});
 
 		// Also make a bookmark (currently being tested).
 		gql.createBookmark(streamID, '[END OF] '+highlightTitle, (id) => {

@@ -6,7 +6,8 @@ var twitchChannelID = nodecg.Replicant('twitchChannelID');
 // Create the GraphQL client with the OAuth from the config.
 var client = new GraphQLClient('https://api.twitch.tv/gql', {
 	headers: {
-		'Authorization': 'OAuth '+nodecg.bundleConfig.twitch.highlighting.gqlOAuth
+		'Authorization': 'OAuth '+nodecg.bundleConfig.twitch.highlighting.gqlOAuth,
+		'Client-ID': nodecg.bundleConfig.twitch.clientID
 	}
 });
 
