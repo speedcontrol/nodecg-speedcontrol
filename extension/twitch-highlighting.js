@@ -185,7 +185,11 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 		highlightTitle = highlightTitle
 			.replace("{{game}}", runData.game)
 			.replace("{{players}}", playerNames.join(', '))
-			.replace("{{category}}", runData.category );
+			.replace("{{category}}", runData.category);
+
+		// Add a part to the end of the title if this is a sponsored run.
+		if (runData.customData && runData.customData.sponsored)
+			highlightTitle += ' #sponsored';
 			
 		// Create highlight after a 30s delay to make sure Twitch has caught up.
 		nodecg.log.info('Twitch highlight will be made in 30s.');
