@@ -176,10 +176,8 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 		if (nodecg.bundleConfig.twitch.highlighting.title)
 			highlightTitle = nodecg.bundleConfig.twitch.highlighting.title;
 
-		var playerNames = [];
 		var twitchLinks = [];
 		for (var i = 0; i < runData.players.length; i++) {
-			playerNames.push(runData.players[i].names.international);
 			if (runData.players[i].twitch && runData.players[i].twitch.uri)
 				twitchLinks.push(runData.players[i].names.international+' '+runData.players[i].twitch.uri);
 		}
@@ -187,7 +185,7 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 		// Fill in the wildcards in the title.
 		highlightTitle = highlightTitle
 			.replace("{{game}}", runData.game)
-			.replace("{{players}}", playerNames.join(', '))
+			.replace("{{players}}", formPlayerNamesString(runData))
 			.replace("{{category}}", runData.category);
 
 		// Add a part to the end of the title if this is a sponsored run.
@@ -203,7 +201,7 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 			Like us on Facebook: https://www.facebook.com/europeanspeedrunnerassembly';
 		highlightDescription = highlightDescription
 			.replace("{{game}}", runData.game)
-			.replace("{{players}}", playerNames.join(', '))
+			.replace("{{players}}", formPlayerNamesString(runData))
 			.replace("{{category}}", runData.category)
 			.replace("{{twitch_links}}", twitchLinks.join('\n'));
 			
@@ -239,6 +237,19 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 				nodecg.log.warn('Twitch bookmark was not created successfully.');
 		});
 	});
+}
+
+// Goes through each team and members and makes a string to show the names correctly together.
+function formPlayerNamesString(runData) {
+	var namesArray = [];
+	var namesList = 'No Runner(s)';
+	runData.teams.forEach(team => {
+		var teamMemberArray = [];
+		team.members.forEach(member => {teamMemberArray.push(member.names.international);});
+		namesArray.push(teamMemberArray.join(', '));
+	});
+	namesList = namesArray.join(' vs. ');
+	return namesList;
 }
 
 // Used to add a created highlight to the history array.
