@@ -97,7 +97,7 @@ exports.getGameID = function(name, callback) {
 }
 
 // Make a highlight, calls back the ID of the highlight.
-exports.createHighlight = function(videoID, start, end, title, gameID, callback) {
+exports.createHighlight = function(videoID, start, end, title, gameID, desc, callback) {
 	var query = `mutation($createVideoHighlightInput: CreateVideoHighlightInput!) {
 		createVideoHighlight(input: $createVideoHighlightInput) {
 			highlight {
@@ -112,7 +112,8 @@ exports.createHighlight = function(videoID, start, end, title, gameID, callback)
 			endOffsetSeconds: end,
 			metadata: {
 				title: title,
-				game: gameID
+				game: gameID,
+				description: desc
 			}
 		}
 	};
