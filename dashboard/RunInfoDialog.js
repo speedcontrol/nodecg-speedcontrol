@@ -110,6 +110,7 @@ $(function() {
 		newRunData.players = [];
 		newRunData.screens = []; // unused
 		newRunData.cameras = []; // unused
+		newRunData.customData = {};
 		
 		if (!disableTeamEditing) {
 			// Going through all the player detail inputs to continue the above.
@@ -148,6 +149,10 @@ $(function() {
 			newRunData.players = runInfo.players;
 			newRunData.teams = runInfo.teams;
 		}
+
+		// Add back the custom data if this is an edit and it's needed.
+		if (runInfo.customData)
+			newRunData.customData = runInfo.customData;
 		
 		// If we're adding a new run.
 		if (currentRunID < 0) {
