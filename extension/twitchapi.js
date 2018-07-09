@@ -81,31 +81,57 @@ if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twi
 // Having to do a check every time before using the API is sloppy, need to improve flow.
 function checkTokenValidity(callback) {
 	//nodecg.log.info('Checking Twitch token validity...');
-	needle.get('https://api.twitch.tv/kraken', requestOptions, (err, resp) => {
-		// If the OAuth token is valid, we can use it for our requests!
-		if (resp.body.token && resp.body.token.valid) {
-			//nodecg.log.info('Twitch token is valid.');
-			if (callback) callback();
+	var tokenChecked = false;
+	async.whilst(
+		() => {return !tokenChecked},
+		(callback) => {
+			needle.get('https://api.twitch.tv/kraken', requestOptions, (err, resp) => {
+				if (err || resp.statusCode !== 200 || !resp || !resp.body) callback();
+				else {
+					tokenChecked = true;
+					callback(null, resp.body);
+				}
+			});
+		},
+		(err, body) => {
+			// If the OAuth token is valid, we can use it for our requests!
+			if (body.token && body.token.valid) {
+				//nodecg.log.info('Twitch token is valid.');
+				if (callback) callback();
+			}
+			else
+				updateToken(() => {if (callback) callback();});
 		}
-		else
-			updateToken(() => {if (callback) callback();});
-	});
+	);
 }
 
 function updateToken(callback) {
 	nodecg.log.info('Twitch API token being refreshed...');
-	needle.post('https://api.twitch.tv/kraken/oauth2/token', {
-		'grant_type': 'refresh_token',
-		'refresh_token': encodeURI(refreshToken.value),
-		'client_id': nodecg.bundleConfig.twitch.clientID,
-		'client_secret': nodecg.bundleConfig.twitch.clientSecret
-	}, (err, resp) => {
-		accessToken.value = resp.body.access_token;
-		refreshToken.value = resp.body.refresh_token;
-		requestOptions.headers['Authorization'] = 'OAuth '+resp.body.access_token;
-		nodecg.log.info('Twitch API token successfully refreshed.');
-		callback();
-	});
+	var tokenRefreshed = false;
+	async.whilst(
+		() => {return !tokenRefreshed},
+		(callback) => {
+			needle.post('https://api.twitch.tv/kraken/oauth2/token', {
+				'grant_type': 'refresh_token',
+				'refresh_token': encodeURI(refreshToken.value),
+				'client_id': nodecg.bundleConfig.twitch.clientID,
+				'client_secret': nodecg.bundleConfig.twitch.clientSecret
+			}, (err, resp) => {
+				if (err || resp.statusCode !== 200 || !resp || !resp.body) callback();
+				else {
+					tokenRefreshed = true;
+					callback(null, resp.body);
+				}
+			});
+		},
+		(err, body) => {
+			accessToken.value = body.access_token;
+			refreshToken.value = body.refresh_token;
+			requestOptions.headers['Authorization'] = 'OAuth '+body.access_token;
+			nodecg.log.info('Twitch API token successfully refreshed.');
+			callback();
+		}
+	);
 }
 
 // Used to frequently get the details of the channel for use on the dashboard.
