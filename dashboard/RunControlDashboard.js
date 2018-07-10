@@ -128,6 +128,8 @@ $(function () {
         $.each(buttonCloneIDs, function (index, buttonID) {
             $('#' + buttonID).click(function () {
 				var clonedRunData = JSON.parse(JSON.stringify(runControl_GetRun(index)));
+				var newCategory = prompt('Change the category here if needed.', clonedRunData.category);
+				if (newCategory) clonedRunData.category = newCategory; // Set new category if it was entered.
 				clonedRunData.scheduled = undefined;
 				clonedRunData.scheduledS = 0;
 				clonedRunData.runID = horaroRunDataLastIDReplicant.value;
