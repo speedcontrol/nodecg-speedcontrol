@@ -110,7 +110,7 @@ function getRunData() {
 	// Some bad code to get the sponsored data if it exists.
 	var runCustomData = nodecg.readReplicant("runDataActiveRun").customData;
 	var sponsored = false;
-	if (runCustomData && runCustomData.sponsored)
+	if (runCustomData && runCustomData.info && runCustomData.info.toLowerCase() === 'sponsored')
 		sponsored = true;
 
     return {

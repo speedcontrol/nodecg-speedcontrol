@@ -292,7 +292,7 @@ $(function () {
 													.replace("{{category}}", runData.category);
 
 				// Add a part to the end of the title if this is a sponsored run.
-				if (runData.customData && runData.customData.sponsored)
+				if (runData.customData && runData.customData.info && runData.customData.info.toLowerCase() === 'sponsored')
 					newTitle += ' #sponsored';
 
 				requestObject.channel.status = newTitle;
