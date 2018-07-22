@@ -71,7 +71,7 @@ function register_api() {
     });
 
     var activeRunStartTime = nodecg.Replicant('activeRunStartTime', {defaultValue: 0});
-    var lastrundata = nodecg.Replicant("esaRunDataLastRun", {defaultValue: {}})
+    var lastrundata = nodecg.Replicant("esaRunDataLastRun", {defaultValue: undefined})
 
     nodecg.listenFor("splitRecording", "nodecg-speedcontrol", function(message) {
         activeRunStartTime.value = getTimeStamp();
@@ -80,7 +80,7 @@ function register_api() {
             data: getRunData(),
             oldrun: nodecg.readReplicant("esaRunDataLastRun")
 		})
-		lastrundata.value = {};
+		lastrundata.value = undefined;
 	});
 	
 	// Store the currently set run when the timer first starts, which we will use for the upload info.
