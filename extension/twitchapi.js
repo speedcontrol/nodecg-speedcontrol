@@ -177,10 +177,10 @@ function playTwitchAd(data, callback) {
 			if (handleResponse(err, resp)) {
 				nodecg.log.info('Twitch ad started successfully.');
 				//nodecg.sendMessage('twitchAdStarted');
-				callback(false); // Calls back successfully.
+				if (callback) callback(false); // Calls back successfully.
 			}
 			else
-				callback(true); // Call back with an error.
+				if (callback) callback(true); // Call back with an error.
 		});
 	});
 }
