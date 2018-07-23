@@ -176,7 +176,7 @@ function playTwitchAd(data, callback) {
 			nodecg.log.info('Requested a Twitch ad be played.');
 			if (handleResponse(err, resp)) {
 				nodecg.log.info('Twitch ad started successfully.');
-				// nodecg.sendMessage('twitchAdStarted', {'duration':180});
+				nodecg.sendMessage('twitchAdStarted', {'duration':180});
 				if (callback) callback({successful: true, result: {duration: 180}}); // Calls back successfully.
 			}
 			else
