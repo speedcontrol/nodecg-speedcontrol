@@ -33,7 +33,7 @@ function register_api() {
         });
 
         const stopwatch = nodecg.readReplicant('stopwatch')
-        nodecg.log.info(stopwatch);
+        //nodecg.log.info(stopwatch);
         if (stopwatch.state == "running") {
             result.forEach(function(runner) {
                 runner.status = "running";
@@ -71,20 +71,28 @@ function register_api() {
     });
 
     var activeRunStartTime = nodecg.Replicant('activeRunStartTime', {defaultValue: 0});
-    var lastrundata = nodecg.Replicant("esaRunDataLastRun", {defaultValue: {}})
+    var lastrundata = nodecg.Replicant("esaRunDataLastRun", {defaultValue: undefined})
 
-    nodecg.listenFor("runStarted", "nodecg-speedcontrol", function(message) {
+    nodecg.listenFor("splitRecording", "nodecg-speedcontrol", function(message) {
         activeRunStartTime.value = getTimeStamp();
         publish({
             event: "runStarted",
-            data: getRunData(nodecg),
+            data: getRunData(),
             oldrun: nodecg.readReplicant("esaRunDataLastRun")
-        })
-    });
+		})
+		lastrundata.value = undefined;
+	});
+	
+	// Store the currently set run when the timer first starts, which we will use for the upload info.
+	var stopwatch = nodecg.Replicant('stopwatch');
+	stopwatch.on('change', (newVal, oldVal) => {
+		if (!lastrundata.value && oldVal && oldVal.state === 'stopped' && newVal.state === 'running')
+			lastrundata.value = clone(getRunData());
+	});
 
-    nodecg.listenFor("runEnded", "nodecg-speedcontrol", function(message) {
+    /*nodecg.listenFor("runEnded", "nodecg-speedcontrol", function(message) {
         nodecg.log.info(nodecg.readReplicant("runDataActiveRun"))
-        var data = getRunData(nodecg)
+        var data = getRunData()
         lastrundata.value = clone(data);
 
         nodecg.log.info(JSON.stringify(data));
@@ -92,19 +100,26 @@ function register_api() {
             event: "runEnded",
             data: data
         });
-    });
+    });*/
 
     app.use('/speedcontrol', speedcontrolRouter);
     nodecg.mount(app);
 }
 
 function getRunData() {
+	// Some bad code to get the sponsored data if it exists.
+	var runCustomData = nodecg.readReplicant("runDataActiveRun").customData;
+	var sponsored = false;
+	if (runCustomData && runCustomData.info && runCustomData.info.toLowerCase() === 'sponsored')
+		sponsored = true;
+
     return {
         game: nodecg.readReplicant("runDataActiveRun").game,
         category: nodecg.readReplicant("runDataActiveRun").category,
         console: nodecg.readReplicant("runDataActiveRun").console,
         teams: nodecg.readReplicant("runDataActiveRun").teams,
-        players: nodecg.readReplicant("runDataActiveRun").players,
+		players: nodecg.readReplicant("runDataActiveRun").players,
+		sponsored: sponsored,
         time: nodecg.readReplicant("stopwatch").time,
         start: nodecg.readReplicant("activeRunStartTime"),
         end: getTimeStamp()

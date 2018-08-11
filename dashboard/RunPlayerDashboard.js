@@ -278,20 +278,23 @@ $(function () {
 
 	 		// Gets Twitch channel names from the runData and puts them in an array to send to the FFZ WS script.
  			var twitchNames = [];
- 			var playerNames = [];
  			for (var i = 0; i < runData.players.length; i++) {
 				var twitchData = runData.players[i].twitch;
 				var twitchName = (twitchData && twitchData.uri) ? twitchData.uri.replace(/https?:\/\/.*?\//, '') : undefined;
 				if (twitchName && !twitchName.match(/^http/)) {
 					twitchNames.push(twitchName);
 				}
-				playerNames.push(runData.players[i].names.international);
  			}
 			if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.streamTitle) {
 				var newTitle = nodecg.bundleConfig.twitch.streamTitle
 													.replace("{{game}}",runData.game)
-													.replace("{{players}}", playerNames.join(', '))
-													.replace("{{category}}", runData.category );
+													.replace("{{players}}", formPlayerNamesString(runData))
+													.replace("{{category}}", runData.category);
+
+				// Add a part to the end of the title if this is a sponsored run.
+				if (runData.customData && runData.customData.info && runData.customData.info.toLowerCase() === 'sponsored')
+					newTitle += ' #sponsored';
+
 				requestObject.channel.status = newTitle;
 			}
 
@@ -370,7 +373,20 @@ $(function () {
 				});
 			}
 		},2000);
-  	}
+	  }
+	  
+	// Goes through each team and members and makes a string to show the names correctly together.
+	function formPlayerNamesString(runData) {
+		var namesArray = [];
+		var namesList = 'No Runner(s)';
+		runData.teams.forEach(team => {
+			var teamMemberArray = [];
+			team.members.forEach(member => {teamMemberArray.push(member.names.international);});
+			namesArray.push(teamMemberArray.join(', '));
+		});
+		namesList = namesArray.join(' vs. ');
+		return namesList;
+	}
 
     function runPlayer_playNextRun() {
         var activeGame = runDataActiveRunReplicant.value;

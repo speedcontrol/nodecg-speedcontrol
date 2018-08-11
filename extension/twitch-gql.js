@@ -1,11 +1,13 @@
 'use strict';
 var {GraphQLClient} = require('graphql-request');
 var nodecg = require('./utils/nodecg-api-context').get();
+var twitchChannelID = nodecg.Replicant('twitchChannelID');
 
 // Create the GraphQL client with the OAuth from the config.
 var client = new GraphQLClient('https://api.twitch.tv/gql', {
 	headers: {
-		'Authorization': 'OAuth '+nodecg.bundleConfig.twitch.highlighting.gqlOAuth
+		'Authorization': 'OAuth '+nodecg.bundleConfig.twitch.highlighting.gqlOAuth,
+		'Client-ID': nodecg.bundleConfig.twitch.clientID
 	}
 });
 
@@ -22,26 +24,31 @@ exports.getCurrentUserID = function(callback) {
 		.catch(err => callback(err.response.status, null));
 }
 
-// Gets the time the OAuth user's stream was created at.
-exports.getStreamCreatedTime = function(callback) {
-	var query = `query() {
-		currentUser {
+// Gets the time the stored user's stream was created at.
+exports.getStreamInfo = function(callback) {
+	var query = `query($userId: ID, $userLogin: String) {
+		user(id: $userId, login: $userLogin) {
 			stream {
 				createdAt
+				id
 			}
 		}
 	}`;
+	console.log(twitchChannelID.value);
+	var variables = {
+		userId: twitchChannelID.value.toString()
+	};
 
-	client.request(query)
-		.then(data => callback(data.currentUser.stream.createdAt))
-		.catch(err => callback(null));
+	client.request(query, variables)
+		.then(data => callback(false, data.user.stream.createdAt, data.user.stream.id))
+		.catch(err => callback(true));
 }
 
-// Gets the OAuth user's most recent past broadcast ID/recorded timestamp.
+// Gets the stored user's most recent past broadcast ID/recorded timestamp.
 exports.getMostRecentBroadcastData = function(callback) {
-	var query = `query($currentUserVideosFirst: Int, $currentUserVideosTypes: [BroadcastType!], $currentUserVideosSort: VideoSort) {
-		currentUser {
-			videos(first: $currentUserVideosFirst, types: $currentUserVideosTypes, sort: $currentUserVideosSort) {
+	var query = `query($userId: ID, $userLogin: String, $userVideosFirst: Int, $userVideosTypes: [BroadcastType!], $userVideosSort: VideoSort) {
+		user(id: $userId, login: $userLogin) {
+			videos(first: $userVideosFirst, types: $userVideosTypes, sort: $userVideosSort) {
 				edges {
 					node {
 						id
@@ -52,15 +59,16 @@ exports.getMostRecentBroadcastData = function(callback) {
 		}
 	}`;
 	var variables = {
-		currentUserVideosFirst: 1,
-		currentUserVideosTypes: 'ARCHIVE',
-		currentUserVideosSort: 'TIME'
+		userId: twitchChannelID.value.toString(),
+		userVideosFirst: 1,
+		userVideosTypes: 'ARCHIVE',
+		userVideosSort: 'TIME'
 	};
 
 	client.request(query, variables)
 		.then(data => {
-			if (data.currentUser.videos.edges.length)
-				callback(data.currentUser.videos.edges[0].node);
+			if (data.user.videos.edges.length)
+				callback(data.user.videos.edges[0].node);
 			else
 				callback(null);
 		})
@@ -89,7 +97,7 @@ exports.getGameID = function(name, callback) {
 }
 
 // Make a highlight, calls back the ID of the highlight.
-exports.createHighlight = function(videoID, start, end, title, gameID, callback) {
+exports.createHighlight = function(videoID, start, end, title, gameID, desc, callback) {
 	var query = `mutation($createVideoHighlightInput: CreateVideoHighlightInput!) {
 		createVideoHighlight(input: $createVideoHighlightInput) {
 			highlight {
@@ -104,7 +112,8 @@ exports.createHighlight = function(videoID, start, end, title, gameID, callback)
 			endOffsetSeconds: end,
 			metadata: {
 				title: title,
-				game: gameID
+				game: gameID,
+				description: desc
 			}
 		}
 	};
@@ -113,6 +122,34 @@ exports.createHighlight = function(videoID, start, end, title, gameID, callback)
 		.then(data => {
 			if (data && data.createVideoHighlight && data.createVideoHighlight.highlight)
 				callback(data.createVideoHighlight.highlight.id);
+			else
+				callback(null);
+		})
+		.catch(err => callback(null));
+}
+
+// Creates a bookmark at the current moment in time, calls back the ID of the bookmark.
+exports.createBookmark = function(streamID, desc, callback) {
+	var query = `mutation($createVideoBookmarkInput: CreateVideoBookmarkInput!) {
+		createVideoBookmark(input: $createVideoBookmarkInput) {
+			videoBookmark {
+				id
+			}
+		}
+	}`;
+	var variables = {
+		createVideoBookmarkInput: {
+			broadcastID: streamID.toString(),
+			description: desc,
+			medium: 'chat',
+			platform: 'web'
+		}
+	};
+
+	client.request(query, variables)
+		.then(data => {
+			if (data && data.createVideoBookmark && data.createVideoBookmark.videoBookmark)
+				callback(data.createVideoBookmark.videoBookmark.id);
 			else
 				callback(null);
 		})

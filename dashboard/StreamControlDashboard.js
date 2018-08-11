@@ -73,7 +73,7 @@ $(function() {
     });
 	
 	$playTwitchAdButton.click(() => {
-		nodecg.sendMessage('playTwitchAd', err => {
+		nodecg.sendMessage('playTwitchAd', (err, data) => {
 			if (!err) {
 				$playTwitchAdButton.button({disabled: true});
 				setTimeout(function() {

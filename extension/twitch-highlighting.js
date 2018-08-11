@@ -28,6 +28,7 @@ var highlightRecording = nodecg.Replicant('twitchHighlightRecording', {defaultVa
 var startTimestamp = nodecg.Replicant('twitchHighlightStartTimestamp', {defaultValue:null});
 var highlightRunData = nodecg.Replicant('twitchHighlightRunData', {defaultValue:null});
 var highlightHistory = nodecg.Replicant('twitchHighlightHistory', {defaultValue:[]});
+var highlightHistoryRaw = nodecg.Replicant('twitchHighlightHistoryRaw', {defaultValue:[]});
 var highlightProcessing = nodecg.Replicant('twitchHighlightProcessing', {defaultValue:null, persistent:false});
 var stopwatch = nodecg.Replicant('stopwatch');
 var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
@@ -48,22 +49,26 @@ function setUp() {
 
 	// Ability to stop the Twitch highlight recording.
 	// Listens for a message, either from the dashboard buttons or somewhere else.
-	nodecg.listenFor('stopTwitchHighlight', () => {
+	nodecg.listenFor('stopTwitchHighlight', (data, callback) => {
 		// Cannot stop a highlight if one isn't being recorded, or if the timer is running/paused.
-		if (!highlightRecording.value || stopwatch.value.state === 'running' || stopwatch.value.state === 'paused')
+		if (!highlightRecording.value || stopwatch.value.state === 'running' || stopwatch.value.state === 'paused') {
+			if (callback) callback(true);
 			return;
+		}
 
 		highlightRecording.value = false;
 
 		// If no run data was set during the recording, don't process it.
 		if (!highlightRunData.value) {
 			nodecg.log.warn('Twitch highlight will not be made due to no run being done during the recording.');
+			if (callback) callback(true);
 			return;
 		}
 
 		var endTimestamp = Math.floor(Date.now()/1000);
 		createHighlight(startTimestamp.value, endTimestamp, clone(highlightRunData.value));
 		cleanUp();
+		if (callback) callback(null);
 	});
 
 	// Ability to cancel the Twitch highlight recording.
@@ -93,6 +98,7 @@ function cleanUp() {
 // Once the data is collected, it's passed to this function to do the main work.
 function createHighlight(startTimestamp, endTimestamp, runData) {
 	var streamCreatedAt;
+	var streamID;
 	var pastBroadcastRecordedAt;
 	var pastBroadcastID;
 	var gameID;
@@ -100,11 +106,12 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 	async.waterfall([
 		function(callback) {
 			// Get the time the current stream was started.
-			gql.getStreamCreatedTime(createdAt => {
+			gql.getStreamInfo((err, createdAt, id) => {
 				if (!createdAt)
 					callback('no_stream');
 				else {
 					streamCreatedAt = moment.utc(createdAt);
+					streamID = id;
 					callback();
 				}
 			});
@@ -152,34 +159,57 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 
 		// If the most recent past broadcast started *after* the highlight was started, we want to stop.
 		// TODO: Actually support this and make 2 highlights?
-		if (pastBroadcastRecordedAt.unix() > startTimestamp) {
+		/*if (pastBroadcastRecordedAt.unix() > startTimestamp) {
 			nodecg.log.warn('Twitch highlight will not be made because the last past broadcast started after the highlight recording.');
 			return;
-		}
+		}*/
 
-		var startInPastBroadcast = (startTimestamp-pastBroadcastRecordedAt.unix())-10; // 10s padding.
+		// Highlight starts from beginning of past broadcast if needed.
+		// Temporary "fix".
+		var startInPastBroadcast = 0;
+		if (pastBroadcastRecordedAt.unix() < startTimestamp) {
+			startInPastBroadcast = (startTimestamp-pastBroadcastRecordedAt.unix())-10; // 10s padding.
+		}
 		var endInPastBroadcast = (endTimestamp-pastBroadcastRecordedAt.unix())+10; // 10s padding.
 		var highlightTitle = 'Game: {{game}} - Category: {{category}} - Players: {{players}}';
 
 		if (nodecg.bundleConfig.twitch.highlighting.title)
 			highlightTitle = nodecg.bundleConfig.twitch.highlighting.title;
 
-		var playerNames = [];
+		var twitchLinks = [];
 		for (var i = 0; i < runData.players.length; i++) {
-			playerNames.push(runData.players[i].names.international);
+			if (runData.players[i].twitch && runData.players[i].twitch.uri)
+				twitchLinks.push(runData.players[i].names.international+' '+runData.players[i].twitch.uri);
 		}
 
 		// Fill in the wildcards in the title.
 		highlightTitle = highlightTitle
 			.replace("{{game}}", runData.game)
-			.replace("{{players}}", playerNames.join(', '))
-			.replace("{{category}}", runData.category );
+			.replace("{{players}}", formPlayerNamesString(runData))
+			.replace("{{category}}", runData.category);
+
+		// Add a part to the end of the title if this is a sponsored run.
+		if (runData.customData && runData.customData.info && runData.customData.info.toLowerCase() === 'sponsored')
+			highlightTitle += ' #sponsored';
+
+		// Hardcoded ESA Summer 2018 description.
+		var highlightDescription = '{{game}} [{{category}}] - run by {{players}}\n\n\
+			{{twitch_links}}\n\n\
+			This video was recorded live at ESA Summer 2018, which took place from 20th to 29th July in Malmö, Sweden.\n\
+			It was a charity event benefiting Save the Children.\nFor more ESA events find us at https://esamarathon.com\n\n\
+			You can also find us at Twitter: https://twitter.com/ESAMarathon\n\
+			Like us on Facebook: https://www.facebook.com/europeanspeedrunnerassembly';
+		highlightDescription = highlightDescription
+			.replace("{{game}}", runData.game)
+			.replace("{{players}}", formPlayerNamesString(runData))
+			.replace("{{category}}", runData.category)
+			.replace("{{twitch_links}}", twitchLinks.join('\n'));
 			
 		// Create highlight after a 30s delay to make sure Twitch has caught up.
 		nodecg.log.info('Twitch highlight will be made in 30s.');
 		highlightProcessing.value = highlightTitle;
 		setTimeout(() => {
-			gql.createHighlight(pastBroadcastID, startInPastBroadcast, endInPastBroadcast, highlightTitle, gameID, (id) => {
+			gql.createHighlight(pastBroadcastID, startInPastBroadcast, endInPastBroadcast, highlightTitle, gameID, highlightDescription, (id) => {
 				if (id) {
 					nodecg.log.info('Twitch highlight created successfully (ID: '+id+').');
 					addHighlightToHistory(highlightTitle, id);
@@ -189,7 +219,37 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 					nodecg.log.warn('Twitch highlight was not created successfully.');
 			});
 		}, 30000);
+
+		// Also puts the highlight information into this permenant array, in case we fail to make it and need a reference.
+		highlightHistoryRaw.value.push({
+			pastBroadcastID: pastBroadcastID,
+			startTimestamp: startInPastBroadcast,
+			endTimestamp: endInPastBroadcast,
+			title: highlightTitle,
+			gameID: gameID
+		});
+
+		// Also make a bookmark (currently being tested).
+		gql.createBookmark(streamID, '[END OF] '+highlightTitle, (id) => {
+			if (id)
+				nodecg.log.info('Twitch bookmark created successfully (ID: '+id+').');
+			else
+				nodecg.log.warn('Twitch bookmark was not created successfully.');
+		});
 	});
+}
+
+// Goes through each team and members and makes a string to show the names correctly together.
+function formPlayerNamesString(runData) {
+	var namesArray = [];
+	var namesList = 'No Runner(s)';
+	runData.teams.forEach(team => {
+		var teamMemberArray = [];
+		team.members.forEach(member => {teamMemberArray.push(member.names.international);});
+		namesArray.push(teamMemberArray.join(', '));
+	});
+	namesList = namesArray.join(' vs. ');
+	return namesList;
 }
 
 // Used to add a created highlight to the history array.

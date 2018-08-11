@@ -14,6 +14,8 @@ $(function () {
     });
 	
 	$('#editCurrentRunButton').button();
+
+	var horaroRunDataLastIDReplicant = nodecg.Replicant('runDataLastID');
 	
 	var runDataActiveRunReplicant = nodecg.Replicant('runDataActiveRun');
 	runDataActiveRunReplicant.on('change', (newVal, oldVal) => {
@@ -69,12 +71,15 @@ $(function () {
         var htmlDescriptor = '';
         var buttonRemoveIDs = [];
         var buttonChangeIDs = [];
+        var buttonCloneIDs = [];
 
         $.each(runData, function (index, runData) {
             var buttonRemoveIDString = 'remove' + runData.runID;
             var buttonChangeIDString = 'change' + runData.runID;
+            var buttonCloneIDString = 'clone' + runData.runID;
             buttonRemoveIDs.push(buttonRemoveIDString);
             buttonChangeIDs.push(buttonChangeIDString);
+            buttonCloneIDs.push(buttonCloneIDString);
             teamsString = ( runData.teams.length > 1 ? ", " + runData.teams.length + " Teams" : "");
             htmlDescriptor += '<div class="group" id="' + runData.runID + '">' +
                 '<h3>' + runData.game + ' (' + runData.category + ')' + " " + runData.players.length + "p" + teamsString +
@@ -83,6 +88,7 @@ $(function () {
                 runControl_GetRunBodyHtml(runData) +
                 '<button class="removeButton" id="' + buttonRemoveIDString + '"></button>' +
                 '<button class="changeButton" nodecg-dialog="run-info" id="' + buttonChangeIDString + '"></button>' +
+                '<button class="cloneButton" id="' + buttonCloneIDString + '"></button>' +
                 '</div>' +
                 '</div>';
         });
@@ -114,6 +120,26 @@ $(function () {
             $('#' + buttonID).button({
                 icons: {
                     primary: "ui-icon-pencil"
+                },
+                text: false
+            })
+		});
+		
+        $.each(buttonCloneIDs, function (index, buttonID) {
+            $('#' + buttonID).click(function () {
+				var clonedRunData = JSON.parse(JSON.stringify(runControl_GetRun(index)));
+				var newCategory = prompt('Change the category here if needed.', clonedRunData.category);
+				if (newCategory) clonedRunData.category = newCategory; // Set new category if it was entered.
+				clonedRunData.scheduled = undefined;
+				clonedRunData.scheduledS = 0;
+				clonedRunData.runID = horaroRunDataLastIDReplicant.value;
+				horaroRunDataLastIDReplicant.value++;
+				runDataArrayReplicant.value.splice(index+1, 0, clonedRunData);
+            });
+
+            $('#' + buttonID).button({
+                icons: {
+                    primary: "ui-icon-copy"
                 },
                 text: false
             })
