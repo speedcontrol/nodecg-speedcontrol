@@ -187,29 +187,12 @@ function createHighlight(startTimestamp, endTimestamp, runData) {
 			.replace("{{game}}", runData.game)
 			.replace("{{players}}", formPlayerNamesString(runData))
 			.replace("{{category}}", runData.category);
-
-		// Add a part to the end of the title if this is a sponsored run.
-		if (runData.customData && runData.customData.info && runData.customData.info.toLowerCase() === 'sponsored')
-			highlightTitle += ' #sponsored';
-
-		// Hardcoded ESA Summer 2018 description.
-		var highlightDescription = '{{game}} [{{category}}] - run by {{players}}\n\n\
-			{{twitch_links}}\n\n\
-			This video was recorded live at ESA Summer 2018, which took place from 20th to 29th July in Malmö, Sweden.\n\
-			It was a charity event benefiting Save the Children.\nFor more ESA events find us at https://esamarathon.com\n\n\
-			You can also find us at Twitter: https://twitter.com/ESAMarathon\n\
-			Like us on Facebook: https://www.facebook.com/europeanspeedrunnerassembly';
-		highlightDescription = highlightDescription
-			.replace("{{game}}", runData.game)
-			.replace("{{players}}", formPlayerNamesString(runData))
-			.replace("{{category}}", runData.category)
-			.replace("{{twitch_links}}", twitchLinks.join('\n'));
 			
 		// Create highlight after a 30s delay to make sure Twitch has caught up.
 		nodecg.log.info('Twitch highlight will be made in 30s.');
 		highlightProcessing.value = highlightTitle;
 		setTimeout(() => {
-			gql.createHighlight(pastBroadcastID, startInPastBroadcast, endInPastBroadcast, highlightTitle, gameID, highlightDescription, (id) => {
+			gql.createHighlight(pastBroadcastID, startInPastBroadcast, endInPastBroadcast, highlightTitle, gameID, (id) => {
 				if (id) {
 					nodecg.log.info('Twitch highlight created successfully (ID: '+id+').');
 					addHighlightToHistory(highlightTitle, id);

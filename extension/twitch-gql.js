@@ -24,7 +24,7 @@ exports.getCurrentUserID = function(callback) {
 		.catch(err => callback(err.response.status, null));
 }
 
-// Gets the time the stored user's stream was created at.
+// Gets the time the stored user's stream was created at, along with the ID of it.
 exports.getStreamInfo = function(callback) {
 	var query = `query($userId: ID, $userLogin: String) {
 		user(id: $userId, login: $userLogin) {
@@ -34,7 +34,6 @@ exports.getStreamInfo = function(callback) {
 			}
 		}
 	}`;
-	console.log(twitchChannelID.value);
 	var variables = {
 		userId: twitchChannelID.value.toString()
 	};
@@ -97,7 +96,7 @@ exports.getGameID = function(name, callback) {
 }
 
 // Make a highlight, calls back the ID of the highlight.
-exports.createHighlight = function(videoID, start, end, title, gameID, desc, callback) {
+exports.createHighlight = function(videoID, start, end, title, gameID, callback) {
 	var query = `mutation($createVideoHighlightInput: CreateVideoHighlightInput!) {
 		createVideoHighlight(input: $createVideoHighlightInput) {
 			highlight {
@@ -112,8 +111,7 @@ exports.createHighlight = function(videoID, start, end, title, gameID, desc, cal
 			endOffsetSeconds: end,
 			metadata: {
 				title: title,
-				game: gameID,
-				description: desc
+				game: gameID
 			}
 		}
 	};
