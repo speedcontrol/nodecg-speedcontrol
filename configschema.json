@@ -51,7 +51,8 @@
 			"type": "object",
 			"properties": {
 				"enable": {"type": "boolean", "default": false},
-				"key": {"type": "string", "default": "API_KEY"}
+				"token": {"type": "string", "default": "API_ACCESS_TOKEN"},
+				"campaign": {"type": "string", "default": "CAMPAIGN_ID"}
 			}
 		},
 		"speedrunComMarathon": {

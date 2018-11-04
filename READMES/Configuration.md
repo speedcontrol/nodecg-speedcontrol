@@ -36,7 +36,8 @@ Below is an example configuration file contents with everything that is availabl
 	},
 	"tiltify": {
 		"enable": true,
-		"key": "API_KEY"
+		"token": "API_ACCESS_TOKEN",
+		"campaign": "CAMPAIGN_ID"
 	},
 	"speedrunComMarathon": {
 		"enable": true,
@@ -109,11 +110,12 @@ Once the Twitch integration settings are fully set up and your NodeCG server has
 ```
 "tiltify": {
 	"enable": true,
-	"key": "API_KEY"
+	"token": "API_ACCESS_TOKEN",
+	"campaign": "CAMPAIGN_ID"
 }
 ```
 
-Once enabled and a key is specified from Tiltify (which should be in your Tiltify settings/dashboard), the donation total for your event will be stored and frequently updated in the `tiltifyDonationTotal` replicant of this bundle. The source for the Tiltify code can be found in the [./extension/tiltify.js](../extension/tiltify.js) file.
+Once enabled and an API access token and campaign ID are specified from Tiltify (you can get a token by registering an application on the Tiltify dashboard, the campaign ID is harder to find; look in your browser's inpector in the Network tab), the donation total for your campaign will be stored and frequently updated in the `tiltifyDonationTotal` replicant of this bundle. The source for the Tiltify code can be found in the [./extension/tiltify.js](../extension/tiltify.js) file.
 
 ### Speedrun.com Marathons
 
