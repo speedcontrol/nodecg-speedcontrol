@@ -4,9 +4,10 @@ var nodecg = require('./utils/nodecg-api-context').get();
 var twitchChannelID = nodecg.Replicant('twitchChannelID');
 
 // Create the GraphQL client with the OAuth from the config.
+var gqlOAuth = (nodecg.bundleConfig.twitch.highlighting) ? nodecg.bundleConfig.twitch.highlighting.gqlOAuth : '';
 var client = new GraphQLClient('https://api.twitch.tv/gql', {
 	headers: {
-		'Authorization': 'OAuth '+nodecg.bundleConfig.twitch.highlighting.gqlOAuth,
+		'Authorization': 'OAuth '+gqlOAuth,
 		'Client-ID': nodecg.bundleConfig.twitch.clientID
 	}
 });
