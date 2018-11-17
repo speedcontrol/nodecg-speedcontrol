@@ -215,7 +215,7 @@ function gameSearch(searchQuery, callback) {
 function handleResponse(err, resp) {
 	if (err || resp.statusCode !== 200 || !resp || !resp.body) {
 		nodecg.log.warn('Error occurred in communication with twitch, look below');
-		nodecg.log.warn(err);
+		if (err) nodecg.log.warn(err);
 		if (resp && resp.body) nodecg.log.warn(JSON.stringify(resp.body));
 		return false;
 	}
