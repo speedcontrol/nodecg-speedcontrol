@@ -24,8 +24,8 @@ if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twi
 	// Waits until we have the Twitch access code before doing anything.
 	twitchChannelName = nodecg.Replicant('twitchChannelName');
 	var accessTokenReplicant = nodecg.Replicant('twitchAccessToken');
-	accessTokenReplicant.on('change', function(newValue, oldValue) {
-		accessToken = newValue;
+	twitchChannelName.on('change', function(newValue, oldValue) {
+		accessToken = accessTokenReplicant.value;
 		if (newValue && !oldValue)
 			connectToWS(() => {/* connection to ws done */});
 	});
@@ -48,7 +48,7 @@ function connectToWS(callback) {
 
 	// Catching any errors with the connection. The "close" event is also fired if it's a disconnect.
 	ffzWS.on('error', function(error) {
-		nodecg.log.warn("Error occurred on the FrankerFaceZ connection, see below:");
+		nodecg.log.warn("Error occurred on the FrankerFaceZ connection:");
 		nodecg.log.warn(error);
 	});
 
