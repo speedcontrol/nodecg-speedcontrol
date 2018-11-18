@@ -422,14 +422,6 @@ $(function () {
         return Number(foundIndex);
     }
 	
-    $(".runPlayerNext").click(function () {
-        if(!changingEnabled || runDataArrayReplicantPlayer.value == "") {
-            return;
-        }
-        nodecg.sendMessage("resetTime");
-        runPlayer_playNextRun()
-    });
-	
 	function defaultNextRunButton() {
 		$(".runPlayerNext").button({
             text: true,
