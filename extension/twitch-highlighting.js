@@ -231,12 +231,15 @@ function formPlayerNamesString(runData) {
 		team.members.forEach(member => {teamMemberArray.push(member.names.international);});
 		namesArray.push(teamMemberArray.join(', '));
 	});
-	namesList = namesArray.join(' vs. ');
+	if (namesArray.length) namesList = namesArray.join(' vs. ');
 	return namesList;
 }
 
 // Used to add a created highlight to the history array.
 function addHighlightToHistory(title, id) {
+	// For some reason sometimes the highlight history array is not correctly initialised.
+	if (!Array.isArray(highlightHistory.value)) highlightHistory.value = [];
+
 	// Add run to front of array.
 	var run = {
 		title: title,
