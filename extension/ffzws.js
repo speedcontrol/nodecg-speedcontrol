@@ -29,6 +29,9 @@ if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twi
 		if (newValue && !oldValue)
 			connectToWS(() => {/* connection to ws done */});
 	});
+	accessTokenReplicant.on('change', (newVal, oldVal) => {
+		accessToken = newVal;
+	});
 }
 
 function connectToWS(callback) {
