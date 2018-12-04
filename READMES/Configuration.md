@@ -62,7 +62,7 @@ Below is an example configuration file contents with everything that is availabl
 "live": false
 ```
 
-By default this boolean is false, changing it to true disables a few dashboard buttons that probably shouldn't be pressed during a live marathon. It also should disable edit mode `<div>`s on graphic bundles generated with [generator-speedcontrol](https://github.com/speedcontrol/generator-speedcontrol), although that hasn't been tested recently.
+By default this boolean is false, changing it to true disables a few dashboard buttons that probably shouldn't be pressed during a live marathon.
 
 ### Twitch
 
