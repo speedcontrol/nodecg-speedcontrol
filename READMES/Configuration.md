@@ -44,10 +44,6 @@ Below is an example configuration file contents with everything that is availabl
 		"enable": true,
 		"slug": "SRC_SLUG"
 	},
-	"gaming4Good": {
-		"enable": true,
-		"twitchChannelID": "TWITCH_ID"
-	},
 	"api": {
 		"enable": true,
 		"sharedKey": "TWITCH_ID",
@@ -130,19 +126,6 @@ Once enabled and an API access token and campaign ID are specified from Tiltify 
 ```
 
 Once enabled and a slug is specified of a marathon page on Speedrun.com (this is the part of the URL after the 1st forward slash), if it has donations activated, you will be able to access some information about the marathon's donation information via replicants. No extra README for this yet; see the  [./extension/srcomdonations.js](../extension/srcomdonations.js) file if you're an advanced user and wish to use this functionality in your graphics bundles.
-
-### Gaming4Good
-
-```
-"gaming4Good": {
-	"enable": true,
-	"twitchChannelID": "TWITCH_ID"
-}
-```
-
-***NOTE: This hasn't been fully tested in a while, it may not work correctly.***
-
-Once enabled and you either have Twitch integration enabled *or* a Twitch channel ID is specified in `twitchChannelID`, the donation total for your event will be stored and frequently updated in the `g4gDonationTotal` replicant of this bundle. The source for the Gaming4Good code can be found in the [./extension/g4g.js](../extension/g4g.js) file.
 
 ### API
 

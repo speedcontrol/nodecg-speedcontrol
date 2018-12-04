@@ -14,7 +14,6 @@ module.exports = function(nodecg) {
 	require('./twitchapi');
 	require('./esacontroller');
 	require('./ffzws');
-	require('./g4g');
 	require('./srcomdonations');
 	require('./tiltify');
 }
