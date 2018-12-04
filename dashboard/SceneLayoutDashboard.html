@@ -9,21 +9,6 @@
 
     <title></title>
     <style>
-        label {
-            font-size: 12px;
-        }
-
-        #editModeField, #backgroundTransparencyField {
-            padding: 15px;
-            margin-bottom: 10px;
-            border: 1px solid #008BB9;
-            border-radius: 15px;
-        }
-		
-		#backgroundTransparencyOn, #backgroundTransparencyOff {
-			font-size: 10px;
-		}
-		
 		#forceRefreshIntermissionButton {
             width: 100%;
 			font-size: 16px;
@@ -32,25 +17,7 @@
 </head>
 <body>
 <div id="scene-layout">
-	<button id="forceRefreshIntermissionButton">Force Refresh Intermission</button><br><br>
-    <div id="scene-layout-container">
-        <div id="sceneLayoutContainer">
-            <div id="editModeField">
-                <label for="enableEditModeRadios">Edit Mode:</label><br>
-                <div id="enableEditModeRadios">
-                    <input type="radio" name="enableEditMode" id="enableEditModeOn" value="On"><label for="enableEditModeOn">On</label>
-                    <input type="radio" name="enableEditMode" id="enableEditModeOff" value="Off" checked><label for="enableEditModeOff">Off</label>
-                </div>
-            </div>
-            <div id="backgroundTransparencyField">
-                <label for="backgroundTransparencyRadios">Transparency:</label><br>
-                <div id="backgroundTransparencyRadios">
-                    <input type="radio" name="backgroundTransparency" id="backgroundTransparencyOn" value="On"><label for="backgroundTransparencyOn">On</label>
-                    <input type="radio" name="backgroundTransparency" id="backgroundTransparencyOff" value="Off" checked><label for="backgroundTransparencyOff">Off</label>
-                </div>
-            </div>
-        </div>
-    </div>
+	<button id="forceRefreshIntermissionButton">Force Refresh Intermission</button>
 </div>
 </body>
 

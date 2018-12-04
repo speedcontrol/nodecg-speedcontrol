@@ -23,7 +23,6 @@
   "license": "MIT",
   "nodecg": {
     "compatibleRange": "^1.0.0",
-    "graphics": [],
     "dashboardPanels": [
       {
         "name": "run-player",
