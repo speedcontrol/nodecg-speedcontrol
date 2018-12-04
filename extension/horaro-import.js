@@ -15,6 +15,7 @@ var scheduleImporting = nodecg.Replicant('horaroScheduleImporting', {defaultValu
 var userDataCache = nodecg.Replicant('horaroImportUserDataCache', {defaultValue: {}, persistent: false});
 
 var customData = nodecg.bundleConfig.schedule.customData || [];
+var disableSRComLookup = nodecg.bundleConfig.schedule.disableSpeedrunComLookup || false;
 
 nodecg.listenFor('loadScheduleData', (url, callback) => {
 	setScheduleData(url, () => callback(null, scheduleData));
@@ -232,6 +233,11 @@ function checkGameAgainstIgnoreList(game) {
 
 // Tries to find the specified user on speedrun.com and get their country/region and Twitch if needed.
 function getDataFromSpeedrunCom(username, twitch, callback) {
+	// If speedrun.com lookup is disabled, just return undefined here.
+	if (disableSRComLookup) {
+		return callback(undefined, undefined);
+	}
+
 	if (userDataCache.value[username]) {
 		extractInfoFromSRComUserData(userDataCache.value[username], (SRComRegion, SRComTwitch) => {
 			callback(SRComRegion, SRComTwitch);

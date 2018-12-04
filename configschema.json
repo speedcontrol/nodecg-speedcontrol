@@ -33,6 +33,7 @@
 					"items": {"type": "string"},
 					"minItems": 1
 				},
+				"disableSpeedrunComLookup": {"type": "boolean", "default": false},
 				"customData": {
 					"type": ["array", "null"],
 					"uniqueItems": true,
