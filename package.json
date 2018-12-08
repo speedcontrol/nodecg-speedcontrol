@@ -63,14 +63,6 @@
         "workspace": "Scene Editing"
       },
       {
-        "name": "scene-layout",
-        "title": "Scene Layout",
-        "width": 2,
-        "file": "SceneLayoutDashboard.html",
-        "headerColor": "#008BB9",
-        "workspace": "Scene Editing"
-      },
-      {
         "name": "stream-control",
         "title": "Twitch Control",
         "width": 3,

@@ -30,7 +30,6 @@ $(function () {
                     disableMainResetButton(false);
                     playerTimer_disablePersonalSplitButton(true);
                     playerTimer_disablePersonalResetButton(true);
-					if (oldVal) nodecg.sendMessage("forceRefreshIntermission");
 					toggleEditButton(true);
                 }
                 break;
