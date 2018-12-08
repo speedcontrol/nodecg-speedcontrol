@@ -39,7 +39,7 @@ nodecg start
 
 ## Where has this bundle been used before?
 
-- All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons starting from the Pre-ESA Marathon 2016, including the ESA ran Dreamhack speedrunning events in Sweden.
+- All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons starting from the Pre-ESA Marathon 2016, including the ESA ran Dreamhack speedrunning events in Sweden
 - All [GTA Marathons](https://www.twitch.tv/gtamarathon) starting from GTA Marathon 2016
 - [SpeedSouls Charity Marathon 2017 and 2018](https://www.twitch.tv/speedsouls)
 - [Themeathon Pre-Marathon 2018](https://www.twitch.tv/themeathon)
