@@ -16,4 +16,9 @@ module.exports = function(nodecg) {
 	require('./ffzws');
 	require('./srcomdonations');
 	require('./tiltify');
+
+	// Basic return, currently to expose the set Twitch client ID to other extensions.
+	return {
+		twitchClientID: nodecg.bundleConfig.twitch.clientID
+	}
 }
