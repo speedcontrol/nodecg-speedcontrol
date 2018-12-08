@@ -74,16 +74,6 @@ $(function () {
         }
     });
 
-    var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-    // runDataActiveRunRunnerListReplicant.on("change", function (newValue, oldValue) {
-    //     if (typeof newValue !== 'undefined' && newValue != '' ) {
-    //         if (typeof runDataActiveRunReplicant.value !== 'undefined') {
-    //           playerTimer_UpdateTimers(runDataActiveRunReplicant.value);
-    //         }
-    //
-    //     }
-    // });
-
     var finishedTimersReplicant = nodecg.Replicant('finishedTimers');
     finishedTimersReplicant.on('change', function(newValue, oldValue) {
         if(typeof newValue != 'undefined' && newValue != '') {

@@ -47,8 +47,6 @@ $(function () {
 		setActiveRun(runPlayer_activeRunID);
 	});
 
-    var runDataActiveRunRunnerListReplicant = nodecg.Replicant("runDataActiveRunRunnerList");
-
     var stopWatchReplicant = nodecg.Replicant('stopwatch');
     stopWatchReplicant.on('change', function (newVal, oldVal) {
         if (!newVal) return;
