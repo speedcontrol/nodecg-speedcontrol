@@ -84,8 +84,6 @@ $(function () {
         }
     });
 
-    var activeRunStartTime = nodecg.Replicant('activeRunStartTime');
-
     function updateSplitTimerTextColor(timerArray) {
         $.each(timerArray, function(index, value){
             $('#toolbar'+value.index).css('color','#0000dd');
@@ -103,7 +101,6 @@ $(function () {
         resetSplitTimerTextColor(1);
         resetSplitTimerTextColor(2);
         resetSplitTimerTextColor(3);
-        activeRunStartTime.value = 0;
     }
 
     function splitTimer(splitIndex) {
@@ -275,9 +272,6 @@ $(function () {
             });
 
             nodecg.sendMessage("startTime");
-            if (activeRunStartTime.value === 0) {
-                nodecg.sendMessage("runStarted");
-            }
             options = {
                 label: "pause",
                 icons: {

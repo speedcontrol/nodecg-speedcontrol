@@ -61,19 +61,6 @@
 				"enable": {"type": "boolean", "default": false},
 				"twitchChannelID": {"type": "string", "default": "TWITCH_ID"}
 			}
-		},
-		"api": {
-			"type": ["object", "null"],
-			"properties": {
-				"enable": {"type": "boolean"},
-				"sharedKey": {"type": "string"},
-				"hooks": {
-					"type": "array",
-					"uniqueItems": true,
-					"items": {"type": "string"},
-					"minItems": 1
-				}
-			}
 		}
 	}
 }

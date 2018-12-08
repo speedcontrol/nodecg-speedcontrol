@@ -43,11 +43,6 @@ Below is an example configuration file contents with everything that is availabl
 	"speedrunComMarathon": {
 		"enable": true,
 		"slug": "SRC_SLUG"
-	},
-	"api": {
-		"enable": true,
-		"sharedKey": "TWITCH_ID",
-		"hooks": ["HOOK_URL"]
 	}
 }
 ```
@@ -126,15 +121,3 @@ Once enabled and an API access token and campaign ID are specified from Tiltify 
 ```
 
 Once enabled and a slug is specified of a marathon page on Speedrun.com (this is the part of the URL after the 1st forward slash), if it has donations activated, you will be able to access some information about the marathon's donation information via replicants. No extra README for this yet; see the  [./extension/srcomdonations.js](../extension/srcomdonations.js) file if you're an advanced user and wish to use this functionality in your graphics bundles.
-
-### API
-
-```
-"api": {
-	"enable": true,
-	"sharedKey": "TWITCH_ID",
-	"hooks": ["HOOK_URL"]
-}
-```
-
-This is a undocumented API that can be used to send data to an external server when runs are completed. It was written and mainly intended for use for the European Speedrunner Assembly events. The source for all this can be found in the [./extension/esacontroller.js](../extension/esacontroller.js) file, if you want to use it for some reason.

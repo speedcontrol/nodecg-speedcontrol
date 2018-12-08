@@ -12,7 +12,6 @@ module.exports = function(nodecg) {
 	require('./stopwatch');
 	require('./horaro-import');
 	require('./twitchapi');
-	require('./esacontroller');
 	require('./ffzws');
 	require('./srcomdonations');
 	require('./tiltify');
