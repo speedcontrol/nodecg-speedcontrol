@@ -13,7 +13,6 @@ module.exports = function(nodecg) {
 	require('./horaro-import');
 	require('./twitchapi');
 	require('./ffzws');
-	require('./tiltify');
 
 	// Basic return, currently to expose the set Twitch client ID to other extensions.
 	return {

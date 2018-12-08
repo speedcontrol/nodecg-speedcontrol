@@ -34,11 +34,6 @@ Below is an example configuration file contents with everything that is availabl
 				"key": "gameShort"
 			}
 		]
-	},
-	"tiltify": {
-		"enable": true,
-		"token": "API_ACCESS_TOKEN",
-		"campaign": "CAMPAIGN_ID"
 	}
 }
 ```
@@ -94,15 +89,3 @@ Once the Twitch integration settings are fully set up and your NodeCG server has
 - `ignoreGamesWhileImporting` is an array of strings of games on your schedule that will be ignored on import; for example you may have setup blocks you don't want importing. This does partial matches ("Setup Block" will be matched by "Setup").
  - `disableSpeedrunComLookup` is a boolean (defaults to false) that can be enabled, which will skip the speedrun.com look-ups during schedule import; by default the import will try to find the runner's Twitch username and country from speedrun.com, but if you do not need this you can disable it to speed up the import.
 - `customData` (*for advanced users*) is an array of objects; this is for adding custom data to the run data on import. Once set here, you will be able to select an appropriate column on import for where this data is stored in your schedule. All of this is stored within an objected called `customData` within the run's data object.
-
-### Tiltify
-
-```
-"tiltify": {
-	"enable": true,
-	"token": "API_ACCESS_TOKEN",
-	"campaign": "CAMPAIGN_ID"
-}
-```
-
-Once enabled and an API access token and campaign ID are specified from Tiltify (you can get a token by registering an application on the Tiltify dashboard, the campaign ID is harder to find; look in your browser's inpector in the Network tab), the donation total for your campaign will be stored and frequently updated in the `tiltifyDonationTotal` replicant of this bundle. The source for the Tiltify code can be found in the [./extension/tiltify.js](../extension/tiltify.js) file.

@@ -39,14 +39,6 @@
 					"minItems": 1
 				}
 			}
-		},
-		"tiltify": {
-			"type": "object",
-			"properties": {
-				"enable": {"type": "boolean", "default": false},
-				"token": {"type": "string", "default": "API_ACCESS_TOKEN"},
-				"campaign": {"type": "string", "default": "CAMPAIGN_ID"}
-			}
 		}
 	}
 }
