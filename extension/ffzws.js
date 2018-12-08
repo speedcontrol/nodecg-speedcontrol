@@ -1,7 +1,7 @@
 'use strict';
 
 var WebSocket = require('ws');
-var tmi = require('tmi.js');
+var TwitchJS = require('twitch-js');
 var async = require('async');
 
 var nodecg = require('./utils/nodecg-api-context').get();
@@ -173,7 +173,7 @@ function sendAuthThroughTwitchChat(auth) {
 		}
 	};
 
-	var client = new tmi.client(options);
+	var client = new TwitchJS.client(options);
 	client.connect();
 
 	client.once('connected', function(address, port) {

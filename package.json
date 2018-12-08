@@ -3,10 +3,10 @@
   "version": "0.9.0",
   "author": "zoton2",
   "contributors": [
-	"Charleon",
-	"btrim",
-	"Zephyyrr",
-	"Planks"
+    "Charleon",
+    "btrim",
+    "Zephyyrr",
+    "Planks"
   ],
   "dependencies": {
     "async": "^2.4.1",
@@ -17,7 +17,7 @@
     "moment": "^2.18.1",
     "needle": "^2.2.4",
     "request": "^2.73.0",
-    "tmi.js": "^1.1.1",
+    "twitch-js": "^1.2.17",
     "ws": "^6.1.2"
   },
   "description": "NodeCG bundle to help facilitate the running of speedrunning marathons, including overlays.",
