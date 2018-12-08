@@ -47,13 +47,6 @@
 				"token": {"type": "string", "default": "API_ACCESS_TOKEN"},
 				"campaign": {"type": "string", "default": "CAMPAIGN_ID"}
 			}
-		},
-		"speedrunComMarathon": {
-			"type": "object",
-			"properties": {
-				"enable": {"type": "boolean", "default": false},
-				"slug": {"type": "string", "default": "SRC_SLUG"}
-			}
 		}
 	}
 }

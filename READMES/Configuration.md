@@ -39,10 +39,6 @@ Below is an example configuration file contents with everything that is availabl
 		"enable": true,
 		"token": "API_ACCESS_TOKEN",
 		"campaign": "CAMPAIGN_ID"
-	},
-	"speedrunComMarathon": {
-		"enable": true,
-		"slug": "SRC_SLUG"
 	}
 }
 ```
@@ -110,14 +106,3 @@ Once the Twitch integration settings are fully set up and your NodeCG server has
 ```
 
 Once enabled and an API access token and campaign ID are specified from Tiltify (you can get a token by registering an application on the Tiltify dashboard, the campaign ID is harder to find; look in your browser's inpector in the Network tab), the donation total for your campaign will be stored and frequently updated in the `tiltifyDonationTotal` replicant of this bundle. The source for the Tiltify code can be found in the [./extension/tiltify.js](../extension/tiltify.js) file.
-
-### Speedrun.com Marathons
-
-```
-"speedrunComMarathon": {
-	"enable": true,
-	"slug": "SRC_SLUG"
-}
-```
-
-Once enabled and a slug is specified of a marathon page on Speedrun.com (this is the part of the URL after the 1st forward slash), if it has donations activated, you will be able to access some information about the marathon's donation information via replicants. No extra README for this yet; see the  [./extension/srcomdonations.js](../extension/srcomdonations.js) file if you're an advanced user and wish to use this functionality in your graphics bundles.

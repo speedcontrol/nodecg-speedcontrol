@@ -13,7 +13,7 @@ Some basic information:
 - Automatically feature the current runner(s) on the [FrankerFaceZ](https://www.frankerfacez.com/) featured channels function below the stream.
 - Has an inbuilt timer (powered by [livesplit-core](https://github.com/LiveSplit/livesplit-core)); no need to have a seperate application open.
 - Basic support for donation total for events on [Tiltify](https://tiltify.com/).
-- Support for donation total/goals/bidwars/new donations from marathon pages on [speedrun.com's](https://www.speedrun.com/) if your event has them enabled.
+- Support for some donations trackers can be added with some extra bundles.
 
 This bundle doesn't come with any graphics, you will need to create them yourself in another bundle. We currently have no READMEs for this but you can check out [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext) for an simple example bundle.
 
