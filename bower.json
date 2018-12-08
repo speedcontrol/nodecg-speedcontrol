@@ -3,7 +3,6 @@
   "dependencies": {
     "jquery": "^3.2.1",
     "jquery-ui": "^1.0.0",
-    "jquery.scrollTo": "^2.1.2",
-    "async": "^2.4.1"
+    "jquery.scrollTo": "^2.1.2"
   }
 }
