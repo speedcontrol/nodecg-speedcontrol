@@ -1,25 +1,26 @@
 {
   "name": "nodecg-speedcontrol",
   "version": "0.9.0",
-  "homepage": "http://twitch.tv/sethcharleon",
-  "author": "Tobias Palm Nerg <charleon@gmail.com>",
+  "author": "zoton2",
   "contributors": [
-    "btrim <btrim.twitch@gmail.com>"
+	"Charleon",
+	"btrim",
+	"Zephyyrr",
+	"Planks"
   ],
   "dependencies": {
     "async": "^2.4.1",
     "clone": "^2.1.1",
     "graphql-request": "^1.6.0",
-    "inherits": "^2.0.1",
-    "livesplit-core": "^0.9.0",
+    "livesplit-core": "^0.10.2",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
-    "needle": "^1.6.0",
+    "needle": "^2.2.4",
     "request": "^2.73.0",
     "tmi.js": "^1.1.1",
-    "ws": "^3.0.0"
+    "ws": "^6.1.2"
   },
-  "description": "NodeCG Overlay engine for Speedrun Marathons",
+  "description": "NodeCG bundle to help facilitate the running of speedrunning marathons, including overlays.",
   "license": "MIT",
   "nodecg": {
     "compatibleRange": "^1.0.0",
