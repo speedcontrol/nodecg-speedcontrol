@@ -19,7 +19,7 @@ This bundle doesn't come with any graphics, you will need to create them yoursel
 
 ## Installation
 
-You will need [Node.js](https://nodejs.org) and [git](https://git-scm.com/) installed to install NodeCG, then see the [NodeCG documentation](http://nodecg.com/) on how to install that. I also suggest installing `nodecg-cli`; information on that is also on the documentation just linked.
+You will need [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://git-scm.com/) installed to install NodeCG, then see the [NodeCG documentation](http://nodecg.com/) on how to install that. I also suggest installing `nodecg-cli`; information on that is also on the documentation just linked.
 
 - `nodecg install speedcontrol/nodecg-speedcontrol` to install the latest version of nodecg-speedcontrol
 
@@ -27,7 +27,7 @@ This bundle can run without any extra configuration, but it's needed to use all 
 
 ### tl;dr installation
 
-Install [Node.js](https://nodejs.org) and [git](https://git-scm.com/), then make a folder anywhere and open a command prompt/shell/bash window, then run these commands in order:
+Install [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://git-scm.com/), then make a folder anywhere and open a command prompt/shell/bash window, then run these commands in order:
 
 ```
 npm install bower -g
@@ -39,14 +39,15 @@ nodecg start
 
 ## Where has this bundle been used before?
 
-- All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons starting from the Pre-ESA Marathon 2016, including the Dreamhack speedrunning events in Sweden.
-- All [GTA Marathons](https://www.twitch.tv/gtamarathon) starting from GTA Marathon 2016.
-- [SpeedSouls Charity Marathon 2017](https://www.twitch.tv/speedsouls)
+- All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons starting from the Pre-ESA Marathon 2016, including the ESA ran Dreamhack speedrunning events in Sweden.
+- All [GTA Marathons](https://www.twitch.tv/gtamarathon) starting from GTA Marathon 2016
+- [SpeedSouls Charity Marathon 2017 and 2018](https://www.twitch.tv/speedsouls)
 - [Themeathon Pre-Marathon 2018](https://www.twitch.tv/themeathon)
-- Several [Voltathon](https://www.twitch.tv/voltagegg) marathons.
-- Several [DegenDash](https://www.twitch.tv/degendash) marathons.
-- Some marathons on [The Fast Force](https://www.twitch.tv/thefastforce) Twitch channel.
-- [A Race Against Time 3](https://www.twitch.tv/araceagainsttime) marathon.
+- Several [Voltathon](https://www.twitch.tv/voltagegg) marathons
+- Several [DegenDash](https://www.twitch.tv/degendash) marathons
+- Some marathons on [The Fast Force](https://www.twitch.tv/thefastforce) Twitch channel
+- [A Race Against Time 3](https://www.twitch.tv/araceagainsttime) marathon
+- [Power Up With Pride: Winter Pride 2018](https://www.twitch.tv/powerupwithpride) marathon
 
 ## Authors/Contributors
 
