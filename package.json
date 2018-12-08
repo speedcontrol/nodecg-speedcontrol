@@ -1,6 +1,10 @@
 {
   "name": "nodecg-speedcontrol",
   "version": "0.9.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/speedcontrol/nodecg-speedcontrol.git"
+  },
   "author": "zoton2",
   "contributors": [
     "Charleon",
@@ -21,6 +25,10 @@
   },
   "description": "NodeCG bundle to help facilitate the running of speedrunning marathons, including overlays.",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/speedcontrol/nodecg-speedcontrol/issues"
+  },
+  "homepage": "https://github.com/speedcontrol/nodecg-speedcontrol#readme",
   "nodecg": {
     "compatibleRange": "^1.0.0",
     "dashboardPanels": [
@@ -68,14 +76,6 @@
         "width": 3,
         "file": "StreamControlDashboard.html",
         "headerColor": "#008BB9"
-      },
-      {
-        "name": "twitch-highlighting",
-        "title": "Twitch Highlighting",
-        "width": 2,
-        "file": "TwitchHighlighting.html",
-        "headerColor": "#008BB9",
-        "workspace": "Twitch Highlighting"
       },
       {
         "name": "horaro-import",
