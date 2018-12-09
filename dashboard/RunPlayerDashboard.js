@@ -115,16 +115,13 @@ $(function () {
 	
     function runPlayer_getRunBodyHtml(runData) {
         var players = runPlayer_getPlayers(runData);
-        var bodyHtml = '<table class="table-striped">' +
-            players +
-            '<tr><td class="rowTitle">Estimate</td><td class="rowContent">' + runData.estimate + '</td></tr>' +
-            '<tr><td class="rowTitle">Category</td><td class="rowContent">' + runData.category + '</td></tr>' +
-            '<tr><td class="rowTitle">System</td><td class="rowContent">' + runData.system + '</td></tr>' +
-            '<tr><td class="rowTitle">Region</td><td class="rowContent">' + runData.region + '</td></tr>' +
-            '</table>' +
-            '<button class="playRunButton" id="playRun' + runData.runID + '">play</button>';
+        var bodyHtml = '<table class="table-striped">'+players;
+        if (runData.estimate) bodyHtml += '<tr><td class="rowTitle">Estimate</td><td class="rowContent">' + runData.estimate + '</td></tr>';
+        if (runData.category) bodyHtml += '<tr><td class="rowTitle">Category</td><td class="rowContent">' + runData.category + '</td></tr>';
+        if (runData.system) bodyHtml += '<tr><td class="rowTitle">System</td><td class="rowContent">' + runData.system + '</td></tr>';
+        if (runData.region) bodyHtml += '<tr><td class="rowTitle">Region</td><td class="rowContent">' + runData.region + '</td></tr>';
+        bodyHtml += '</table><button class="playRunButton" id="playRun' + runData.runID + '">play</button>';
         return bodyHtml;
-
     }
 
     function runPlayer_updateList(runData) {

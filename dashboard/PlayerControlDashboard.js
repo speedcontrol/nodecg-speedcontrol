@@ -7,7 +7,6 @@ $(function () {
 
 // Initialize replicants we will use
     var runDataArrayReplicant = nodecg.Replicant("runDataArray");
-	var runDataEditRunReplicant = nodecg.Replicant('runDataEditRun', {defaultValue: -1, persistent: false});
 	var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
 
     var runDataLastIDReplicant = nodecg.Replicant("runDataLastID");
@@ -36,8 +35,9 @@ $(function () {
         $removeRunsButton.button({});
         $randomizeRunsButton.button({});
 		
-		$addRunButton.click(function() {
-			runDataEditRunReplicant.value = -1;
+		$addRunButton.click(() => {
+			nodecg.getDialog('run-info').querySelector('iframe').contentWindow.loadRun();
+			nodecg.getDialog('run-info').open();
 		});
 
         $removeRunsButton.click(function () {
@@ -91,17 +91,6 @@ $(function () {
 
         });
     }
-
-    function playerControl_InitializePlayerElements() {
-        $addPlayerButton = $('#playerControlAddPlayerButton');
-
-        $addPlayerButton.button({
-            icons: {
-                primary: "ui-icon-plusthick"
-            },
-            text: false
-        });
-	}
 
     // Initialize dashboard panel, only runs once
     playerControl_InitializeElements();

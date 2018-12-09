@@ -24,10 +24,8 @@ $(function () {
 	});
 	
 	$('#editCurrentRunButton').click(() => {
-		runDataEditRunReplicant.value = runDataActiveRunReplicant.value.runID;
+		editRun(runDataActiveRunReplicant.value.runID);
 	});
-
-    var runDataEditRunReplicant = nodecg.Replicant('runDataEditRun', {defaultValue: -1, persistent: false});
 
     function runControl_GetPlayers(runData) {
         var shouldSayTeams = runData.teams.length > 1;
@@ -56,13 +54,12 @@ $(function () {
 
     function runControl_GetRunBodyHtml(runData) {
         var players = runControl_GetPlayers(runData);
-        var bodyHtml = '<table class="table-striped">' +
-            players +
-            '<tr><td class="rowTitle">Estimate</td><td class="rowContent">' + runData.estimate + '</td></tr>' +
-            '<tr><td class="rowTitle">Category</td><td class="rowContent">' + runData.category + '</td></tr>' +
-            '<tr><td class="rowTitle">System</td><td class="rowContent">' + runData.system + '</td></tr>' +
-            '<tr><td class="rowTitle">Region</td><td class="rowContent">' + runData.region + '</td></tr>' +
-            '</table>';
+        var bodyHtml = '<table class="table-striped">'+players;
+        if (runData.estimate) bodyHtml += '<tr><td class="rowTitle">Estimate</td><td class="rowContent">' + runData.estimate + '</td></tr>';
+        if (runData.category) bodyHtml += '<tr><td class="rowTitle">Category</td><td class="rowContent">' + runData.category + '</td></tr>';
+        if (runData.system) bodyHtml += '<tr><td class="rowTitle">System</td><td class="rowContent">' + runData.system + '</td></tr>';
+        if (runData.region) bodyHtml += '<tr><td class="rowTitle">Region</td><td class="rowContent">' + runData.region + '</td></tr>';
+        bodyHtml += '</table>';
         return bodyHtml;
 
     }
@@ -114,7 +111,7 @@ $(function () {
 
         $.each(buttonChangeIDs, function (index, buttonID) {
             $('#' + buttonID).click(function () {
-                runDataEditRunReplicant.value = runControl_GetRun(index).runID;
+				editRun(runControl_GetRun(index).runID)
             });
 
             $('#' + buttonID).button({
@@ -186,5 +183,10 @@ $(function () {
     function runControl_GetRun(ID) {
         var runContainer = runDataArrayReplicant.value;
         return runContainer[ID];
-    }
+	}
+	
+	function editRun(runID) {
+		nodecg.getDialog('run-info').querySelector('iframe').contentWindow.loadRun(runID);
+		nodecg.getDialog('run-info').open();
+	}
 });
