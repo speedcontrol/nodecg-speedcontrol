@@ -2,9 +2,10 @@
 var nodecg = require('./utils/nodecg-api-context').get();
 var needle = require('needle');
 var async = require('async');
+var clone = require('clone');
 
 var runDataArray = [];
-var runNumberIterator = 1;
+var runNumberIterator = -1;
 var scheduleData;
 
 var defaultSetupTimeReplicant = nodecg.Replicant('defaultSetupTime', {defaultValue: 0});
@@ -14,7 +15,6 @@ var scheduleImporting = nodecg.Replicant('horaroScheduleImporting', {defaultValu
 // Temp cache for the user data from SR.com that is kept until the server is restarted.
 var userDataCache = nodecg.Replicant('horaroImportUserDataCache', {defaultValue: {}, persistent: false});
 
-var customData = nodecg.bundleConfig.schedule.customData || [];
 var disableSRComLookup = nodecg.bundleConfig.schedule.disableSpeedrunComLookup || false;
 
 nodecg.listenFor('loadScheduleData', (url, callback) => {
@@ -26,7 +26,7 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 	scheduleImporting.value.importing = true;
 	scheduleImporting.value.item = 0;
 	runDataArray = [];
-	runNumberIterator = 1;
+	runNumberIterator = -1;
 
 	var runItems = scheduleData.schedule.items;
 	scheduleImporting.value.total = runItems.length;
@@ -50,7 +50,7 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 			return callback();
 		}
 		
-		var runData = createRunData();
+		var runData = clone(nodecg.readReplicant('defaultRunDataObject'));
 		
 		// Game Name
 		if (columns.game >= 0 && run.data[columns.game]) {
@@ -114,22 +114,17 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 			var vsList = playerLinksList.split(/\s+vs\.?\s+/);
 			async.eachSeries(vsList, function(rawTeam, callback) {
 				// Getting/setting the team name.
-				var customTeamName = false;
 				var cap = rawTeam.match(/(Team\s*)?(\S+):\s+\[/);
 				if (cap !== null && cap.length > 0) {
-					customTeamName = true;
 					var teamName = cap[2];
 				}
-				else
-					var teamName = 'Team '+(runData.teams.length+1);
 				
 				// Getting the members of this team.
 				var members = rawTeam.split(/\s*,\s*/);
-				var team = {
-					name: teamName,
-					custom: customTeamName,
-					members: new Array()
-				};
+				var team = clone(nodecg.readReplicant('defaultRunDataTeamObject'));
+				runData.teamLastID++;
+				team.ID = runData.teamLastID;
+				if (teamName) runData.teamNames[team.ID] = teamName;
 				
 				// Going through the list of members.
 				async.eachSeries(members, function(member, callback) {
@@ -143,16 +138,17 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 					
 					getDataFromSpeedrunCom(playerName, URI, function(regionCode, twitchURI) {
 						// Creating the member object.
-						var memberObj = {
-							names: {
-								international: playerName
-							},
-							twitch: {
-								uri: twitchURI || URI
-							},
-							team: team.name,
-							region: regionCode
-						};
+						var memberObj = clone(nodecg.readReplicant('defaultPlayerObject'));
+						memberObj.name = playerName;
+						memberObj.teamID = team.ID;
+						memberObj.country = regionCode;
+
+						// Get/set Twitch username from URL.
+						var twitch = twitchURI || URI;
+						if (twitch) {
+							twitch = twitch.split('/')[twitch.split('/').length-1];
+							memberObj.social.twitch = twitch;
+						}
 						
 						// Push this object to the relevant arrays where it is stored.
 						team.members.push(memberObj);
@@ -160,12 +156,6 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 						callback();
 					});
 				}, function(err) {
-					// If there's only 1 member in the team, set the team name as their name.
-					if (members.length === 1) {
-						team.name = team.members[0].names.international;
-						team.members[0].team = team.name;
-					}
-					
 					runData.teams.push(team);
 					callback();
 				});
@@ -194,28 +184,6 @@ function setScheduleData(url, callback) {
 		scheduleData = resp.body;
 		callback();
 	});
-}
-
-// Returns an empty run object.
-function createRunData() {
-	var runData = {};
-	runData.players = [];
-	runData.game = undefined;
-	runData.gameTwitch = undefined;
-	runData.estimate = undefined;
-	runData.estimateS = 0;
-	runData.setupTime = undefined;
-	runData.setupTimeS = 0;
-	runData.scheduled = undefined;
-	runData.scheduledS = 0;
-	runData.system = undefined;
-	runData.region = undefined;
-	runData.category = undefined;
-	runData.screens = [];
-	runData.cameras = [];
-	runData.teams = [];
-	runData.customData = {};
-	return runData;
 }
 
 function checkGameAgainstIgnoreList(game) {
@@ -346,8 +314,8 @@ function getTwitchFromSRComUserData(data) {
 
 // Called as a process when pushing the "add run" button.
 function horaro_AddRun(runData) {
-	runData.runID = runNumberIterator;
 	runNumberIterator++;
+	runData.runID = runNumberIterator;
 	runDataArray.push(runData);
 }
 
@@ -357,16 +325,10 @@ function horaro_finalizeRunList() {
 }
 
 // All the runs have a unique ID attached to them.
+var runDataLastID = nodecg.Replicant('runDataLastID');
 function horaro_SetLastID() {
-	horaroRunDataLastIDReplicant.value = runNumberIterator;
+	runDataLastID.value = runNumberIterator;
 }
-
-var horaroRunDataLastIDReplicant = nodecg.Replicant('runDataLastID');
-horaroRunDataLastIDReplicant.on('change', function(newValue, oldValue) {
-	if (typeof newValue === 'undefined') {
-		horaroRunDataLastIDReplicant.value = 1;
-	}
-});
 
 function secondsToTime(duration) {
 	var seconds = parseInt(duration % 60);

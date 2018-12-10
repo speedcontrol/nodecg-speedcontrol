@@ -15,7 +15,7 @@ $(function () {
 	
 	$('#editCurrentRunButton').button();
 
-	var horaroRunDataLastIDReplicant = nodecg.Replicant('runDataLastID');
+	var runDataLastID = nodecg.Replicant('runDataLastID');
 	
 	var runDataActiveRunReplicant = nodecg.Replicant('runDataActiveRun');
 	runDataActiveRunReplicant.on('change', (newVal, oldVal) => {
@@ -27,30 +27,37 @@ $(function () {
 		editRun(runDataActiveRunReplicant.value.runID);
 	});
 
-    function runControl_GetPlayers(runData) {
-        var shouldSayTeams = runData.teams.length > 1;
-        // if any teams have more than 1 player, we should say teams
-        runData.teams.forEach( function(team, index) {
-          shouldSayTeams = team.members.length > 1;
-        });
-        var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
-        $.each(runData.teams, function (index, team) {
-          if (index > 0) {
-            playerString += '<tr><td class="rowTitle"</td>';
-          }
-          playerString += '<td class="rowContent">' + team.name;
-          if (team.members.length > 1) {
-            playerString += '<ul>';
+	function runControl_GetPlayers(runData) {
+		var shouldSayTeams = runData.teams.length > 1;
+		// if any teams have more than 1 player, we should say teams
+		runData.teams.forEach( function(team, index) {
+			shouldSayTeams = team.members.length > 1;
+		});
+		var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
+		$.each(runData.teams, function (index, team) {
+			if (index > 0) {
+				playerString += '<tr><td class="rowTitle"></td>';
+			}
+			if (team.members.length > 1) {
+				if (runData.teamNames[team.ID]) var teamName = runData.teamNames[team.ID];
+				else var teamName = `Team ${index+1}`
+				playerString += `<td class="rowContent"> ${teamName}`;
+			}
+			else {
+				playerString += `<td class="rowContent"> ${team.members[0].name}`;
+			}
+			if (team.members.length > 1) {
+				playerString += '<ul>';
 
-            $.each(team.members, function (index, member) {
-              playerString += '<li>' + member.names.international + '</li>';
-            });
-            playerString += '</ul>'
-          }
-          playerString += '</td></tr>';
-        });
-        return playerString;
-    }
+				$.each(team.members, function (index, member) {
+					playerString += '<li>' + member.name + '</li>';
+				});
+				playerString += '</ul>'
+			}
+			playerString += '</td></tr>';
+		});
+		return playerString;
+	}
 
     function runControl_GetRunBodyHtml(runData) {
         var players = runControl_GetPlayers(runData);
@@ -129,8 +136,8 @@ $(function () {
 				if (newCategory) clonedRunData.category = newCategory; // Set new category if it was entered.
 				clonedRunData.scheduled = undefined;
 				clonedRunData.scheduledS = 0;
-				clonedRunData.runID = horaroRunDataLastIDReplicant.value;
-				horaroRunDataLastIDReplicant.value++;
+				runDataLastID.value++;
+				clonedRunData.runID = runDataLastID.value;
 				runDataArrayReplicant.value.splice(index+1, 0, clonedRunData);
             });
 

@@ -27,7 +27,7 @@ $(function() {
 				var newTeamArray = [];
 				$.each(sortedIDs, function (index, valueId) {
 					$.each(oldTeamArray, function (index, team) {
-						if (team.name == valueId) {
+						if (team.ID == valueId) {
 							newTeamArray.push(team);
 							return false;
 						}
@@ -45,9 +45,11 @@ $(function() {
 		$.each(teamArray, function (index, value) {
 			var teamMembers = [];
 			if (value.members.length > 1) {
-				value.members.forEach(function(member) {teamMembers.push(member.names.international);});
+				value.members.forEach(function(member) {teamMembers.push(member.name);});
 			}
-			runnerHtml += '<li class="ui-state-default" id="' + value.name + '" title="'+teamMembers.join(', ')+'">' + value.name + '</li>';
+			if (runDataActiveRunReplicant.value.teamNames[value.ID]) var teamName = runDataActiveRunReplicant.value.teamNames[value.ID];
+			else var teamName = `Team ${index+1}`
+			runnerHtml += '<li class="ui-state-default" id="' + value.ID + '" title="'+teamMembers.join(', ')+'">' + teamName + '</li>';
 		});
 		return runnerHtml;
 	}
@@ -67,7 +69,7 @@ $(function() {
 				var newPlayerArray = [];
 				$.each(sortedIDs, function (index, valueId) {
 					$.each(oldPlayerArray, function (index, player) {
-						if (player.names.international == valueId) {
+						if (player.name == valueId) {
 							newPlayerArray.push(player);
 							return false;
 						}
@@ -83,7 +85,7 @@ $(function() {
 	function playerLayout_CreatePlayerListHtmlElements(playerArray) {
 		var runnerHtml = '';
 		$.each(playerArray.members, function (index, value) {
-			runnerHtml += '<li class="ui-state-default" id="' + value.names.international + '">' + value.names.international + '</li>';
+			runnerHtml += '<li class="ui-state-default" id="' + value.name + '">' + value.name + '</li>';
 		});
 		return runnerHtml;
 	}

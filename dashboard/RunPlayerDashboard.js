@@ -97,14 +97,21 @@ $(function () {
 			var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
 			$.each(runData.teams, function (index, team) {
 				if (index > 0) {
-					playerString += '<tr><td class="rowTitle"</td>';
+					playerString += '<tr><td class="rowTitle"></td>';
 				}
-				playerString += '<td class="rowContent">' + team.name;
+				if (team.members.length > 1) {
+					if (runData.teamNames[team.ID]) var teamName = runData.teamNames[team.ID];
+					else var teamName = `Team ${index+1}`
+					playerString += `<td class="rowContent"> ${teamName}`;
+				}
+				else {
+					playerString += `<td class="rowContent"> ${team.members[0].name}`;
+				}
 				if (team.members.length > 1) {
 					playerString += '<ul>';
 
 					$.each(team.members, function (index, member) {
-						playerString += '<li>' + member.names.international + '</li>';
+						playerString += '<li>' + member.name + '</li>';
 					});
 					playerString += '</ul>'
 				}
@@ -274,8 +281,7 @@ $(function () {
 	 		// Gets Twitch channel names from the runData and puts them in an array to send to the FFZ WS script.
  			var twitchNames = [];
  			for (var i = 0; i < runData.players.length; i++) {
-				var twitchData = runData.players[i].twitch;
-				var twitchName = (twitchData && twitchData.uri) ? twitchData.uri.replace(/https?:\/\/.*?\//, '') : undefined;
+				var twitchName = runData.players[i].social.twitch;
 				if (twitchName && !twitchName.match(/^http/)) {
 					twitchNames.push(twitchName);
 				}
@@ -316,7 +322,7 @@ $(function () {
 				},
 				success: function(result) {
 					// We look for an exact match (case insensitive) here so games like super metroid fall back to twitch search instead
-					if ((result.data.length > 0) && (runData.game.toLowerCase() == result.data[0].names.international.toLowerCase())) {
+					if ((result.data.length > 0) && (runData.game.toLowerCase() == result.data[0].name.toLowerCase())) {
 						twitchGameName = result.data[0].names.twitch;
 					} else {
 						console.log ("No exact game match on speedrun.com for "+ runData.game);
@@ -372,7 +378,7 @@ $(function () {
 		var namesList = 'No Runner(s)';
 		runData.teams.forEach(team => {
 			var teamMemberArray = [];
-			team.members.forEach(member => {teamMemberArray.push(member.names.international);});
+			team.members.forEach(member => {teamMemberArray.push(member.name);});
 			namesArray.push(teamMemberArray.join(', '));
 		});
 		namesList = namesArray.join(' vs. ');

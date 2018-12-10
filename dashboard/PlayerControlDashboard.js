@@ -8,16 +8,11 @@ $(function () {
 // Initialize replicants we will use
     var runDataArrayReplicant = nodecg.Replicant("runDataArray");
 	var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
-
-    var runDataLastIDReplicant = nodecg.Replicant("runDataLastID");
-    runDataLastIDReplicant.on("change", function (newValue, oldValue) {
-        if (typeof newValue === 'undefined') {
-            runDataLastIDReplicant.value = 1;
-        }
-    });
+	
+	var runDataLastIDReplicant = nodecg.Replicant("runDataLastID");
 	
 	// Returns an empty run object
-    function playerControl_CreateRunData() {
+    /*function playerControl_CreateRunData() {
         var theRun = {};
         theRun.players = [];
 		theRun.teams = [];
@@ -27,7 +22,7 @@ $(function () {
         theRun.region = "";
         theRun.category = "";
         return theRun;
-    }
+	}*/
 	
 	// Initializes logic for buttons, fields, and validation
     function playerControl_InitializeElements() {
@@ -42,13 +37,13 @@ $(function () {
 
         $removeRunsButton.click(function () {
             if (confirm("Really remove all runs?")) {
-                runDataArrayReplicant.value = undefined;
-                runDataLastIDReplicant.value = undefined;
+                runDataArrayReplicant.value = [];
+                runDataLastIDReplicant.value = -1;
                 runDataActiveRunReplicant.value = undefined;
             }
         });
 
-        $randomizeRunsButton.click(function () {
+        /*$randomizeRunsButton.click(function () {
             var runs = [];
             var runID = runDataLastIDReplicant.value;
             for (var i = 0; i < 10; i++) {
@@ -89,13 +84,13 @@ $(function () {
             runContainer = runs;
             runDataArrayReplicant.value = runContainer;
 
-        });
+        });*/
     }
 
     // Initialize dashboard panel, only runs once
     playerControl_InitializeElements();
 
-    if (nodecg.bundleConfig && (typeof nodecg.bundleConfig.live !== 'undefined' && nodecg.bundleConfig.live === true)) {
+    /*if (nodecg.bundleConfig && (typeof nodecg.bundleConfig.live !== 'undefined' && nodecg.bundleConfig.live === true)) {
         $randomizeRunsButton.button({disabled: true});
-    }
+	}*/
 });

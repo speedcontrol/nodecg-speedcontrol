@@ -147,7 +147,7 @@ $(function () {
         var splitTime = {};
         splitTime.index = index;
         splitTime.time = stopWatchReplicant.value.time;
-        splitTime.name = runDataActiveRunReplicant.value.teams[index].name;
+        splitTime.name = runDataActiveRunReplicant.value.teams[index].ID;
         return splitTime;
     }
 
@@ -212,11 +212,19 @@ $(function () {
         var toolbarPlayerSpecificHtml = '';
         if ( run.teams.length > 1 ) {
           $.each(run.teams, function( index, value ) {
+			if (value.members.length > 1) {
+				if (run.teamNames[value.ID]) var teamName = run.teamNames[value.ID];
+				else var teamName = `Team ${index+1}`
+			}
+			else {
+				var teamName = value.members[0].name;
+			}
+
             toolbarPlayerSpecificHtml += "" +
                 '<div id="toolbar' + index + '" class="ui-widget-header ui-corner-all">' +
                 '<button id="split' + index + '" class="personalSplitButton">split</button>' +
                 '<button id="resetTime' + index + '" class="personalResetButton">reset</button>' +
-                " " + value.name +
+                " " + teamName +
                 '</div>';
           });
         }

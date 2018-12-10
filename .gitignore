@@ -1,3 +1,6 @@
 # Node / Bower
 bower_components/
 node_modules/
+runDataArray.json
+runData_old.json
+runData_new.json
