@@ -44,10 +44,11 @@ $(function() {
 		var runnerHtml = '';
 		$.each(teamArray, function (index, value) {
 			var teamMembers = [];
-			if (value.members.length > 1) {
+			if (value.members.length === 1) {
 				value.members.forEach(function(member) {teamMembers.push(member.name);});
+				teamName = teamMembers.join(', ');
 			}
-			if (runDataActiveRunReplicant.value.teamNames[value.ID]) var teamName = runDataActiveRunReplicant.value.teamNames[value.ID];
+			else if (runDataActiveRunReplicant.value.teamNames[value.ID]) var teamName = runDataActiveRunReplicant.value.teamNames[value.ID];
 			else var teamName = `Team ${index+1}`
 			runnerHtml += '<li class="ui-state-default" id="' + value.ID + '" title="'+teamMembers.join(', ')+'">' + teamName + '</li>';
 		});
