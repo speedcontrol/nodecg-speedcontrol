@@ -5,6 +5,7 @@ $(function () {
     var syncGamePlayedToTwitch = false;
 	var changingEnabled = true;
     var blankSlateRunContainerHtml = $('#run-player-container').html();
+	var customData = nodecg.bundleConfig.schedule.customData || [];
 	
     // Initialize replicants we will use
 	
@@ -127,7 +128,13 @@ $(function () {
         if (runData.category) bodyHtml += '<tr><td class="rowTitle">Category</td><td class="rowContent">' + runData.category + '</td></tr>';
         if (runData.system) bodyHtml += '<tr><td class="rowTitle">System</td><td class="rowContent">' + runData.system + '</td></tr>';
         if (runData.region) bodyHtml += '<tr><td class="rowTitle">Region</td><td class="rowContent">' + runData.region + '</td></tr>';
-        if (runData.release) bodyHtml += '<tr><td class="rowTitle">Released</td><td class="rowContent">' + runData.release + '</td></tr>';
+		if (runData.release) bodyHtml += '<tr><td class="rowTitle">Released</td><td class="rowContent">' + runData.release + '</td></tr>';
+		
+		customData.forEach((customDataElem) => {
+			if (customDataElem.key && customDataElem.name && runData.customData[customDataElem.key])
+				bodyHtml += `<tr><td class="rowTitle">${customDataElem.name}</td><td class="rowContent">${runData.customData[customDataElem.key]}</td></tr>`;
+		});
+
         bodyHtml += '</table><button class="playRunButton" id="playRun' + runData.runID + '">play</button>';
         return bodyHtml;
     }
