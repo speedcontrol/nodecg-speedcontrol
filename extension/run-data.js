@@ -8,6 +8,7 @@ const defaultRunDataObject = nodecg.Replicant('defaultRunDataObject', {defaultVa
 	gameTwitch: '',
 	system: '',
 	region: '',
+	release: '',
 	category: '',
 	estimate: '',
 	estimateS: -1,

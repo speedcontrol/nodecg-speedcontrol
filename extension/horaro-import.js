@@ -97,6 +97,10 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 		// Region
 		if (columns.region >= 0 && run.data[columns.region])
 			runData.region = run.data[columns.region];
+
+		// Release
+		if (columns.release >= 0 && run.data[columns.release])
+			runData.release = run.data[columns.release];
 		
 		// Custom Data
 		// These are stored within the own object in the runData: "customData".
