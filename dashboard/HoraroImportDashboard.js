@@ -95,6 +95,13 @@ $(() => {
 					$('#playerColumns').val(i);
 					foundColumns.player = true;
 				}
+
+				customData.forEach((customDataElem) => {
+					if (columns[i].toLowerCase().indexOf(customDataElem.name.toLowerCase()) >= 0 && !foundColumns[customDataElem.key]) {
+						$(`#${customDataElem.key}Columns`).val(i);
+						foundColumns[customDataElem.key] = true;
+					}
+				});
 			}
 		});
 	});
