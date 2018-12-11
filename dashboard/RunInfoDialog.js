@@ -1,4 +1,4 @@
-var runDataCurrent, dialog, runID, runDataArray, defaultSetupTime, runDataLastID, runDataActiveRun, defaultRunDataObject;
+var runDataCurrent, dialog, runID, runDataArray, defaultSetupTime, runDataLastID, runDataActiveRun, defaultRunDataObject, customData;
 
 var runDataInputs = [
 	{id: 'game', placeholder: 'Game'},
@@ -9,6 +9,7 @@ var runDataInputs = [
 	{id: 'region', placeholder: 'Region'},
 	{id: 'release', placeholder: 'Released'},
 	{id: 'setupTime', placeholder: 'Setup Time (HH:MM:SS)'}
+	//{id: 'customExample', placeholder: 'Custom Example', custom: true}
 ];
 
 $(() => {
@@ -18,6 +19,17 @@ $(() => {
 	runDataLastID = nodecg.Replicant('runDataLastID');
 	runDataActiveRun = nodecg.Replicant('runDataActiveRun');
 	defaultRunDataObject = nodecg.Replicant('defaultRunDataObject');
+	customData = nodecg.bundleConfig.schedule.customData || [];
+
+	customData.forEach((customDataElem) => {
+		if (customDataElem.key && customDataElem.name) {
+			runDataInputs.push({
+				id: customDataElem.key,
+				placeholder: customDataElem.name,
+				custom: true
+			});
+		}
+	});
 
 	document.addEventListener('dialog-confirmed', () => {
 		saveRun();
@@ -42,9 +54,9 @@ function loadRun(runIDtoLoad) {
 		// Add empty fields for run data.
 		for (var i = 0; i < runDataInputs.length; i++) {
 			if (runDataInputs[i].id !== 'setupTime')
-				$('#gameDetailsInputs').append(`<input id='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}'>`);
+				$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' id='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}'>`);
 			else
-				$('#gameDetailsInputs').append(`<input id='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${msToTime(defaultSetupTime.value*1000)}'>`);
+				$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' id='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${msToTime(defaultSetupTime.value*1000)}'>`);
 		}
 	}
 
@@ -57,7 +69,10 @@ function loadRun(runIDtoLoad) {
 
 		// Add fields for run data, populated if the data is available.
 		for (var i = 0; i < runDataInputs.length; i++) {
-			$('#gameDetailsInputs').append(`<input id='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${runDataCurrent[runDataInputs[i].id]}'>`);
+			if (runDataInputs[i].custom) var value = runDataCurrent.customData[runDataInputs[i].id];
+			else var value = runDataCurrent[runDataInputs[i].id];
+
+			$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' id='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${value}'>`);
 		}
 	}
 }
@@ -68,7 +83,10 @@ function saveRun() {
 	for (var i = 0; i < runDataInputs.length; i++) {
 		var input = $(`#${runDataInputs[i].id}`).val();
 
-		if (runDataInputs[i].id === 'estimate' || runDataInputs[i].id === 'setupTime') {
+		if (runDataInputs[i].custom)
+			runData.customData[runDataInputs[i].id] = input;
+
+		else if (runDataInputs[i].id === 'estimate' || runDataInputs[i].id === 'setupTime') {
 			if (input.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/) || !isNaN(input)) {
 				var ms = timeToMS(input);
 				runData[runDataInputs[i].id] = msToTime(ms);

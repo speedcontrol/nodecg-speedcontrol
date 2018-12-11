@@ -105,7 +105,7 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 		// Custom Data
 		// These are stored within the own object in the runData: "customData".
 		Object.keys(columns.custom).forEach((col) => {
-			runData.customData[col] = null; // Make sure the key is set for all runs.
+			runData.customData[col] = ''; // Make sure the key is set for all runs.
 			if (columns.custom[col] >= 0 && run.data[columns.custom[col]])
 				runData.customData[col] = run.data[columns.custom[col]];
 		});
