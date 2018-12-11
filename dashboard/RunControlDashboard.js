@@ -138,13 +138,13 @@ $(function () {
 		
         $.each(buttonCloneIDs, function (index, buttonID) {
             $('#' + buttonID).click(function () {
-				var clonedRunData = JSON.parse(JSON.stringify(runControl_GetRun(index)));
+				var clonedRunData = clone(runControl_GetRun(index));
 				var newCategory = prompt('Change the category here if needed.', clonedRunData.category);
 				if (newCategory) clonedRunData.category = newCategory; // Set new category if it was entered.
-				clonedRunData.scheduled = undefined;
-				clonedRunData.scheduledS = 0;
+				clonedRunData.scheduled = '';
+				clonedRunData.scheduledS = -1;
+				clonedRunData.runID = runDataLastID.value+1;
 				runDataLastID.value++;
-				clonedRunData.runID = runDataLastID.value;
 				runDataArrayReplicant.value.splice(index+1, 0, clonedRunData);
             });
 

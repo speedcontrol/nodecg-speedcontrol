@@ -99,8 +99,8 @@ function saveRun() {
 
 	// If adding a new run.
 	if (runID === undefined) {
+		runData.runID = runDataLastID.value+1;
 		runDataLastID.value++;
-		runData.runID = runDataLastID.value;
 		runDataArray.value.push(runData);
 	}
 
