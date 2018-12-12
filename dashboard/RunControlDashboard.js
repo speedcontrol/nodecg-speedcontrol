@@ -98,7 +98,7 @@ $(function () {
                 '<div>' +
                 runControl_GetRunBodyHtml(runData) +
                 '<button class="removeButton" id="' + buttonRemoveIDString + '"></button>' +
-                '<button class="changeButton" nodecg-dialog="run-info" id="' + buttonChangeIDString + '"></button>' +
+                '<button class="changeButton" id="' + buttonChangeIDString + '"></button>' +
                 '<button class="cloneButton" id="' + buttonCloneIDString + '"></button>' +
                 '</div>' +
                 '</div>';
