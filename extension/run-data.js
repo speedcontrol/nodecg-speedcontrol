@@ -18,10 +18,9 @@ const defaultRunDataObject = nodecg.Replicant('defaultRunDataObject', {defaultVa
 	scheduled: '',
 	scheduledS: -1,
 	teams: [],
-	players: [],
 	customData: {},
-	teamNames: {},
 	teamLastID: -1,
+	playerLastID: -1,
 	runID: -1
 }, persistent: false});
 
@@ -32,12 +31,14 @@ customData.forEach((customDataElem) => {
 });
 
 const defaultRunDataTeamObject = nodecg.Replicant('defaultRunDataTeamObject', {defaultValue: {
+	name: '',
 	ID: -1,
-	members: []
+	players: []
 }, persistent: false});
 
 const defaultPlayerObject = nodecg.Replicant('defaultPlayerObject', {defaultValue: {
 	name: '',
+	ID: -1,
 	teamID: -1,
 	country: '',
 	social: {

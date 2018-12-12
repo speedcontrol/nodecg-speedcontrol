@@ -42,15 +42,15 @@ $(function() {
 	
 	function playerLayout_CreateTeamListHtmlElements(teamArray) {
 		var runnerHtml = '';
-		$.each(teamArray, function (index, value) {
-			var teamMembers = [];
-			if (value.members.length === 1) {
-				value.members.forEach(function(member) {teamMembers.push(member.name);});
-				teamName = teamMembers.join(', ');
+		$.each(teamArray, function (index, team) {
+			var teamPlayers = [];
+			if (team.players.length === 1) {
+				team.players.forEach(function(player) {teamPlayers.push(player.name);});
+				var teamName = teamPlayers.join(', ');
 			}
-			else if (runDataActiveRunReplicant.value.teamNames[value.ID]) var teamName = runDataActiveRunReplicant.value.teamNames[value.ID];
+			else if (team.name) var teamName = team.name;
 			else var teamName = `Team ${index+1}`
-			runnerHtml += '<li class="ui-state-default" id="' + value.ID + '" title="'+teamMembers.join(', ')+'">' + teamName + '</li>';
+			runnerHtml += '<li class="ui-state-default" id="' + team.ID + '" title="'+teamPlayers.join(', ')+'">' + teamName + '</li>';
 		});
 		return runnerHtml;
 	}
@@ -66,7 +66,7 @@ $(function() {
 				// IE doesn't register the blur when sorting
 				// so trigger focusout handlers to remove .ui-state-focus
 				var sortedIDs = $('#playerLayoutSortable').sortable("toArray");
-				var oldPlayerArray = runDataActiveRunReplicant.value.teams[0].members;
+				var oldPlayerArray = runDataActiveRunReplicant.value.teams[0].players;
 				var newPlayerArray = [];
 				$.each(sortedIDs, function (index, valueId) {
 					$.each(oldPlayerArray, function (index, player) {
@@ -76,7 +76,7 @@ $(function() {
 						}
 					});
 				});
-				runDataActiveRunReplicant.value.teams[0].members = newPlayerArray;
+				runDataActiveRunReplicant.value.teams[0].players = newPlayerArray;
 			}
 		});
 		
@@ -85,7 +85,7 @@ $(function() {
 	
 	function playerLayout_CreatePlayerListHtmlElements(playerArray) {
 		var runnerHtml = '';
-		$.each(playerArray.members, function (index, value) {
+		$.each(playerArray.players, function (index, value) {
 			runnerHtml += '<li class="ui-state-default" id="' + value.name + '">' + value.name + '</li>';
 		});
 		return runnerHtml;

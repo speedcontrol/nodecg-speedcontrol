@@ -32,26 +32,26 @@ $(function () {
 		var shouldSayTeams = runData.teams.length > 1;
 		// if any teams have more than 1 player, we should say teams
 		runData.teams.forEach( function(team, index) {
-			shouldSayTeams = team.members.length > 1;
+			shouldSayTeams = team.players.length > 1;
 		});
 		var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
 		$.each(runData.teams, function (index, team) {
 			if (index > 0) {
 				playerString += '<tr><td class="rowTitle"></td>';
 			}
-			if (team.members.length > 1) {
-				if (runData.teamNames[team.ID]) var teamName = runData.teamNames[team.ID];
+			if (team.players.length > 1) {
+				if (team.name) var teamName = team.name;
 				else var teamName = `Team ${index+1}`
 				playerString += `<td class="rowContent"> ${teamName}`;
 			}
 			else {
-				playerString += `<td class="rowContent"> ${team.members[0].name}`;
+				playerString += `<td class="rowContent"> ${team.players[0].name}`;
 			}
-			if (team.members.length > 1) {
+			if (team.players.length > 1) {
 				playerString += '<ul>';
 
-				$.each(team.members, function (index, member) {
-					playerString += '<li>' + member.name + '</li>';
+				$.each(team.players, function (index, player) {
+					playerString += '<li>' + player.name + '</li>';
 				});
 				playerString += '</ul>'
 			}
@@ -93,7 +93,7 @@ $(function () {
             buttonCloneIDs.push(buttonCloneIDString);
             teamsString = ( runData.teams.length > 1 ? ", " + runData.teams.length + " Teams" : "");
             htmlDescriptor += '<div class="group" id="' + runData.runID + '">' +
-                '<h3>' + runData.game + ' (' + runData.category + ')' + " " + runData.players.length + "p" + teamsString +
+                '<h3>' + runData.game + ' (' + runData.category + ')' +
                 '</h3>' +
                 '<div>' +
                 runControl_GetRunBodyHtml(runData) +

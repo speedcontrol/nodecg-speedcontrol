@@ -69,7 +69,6 @@ $(function () {
     runDataActiveRunReplicant.on('change', function( newValue, oldValue) {
         if( typeof newValue !== 'undefined' && newValue !== '' ) {
             moreThanOneTeam = newValue.teams.length > 1;
-              //|| (newValue.players.length >=2) && newValue.teams.length == 1);
             playerTimer_UpdateTimers(newValue);
         }
     });
@@ -208,16 +207,15 @@ $(function () {
     }
 
     function playerTimer_UpdateTimers(run) {
-        var players = run.players;
         var toolbarPlayerSpecificHtml = '';
         if ( run.teams.length > 1 ) {
-          $.each(run.teams, function( index, value ) {
-			if (value.members.length > 1) {
-				if (run.teamNames[value.ID]) var teamName = run.teamNames[value.ID];
+          $.each(run.teams, function( index, team ) {
+			if (team.players.length > 1) {
+				if (team.name) var teamName = team.name;
 				else var teamName = `Team ${index+1}`
 			}
 			else {
-				var teamName = value.members[0].name;
+				var teamName = team.players[0].name;
 			}
 
             toolbarPlayerSpecificHtml += "" +

@@ -123,40 +123,41 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 					var teamName = cap[2];
 				}
 				
-				// Getting the members of this team.
-				var members = rawTeam.split(/\s*,\s*/);
+				// Getting the players on this team.
+				var players = rawTeam.split(/\s*,\s*/);
 				var team = clone(nodecg.readReplicant('defaultRunDataTeamObject'));
 				runData.teamLastID++;
 				team.ID = runData.teamLastID;
-				if (teamName) runData.teamNames[team.ID] = teamName;
+				if (teamName) team.name = teamName;
 				
-				// Going through the list of members.
-				async.eachSeries(members, function(member, callback) {
+				// Going through the list of players.
+				async.eachSeries(players, function(player, callback) {
 					// Checking to see if the user is a link, if not use the whole field.
-					if (member.match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/) && member.match(/\((.*?)\)/)) {
-						var URI = member.match(/\((.*?)\)/)[1];
-						var playerName = member.match(/\[(.*?)\]/)[1];
+					if (player.match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/) && player.match(/\((.*?)\)/)) {
+						var URI = player.match(/\((.*?)\)/)[1];
+						var playerName = player.match(/\[(.*?)\]/)[1];
 					}
 					else
-						var playerName = member;
+						var playerName = player;
 					
 					getDataFromSpeedrunCom(playerName, URI, function(regionCode, twitchURI) {
-						// Creating the member object.
-						var memberObj = clone(nodecg.readReplicant('defaultPlayerObject'));
-						memberObj.name = playerName;
-						memberObj.teamID = team.ID;
-						memberObj.country = regionCode;
+						// Creating the player object.
+						var playerObj = clone(nodecg.readReplicant('defaultPlayerObject'));
+						playerObj.name = playerName;
+						playerObj.teamID = team.ID;
+						playerObj.country = regionCode;
+						runData.playerLastID++;
+						playerObj.ID = runData.playerLastID;
 
 						// Get/set Twitch username from URL.
 						var twitch = twitchURI || URI;
 						if (twitch) {
 							twitch = twitch.split('/')[twitch.split('/').length-1];
-							memberObj.social.twitch = twitch;
+							playerObj.social.twitch = twitch;
 						}
 						
 						// Push this object to the relevant arrays where it is stored.
-						team.members.push(memberObj);
-						runData.players.push(memberObj);
+						team.players.push(playerObj);
 						callback();
 					});
 				}, function(err) {

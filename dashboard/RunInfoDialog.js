@@ -83,8 +83,8 @@ function loadRun(runIDtoLoad) {
 
 		runDataCurrent.teams.forEach((team, i) => {
 			var teamElement = addTeam(team, i);
-			team.members.forEach((member, i) => {
-				teamElement.append(addPlayer(member, i));
+			team.players.forEach((player, i) => {
+				teamElement.append(addPlayer(player, i));
 			});
 			$('#gameDetailsInputs').append(teamElement);
 		});
@@ -117,9 +117,9 @@ function saveRun() {
 				var input = $(`.${playerDataInputs[i].id}`, playerElem).val();
 
 				if (playerDataInputs[i].social)
-					runData.teams[teamIndex].members[playerIndex].social[playerDataInputs[i].id] = input;
+					runData.teams[teamIndex].players[playerIndex].social[playerDataInputs[i].id] = input;
 				else
-					runData.teams[teamIndex].members[playerIndex][playerDataInputs[i].id] = input;
+					runData.teams[teamIndex].players[playerIndex][playerDataInputs[i].id] = input;
 			}
 		});
 	});

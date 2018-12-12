@@ -93,26 +93,26 @@ $(function () {
 			var shouldSayTeams = runData.teams.length > 1;
 			// if any teams have more than 1 player, we should say teams
 			runData.teams.forEach( function(team, index) {
-				shouldSayTeams = team.members.length > 1;
+				shouldSayTeams = team.players.length > 1;
 			});
 			var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
 			$.each(runData.teams, function (index, team) {
 				if (index > 0) {
 					playerString += '<tr><td class="rowTitle"></td>';
 				}
-				if (team.members.length > 1) {
-					if (runData.teamNames[team.ID]) var teamName = runData.teamNames[team.ID];
+				if (team.players.length > 1) {
+					if (team.name) var teamName = team.name;
 					else var teamName = `Team ${index+1}`
 					playerString += `<td class="rowContent"> ${teamName}`;
 				}
 				else {
-					playerString += `<td class="rowContent"> ${team.members[0].name}`;
+					playerString += `<td class="rowContent"> ${team.players[0].name}`;
 				}
-				if (team.members.length > 1) {
+				if (team.players.length > 1) {
 					playerString += '<ul>';
 
-					$.each(team.members, function (index, member) {
-						playerString += '<li>' + member.name + '</li>';
+					$.each(team.players, function (index, player) {
+						playerString += '<li>' + player.name + '</li>';
 					});
 					playerString += '</ul>'
 				}
@@ -143,7 +143,7 @@ $(function () {
         var htmlDescriptor = '';
         $.each(runData, function (index, runData) {
             htmlDescriptor += '<div class="playerGroup" id="' + runData.runID + '">' +
-                '<h3>' + runData.game + ' (' + runData.category + ')' + " " + runData.players.length + "p" +
+                '<h3>' + runData.game + ' (' + runData.category + ')' +
                 '</h3>' +
                 '<div>' +
                 runPlayer_getRunBodyHtml(runData) +
@@ -287,13 +287,13 @@ $(function () {
  			}
 
 	 		// Gets Twitch channel names from the runData and puts them in an array to send to the FFZ WS script.
- 			var twitchNames = [];
- 			for (var i = 0; i < runData.players.length; i++) {
-				var twitchName = runData.players[i].social.twitch;
-				if (twitchName && !twitchName.match(/^http/)) {
-					twitchNames.push(twitchName);
-				}
- 			}
+			var twitchNames = [];
+			runData.teams.forEach((team) => {
+				team.players.forEach((player) => {
+					if (player.social.twitch)
+						twitchNames.push(player.social.twitch);
+				});
+			});
 			if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.streamTitle) {
 				var newTitle = nodecg.bundleConfig.twitch.streamTitle
 													.replace("{{game}}",runData.game)
@@ -380,14 +380,14 @@ $(function () {
 		},2000);
 	  }
 	  
-	// Goes through each team and members and makes a string to show the names correctly together.
+	// Goes through each team and players and makes a string to show the names correctly together.
 	function formPlayerNamesString(runData) {
 		var namesArray = [];
 		var namesList = 'No Runner(s)';
 		runData.teams.forEach(team => {
-			var teamMemberArray = [];
-			team.members.forEach(member => {teamMemberArray.push(member.name);});
-			namesArray.push(teamMemberArray.join(', '));
+			var teamPlayerArray = [];
+			team.players.forEach(player => {teamPlayerArray.push(player.name);});
+			namesArray.push(teamPlayerArray.join(', '));
 		});
 		namesList = namesArray.join(' vs. ');
 		return namesList;
