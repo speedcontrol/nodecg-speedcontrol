@@ -12,6 +12,12 @@ var runDataInputs = [
 	//{id: 'customExample', placeholder: 'Custom Example', custom: true}
 ];
 
+var playerDataInputs = [
+	{id: 'name', placeholder: 'Name'},
+	{id: 'twitch', placeholder: 'Twitch Username', social: true},
+	{id: 'country', placeholder: 'Country Code'},
+];
+
 $(() => {
 	dialog = nodecg.getDialog('run-info');
 	runDataArray = nodecg.Replicant('runDataArray');
@@ -54,9 +60,9 @@ function loadRun(runIDtoLoad) {
 		// Add empty fields for run data.
 		for (var i = 0; i < runDataInputs.length; i++) {
 			if (runDataInputs[i].id !== 'setupTime')
-				$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' id='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}'>`);
+				$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}'>`);
 			else
-				$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' id='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${msToTime(defaultSetupTime.value*1000)}'>`);
+				$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${msToTime(defaultSetupTime.value*1000)}'>`);
 		}
 	}
 
@@ -72,8 +78,16 @@ function loadRun(runIDtoLoad) {
 			if (runDataInputs[i].custom) var value = runDataCurrent.customData[runDataInputs[i].id];
 			else var value = runDataCurrent[runDataInputs[i].id];
 
-			$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' id='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${value}'>`);
+			$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${value}'>`);
 		}
+
+		runDataCurrent.teams.forEach((team, i) => {
+			var teamElement = addTeam(team, i);
+			team.members.forEach((member, i) => {
+				teamElement.append(addPlayer(member, i));
+			});
+			$('#gameDetailsInputs').append(teamElement);
+		});
 	}
 }
 
@@ -81,7 +95,7 @@ function saveRun() {
 	var runData = clone(runDataCurrent);
 
 	for (var i = 0; i < runDataInputs.length; i++) {
-		var input = $(`#${runDataInputs[i].id}`).val();
+		var input = $(`.${runDataInputs[i].id}`).val();
 
 		if (runDataInputs[i].custom)
 			runData.customData[runDataInputs[i].id] = input;
@@ -96,6 +110,19 @@ function saveRun() {
 
 		else runData[runDataInputs[i].id] = input;
 	}
+
+	$('.team').each((teamIndex, teamElem) => {
+		$('.player', teamElem).each((playerIndex, playerElem) => {
+			for (var i = 0; i < playerDataInputs.length; i++) {
+				var input = $(`.${playerDataInputs[i].id}`, playerElem).val();
+
+				if (playerDataInputs[i].social)
+					runData.teams[teamIndex].members[playerIndex].social[playerDataInputs[i].id] = input;
+				else
+					runData.teams[teamIndex].members[playerIndex][playerDataInputs[i].id] = input;
+			}
+		});
+	});
 
 	// If adding a new run.
 	if (runID === undefined) {
@@ -112,6 +139,22 @@ function saveRun() {
 		if (runDataActiveRun.value && runData.runID == runDataActiveRun.value.runID)
 			runDataActiveRun.value = runData;
 	}
+}
+
+function addTeam(teamData, i) {
+	var teamElement = $(`<div class='team' id='${i}'>`);
+	teamElement.append(`<div>Team ${i+1}`);
+	return teamElement;
+}
+
+function addPlayer(playerData, i) {
+	var playerElement = $(`<span class='player' id='${i}'>`);
+	for (var i = 0; i < playerDataInputs.length; i++) {
+		if (playerDataInputs[i].social) var value = playerData.social[playerDataInputs[i].id];
+		else var value = playerData[playerDataInputs[i].id];
+		playerElement.append(`<input title='${playerDataInputs[i].placeholder}' class='${playerDataInputs[i].id}' placeholder='${playerDataInputs[i].placeholder}' value='${value}'>`);
+	}
+	return playerElement;
 }
 
 function cleanUp() {
