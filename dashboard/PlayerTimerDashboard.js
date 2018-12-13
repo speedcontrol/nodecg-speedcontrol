@@ -210,13 +210,9 @@ $(function () {
         var toolbarPlayerSpecificHtml = '';
         if ( run.teams.length > 1 ) {
           $.each(run.teams, function( index, team ) {
-			if (team.players.length > 1) {
-				if (team.name) var teamName = team.name;
-				else var teamName = `Team ${index+1}`
-			}
-			else {
-				var teamName = team.players[0].name;
-			}
+			if (team.name) var teamName = team.name;
+			else if (team.players.length > 1) var teamName = `Team ${index+1}`
+			else var teamName = team.players[0].name;
 
             toolbarPlayerSpecificHtml += "" +
                 '<div id="toolbar' + index + '" class="ui-widget-header ui-corner-all">' +

@@ -112,6 +112,8 @@ function saveRun() {
 	}
 
 	$('.team').each((teamIndex, teamElem) => {
+		runData.teams[teamIndex].name = $(`.name`, teamElem).val();
+		
 		$('.player', teamElem).each((playerIndex, playerElem) => {
 			for (var i = 0; i < playerDataInputs.length; i++) {
 				var input = $(`.${playerDataInputs[i].id}`, playerElem).val();
@@ -143,7 +145,7 @@ function saveRun() {
 
 function addTeam(teamData, i) {
 	var teamElement = $(`<div class='team' id='${i}'>`);
-	teamElement.append(`<div>Team ${i+1}`);
+	teamElement.append(`<div>Team ${i+1}<input title='Team Name' class='name' placeholder='Team Name' value='${teamData.name}'></div>`);
 	return teamElement;
 }
 

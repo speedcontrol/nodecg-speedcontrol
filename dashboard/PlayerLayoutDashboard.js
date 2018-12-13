@@ -43,13 +43,13 @@ $(function() {
 	function playerLayout_CreateTeamListHtmlElements(teamArray) {
 		var runnerHtml = '';
 		$.each(teamArray, function (index, team) {
+			if (team.name) var teamName = team.name;
+			else if (team.players.length > 1) var teamName = `Team ${index+1}`
+			else var teamName = team.players[0].name;
+
 			var teamPlayers = [];
-			if (team.players.length === 1) {
-				team.players.forEach(function(player) {teamPlayers.push(player.name);});
-				var teamName = teamPlayers.join(', ');
-			}
-			else if (team.name) var teamName = team.name;
-			else var teamName = `Team ${index+1}`
+			if (team.players.length > 1 || team.name) team.players.forEach(player => teamPlayers.push(player.name));
+
 			runnerHtml += '<li class="ui-state-default" id="' + team.ID + '" title="'+teamPlayers.join(', ')+'">' + teamName + '</li>';
 		});
 		return runnerHtml;
