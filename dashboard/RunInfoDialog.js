@@ -1,4 +1,4 @@
-var runDataCurrent, dialog, runID, runDataArray, defaultSetupTime, runDataLastID, runDataActiveRun, defaultRunDataObject, customData;
+var runDataCurrent, dialog, runID, runDataArray, defaultSetupTime, runDataLastID, runDataActiveRun, defaultRunDataObject, customData, defaultTeamObject, defaultPlayerObject;
 
 var runDataInputs = [
 	{id: 'game', placeholder: 'Game'},
@@ -25,6 +25,8 @@ $(() => {
 	runDataLastID = nodecg.Replicant('runDataLastID');
 	runDataActiveRun = nodecg.Replicant('runDataActiveRun');
 	defaultRunDataObject = nodecg.Replicant('defaultRunDataObject');
+	defaultTeamObject = nodecg.Replicant('defaultTeamObject');
+	defaultPlayerObject = nodecg.Replicant('defaultPlayerObject');
 	customData = nodecg.bundleConfig.schedule.customData || [];
 
 	customData.forEach((customDataElem) => {
@@ -44,6 +46,26 @@ $(() => {
 
 	document.addEventListener('dialog-dismissed', () => {
 		cleanUp();
+	});
+
+	$('.addTeam').on('click', () => {
+		var teamElement = addTeam();
+		teamElement.append(addPlayer());
+		$('#gameDetailsInputs').append(teamElement);
+		updateTeamTitles();
+	});
+
+	$('#gameDetailsInputs').on('click', '.removeTeam', (evt) => {
+		$(evt.target).parent().parent().remove();
+		updateTeamTitles();
+	});
+
+	$('#gameDetailsInputs').on('click', '.addPlayer', (evt) => {
+		$(evt.target).parent().parent().append(addPlayer());
+	});
+
+	$('#gameDetailsInputs').on('click', '.removePlayer', (evt) => {
+		$(evt.target).parent().remove();
 	});
 });
 
@@ -87,6 +109,15 @@ function loadRun(runIDtoLoad) {
 			$('#gameDetailsInputs').append(teamElement);
 		});
 	}
+
+	// If adding a run, add a blank team with a blank player for ease of use.
+	else {
+		var teamElement = addTeam();
+		teamElement.append(addPlayer());
+		$('#gameDetailsInputs').append(teamElement);
+	}
+
+	updateTeamTitles();
 }
 
 function saveRun() {
@@ -109,51 +140,87 @@ function saveRun() {
 		else runData[runDataInputs[i].id] = input;
 	}
 
+	var newTeams = [];
 	$('.team').each((teamIndex, teamElem) => {
-		runData.teams[teamIndex].name = $(`.name`, teamElem).val();
+		// If this is an existing team and we only need to edit their data.
+		if ($(teamElem).data('id') !== undefined) {
+			var teamData = getTeamDataByID($(teamElem).data('id'));
+		}
+		else {
+			var teamData = clone(defaultTeamObject.value);
+			teamData.id = runData.lastTeamID+1;
+			runData.lastTeamID++;
+		}
 
+		teamData.name = $(`.name`, teamElem).val();
+
+		var newPlayers = [];
 		$('.player', teamElem).each((playerIndex, playerElem) => {
+			if ($(playerElem).data('id') !== undefined) {
+				var playerData = getPlayerDataByID(teamData, $(playerElem).data('id'));
+			}
+			else {
+				var playerData = clone(defaultPlayerObject.value);
+				playerData.id = runData.lastPlayerID+1;
+				runData.lastPlayerID++;
+			}
+			
 			for (var i = 0; i < playerDataInputs.length; i++) {
 				var input = $(`.${playerDataInputs[i].id}`, playerElem).val();
 
 				if (playerDataInputs[i].social)
-					runData.teams[teamIndex].players[playerIndex].social[playerDataInputs[i].id] = input;
+					playerData.social[playerDataInputs[i].id] = input;
 				else
-					runData.teams[teamIndex].players[playerIndex][playerDataInputs[i].id] = input;
+					playerData[playerDataInputs[i].id] = input;
 			}
+
+			newPlayers.push(playerData);
 		});
+		teamData.players = newPlayers;
+
+		newTeams.push(teamData);
 	});
+
+	runData.teams = newTeams;
 
 	// If adding a new run.
 	if (runID === undefined) {
-		runData.runID = runDataLastID.value+1;
+		runData.id = runDataLastID.value+1;
 		runDataLastID.value++;
 		runDataArray.value.push(runData);
 	}
 
 	// Else editing an old one.
 	else {
-		runDataArray.value[getRunIndexInRunDataArray(runData.runID)] = runData;
+		runDataArray.value[getRunIndexInRunDataArray(runData.id)] = runData;
 
 		// If the run being edited is the currently active run, update those details too.
-		if (runDataActiveRun.value && runData.runID == runDataActiveRun.value.runID)
+		if (runDataActiveRun.value && runData.id == runDataActiveRun.value.id)
 			runDataActiveRun.value = runData;
 	}
 }
 
 function addTeam(teamData, i) {
-	var teamElement = $(`<div class='team' id='${i}'>`);
+	if (!teamData) teamData = clone(defaultTeamObject.value);
+
+	var teamElement = $(`<div class='team'>`);
+	if (teamData.id > -1) teamElement.data('id', teamData.id);
+
 	var teamHeader = $(`<div>`);
-	teamHeader.append(`<span>Team ${i+1}`);
+	teamHeader.append(`<span class="teamTitle">Team X`);
 	teamHeader.append(`<button type="button" class="addPlayer">+ Add Player</button>`)
-	teamHeader.append(`<button type="button" id='${i}' class="removeTeam">- Remove Team</button>`)
+	teamHeader.append(`<button type="button" class="removeTeam">- Remove Team</button>`)
 	teamHeader.append(`<input title='Team Name' class='name' placeholder='Team Name' value='${teamData.name}'>`);
 	teamElement.append(teamHeader);
 	return teamElement;
 }
 
 function addPlayer(playerData, i) {
-	var playerElement = $(`<span class='player' id='${i}'>`);
+	if (!playerData) playerData = clone(defaultPlayerObject.value);
+
+	var playerElement = $(`<span class='player'>`);
+	if (playerData.id > -1) playerElement.data('id', playerData.id);
+
 	playerElement.append(`<button type="button" class="removePlayer">X</button>`)
 	for (var i = 0; i < playerDataInputs.length; i++) {
 		if (playerDataInputs[i].social) var value = playerData.social[playerDataInputs[i].id];
@@ -166,15 +233,41 @@ function addPlayer(playerData, i) {
 function cleanUp() {
 	$('#gameDetailsInputs').empty();
 	runID = undefined;
-	runData = undefined;
+	runDataCurrent = undefined;
+}
+
+function updateTeamTitles() {
+	$('.teamTitle').each((i, elem) => {
+		$(elem).text(`Team ${i+1}`);
+	});
+}
+
+function getTeamDataByID(id) {
+	if (!runDataCurrent) return null;
+	for (var i = 0; i < runDataCurrent.teams.length; i++) {
+		if (runDataCurrent.teams[i].id === id) {
+			return clone(runDataCurrent.teams[i]);
+		}
+	}
+	return null;
+}
+
+function getPlayerDataByID(teamData, id) {
+	if (!teamData) return null;
+	for (var i = 0; i < teamData.players.length; i++) {
+		if (teamData.players[i].id === id) {
+			return clone(teamData.players[i]);
+		}
+	}
+	return null;
 }
 
 // Needs moving to a seperate file; this is copy/pasted in a few places.
 // Gets index of the run in the array by the unique ID given to the run.
-function getRunIndexInRunDataArray(runID) {
+function getRunIndexInRunDataArray(id) {
 	if (!runDataArray.value) return -1;
 	for (var i = 0; i < runDataArray.value.length; i++) {
-		if (runDataArray.value[i].runID === runID) {
+		if (runDataArray.value[i].id === id) {
 			return i;
 		}
 	}

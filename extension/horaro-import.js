@@ -127,7 +127,7 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 				var players = rawTeam.split(/\s*,\s*/);
 				var team = clone(nodecg.readReplicant('defaultTeamObject'));
 				runData.teamLastID++;
-				team.ID = runData.teamLastID;
+				team.id = runData.teamLastID;
 				if (teamName) team.name = teamName;
 				
 				// Going through the list of players.
@@ -144,10 +144,10 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 						// Creating the player object.
 						var playerObj = clone(nodecg.readReplicant('defaultPlayerObject'));
 						playerObj.name = playerName;
-						playerObj.teamID = team.ID;
+						playerObj.teamID = team.id;
 						playerObj.country = regionCode;
 						runData.playerLastID++;
-						playerObj.ID = runData.playerLastID;
+						playerObj.id = runData.playerLastID;
 
 						// Get/set Twitch username from URL.
 						var twitch = twitchURI || URI;
@@ -320,7 +320,7 @@ function getTwitchFromSRComUserData(data) {
 // Called as a process when pushing the "add run" button.
 function horaro_AddRun(runData) {
 	runNumberIterator++;
-	runData.runID = runNumberIterator;
+	runData.id = runNumberIterator;
 	runDataArray.push(runData);
 }
 

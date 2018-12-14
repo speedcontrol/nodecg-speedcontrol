@@ -146,7 +146,7 @@ $(function () {
         var splitTime = {};
         splitTime.index = index;
         splitTime.time = stopWatchReplicant.value.time;
-        splitTime.name = runDataActiveRunReplicant.value.teams[index].ID;
+        splitTime.name = runDataActiveRunReplicant.value.teams[index].id;
         return splitTime;
     }
 

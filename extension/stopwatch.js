@@ -94,7 +94,7 @@ function finish() {
 	timer.pause(); // For now this just pauses the timer.
 	stopwatch.value.state = 'finished';
 	if (runDataActiveRun.value)
-		runFinishTimes.value[runDataActiveRun.value.runID] = stopwatch.value.time;
+		runFinishTimes.value[runDataActiveRun.value.id] = stopwatch.value.time;
 }
 
 function edit(time) {

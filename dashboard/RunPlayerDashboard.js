@@ -31,7 +31,7 @@ $(function () {
     var runDataActiveRunReplicant = nodecg.Replicant("runDataActiveRun");
     runDataActiveRunReplicant.on("change", function (newValue, oldValue) {
         if (newValue != "" && typeof newValue !== 'undefined') {
-            setActiveRun(newValue.runID);
+            setActiveRun(newValue.id);
         }
         else {
 			runPlayer_activeRunID = -1;
@@ -135,14 +135,14 @@ $(function () {
 				bodyHtml += `<tr><td class="rowTitle">${customDataElem.name}</td><td class="rowContent">${runData.customData[customDataElem.key]}</td></tr>`;
 		});
 
-        bodyHtml += '</table><button class="playRunButton" id="playRun' + runData.runID + '">play</button>';
+        bodyHtml += '</table><button class="playRunButton" id="playRun' + runData.id + '">play</button>';
         return bodyHtml;
     }
 
     function runPlayer_updateList(runData) {
         var htmlDescriptor = '';
         $.each(runData, function (index, runData) {
-            htmlDescriptor += '<div class="playerGroup" id="' + runData.runID + '">' +
+            htmlDescriptor += '<div class="playerGroup" id="' + runData.id + '">' +
                 '<h3>' + runData.game + ' (' + runData.category + ')' +
                 '</h3>' +
                 '<div>' +
@@ -214,8 +214,8 @@ $(function () {
         $('.playerGroup').find('*').removeClass('ui-state-playing');
         $('.playerGroup').find('*').removeClass('ui-state-playing-next');
         $('#' + runID + ".playerGroup").find('h3').addClass('ui-state-playing');
-        $('#' + theNextGame.runID + ".playerGroup").find('h3').addClass('ui-state-playing-next');
-        $("#runPlayerWindow").scrollTo($('#' + thePreviousGame.runID + ".playerGroup"), 500, {queue: false});
+        $('#' + theNextGame.id + ".playerGroup").find('h3').addClass('ui-state-playing-next');
+        $("#runPlayerWindow").scrollTo($('#' + thePreviousGame.id + ".playerGroup"), 500, {queue: false});
 
         $(".runPlayerNext").button({
             text: true,
@@ -241,8 +241,8 @@ $(function () {
         $('.playerGroup').find('*').removeClass('ui-state-playing');
         $('.playerGroup').find('*').removeClass('ui-state-playing-next');
         $('#' + runID + ".playerGroup").find('h3').addClass('ui-state-playing');
-        $('#' + theNextGame.runID + ".playerGroup").find('h3').addClass('ui-state-playing-next');
-        $("#runPlayerWindow").scrollTo($('#' + thePreviousGame.runID + ".playerGroup"), 500, {queue: false});
+        $('#' + theNextGame.id + ".playerGroup").find('h3').addClass('ui-state-playing-next');
+        $("#runPlayerWindow").scrollTo($('#' + thePreviousGame.id + ".playerGroup"), 500, {queue: false});
         runDataActiveRunReplicant.value = runPlayer_activeRunObject;
 
 
@@ -395,12 +395,12 @@ $(function () {
 
     function runPlayer_playNextRun() {
         var activeGame = runDataActiveRunReplicant.value;
-        var nextGameIndex; try {nextGameIndex = runPlayer_getRunIndexInArray(activeGame.runID);} catch(e) {nextGameIndex = -1;}
+        var nextGameIndex; try {nextGameIndex = runPlayer_getRunIndexInArray(activeGame.id);} catch(e) {nextGameIndex = -1;}
         nextGameIndex++;
         if(nextGameIndex >= runDataArrayReplicantPlayer.value.length) {
             nextGameIndex = 0;
         }
-        runPlayer_playRunIdOnly(runDataArrayReplicantPlayer.value[nextGameIndex].runID);
+        runPlayer_playRunIdOnly(runDataArrayReplicantPlayer.value[nextGameIndex].id);
     }
 
     function runPlayer_getRunObjectByIndex(runIndex) {
@@ -424,7 +424,7 @@ $(function () {
         var runs = runDataArrayReplicantPlayer.value;
         var foundIndex = -1;
         $.each(runs, function(index, run) {
-            if(run.runID == runID) {
+            if(run.id == runID) {
                 foundIndex = index;
             }
         });

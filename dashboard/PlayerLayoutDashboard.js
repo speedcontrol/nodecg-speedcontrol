@@ -27,7 +27,7 @@ $(function() {
 				var newTeamArray = [];
 				$.each(sortedIDs, function (index, valueId) {
 					$.each(oldTeamArray, function (index, team) {
-						if (team.ID == valueId) {
+						if (team.id == valueId) {
 							newTeamArray.push(team);
 							return false;
 						}
@@ -50,7 +50,7 @@ $(function() {
 			var teamPlayers = [];
 			if (team.players.length > 1 || team.name) team.players.forEach(player => teamPlayers.push(player.name));
 
-			runnerHtml += '<li class="ui-state-default" id="' + team.ID + '" title="'+teamPlayers.join(', ')+'">' + teamName + '</li>';
+			runnerHtml += '<li class="ui-state-default" id="' + team.id + '" title="'+teamPlayers.join(', ')+'">' + teamName + '</li>';
 		});
 		return runnerHtml;
 	}

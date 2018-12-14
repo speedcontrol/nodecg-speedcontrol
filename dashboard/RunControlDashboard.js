@@ -25,7 +25,7 @@ $(function () {
 	});
 	
 	$('#editCurrentRunButton').click(() => {
-		editRun(runDataActiveRunReplicant.value.runID);
+		editRun(runDataActiveRunReplicant.value.id);
 	});
 
 	function runControl_GetPlayers(runData) {
@@ -85,14 +85,14 @@ $(function () {
         var buttonCloneIDs = [];
 
         $.each(runData, function (index, runData) {
-            var buttonRemoveIDString = 'remove' + runData.runID;
-            var buttonChangeIDString = 'change' + runData.runID;
-            var buttonCloneIDString = 'clone' + runData.runID;
+            var buttonRemoveIDString = 'remove' + runData.id;
+            var buttonChangeIDString = 'change' + runData.id;
+            var buttonCloneIDString = 'clone' + runData.id;
             buttonRemoveIDs.push(buttonRemoveIDString);
             buttonChangeIDs.push(buttonChangeIDString);
             buttonCloneIDs.push(buttonCloneIDString);
             teamsString = ( runData.teams.length > 1 ? ", " + runData.teams.length + " Teams" : "");
-            htmlDescriptor += '<div class="group" id="' + runData.runID + '">' +
+            htmlDescriptor += '<div class="group" id="' + runData.id + '">' +
                 '<h3>' + runData.game + ' (' + runData.category + ')' +
                 '</h3>' +
                 '<div>' +
@@ -125,7 +125,7 @@ $(function () {
 
         $.each(buttonChangeIDs, function (index, buttonID) {
             $('#' + buttonID).click(function () {
-				editRun(runControl_GetRun(index).runID)
+				editRun(runControl_GetRun(index).id)
             });
 
             $('#' + buttonID).button({
@@ -143,7 +143,7 @@ $(function () {
 				if (newCategory) clonedRunData.category = newCategory; // Set new category if it was entered.
 				clonedRunData.scheduled = '';
 				clonedRunData.scheduledS = -1;
-				clonedRunData.runID = runDataLastID.value+1;
+				clonedRunData.id = runDataLastID.value+1;
 				runDataLastID.value++;
 				runDataArrayReplicant.value.splice(index+1, 0, clonedRunData);
             });
@@ -174,7 +174,7 @@ $(function () {
                     var newRunDataArray = [];
                     $.each(sortedIDs, function (index, valueId) {
                         $.each(runContainer, function (index, valueRunData) {
-                            if (valueRunData.runID == valueId) {
+                            if (valueRunData.id == valueId) {
                                 newRunDataArray.push(valueRunData);
                                 return false;
                             }
@@ -199,8 +199,8 @@ $(function () {
         return runContainer[ID];
 	}
 	
-	function editRun(runID) {
-		nodecg.getDialog('run-info').querySelector('iframe').contentWindow.loadRun(runID);
+	function editRun(id) {
+		nodecg.getDialog('run-info').querySelector('iframe').contentWindow.loadRun(id);
 		nodecg.getDialog('run-info').open();
 	}
 });
