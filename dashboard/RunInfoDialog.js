@@ -148,8 +148,8 @@ function saveRun() {
 		}
 		else {
 			var teamData = clone(defaultTeamObject.value);
-			teamData.id = runData.lastTeamID+1;
-			runData.lastTeamID++;
+			teamData.id = runData.teamLastID+1;
+			runData.teamLastID++;
 		}
 
 		teamData.name = $(`.name`, teamElem).val();
@@ -161,8 +161,9 @@ function saveRun() {
 			}
 			else {
 				var playerData = clone(defaultPlayerObject.value);
-				playerData.id = runData.lastPlayerID+1;
-				runData.lastPlayerID++;
+				playerData.id = runData.playerLastID+1;
+				runData.playerLastID++;
+				playerData.teamID = teamData.id;
 			}
 			
 			for (var i = 0; i < playerDataInputs.length; i++) {
@@ -176,9 +177,12 @@ function saveRun() {
 
 			newPlayers.push(playerData);
 		});
-		teamData.players = newPlayers;
 
-		newTeams.push(teamData);
+		// Don't add the team if there is 0 players.
+		if (newPlayers.length) {
+			teamData.players = newPlayers;
+			newTeams.push(teamData);
+		}
 	});
 
 	runData.teams = newTeams;
