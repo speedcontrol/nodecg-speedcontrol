@@ -17,17 +17,27 @@
 				height: 25px;
 			}
 
-			.team > div > input {
+			.team > div > input, .team > div > .removeTeam {
 				float: right;
 			}
 
+			.team > div > .addPlayer {
+				margin-left: 10px;
+			}
+
 			.player > input {
-				width: calc(98%/3);
+				width: calc(94%/3);
+			}
+
+			.addTeam {
+				margin-top: 20px;
+				float: right;
 			}
 		</style>
 	</head>
 	<body>
-		<span id="gameDetailsInputs">
-		</span>
+		<span>If you need to reset any issues, click on "Cancel" or anywhere outside this dialog, and then add/edit the run again.</span>
+		<br><br><span id="gameDetailsInputs"></span>
+		<button type="button" class="addTeam">+ Add Team</button>
 	</body>
 </html>

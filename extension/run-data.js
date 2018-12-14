@@ -30,7 +30,7 @@ customData.forEach((customDataElem) => {
 		defaultRunDataObject.value.customData[customDataElem.key] = '';
 });
 
-const defaultRunDataTeamObject = nodecg.Replicant('defaultRunDataTeamObject', {defaultValue: {
+const defaultTeamObject = nodecg.Replicant('defaultTeamObject', {defaultValue: {
 	name: '',
 	ID: -1,
 	players: []

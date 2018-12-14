@@ -125,7 +125,7 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 				
 				// Getting the players on this team.
 				var players = rawTeam.split(/\s*,\s*/);
-				var team = clone(nodecg.readReplicant('defaultRunDataTeamObject'));
+				var team = clone(nodecg.readReplicant('defaultTeamObject'));
 				runData.teamLastID++;
 				team.ID = runData.teamLastID;
 				if (teamName) team.name = teamName;

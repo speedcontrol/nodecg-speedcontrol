@@ -54,16 +54,11 @@ function loadRun(runIDtoLoad) {
 	if (runID === undefined) {
 		runDataCurrent = clone(defaultRunDataObject.value);
 
+		runDataCurrent.setupTime = msToTime(defaultSetupTime.value*1000);
+		runDataCurrent.setupTimeS = defaultSetupTime.value*1000;
+
 		$('h2', $(dialog)).text('Add New Run'); // Change Title
 		$('paper-button[dialog-confirm]', $(dialog)).text('Add Run'); // Change Confirm Button
-
-		// Add empty fields for run data.
-		for (var i = 0; i < runDataInputs.length; i++) {
-			if (runDataInputs[i].id !== 'setupTime')
-				$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}'>`);
-			else
-				$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${msToTime(defaultSetupTime.value*1000)}'>`);
-		}
 	}
 
 	// Else, we want to edit the run with the ID supplied.
@@ -72,15 +67,18 @@ function loadRun(runIDtoLoad) {
 		
 		$('h2', $(dialog)).text('Edit Run'); // Change Title
 		$('paper-button[dialog-confirm]', $(dialog)).text('Save Changes'); // Change Confirm Button
+	}
 
-		// Add fields for run data, populated if the data is available.
-		for (var i = 0; i < runDataInputs.length; i++) {
-			if (runDataInputs[i].custom) var value = runDataCurrent.customData[runDataInputs[i].id];
-			else var value = runDataCurrent[runDataInputs[i].id];
+	// Add fields for run data, populated if the data is available.
+	for (var i = 0; i < runDataInputs.length; i++) {
+		if (runDataInputs[i].custom) var value = runDataCurrent.customData[runDataInputs[i].id];
+		else var value = runDataCurrent[runDataInputs[i].id];
 
-			$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${value}'>`);
-		}
+		$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${value}'>`);
+	}
 
+	// If we're editing a run, add the team/player fields.
+	if (runID !== undefined) {
 		runDataCurrent.teams.forEach((team, i) => {
 			var teamElement = addTeam(team, i);
 			team.players.forEach((player, i) => {
@@ -113,7 +111,7 @@ function saveRun() {
 
 	$('.team').each((teamIndex, teamElem) => {
 		runData.teams[teamIndex].name = $(`.name`, teamElem).val();
-		
+
 		$('.player', teamElem).each((playerIndex, playerElem) => {
 			for (var i = 0; i < playerDataInputs.length; i++) {
 				var input = $(`.${playerDataInputs[i].id}`, playerElem).val();
@@ -145,12 +143,18 @@ function saveRun() {
 
 function addTeam(teamData, i) {
 	var teamElement = $(`<div class='team' id='${i}'>`);
-	teamElement.append(`<div>Team ${i+1}<input title='Team Name' class='name' placeholder='Team Name' value='${teamData.name}'></div>`);
+	var teamHeader = $(`<div>`);
+	teamHeader.append(`<span>Team ${i+1}`);
+	teamHeader.append(`<button type="button" class="addPlayer">+ Add Player</button>`)
+	teamHeader.append(`<button type="button" id='${i}' class="removeTeam">- Remove Team</button>`)
+	teamHeader.append(`<input title='Team Name' class='name' placeholder='Team Name' value='${teamData.name}'>`);
+	teamElement.append(teamHeader);
 	return teamElement;
 }
 
 function addPlayer(playerData, i) {
 	var playerElement = $(`<span class='player' id='${i}'>`);
+	playerElement.append(`<button type="button" class="removePlayer">X</button>`)
 	for (var i = 0; i < playerDataInputs.length; i++) {
 		if (playerDataInputs[i].social) var value = playerData.social[playerDataInputs[i].id];
 		else var value = playerData[playerDataInputs[i].id];
