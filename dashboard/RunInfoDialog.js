@@ -9,7 +9,8 @@ var runDataCurrent,
 	customData,
 	defaultTeamObject,
 	defaultPlayerObject,	
-	gameDetailsInputs;
+	runDataInputsContainer,
+	teamsContainer;
 
 // All possible general run data inputs available.
 var runDataInputs = [
@@ -40,7 +41,8 @@ $(() => {
 	defaultRunDataObject = nodecg.Replicant('defaultRunDataObject');
 	defaultTeamObject = nodecg.Replicant('defaultTeamObject');
 	defaultPlayerObject = nodecg.Replicant('defaultPlayerObject');
-	gameDetailsInputs = $('#gameDetailsInputs');
+	runDataInputsContainer = $('#runDataInputs');
+	teamsContainer = $('#teamsContainer');
 
 	// Add custom data to the possible run data inputs.
 	customData = nodecg.bundleConfig.schedule.customData || [];
@@ -68,25 +70,51 @@ $(() => {
 	// The "Add Team" button will add the extra empty elements to the end.
 	$('.addTeam').on('click', () => {
 		var teamElement = addTeam();
-		teamElement.append(addPlayer());
-		gameDetailsInputs.append(teamElement);
+		$('.playersContainer', teamElement).append(addPlayer());
+		teamsContainer.append(teamElement);
 		updateTeamTitles();
 	});
 
 	// The "Remove Team" buttons will delete the team element (and the players inside that).
-	gameDetailsInputs.on('click', '.removeTeam', (evt) => {
+	teamsContainer.on('click', '.removeTeam', (evt) => {
 		$(evt.target).parent().parent().remove();
 		updateTeamTitles();
 	});
 
+	// The up arrows next to the teams will move that team up the list.
+	teamsContainer.on('click', '.moveTeamUp', (evt) => {
+		var teamElem = $(evt.target).parent().parent();
+		teamElem.prev().insertAfter(teamElem);
+		updateTeamTitles();
+	});
+
+	// The down arrows next to the teams will move that team down the list.
+	teamsContainer.on('click', '.moveTeamDown', (evt) => {
+		var teamElem = $(evt.target).parent().parent();
+		teamElem.next().insertBefore(teamElem);
+		updateTeamTitles();
+	});
+
 	// The "Add Player" buttons will add an empty element.
-	gameDetailsInputs.on('click', '.addPlayer', (evt) => {
-		$(evt.target).parent().parent().append(addPlayer());
+	teamsContainer.on('click', '.addPlayer', (evt) => {
+		$(evt.target).parent().parent().find('.playersContainer').append(addPlayer());
 	});
 
 	// The "X" button to the left of players will remove their element.
-	gameDetailsInputs.on('click', '.removePlayer', (evt) => {
+	teamsContainer.on('click', '.removePlayer', (evt) => {
 		$(evt.target).parent().remove();
+	});
+
+	// The up arrows next to the players will move that player up the list.
+	teamsContainer.on('click', '.movePlayerUp', (evt) => {
+		var playerElem = $(evt.target).parent();
+		playerElem.prev().insertAfter(playerElem);
+	});
+
+	// The down arrows next to the players will move that player down the list.
+	teamsContainer.on('click', '.movePlayerDown', (evt) => {
+		var playerElem = $(evt.target).parent();
+		playerElem.next().insertBefore(playerElem);
 	});
 });
 
@@ -118,23 +146,23 @@ function loadRun(runIDtoLoad) {
 	for (var i = 0; i < runDataInputs.length; i++) {
 		if (runDataInputs[i].custom) var value = runDataCurrent.customData[runDataInputs[i].id];
 		else var value = runDataCurrent[runDataInputs[i].id];
-		gameDetailsInputs.append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${value}'>`);
+		runDataInputsContainer.append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${value}'>`);
 	}
 
 	// If we're editing a run, add the team/player fields.
 	if (runID !== undefined) {
 		runDataCurrent.teams.forEach(team => {
 			var teamElement = addTeam(team);
-			team.players.forEach(player => teamElement.append(addPlayer(player)));
-			gameDetailsInputs.append(teamElement);
+			team.players.forEach(player => $('.playersContainer', teamElement).append(addPlayer(player)));
+			teamsContainer.append(teamElement);
 		});
 	}
 
 	// If adding a run, add a blank team with a blank player for ease of use.
 	else {
 		var teamElement = addTeam();
-		teamElement.append(addPlayer());
-		gameDetailsInputs.append(teamElement);
+		$('.playersContainer', teamElement).append(addPlayer());
+		teamsContainer.append(teamElement);
 	}
 
 	updateTeamTitles();
@@ -235,11 +263,14 @@ function addTeam(teamData) {
 	if (teamData.id > -1) teamElement.data('id', teamData.id);
 
 	var teamHeader = $(`<div>`);
+	teamHeader.append(`<button type="button" class="moveTeamUp">↑</button>`);
+	teamHeader.append(`<button type="button" class="moveTeamDown">↓</button>`);
 	teamHeader.append(`<span class="teamTitle">Team X`);
 	teamHeader.append(`<button type="button" class="addPlayer">+ Add Player</button>`)
 	teamHeader.append(`<button type="button" class="removeTeam">- Remove Team</button>`)
 	teamHeader.append(`<input title='Team Name' class='name' placeholder='Team Name' value='${teamData.name}'>`);
 	teamElement.append(teamHeader);
+	teamElement.append(`<span class="playersContainer">`);
 
 	return teamElement;
 }
@@ -251,6 +282,8 @@ function addPlayer(playerData) {
 	var playerElement = $(`<span class='player'>`);
 	if (playerData.id > -1) playerElement.data('id', playerData.id);
 
+	playerElement.append(`<button type="button" class="movePlayerUp">↑</button>`);
+	playerElement.append(`<button type="button" class="movePlayerDown">↓</button>`);
 	playerElement.append(`<button type="button" class="removePlayer">X</button>`)
 	for (var i = 0; i < playerDataInputs.length; i++) {
 		if (playerDataInputs[i].social) var value = playerData.social[playerDataInputs[i].id];
@@ -263,7 +296,8 @@ function addPlayer(playerData) {
 
 // General clean up when we're done.
 function cleanUp() {
-	gameDetailsInputs.empty();
+	runDataInputsContainer.empty();
+	teamsContainer.empty();
 	runID = undefined;
 	runDataCurrent = undefined;
 }

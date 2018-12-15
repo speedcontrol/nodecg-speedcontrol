@@ -5,7 +5,7 @@
 		<script src="../node_modules/clone/clone.js"></script>
 		<script src="RunInfoDialog.js"></script>
 		<style>
-			#gameDetailsInputs > input {
+			#runDataInputs > input {
 				width: 100%;
 			}
 
@@ -17,16 +17,16 @@
 				height: 25px;
 			}
 
-			.team > div > input, .team > div > .removeTeam {
+			.team > div > .name, .team > div > .removeTeam {
 				float: right;
 			}
 
-			.team > div > .addPlayer {
-				margin-left: 10px;
+			.team > div > .teamTitle {
+				margin: 0 10px;
 			}
 
 			.player > input {
-				width: calc(94%/3);
+				width: calc(87%/3);
 			}
 
 			.addTeam {
@@ -40,7 +40,8 @@
 			If you need to reset any issues, click on "Cancel" or anywhere outside this dialog, and then add/edit the run again.
 			If a team is empty when you save, it will be dropped.
 		</span>
-		<br><br><span id="gameDetailsInputs"></span>
+		<br><br><span id="runDataInputs"></span>
+		<span id="teamsContainer"></span>
 		<button type="button" class="addTeam">+ Add Team</button>
 	</body>
 </html>
