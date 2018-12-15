@@ -1,5 +1,17 @@
-var runDataCurrent, dialog, runID, runDataArray, defaultSetupTime, runDataLastID, runDataActiveRun, defaultRunDataObject, customData, defaultTeamObject, defaultPlayerObject;
+var runDataCurrent,
+	dialog,
+	runID,
+	runDataArray,
+	defaultSetupTime,
+	runDataLastID,
+	runDataActiveRun,
+	defaultRunDataObject,
+	customData,
+	defaultTeamObject,
+	defaultPlayerObject,	
+	gameDetailsInputs;
 
+// All possible general run data inputs available.
 var runDataInputs = [
 	{id: 'game', placeholder: 'Game'},
 	{id: 'gameTwitch', placeholder: 'Game (Twitch)'},
@@ -12,6 +24,7 @@ var runDataInputs = [
 	//{id: 'customExample', placeholder: 'Custom Example', custom: true}
 ];
 
+// All possible player data inputs available.
 var playerDataInputs = [
 	{id: 'name', placeholder: 'Name'},
 	{id: 'twitch', placeholder: 'Twitch Username', social: true},
@@ -27,8 +40,10 @@ $(() => {
 	defaultRunDataObject = nodecg.Replicant('defaultRunDataObject');
 	defaultTeamObject = nodecg.Replicant('defaultTeamObject');
 	defaultPlayerObject = nodecg.Replicant('defaultPlayerObject');
-	customData = nodecg.bundleConfig.schedule.customData || [];
+	gameDetailsInputs = $('#gameDetailsInputs');
 
+	// Add custom data to the possible run data inputs.
+	customData = nodecg.bundleConfig.schedule.customData || [];
 	customData.forEach((customDataElem) => {
 		if (customDataElem.key && customDataElem.name) {
 			runDataInputs.push({
@@ -39,36 +54,43 @@ $(() => {
 		}
 	});
 
+	// Listener for the "Add Run/Save Changes" button.
 	document.addEventListener('dialog-confirmed', () => {
 		saveRun();
 		cleanUp();
 	});
 
+	// Listener for the "Cancel" button, or clicking outside the dialog.
 	document.addEventListener('dialog-dismissed', () => {
 		cleanUp();
 	});
 
+	// The "Add Team" button will add the extra empty elements to the end.
 	$('.addTeam').on('click', () => {
 		var teamElement = addTeam();
 		teamElement.append(addPlayer());
-		$('#gameDetailsInputs').append(teamElement);
+		gameDetailsInputs.append(teamElement);
 		updateTeamTitles();
 	});
 
-	$('#gameDetailsInputs').on('click', '.removeTeam', (evt) => {
+	// The "Remove Team" buttons will delete the team element (and the players inside that).
+	gameDetailsInputs.on('click', '.removeTeam', (evt) => {
 		$(evt.target).parent().parent().remove();
 		updateTeamTitles();
 	});
 
-	$('#gameDetailsInputs').on('click', '.addPlayer', (evt) => {
+	// The "Add Player" buttons will add an empty element.
+	gameDetailsInputs.on('click', '.addPlayer', (evt) => {
 		$(evt.target).parent().parent().append(addPlayer());
 	});
 
-	$('#gameDetailsInputs').on('click', '.removePlayer', (evt) => {
+	// The "X" button to the left of players will remove their element.
+	gameDetailsInputs.on('click', '.removePlayer', (evt) => {
 		$(evt.target).parent().remove();
 	});
 });
 
+// This function is triggered from other panels.
 function loadRun(runIDtoLoad) {
 	runID = runIDtoLoad;
 
@@ -76,6 +98,7 @@ function loadRun(runIDtoLoad) {
 	if (runID === undefined) {
 		runDataCurrent = clone(defaultRunDataObject.value);
 
+		// Set default setup time.
 		runDataCurrent.setupTime = msToTime(defaultSetupTime.value*1000);
 		runDataCurrent.setupTimeS = defaultSetupTime.value*1000;
 
@@ -95,18 +118,15 @@ function loadRun(runIDtoLoad) {
 	for (var i = 0; i < runDataInputs.length; i++) {
 		if (runDataInputs[i].custom) var value = runDataCurrent.customData[runDataInputs[i].id];
 		else var value = runDataCurrent[runDataInputs[i].id];
-
-		$('#gameDetailsInputs').append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${value}'>`);
+		gameDetailsInputs.append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${value}'>`);
 	}
 
 	// If we're editing a run, add the team/player fields.
 	if (runID !== undefined) {
-		runDataCurrent.teams.forEach((team, i) => {
-			var teamElement = addTeam(team, i);
-			team.players.forEach((player, i) => {
-				teamElement.append(addPlayer(player, i));
-			});
-			$('#gameDetailsInputs').append(teamElement);
+		runDataCurrent.teams.forEach(team => {
+			var teamElement = addTeam(team);
+			team.players.forEach(player => teamElement.append(addPlayer(player)));
+			gameDetailsInputs.append(teamElement);
 		});
 	}
 
@@ -114,7 +134,7 @@ function loadRun(runIDtoLoad) {
 	else {
 		var teamElement = addTeam();
 		teamElement.append(addPlayer());
-		$('#gameDetailsInputs').append(teamElement);
+		gameDetailsInputs.append(teamElement);
 	}
 
 	updateTeamTitles();
@@ -123,12 +143,14 @@ function loadRun(runIDtoLoad) {
 function saveRun() {
 	var runData = clone(runDataCurrent);
 
+	// Go through all the general run data inputs and grab their information.
 	for (var i = 0; i < runDataInputs.length; i++) {
 		var input = $(`.${runDataInputs[i].id}`).val();
 
 		if (runDataInputs[i].custom)
 			runData.customData[runDataInputs[i].id] = input;
 
+		// Estimate/setup time needs checking to make sure it's valid and converting to seconds.
 		else if (runDataInputs[i].id === 'estimate' || runDataInputs[i].id === 'setupTime') {
 			if (input.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/) || !isNaN(input)) {
 				var ms = timeToMS(input);
@@ -140,12 +162,12 @@ function saveRun() {
 		else runData[runDataInputs[i].id] = input;
 	}
 
+	// For teams/players, we start from blank and redo the arrays.
 	var newTeams = [];
-	$('.team').each((teamIndex, teamElem) => {
+	$('.team').each((i, teamElem) => {
 		// If this is an existing team and we only need to edit their data.
-		if ($(teamElem).data('id') !== undefined) {
-			var teamData = getTeamDataByID($(teamElem).data('id'));
-		}
+		if ($(teamElem).data('id') !== undefined)
+			var teamData = getTeamDataByID(runData, $(teamElem).data('id'));
 		else {
 			var teamData = clone(defaultTeamObject.value);
 			teamData.id = runData.teamLastID+1;
@@ -155,10 +177,10 @@ function saveRun() {
 		teamData.name = $(`.name`, teamElem).val();
 
 		var newPlayers = [];
-		$('.player', teamElem).each((playerIndex, playerElem) => {
-			if ($(playerElem).data('id') !== undefined) {
+		$('.player', teamElem).each((i, playerElem) => {
+			// If this is an existing player and we only need to edit their data.
+			if ($(playerElem).data('id') !== undefined)
 				var playerData = getPlayerDataByID(teamData, $(playerElem).data('id'));
-			}
 			else {
 				var playerData = clone(defaultPlayerObject.value);
 				playerData.id = runData.playerLastID+1;
@@ -166,6 +188,7 @@ function saveRun() {
 				playerData.teamID = teamData.id;
 			}
 			
+			// Go through player data inputs and grab their information.
 			for (var i = 0; i < playerDataInputs.length; i++) {
 				var input = $(`.${playerDataInputs[i].id}`, playerElem).val();
 
@@ -187,7 +210,7 @@ function saveRun() {
 
 	runData.teams = newTeams;
 
-	// If adding a new run.
+	// If adding a new run, correctly set the ID and push.
 	if (runID === undefined) {
 		runData.id = runDataLastID.value+1;
 		runDataLastID.value++;
@@ -204,7 +227,8 @@ function saveRun() {
 	}
 }
 
-function addTeam(teamData, i) {
+// Used to add a team element, with populated information if available.
+function addTeam(teamData) {
 	if (!teamData) teamData = clone(defaultTeamObject.value);
 
 	var teamElement = $(`<div class='team'>`);
@@ -216,10 +240,12 @@ function addTeam(teamData, i) {
 	teamHeader.append(`<button type="button" class="removeTeam">- Remove Team</button>`)
 	teamHeader.append(`<input title='Team Name' class='name' placeholder='Team Name' value='${teamData.name}'>`);
 	teamElement.append(teamHeader);
+
 	return teamElement;
 }
 
-function addPlayer(playerData, i) {
+// Used to add a player element, with populated information if available.
+function addPlayer(playerData) {
 	if (!playerData) playerData = clone(defaultPlayerObject.value);
 
 	var playerElement = $(`<span class='player'>`);
@@ -231,31 +257,36 @@ function addPlayer(playerData, i) {
 		else var value = playerData[playerDataInputs[i].id];
 		playerElement.append(`<input title='${playerDataInputs[i].placeholder}' class='${playerDataInputs[i].id}' placeholder='${playerDataInputs[i].placeholder}' value='${value}'>`);
 	}
+
 	return playerElement;
 }
 
+// General clean up when we're done.
 function cleanUp() {
-	$('#gameDetailsInputs').empty();
+	gameDetailsInputs.empty();
 	runID = undefined;
 	runDataCurrent = undefined;
 }
 
+// Used to keep the generic team titles always correct when things change around.
 function updateTeamTitles() {
 	$('.teamTitle').each((i, elem) => {
 		$(elem).text(`Team ${i+1}`);
 	});
 }
 
-function getTeamDataByID(id) {
-	if (!runDataCurrent) return null;
-	for (var i = 0; i < runDataCurrent.teams.length; i++) {
-		if (runDataCurrent.teams[i].id === id) {
-			return clone(runDataCurrent.teams[i]);
+// Get team object from provided run data.
+function getTeamDataByID(runData, id) {
+	if (!runData) return null;
+	for (var i = 0; i < runData.teams.length; i++) {
+		if (runData.teams[i].id === id) {
+			return clone(runData.teams[i]);
 		}
 	}
 	return null;
 }
 
+// Get player object from provided team data.
 function getPlayerDataByID(teamData, id) {
 	if (!teamData) return null;
 	for (var i = 0; i < teamData.players.length; i++) {
