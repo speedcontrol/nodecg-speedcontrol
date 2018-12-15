@@ -152,7 +152,7 @@ function saveRun() {
 
 		// Estimate/setup time needs checking to make sure it's valid and converting to seconds.
 		else if (runDataInputs[i].id === 'estimate' || runDataInputs[i].id === 'setupTime') {
-			if (input.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/) || !isNaN(input)) {
+			if (input.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
 				var ms = timeToMS(input);
 				runData[runDataInputs[i].id] = msToTime(ms);
 				runData[`${runDataInputs[i].id}S`] = ms/1000;
