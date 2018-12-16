@@ -8,11 +8,11 @@ nodecg-speedcontrol, usually known as just "Speedcontrol", is a bundle for the [
 
 Some basic information:
 - Import schedules from [Horaro](https://horaro.org/).
-- By default, can store information on the run and the runners, but can also be customised to store more if needed by advanced users.
+- By default, can store information on the run and the players, but can also be customised to store more if needed by advanced users.
 - Automatically change Twitch title and/or game directory if needed.
-- Automatically feature the current runner(s) on the [FrankerFaceZ](https://www.frankerfacez.com/) featured channels function below the stream.
+- Automatically feature the current player(s) on the [FrankerFaceZ](https://www.frankerfacez.com/) featured channels function below the stream.
 - Has an inbuilt timer (powered by [livesplit-core](https://github.com/LiveSplit/livesplit-core)); no need to have a seperate application open.
-- Support for some donations trackers can be added with some extra bundles.
+- Support for some donations trackers can be added with extra bundles (see below).
 
 This bundle doesn't come with any graphics, you will need to create them yourself in another bundle. We currently have no READMEs for this but you can check out [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext) for an simple example bundle.
 
@@ -36,6 +36,14 @@ nodecg install speedcontrol/nodecg-speedcontrol
 nodecg start
 ```
 
+## Extra Support Bundles
+
+Alongside the main bundle, there are some extra bundles that we maintain that you may also want to use for speedrunning marathons. See their GitHub pages for more detailed information on how to use them. Be warned they are somewhat undocumented as of now.
+
+To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
+- [speedcontrol-tiltify](https://github.com/speedcontrol/speedcontrol-tiltify): Adds a frequently updating donation total amount for a Tiltify campaign you can use in layouts.
+- [speedcontrol-srcomtracker](https://github.com/speedcontrol/speedcontrol-srcomtracker): Adds frequently updating donation total/goals/bidwars and messages for new donations for a marathon on [speedrun.com](https://www.speedrun.com) if they are enabled, that you can use in your layouts.
+
 ## Where has this bundle been used before?
 
 - All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons starting from the Pre-ESA Marathon 2016, including the ESA ran Dreamhack speedrunning events in Sweden
@@ -56,3 +64,11 @@ With help from:
 - btrim
 - Zephyyrr
 - Planks
+
+## Contribution/Development
+
+The `master` branch will always be the most recent stable release, while all development work is done in the `dev` branch; if you want to use experimental unfinished features or contribute, use that branch.
+
+If you need to report an issue, you can [do that on GitHub](https://github.com/speedcontrol/nodecg-speedcontrol/issues).
+
+Feel free to raise an issue/Pull Request if you have used our bundle(s) for a marathon and would like to be linked above.
