@@ -23,12 +23,24 @@ This part is a bit complicated, but hang tight, hopefully it will all make sense
 - **Country Code**: You cannot currectly set this yourself on the import, but if you have [speedrun.com](https://www.speedrun.com) lookup enabled, it will attempt to get this for you.
 - **Team Names**: Not used commonly, but still supported; you can give your teams names that are shown in the dashboard and you could use on a layout if you wanted to. To do this, you need to put `TEAM_NAME: ` before the players in the team, where `TEAM_NAME` is what you want to name that team.
 
+You can use a mix of no links/links and no team name/team name safely, if they are only needed for certain players/runs.
+
 ### Examples
-- **1 Player**: `[btrim](https://twitch.tv/btrim)`
-- **Race (with vs. separation)**: `[btrim](https://twitch.tv/btrim) vs. [charleon](https://twitch.tv/sethcharleon)`
-- **Co-Op/Race (with comma separation)**: `[btrim](https://twitch.tv/btrim), [charleon](https://twitch.tv/sethcharleon)`
-- **Co-Op Race**: `[btrim](https://twitch.tv/btrim), [charleon](https://twitch.tv/sethcharleon) vs. [zoton2](https://twitch.tv/zoton2), [zephyyrr](http://hitbox.tv/zephyyrr)`
-- **Co-Op Race with Team Names**: `Mickeyvania: [btrim](https://twitch.tv/btrim), [charleon](https://twitch.tv/sethcharleon) vs. GTAHorns: [zoton2](https://twitch.tv/zoton2), [zephyyrr](http://hitbox.tv/zephyyrr)`
+- **1 Player**:
+  -  (without link) `btrim`
+  -  (with link) `[btrim](https://twitch.tv/btrim)`
+- **Race (with vs. separation)**:
+  - (without links) `btrim vs. charleon`
+  - (with links) `[btrim](https://twitch.tv/btrim) vs. [charleon](https://twitch.tv/sethcharleon)`
+- **Co-Op/Race (with comma separation)**:
+  - (without links) `btrim, charleon`
+  - (with links) `[btrim](https://twitch.tv/btrim), [charleon](https://twitch.tv/sethcharleon)`
+- **Co-Op Race**:
+  - (without links) `btrim, charleon vs. zoton2, zephyyrr`
+  - (with links) `[btrim](https://twitch.tv/btrim), [charleon](https://twitch.tv/sethcharleon) vs. [zoton2](https://twitch.tv/zoton2), [zephyyrr](http://twitch.tv/zephyyrr)`
+- **Co-Op Race with Team Names**: 
+  - (without links) `Mickeyvania: btrim, charleon vs. GTAHorns: zoton2, zephyyrr`
+  - (with links) `Mickeyvania: [btrim](https://twitch.tv/btrim), [charleon](https://twitch.tv/sethcharleon) vs. GTAHorns: [zoton2](https://twitch.tv/zoton2), [zephyyrr](http://twitch.tv/zephyyrr)`
 
 ## Schedule Examples
 
