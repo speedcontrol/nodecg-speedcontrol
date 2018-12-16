@@ -32,13 +32,13 @@ You can use a mix of no links/links and no team name/team name safely, if they a
 - **Race (with vs. separation)**:
   - (without links) `btrim vs. charleon`
   - (with links) `[btrim](https://twitch.tv/btrim) vs. [charleon](https://twitch.tv/sethcharleon)`
-- **Co-Op/Race (with comma separation)**:
+- **Co-op/Race (with comma separation)**:
   - (without links) `btrim, charleon`
   - (with links) `[btrim](https://twitch.tv/btrim), [charleon](https://twitch.tv/sethcharleon)`
-- **Co-Op Race**:
+- **Co-op Race**:
   - (without links) `btrim, charleon vs. zoton2, zephyyrr`
   - (with links) `[btrim](https://twitch.tv/btrim), [charleon](https://twitch.tv/sethcharleon) vs. [zoton2](https://twitch.tv/zoton2), [zephyyrr](http://twitch.tv/zephyyrr)`
-- **Co-Op Race with Team Names**: 
+- **Co-op Race with Team Names**: 
   - (without links) `Mickeyvania: btrim, charleon vs. GTAHorns: zoton2, zephyyrr`
   - (with links) `Mickeyvania: [btrim](https://twitch.tv/btrim), [charleon](https://twitch.tv/sethcharleon) vs. GTAHorns: [zoton2](https://twitch.tv/zoton2), [zephyyrr](http://twitch.tv/zephyyrr)`
 
