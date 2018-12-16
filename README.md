@@ -14,7 +14,7 @@ Some basic information:
 - Has an inbuilt timer (powered by [livesplit-core](https://github.com/LiveSplit/livesplit-core)); no need to have a seperate application open.
 - Support for some donations trackers can be added with extra bundles (see below).
 
-This bundle doesn't come with any graphics, you will need to create them yourself in another bundle. We currently have no READMEs for this but you can check out [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext) for an simple example bundle.
+This bundle doesn't come with any graphics, you will need to create them yourself in another bundle. We currently have no README for this but you can check out [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext) for an simple example bundle.
 
 ## Installation
 
@@ -22,7 +22,7 @@ You will need [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://
 
 - `nodecg install speedcontrol/nodecg-speedcontrol` to install the latest version of nodecg-speedcontrol
 
-This bundle can run without any extra configuration, but it's needed to use all of the functionality. Please see [Configuration.md](READMES/Configuration.md) for more information.
+This bundle can run without any extra configuration, but it's needed to use all of the functionality. Please see [Configuration.md](READMES/Configuration.md) for more information. You may also want to read [Schedule-Formatting.md](READMES/Schedule-Formatting.md) for advice on formatting your schedules before importing.
 
 ### tl;dr installation
 
@@ -45,7 +45,7 @@ To import a schedule, go to the *Run Modifications* workspace along the top, and
 ![Schedule Import Before Import](READMES/img/schedule-import-1.png)
 
 Next you will see a list of dropdowns. These are used to select which columns in your schedule relate to which information in the run data. The import tries to automatically select the appropriate columns, but if something is wrong you can change it here.
-Also available here is an option on how the players in the *Players* column should be split. See the [schedule formatting README (todo)]() for more information on how the *Players* column data is handled.
+Also available here is an option on how the players in the *Players* column should be split. See [Schedule-Formatting.md](READMES/Schedule-Formatting.md) for more information on how the *Players* column data should be formatted.
 Once you have everything selected correctly, click on the *Import* button.
 
 ![Schedule Import Import Settings](READMES/img/schedule-import-2.png)
