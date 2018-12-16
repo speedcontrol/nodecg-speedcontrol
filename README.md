@@ -40,7 +40,7 @@ nodecg start
 
 Once installed, go to `https://localhost:9090` (unless you have overridden the defaults in the NodeCG config) to access the dashboard.
 
-To import a schedule, go to the *Run Modifications* workspace along the top, and look for the *"*Horaro Schedule Import* panel. Paste in a Horaro schedule URL into the text box (it will be automatically pre-filled if you set `schedule.defaultURL` in this bundles config) and click *"*Load Schedule Data*.
+To import a schedule, go to the *Run Modifications* workspace along the top, and look for the *Horaro Schedule Import* panel. Paste in a Horaro schedule URL into the text box (it will be automatically pre-filled if you set `schedule.defaultURL` in this bundles config) and click *Load Schedule Data*.
 
 ![Schedule Import Before Import](READMES/img/schedule-import-1.png)
 
@@ -62,11 +62,11 @@ Next to the above panel should be the *Run Timer* panel. This should be very sel
 
 ![Run Timer Stopped](READMES/img/run-timer-stopped.png)
 
-If you have enabled the Twitch integration in the configuration in this bundle's config, there will be a panel in *Main Workspace* called *Twitch Control*, which will have a button to set up the connection with Twitch. Use this to connect the application to your Twitch account.
+If you have enabled the Twitch integration in this bundle's config, there will be a panel in *Main Workspace* called *Twitch Control*, which will have a button to set up the connection with Twitch. Use this to connect the application to your Twitch account.
 
 ![Twitch Control Login](READMES/img/twitch-control-1.png)
 
-Once you have done the above, make sure to turn the auto-sync on in the panel, otherwise it will not be done when you change runs. You can also manually update the title, game and if enabled, the Twitch usernames for the FrankerFaceZ featured channels integration if you have this enabled.
+Once you have done the above, make sure to turn the auto-sync on in the panel, otherwise it will not be done when you change runs. You can also manually update the title, game and the Twitch usernames for the FrankerFaceZ featured channels integration if you have this enabled.
 
 ![Twitch Control Logged In](READMES/img/twitch-control-2.png)
 
