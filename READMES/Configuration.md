@@ -14,7 +14,6 @@ Below is an example configuration file contents with everything that is availabl
 
 ```
 {
-	"live": false,
 	"twitch": {
 		"enable": true,
 		"clientID": "CLIENT_ID",
@@ -39,12 +38,6 @@ Below is an example configuration file contents with everything that is availabl
 ```
 
 ## Breakdown
-
-```
-"live": false
-```
-
-By default this boolean is false, changing it to true disables a few dashboard buttons that probably shouldn't be pressed during a live marathon.
 
 ### Twitch
 

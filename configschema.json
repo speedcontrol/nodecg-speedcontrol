@@ -2,7 +2,6 @@
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"type": "object",
 	"properties": {
-		"live": {"type": "boolean", "default": false},
 		"twitch": {
 			"type": "object",
 			"properties": {
