@@ -18,6 +18,10 @@ var userDataCache = nodecg.Replicant('horaroImportUserDataCache', {defaultValue:
 var disableSRComLookup = nodecg.bundleConfig.schedule.disableSpeedrunComLookup || false;
 
 nodecg.listenFor('loadScheduleData', (url, callback) => {
+	// If the URL has a secret key in it, extract it and form the JSON URL correctly.
+	if (url.match((/\?key=/))) url = `${url.match(/(.*?)(?=(\?key=))/)[0]}.json?key=${url.match(/(?<=(\?key=))(.*?)$/)[0]}`;
+	else url = `${url}.json`;
+
 	setScheduleData(url, () => callback(null, scheduleData));
 });
 
@@ -112,52 +116,66 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 		
 		// Teams/Players (there's a lot of stuff here!)
 		if (columns.player >= 0 && run.data[columns.player]) {
-			var playerLinksList = run.data[columns.player];
-			
-			// Splitting by ' vs. ' or ' vs ' in case this is a race.
-			var vsList = playerLinksList.split(/\s+vs\.?\s+/);
-			async.eachSeries(vsList, function(rawTeam, callback) {
-				// Getting/setting the team name.
-				var cap = rawTeam.match(/(Team\s*)?(\S+):\s+\[/);
-				if (cap !== null && cap.length > 0) {
-					var teamName = cap[2];
-				}
-				
+			var splitOption = columns.playerSplit; // 0: vs/vs. - 1: Comma (,) no teams
+			var playerList = run.data[columns.player];
+			var teamsRaw = [];
+
+			// vs/vs.
+			if (splitOption === 0) {
+				playerList.split(/\s+vs\.?\s+/).forEach(team => {
+					teamsRaw.push({
+						name: (team.match(/^(.+)(?=:\s)/)) ? team.match(/^(.+)(?=:\s)/)[0] : null, // Either will be a string or null.
+						players: team.replace(/^(.+)(:\s)/, '').split(/\s*,\s*/)
+					})
+				});
+			}
+
+			// Comma (,)
+			else if (splitOption === 1) {
+				playerList.split(/\s*,\s*/).forEach(team => {
+					teamsRaw.push({
+						name: (team.match(/^(.+)(?=:\s)/)) ? team.match(/^(.+)(?=:\s)/)[0] : null, // Either will be a string or null.
+						players: [team.replace(/^(.+)(:\s)/, '')] // Making the single string into an array.
+					})
+				});
+			}
+
+			async.eachSeries(teamsRaw, function(rawTeam, callback) {
 				// Getting the players on this team.
-				var players = rawTeam.split(/\s*,\s*/);
+				var players = rawTeam.players;
 				var team = clone(nodecg.readReplicant('defaultTeamObject'));
 				runData.teamLastID++;
 				team.id = runData.teamLastID;
-				if (teamName) team.name = teamName;
+				if (rawTeam.name) team.name = rawTeam.name;
 				
 				// Going through the list of players.
-				async.eachSeries(players, function(player, callback) {
-					// Checking to see if the user is a link, if not use the whole field.
-					if (player.match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/) && player.match(/\((.*?)\)/)) {
-						var URI = player.match(/\((.*?)\)/)[1];
-						var playerName = player.match(/\[(.*?)\]/)[1];
+				async.eachSeries(players, function(rawPlayer, callback) {
+					// Checking to see if the user is a Markdown link, if not use the whole field.
+					if (rawPlayer.match(/(\[(.*?)\])\(.*?\)/)) {
+						var playerName = rawPlayer.match(/(?<=\[)(.*?)(?=\])/)[0];
+						var URI = rawPlayer.replace(/\[(.*?)\]/, '').match(/(?<=\()(.*?)(?=\))/)[0];
 					}
 					else
-						var playerName = player;
+						var playerName = rawPlayer;
 					
 					getDataFromSpeedrunCom(playerName, URI, function(regionCode, twitchURI) {
 						// Creating the player object.
-						var playerObj = clone(nodecg.readReplicant('defaultPlayerObject'));
-						playerObj.name = playerName;
-						playerObj.teamID = team.id;
-						playerObj.country = regionCode;
+						var player = clone(nodecg.readReplicant('defaultPlayerObject'));
+						player.name = playerName;
+						player.teamID = team.id;
+						player.country = regionCode;
 						runData.playerLastID++;
-						playerObj.id = runData.playerLastID;
+						player.id = runData.playerLastID;
 
 						// Get/set Twitch username from URL.
 						var twitch = twitchURI || URI;
 						if (twitch) {
 							twitch = twitch.split('/')[twitch.split('/').length-1];
-							playerObj.social.twitch = twitch;
+							player.social.twitch = twitch;
 						}
 						
 						// Push this object to the relevant arrays where it is stored.
-						team.players.push(playerObj);
+						team.players.push(player);
 						callback();
 					});
 				}, function(err) {
@@ -185,7 +203,7 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 });
 
 function setScheduleData(url, callback) {
-	needle.get(url+'.json', (err, resp) => {
+	needle.get(url, (err, resp) => {
 		scheduleData = resp.body;
 		callback();
 	});

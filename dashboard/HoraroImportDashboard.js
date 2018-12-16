@@ -24,31 +24,36 @@ $(() => {
 			$helpText.html('Select the correct columns that match the data type below, if the one auto-selected is wrong.<br><br>');
 			
 			// What a nice mess.
-			var dropdownsHTML = '<div class="selectWrapper"><span class="selectName">Game:</span><span class="selectDropdown"><select id="gameColumns"></select></span></div>\
-			<div class="selectWrapper"><span class="selectName">Game (Twitch):</span><span class="selectDropdown"><select id="gameTwitchColumns"></select></span></div>\
-			<div class="selectWrapper"><span class="selectName">Category:</span><span class="selectDropdown"><select id="categoryColumns"></select></span></div>\
-			<div class="selectWrapper"><span class="selectName">System:</span><span class="selectDropdown"><select id="systemColumns"></select></span></div>\
-			<div class="selectWrapper"><span class="selectName">Region:</span><span class="selectDropdown"><select id="regionColumns"></select></span></div>\
-			<div class="selectWrapper"><span class="selectName">Released:</span><span class="selectDropdown"><select id="releaseColumns"></select></span></div>\
-			<div class="selectWrapper"><span class="selectName">Players:</span><span class="selectDropdown"><select id="playerColumns"></select></span></div>';
+			var dropdownsHTML = '<div class="selectWrapper"><span class="selectName">Game:</span><span class="selectDropdown"><select class="columnOptions" id="gameColumns"></select></span></div>\
+			<div class="selectWrapper"><span class="selectName">Game (Twitch):</span><span class="selectDropdown"><select class="columnOptions" id="gameTwitchColumns"></select></span></div>\
+			<div class="selectWrapper"><span class="selectName">Category:</span><span class="selectDropdown"><select class="columnOptions" id="categoryColumns"></select></span></div>\
+			<div class="selectWrapper"><span class="selectName">System:</span><span class="selectDropdown"><select class="columnOptions" id="systemColumns"></select></span></div>\
+			<div class="selectWrapper"><span class="selectName">Region:</span><span class="selectDropdown"><select class="columnOptions" id="regionColumns"></select></span></div>\
+			<div class="selectWrapper"><span class="selectName">Released:</span><span class="selectDropdown"><select class="columnOptions" id="releaseColumns"></select></span></div>\
+			<div class="selectWrapper"><span class="selectName">Players:</span><span class="selectDropdown"><select class="columnOptions" id="playerColumns"></select></span></div>';
 			
 			// Add dropdowns for custom data as specified in the config.
 			customData.forEach((customDataElem) => {
 				if (customDataElem.key && customDataElem.name)
-					dropdownsHTML += '<div class="selectWrapper"><span class="selectName">'+customDataElem.name+':</span><span class="selectDropdown"><select id="'+customDataElem.key+'Columns"></select></span></div>';
+					dropdownsHTML += '<div class="selectWrapper"><span class="selectName">'+customDataElem.name+':</span><span class="selectDropdown"><select class="columnOptions" id="'+customDataElem.key+'Columns"></select></span></div>';
 			});
-			
+
+			var playerSplitDropdown = $('<br><div class="selectWrapper"><span class="selectName">Split Players: <a href="#" title="This option dictates how the players in your relevant schedule column are split; check the README for more information.">?</a></span><span class="selectDropdown"><select id="playerSplitOption"></select></span></div>');
+			$('#playerSplitOption', playerSplitDropdown).append($('<option>', {value: 0, text : 'vs/vs. [Teams]'}));
+			$('#playerSplitOption', playerSplitDropdown).append($('<option>', {value: 1, text : 'Comma (,) [No Teams]'}));
+
 			$('#columnsDropdownsWrapper').html(dropdownsHTML);
+			$('#columnsDropdownsWrapper').append(playerSplitDropdown);
 			
 			// Adds a -1 N/A selection for if the column isn't on their schedule.
-			$('#columnsDropdownsWrapper select').append($('<option>', { 
+			$('#columnsDropdownsWrapper select.columnOptions').append($('<option>', { 
 				value: -1,
 				text : 'N/A'
 			}));
 			
 			// Adds all other available columns as options to the dropdowns.
 			$.each(columns, (i, column) => {
-				$('#columnsDropdownsWrapper select').append($('<option>', {
+				$('#columnsDropdownsWrapper select.columnOptions').append($('<option>', {
 					value: i,
 					text : column
 				}));
@@ -127,6 +132,7 @@ $(() => {
 			region: parseInt($('#regionColumns').val()),
 			release: parseInt($('#releaseColumns').val()),
 			player: parseInt($('#playerColumns').val()),
+			playerSplit: parseInt($('#playerSplitOption').val()), // Hijacking this for setting the player split option.
 			custom: {}
 		};
 		// Add the custom data stuff if needed.
