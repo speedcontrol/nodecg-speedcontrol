@@ -40,35 +40,35 @@ nodecg start
 
 Once installed, go to `https://localhost:9090` (unless you have overridden the defaults in the NodeCG config) to access the dashboard.
 
-![Schedule Import Before Import](READMES/img/schedule-import-1.png)
-
 To import a schedule, go to the *Run Modifications* workspace along the top, and look for the *"*Horaro Schedule Import* panel. Paste in a Horaro schedule URL into the text box (it will be automatically pre-filled if you set `schedule.defaultURL` in this bundles config) and click *"*Load Schedule Data*.
 
-![Schedule Import Import Settings](READMES/img/schedule-import-2.png)
+![Schedule Import Before Import](READMES/img/schedule-import-1.png)
 
 Next you will see a list of dropdowns. These are used to select which columns in your schedule relate to which information in the run data. The import tries to automatically select the appropriate columns, but if something is wrong you can change it here.
 Also available here is an option on how the players in the *Players* column should be split. See the [schedule formatting README (todo)]() for more information on how the *Players* column data is handled.
 Once you have everything selected correctly, click on the *Import* button.
 
-![Schedule Import Importing](READMES/img/schedule-import-3.png)
+![Schedule Import Import Settings](READMES/img/schedule-import-2.png)
 
 The schedule will begin importing. If you have the speedrun.com lookup enabled (by default it's enabled) this import may take a while, so be patient. Once the import is done, this panel will turn back to how it was before, and the runs will be listed in the *Run Player* and *Run Editor* panels.
 
-![Run Player Play Button](READMES/img/run-player-playbtn.png)
+![Schedule Import Importing](READMES/img/schedule-import-3.png)
 
 To start "playing" runs, go back to the *Main Workspace* and find the *Run Player* panel, and click on the big *Play _* button at the top.
 
-![Run Timer Stopped](READMES/img/run-timer-stopped.png)
+![Run Player Play Button](READMES/img/run-player-playbtn.png)
 
 Next to the above panel should be the *Run Timer* panel. This should be very self explanitory; use the play button to start the timer and use the tick button to end it. You can also reset it if needed, pause it and also use the pencil to edit the time if needed for any reason.
 
-![Twitch Control Login](READMES/img/twitch-control-1.png)
+![Run Timer Stopped](READMES/img/run-timer-stopped.png)
 
 If you have enabled the Twitch integration in the configuration in this bundle's config, there will be a panel in *Main Workspace* called *Twitch Control*, which will have a button to set up the connection with Twitch. Use this to connect the application to your Twitch account.
 
-![Twitch Control Logged In](READMES/img/twitch-control-2.png)
+![Twitch Control Login](READMES/img/twitch-control-1.png)
 
 Once you have done the above, make sure to turn the auto-sync on in the panel, otherwise it will not be done when you change runs. You can also manually update the title, game and if enabled, the Twitch usernames for the FrankerFaceZ featured channels integration if you have this enabled.
+
+![Twitch Control Logged In](READMES/img/twitch-control-2.png)
 
 ## Extra Support Bundles
 
