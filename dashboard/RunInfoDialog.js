@@ -146,7 +146,9 @@ function loadRun(runIDtoLoad) {
 	for (var i = 0; i < runDataInputs.length; i++) {
 		if (runDataInputs[i].custom) var value = runDataCurrent.customData[runDataInputs[i].id];
 		else var value = runDataCurrent[runDataInputs[i].id];
-		runDataInputsContainer.append(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}' value='${value}'>`);
+		var inputElem = $(`<input title='${runDataInputs[i].placeholder}' class='${runDataInputs[i].id}' placeholder='${runDataInputs[i].placeholder}'>`);
+		inputElem.val(value);
+		runDataInputsContainer.append(inputElem);
 	}
 
 	// If we're editing a run, add the team/player fields.
@@ -268,7 +270,9 @@ function addTeam(teamData) {
 	teamHeader.append(`<span class="teamTitle">Team X`);
 	teamHeader.append(`<button type="button" class="addPlayer">+ Add Player</button>`)
 	teamHeader.append(`<button type="button" class="removeTeam">- Remove Team</button>`)
-	teamHeader.append(`<input title='Team Name' class='name' placeholder='Team Name' value='${teamData.name}'>`);
+	var teamNameInput = $(`<input title='Team Name' class='name' placeholder='Team Name'>`);
+	teamNameInput.val(teamData.name);
+	teamHeader.append(teamNameInput);
 	teamElement.append(teamHeader);
 	teamElement.append(`<span class="playersContainer">`);
 
@@ -288,7 +292,9 @@ function addPlayer(playerData) {
 	for (var i = 0; i < playerDataInputs.length; i++) {
 		if (playerDataInputs[i].social) var value = playerData.social[playerDataInputs[i].id];
 		else var value = playerData[playerDataInputs[i].id];
-		playerElement.append(`<input title='${playerDataInputs[i].placeholder}' class='${playerDataInputs[i].id}' placeholder='${playerDataInputs[i].placeholder}' value='${value}'>`);
+		var input = $(`<input title='${playerDataInputs[i].placeholder}' class='${playerDataInputs[i].id}' placeholder='${playerDataInputs[i].placeholder}'>`);
+		input.val(value);
+		playerElement.append(input);
 	}
 
 	return playerElement;
