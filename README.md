@@ -16,6 +16,8 @@ Some basic information:
 
 This bundle doesn't come with any graphics, you will need to create them yourself in another bundle. We currently have no README for this but you can check out [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext) for an simple example bundle.
 
+**If you were developing bundles that relied on this bundle before v1.x was released, please check [Migrating-from-v0.9-to-v1.x.md](READMES/Migrating-from-v0.9-to-v1.x.md).**
+
 ## Installation
 
 You will need [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://git-scm.com/) installed to install NodeCG, then see the [NodeCG documentation](http://nodecg.com/) on how to install that. I also suggest installing `nodecg-cli`; information on that is also on the documentation just linked.
@@ -45,7 +47,7 @@ To import a schedule, go to the *Run Modifications* workspace along the top, and
 ![Schedule Import Before Import](READMES/img/schedule-import-1.png)
 
 Next you will see a list of dropdowns. These are used to select which columns in your schedule relate to which information in the run data. The import tries to automatically select the appropriate columns, but if something is wrong you can change it here.
-Also available here is an option on how the players in the *Players* column should be split. See [Schedule-Formatting.md](READMES/Schedule-Formatting.md) for more information on how the *Players* column data should be formatted.
+Also available here is an option on how the players in the *Players* column should be split; see [Schedule-Formatting.md](READMES/Schedule-Formatting.md) for more information on what these options mean and how the *Players* column data should be formatted.
 Once you have everything selected correctly, click on the *Import* button.
 
 ![Schedule Import Import Settings](READMES/img/schedule-import-2.png)
