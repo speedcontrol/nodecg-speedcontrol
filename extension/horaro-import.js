@@ -3,6 +3,8 @@ var nodecg = require('./utils/nodecg-api-context').get();
 var needle = require('needle');
 var async = require('async');
 var clone = require('clone');
+var md = require('markdown-it')();
+var removeMd = require('remove-markdown');
 
 var runDataArray = [];
 var runNumberIterator = -1;
@@ -57,17 +59,12 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 		var runData = clone(nodecg.readReplicant('defaultRunDataObject'));
 		
 		// Game Name
-		if (columns.game >= 0 && run.data[columns.game]) {
-			// Checking to see if the game name is a link, if not use the whole field.
-			if (run.data[columns.game].match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/))
-				runData.game = run.data[columns.game].match(/(?:__|[*#])|\[(.*?)\]\(.*?\)/)[1];
-			else
-				runData.game = run.data[columns.game];
-		}
+		if (columns.game >= 0 && run.data[columns.game])
+			runData.game = parseMarkdown(run.data[columns.game]).str;
 		
 		// Game Twitch Name
 		if (columns.gameTwitch >= 0 && run.data[columns.gameTwitch])
-			runData.gameTwitch = run.data[columns.gameTwitch];
+			runData.gameTwitch = parseMarkdown(run.data[columns.gameTwitch]).str;
 		
 		// Scheduled date/time.
 		runData.scheduledS = run.scheduled_t;
@@ -91,27 +88,27 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 		}
 		
 		// Category
-		if(columns.category >= 0 && run.data[columns.category])
-			runData.category = run.data[columns.category];
+		if (columns.category >= 0 && run.data[columns.category])
+			runData.category = parseMarkdown(run.data[columns.category]).str;
 		
 		// System
-		if(columns.system >= 0 && run.data[columns.system])
-			runData.system = run.data[columns.system];
+		if (columns.system >= 0 && run.data[columns.system])
+			runData.system = parseMarkdown(run.data[columns.system]).str;
 		
 		// Region
 		if (columns.region >= 0 && run.data[columns.region])
-			runData.region = run.data[columns.region];
+			runData.region = parseMarkdown(run.data[columns.region]).str;
 
 		// Release
 		if (columns.release >= 0 && run.data[columns.release])
-			runData.release = run.data[columns.release];
+			runData.release = parseMarkdown(run.data[columns.release]).str;
 		
 		// Custom Data
 		// These are stored within the own object in the runData: "customData".
 		Object.keys(columns.custom).forEach((col) => {
 			runData.customData[col] = ''; // Make sure the key is set for all runs.
 			if (columns.custom[col] >= 0 && run.data[columns.custom[col]])
-				runData.customData[col] = run.data[columns.custom[col]];
+				runData.customData[col] = parseMarkdown(run.data[columns.custom[col]]).str;
 		});
 		
 		// Teams/Players (there's a lot of stuff here!)
@@ -146,17 +143,12 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 				var team = clone(nodecg.readReplicant('defaultTeamObject'));
 				runData.teamLastID++;
 				team.id = runData.teamLastID;
-				if (rawTeam.name) team.name = rawTeam.name;
+				if (rawTeam.name) team.name = parseMarkdown(rawTeam.name).str;
 				
 				// Going through the list of players.
 				async.eachSeries(players, function(rawPlayer, callback) {
-					// Checking to see if the user is a Markdown link, if not use the whole field.
-					if (rawPlayer.match(/(\[(.*?)\])\(.*?\)/)) {
-						var playerName = rawPlayer.match(/(?<=\[)(.*?)(?=\])/)[0];
-						var URI = rawPlayer.replace(/\[(.*?)\]/, '').match(/(?<=\()(.*?)(?=\))/)[0];
-					}
-					else
-						var playerName = rawPlayer;
+					var playerName = parseMarkdown(rawPlayer).str;
+					var URI = parseMarkdown(rawPlayer).url;
 					
 					getDataFromSpeedrunCom(playerName, URI, function(regionCode, twitchURI) {
 						// Creating the player object.
@@ -333,6 +325,23 @@ function getTwitchFromSRComUserData(data) {
 		return data.twitch.uri;
 	else
 		return false;
+}
+
+// Used to parse Markdown from schedules.
+// Currently returns URL of first link (if found) and a string with all formatting removed.
+function parseMarkdown(str) {
+	var results = {url: undefined, str: undefined};
+	var res = md.parseInline(str);
+	if (res && res[0] && res[0].children && res[0].children.length) {
+		for (const child of res[0].children) {
+			if (child.type === 'link_open' && child.attrs.length && child.attrs[0] && child.attrs[0].length && child.attrs[0][0] === 'href') {
+				results.url = child.attrs[0][1];
+				break;
+			}
+		}
+	}
+	results.str = removeMd(str);
+	return results;
 }
 
 // Called as a process when pushing the "add run" button.
