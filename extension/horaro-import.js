@@ -331,7 +331,8 @@ function getTwitchFromSRComUserData(data) {
 // Currently returns URL of first link (if found) and a string with all formatting removed.
 function parseMarkdown(str) {
 	var results = {url: undefined, str: undefined};
-	var res = md.parseInline(str);
+	if (!str) return results; // If no string is provided, just end early.
+	var res; try {res = md.parseInline(str);} catch(err) {} // Some stuff can break this, so catching it if needed.
 	if (res && res[0] && res[0].children && res[0].children.length) {
 		for (const child of res[0].children) {
 			if (child.type === 'link_open' && child.attrs.length && child.attrs[0] && child.attrs[0].length && child.attrs[0][0] === 'href') {
