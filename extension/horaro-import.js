@@ -168,10 +168,10 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 						player.id = runData.playerLastID;
 
 						// Get/set Twitch username from URL.
-						var twitch = twitchURI || URI;
-						if (twitch) {
-							twitch = twitch.split('/')[twitch.split('/').length-1];
-							player.social.twitch = twitch;
+						var url = twitchURI || URI;
+						if (url && url.includes('twitch.tv')) {
+							url = url.split('/')[url.split('/').length-1];
+							player.social.twitch = url;
 						}
 						
 						// Push this object to the relevant arrays where it is stored.
