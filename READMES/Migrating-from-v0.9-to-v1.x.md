@@ -26,7 +26,7 @@ We formally refer to the object structure that we store information about runs i
     - `names.international` has simply been replaced by `name` which stores the same information.
 	- `twitch.uri` which stored the Twitch channel URL has been replaced with `social.twitch` which only stores the username.
 	- `region` has been renamed to `country` to better describe what it should contain.
-- The `players` array that stored a list of all the players in a run has fully been removed; if you need access to all the players, you'll need to loop through all the `players` arrays inside the team objects inside of the `teams` array.
+- The `players` array that stored a list of all the players in a run has been removed; if you need access to all the players, you'll need to loop through all the `players` arrays inside the team objects inside of the `teams` array.
 - `runID` has been simply renamed to `id`.
 - Added `teamLastID` and `playerLastID` to store the last IDs used for teams/players, *not intended for layout use*.
 - Removed the `screens` and `cameras` arrays because they had never actually been used anyway.
