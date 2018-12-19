@@ -44,17 +44,17 @@ Once installed, go to `https://localhost:9090` (unless you have overridden the d
 
 To import a schedule, go to the *Run Modifications* workspace along the top, and look for the *Horaro Schedule Import* panel. Paste in a Horaro schedule URL into the text box (it will be automatically pre-filled if you set `schedule.defaultURL` in this bundles config) and click *Load Schedule Data*.
 
-![Schedule Import Before Import](READMES/img/schedule-import-1.png)
+![Schedule Import Before](READMES/img/schedule-import-1.png)
 
 Next you will see a list of dropdowns. These are used to select which columns in your schedule relate to which information in the run data. The import tries to automatically select the appropriate columns, but if something is wrong you can change it here.
 Also available here is an option on how the players in the *Players* column should be split; see [Schedule-Formatting.md](READMES/Schedule-Formatting.md) for more information on what these options mean and how the *Players* column data should be formatted.
 Once you have everything selected correctly, click on the *Import* button.
 
-![Schedule Import Import Settings](READMES/img/schedule-import-2.png)
+![Schedule Import Settings](READMES/img/schedule-import-2.png)
 
 The schedule will begin importing. If you have the speedrun.com lookup enabled (by default it's enabled) this import may take a while, so be patient. Once the import is done, this panel will turn back to how it was before, and the runs will be listed in the *Run Player* and *Run Editor* panels.
 
-![Schedule Import Importing](READMES/img/schedule-import-3.png)
+![Schedule Importing](READMES/img/schedule-import-3.png)
 
 To start "playing" runs, go back to the *Main Workspace* and find the *Run Player* panel, and click on the big *Play _* button at the top.
 
@@ -82,6 +82,8 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 - [speedcontrol-flagcarrier](https://github.com/speedcontrol/speedcontrol-flagcarrier): Adds a server and replicants that can receive requests from ESA's [FlagCarrier android app](https://play.google.com/store/apps/details?id=de.oromit.flagcarrier) so this information can be used in your layouts.
 
 ## Where has this bundle been used before?
+
+*(This is not an exhaustive list.)*
 
 - All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons starting from the Pre-ESA Marathon 2016, including the ESA ran Dreamhack speedrunning events in Sweden
 - All [GTA Marathons](https://www.twitch.tv/gtamarathon) starting from GTA Marathon 2016
