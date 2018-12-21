@@ -228,12 +228,12 @@ $(function () {
 
             $('.personalSplitButton').click(function () {
                 var index = $(this).attr('id').replace('split', '');
-                nodecg.sendMessage('timerSplit', index);
+                nodecg.sendMessage('teamFinish', index);
                 splitTimer(index);
             });
             $('.personalResetButton').click(function () {
                 var index = $(this).attr('id').replace('resetTime', '');
-                nodecg.sendMessage('timerReset', index);
+                nodecg.sendMessage('teamUndoFinish', index);
                 unSplitTimer(index);
             });
 
@@ -377,9 +377,9 @@ $(function () {
             console.log("SPLIT-EVENT");
             console.log(id);
             if (moreThanOneTeam) {
-                nodecg.sendMessage('timerSplit', id);
+                nodecg.sendMessage('teamFinish', id);
             }
-            nodecg.sendMessage('timerSplit', id);
+            nodecg.sendMessage('teamFinish', id);
             splitTimer(id);
         })
     }

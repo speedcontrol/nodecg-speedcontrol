@@ -6,6 +6,7 @@ If you have the bundle listed as a dependency in your bundle (`nodecg.bundleDepe
 
 - [Major changes to the run data objects.](#run-data-changes)
 - [Split some functionality off into smaller "support bundles".](#support-bundles)
+- [Messages timerSplit/timerReset renamed to teamFinish/teamUndoFinish.](#timer-messages-rename)
 - [Removed Gaming4Good donation tracker support.](#g4g-removed)
 - [Removed some leftover graphics related files.](#removed-graphics)
 - [Removed editing mode.](#edit-mode)
@@ -34,6 +35,11 @@ We formally refer to the object structure that we store information about runs i
 ### <a name="support-bundles"></a> Split some functionality off into smaller "support bundles"
 
 Some of the functionality of this bundle has been split off into separate bundles so as to not bloat this main one too much; this is (mainly) the parts relating to donation tracking. See the [Extra Support Bundles](../README.md#extra-support-bundles) section in the main README file. The unsupported/undocumented "ESAController" code was also moved to [esamarathon/speedcontrol-esacontroller](https://github.com/esamarathon/speedcontrol-esacontroller), but we advise you don't rely on it if you really happen to be using it. The experimental/undocumented Twitch (auto)highlighting functionality was also moved to [speedcontrol-highlighting](https://github.com/speedcontrol/speedcontrol-highlighting).
+
+### <a name="timer-messages-rename"></a> Messages timerSplit/timerReset renamed to teamFinish/teamUndoFinish
+These messages sent by this bundle have been renamed to better reflect what information they actually send:
+- `timerSplit` > `teamFinish`
+- `timerReset` > `teamUndoFinish`
 
 ### <a name="g4g-removed"></a> Removed Gaming4Good donation tracker support
 
