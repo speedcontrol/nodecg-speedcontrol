@@ -12,10 +12,10 @@ $(function() {
 		}
 	});
 	
-	function playerLayout_UpdateLayoutPanelWithTeams(runners) {
+	function playerLayout_UpdateLayoutPanelWithTeams(players) {
 		var playersSortableHTML = '' +
 			'<ul id="playerLayoutSortable">' +
-			playerLayout_CreateTeamListHtmlElements(runners) +
+			playerLayout_CreateTeamListHtmlElements(players) +
 			'</ul>';
 		$('#playerLayoutContainer').html(playersSortableHTML);
 		$("#playerLayoutSortable").sortable({
@@ -41,7 +41,7 @@ $(function() {
 	}
 	
 	function playerLayout_CreateTeamListHtmlElements(teamArray) {
-		var runnerHtml = '';
+		var playerHTML = '';
 		$.each(teamArray, function (index, team) {
 			if (team.name) var teamName = team.name;
 			else if (team.players.length > 1) var teamName = `Team ${index+1}`
@@ -50,15 +50,15 @@ $(function() {
 			var teamPlayers = [];
 			if (team.players.length > 1 || team.name) team.players.forEach(player => teamPlayers.push(player.name));
 
-			runnerHtml += '<li class="ui-state-default" id="' + team.id + '" title="'+teamPlayers.join(', ')+'">' + teamName + '</li>';
+			playerHTML += '<li class="ui-state-default" id="' + team.id + '" title="'+teamPlayers.join(', ')+'">' + teamName + '</li>';
 		});
-		return runnerHtml;
+		return playerHTML;
 	}
 	
-	function playerLayout_UpdateLayoutPanelWithPlayers(runners) {
+	function playerLayout_UpdateLayoutPanelWithPlayers(players) {
 		var playersSortableHTML = '' +
 			'<ul id="playerLayoutSortable">' +
-			playerLayout_CreatePlayerListHtmlElements(runners) +
+			playerLayout_CreatePlayerListHtmlElements(players) +
 			'</ul>';
 		$('#playerLayoutContainer').html(playersSortableHTML);
 		$("#playerLayoutSortable").sortable({
@@ -84,10 +84,10 @@ $(function() {
 	}
 	
 	function playerLayout_CreatePlayerListHtmlElements(playerArray) {
-		var runnerHtml = '';
+		var playerHTML = '';
 		$.each(playerArray.players, function (index, value) {
-			runnerHtml += '<li class="ui-state-default" id="' + value.name + '">' + value.name + '</li>';
+			playerHTML += '<li class="ui-state-default" id="' + value.name + '">' + value.name + '</li>';
 		});
-		return runnerHtml;
+		return playerHTML;
 	}
 });

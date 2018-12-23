@@ -61,7 +61,7 @@ This is the part where the Twitch integration configuration is set up. Make sure
 - `streamTitle` is a string that specifies what the title will be updated to when a run is switched. There are some wildcards as seen above that will be replaced with the relevant data if they're specified. Leave it blank if you don't want to have the title updated.
 - `streamDefaultGame` is the game in the Twitch directory that will be used if the game name from your schedule cannot be found in the directory.
 
-FrankerFaceZ integration can also be enabled with `ffzIntegration`, this will make it so people who use the browser extension see the runner(s) as a "featured" channel for easy following, and if enabled on your channel, will also add their FrankerFaceZ emoticons for use during their run (you will need to ask the devs of the extension to enable this for you).
+FrankerFaceZ integration can also be enabled with `ffzIntegration`, this will make it so people who use the browser extension see the player(s) as a "featured" channel for easy following, and if enabled on your channel, will also add their FrankerFaceZ emoticons for use during their run (you will need to ask the devs of the extension to enable this for you).
 
 Once the Twitch integration settings are fully set up and your NodeCG server has been (re)started, you will see a "Connect with Twitch" button on the dashboard, which can be used to authorise nodecg-speedcontrol with Twitch. Currently, you must login with the channel you wish to have the information updated for.
 
@@ -83,5 +83,5 @@ Once the Twitch integration settings are fully set up and your NodeCG server has
 
 - `defaultURL` is a URL to the schedule on Horaro that will be pre-filled on the dashboard; usually you will only be using your setup for 1 marathon so this means you don't need to keep entering it every time you want to do a (re)import.
 - `ignoreGamesWhileImporting` is an array of strings of games on your schedule that will be ignored on import; for example you may have setup blocks you don't want importing. This does partial matches ("Setup Block" will be matched by "Setup").
- - `disableSpeedrunComLookup` is a boolean (defaults to false) that can be enabled, which will skip the speedrun.com look-ups during schedule import; by default the import will try to find the runner's Twitch username and country from speedrun.com, but if you do not need this you can disable it to speed up the import.
+ - `disableSpeedrunComLookup` is a boolean (defaults to false) that can be enabled, which will skip the speedrun.com look-ups during schedule import; by default the import will try to find the player's Twitch username and country from speedrun.com, but if you do not need this you can disable it to speed up the import.
 - `customData` (*for advanced users*) is an array of objects; this is for adding custom data to the run data on import. Once set here, you will be able to select an appropriate column on import for where this data is stored in your schedule. All of this is stored within an objected called `customData` within the run's data object.

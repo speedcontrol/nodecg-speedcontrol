@@ -230,7 +230,7 @@ $(function () {
         });
     }
 
-    function runPlayer_playRunIdOnly(runID, updateActiveRunnerList) {
+    function runPlayer_playRunIdOnly(runID) {
         var thisGameIndex = runPlayer_getRunIndexInArray(Number(runID));
         var nextGameArrayIndex = thisGameIndex + 1;
         var thePreviousGameIndex = thisGameIndex - 1;
@@ -383,7 +383,7 @@ $(function () {
 	// Goes through each team and players and makes a string to show the names correctly together.
 	function formPlayerNamesString(runData) {
 		var namesArray = [];
-		var namesList = 'No Runner(s)';
+		var namesList = 'No Player(s)';
 		runData.teams.forEach(team => {
 			var teamPlayerArray = [];
 			team.players.forEach(player => {teamPlayerArray.push(player.name);});
