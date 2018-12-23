@@ -2,6 +2,10 @@
 
 Below is a list of the ways you can interact with this bundle from within your own layout bundles. This documentation assumes you have knowledge about [NodeCG](https://nodecg.com/) bundle development.
 
+It is suggested you add this bundle as to your `bundleDependencies` when making your NodeCG bundle, see [nodecg.bundleDependencies here
+](https://nodecg.com/tutorial-5_manifest.html); `"nodecg-speedcontrol": "^1.0.0"` or similar should be added there.
+
+
 **This bundle may contain more than what is documented on here. If it's not mentioned, assume it to be unsupported and that it may change in an update.**
 
 ## `runData` Object Structure
@@ -73,9 +77,9 @@ An array of `runData` objects (see above) of all of the runs that have been impo
 
 Either `undefined` if none is set, or a `runData` object (see above) of the currently active run as set by the *Run Player* panel.
 
-#### `> nodecg.Replicant('stopwatch', 'nodecg-speedcontrol')`
+#### `> nodecg.Replicant('timer', 'nodecg-speedcontrol')`
 
-An object with data on the current status of the stopwatch/timer, updated every 100ms.
+An object with data on the current status of the timer, updated every 100ms.
 
 The default object state:
 ```
@@ -92,7 +96,7 @@ The default object state:
 - `state` is the current state; can be `stopped` (timer is at 0), `running` (timer is currently running), `paused` (timer was running but has been paused) or `finished` (timer has been ended and is showing the final time).
 - `milliseconds` is the current time, but in milliseconds for calculations.
 - `timestamp` is a `Date.now()` timestamp of when the run was started.
-- `teamFinishTimes` is a keyed object for the time a team has finished, if this run was a race. The key is the teams ID; the value is a copy of the `stopwatch` replicant at the time (minus the `teamFinishTimes` value).
+- `teamFinishTimes` is a keyed object for the time a team has finished, if this run was a race. The key is the teams ID; the value is a copy of the `timer` replicant at the time (minus the `teamFinishTimes` value).
 
 
 ## Messages Sent

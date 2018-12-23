@@ -8,7 +8,7 @@ $(function () {
     var lastTimerState = "";
 // Replicant initialization
 
-    var stopWatchReplicant = nodecg.Replicant('stopwatch');
+    var stopWatchReplicant = nodecg.Replicant('timer');
     stopWatchReplicant.on('change', function (newVal, oldVal) {
         if (!newVal) return;
         var time = newVal.time || '88:88:88';

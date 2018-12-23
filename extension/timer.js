@@ -19,7 +19,7 @@ var runFinishTimes = nodecg.Replicant('runFinishTimes', {defaultValue: {}});
 
 // Storage for the stopwatch data.
 var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0, timestamp: 0, teamFinishTimes: {}};
-var stopwatch = nodecg.Replicant('stopwatch', {defaultValue: clone(defaultStopwatch)});
+var stopwatch = nodecg.Replicant('timer', {defaultValue: clone(defaultStopwatch)});
 
 // Sets up the timer with a single split.
 const liveSplit = require('livesplit-core');

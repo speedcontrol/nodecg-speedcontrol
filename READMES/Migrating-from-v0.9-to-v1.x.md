@@ -38,11 +38,13 @@ Some of the functionality of this bundle has been split off into separate bundle
 
 ### <a name="message-rep-changes"></a> Changes to messages/replicants sent out by this bundle
 
-The `runEnded` message has been removed; internally we only used this for ESAController, and this functionality can be replicated by listening to the `stopwatch` replicant.
+The `stopwatch` replicant has been named to `timer` as it is a more common name for this feature.
 
-If you listen to `startTime`, `pauseTime`, `setTime`, `resetTime` or `finishTime` for any reason, these are still available but it's not recommended you listen to these, because they're not reliable ways of knowing what has actually happened and may be changed in the future. Listen to the `stopwatch` replicant instead.
+The `runEnded` message has been removed; internally we only used this for ESAController, and this functionality can be replicated by listening to the `timer` replicant.
 
-The `timerSplit` and `timerReset` messages (badly named; used to know when a team has finished/unfinished in a race) have been removed, and their functionality has been replicated in the `stopwatch` replicant (see the [API Documentation](API.md)).
+If you listen to `startTime`, `pauseTime`, `setTime`, `resetTime` or `finishTime` for any reason, these are still available but it's not recommended you listen to these, because they're not reliable ways of knowing what has actually happened and may be changed in the future. Listen to the `timer` replicant instead.
+
+The `timerSplit` and `timerReset` messages (badly named; used to know when a team has finished/unfinished in a race) have been removed, and their functionality has been replicated in the `timer` replicant for more permentant storage of the finish times (see the [API Documentation](API.md)).
 
 Also, as a general note, if a message/replicant is not mentioned in the [API Documentation](API.md), assume it could change at any point.
 
