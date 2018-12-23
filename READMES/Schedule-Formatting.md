@@ -2,6 +2,7 @@
 
 Speedcontrol supports importing schedules from [Horaro](https://horaro.org/). How you format your schedules is somewhat flexible, but here is some information if you have issues.
 
+
 ## Default run information that can be imported
 
 On top of the automatic importing of the estimate, the setup time and the scheduled time (which is the same on all Horaro schedules), the other information of the run can be formatted differently for different schedules. All of this information is *technically* optional, but you might want the game name at least!
@@ -13,6 +14,7 @@ On top of the automatic importing of the estimate, the setup time and the schedu
 - **Region**: The region the copy of the game being ran on was released in.
 - **Released**: A generic string that can store when the game is released; if you use this, probably just stick to the year.
 - **Players**: The player or a list of players involved in this run. Check the *Players* section below for more information.
+
 
 ## Players
 
@@ -41,6 +43,7 @@ You can use a mix of no links/links and no team name/team name safely, if they a
 - **Co-op Race with Team Names**: 
   - (without links) `Mickeyvania: btrim, charleon vs. GTAHorns: zoton2, zephyyrr`
   - (with links) `Mickeyvania: [btrim](https://twitch.tv/btrim), [charleon](https://twitch.tv/sethcharleon) vs. GTAHorns: [zoton2](https://twitch.tv/zoton2), [zephyyrr](http://twitch.tv/zephyyrr)`
+
 
 ## Schedule Examples
 

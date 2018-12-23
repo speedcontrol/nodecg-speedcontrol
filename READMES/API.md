@@ -2,8 +2,7 @@
 
 Below is a list of the ways you can interact with this bundle from within your own layout bundles. This documentation assumes you have knowledge about [NodeCG](https://nodecg.com/) bundle development.
 
-It is suggested you add this bundle as to your `bundleDependencies` when making your NodeCG bundle, see [nodecg.bundleDependencies here
-](https://nodecg.com/tutorial-5_manifest.html); `"nodecg-speedcontrol": "^1.0.0"` or similar should be added there.
+It is suggested you add this bundle as to your `bundleDependencies` when making your NodeCG bundle, see [nodecg.bundleDependencies here](https://nodecg.com/tutorial-5_manifest.html); `"nodecg-speedcontrol": "^1.0.0"` or similar should be added there.
 
 
 **This bundle may contain more than what is documented on here. If it's not mentioned, assume it to be unsupported and that it may change in an update.**

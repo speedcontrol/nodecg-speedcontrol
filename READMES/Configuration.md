@@ -37,6 +37,7 @@ Below is an example configuration file contents with everything that is availabl
 }
 ```
 
+
 ## Breakdown
 
 ### Twitch

@@ -12,6 +12,7 @@ If you have the bundle listed as a dependency in your bundle (`nodecg.bundleDepe
 - [Removed editing mode.](#edit-mode)
 - [Removed the "Force Refresh Intermission" button.](#force-refresh-intermission)
 
+
 ### <a name="run-data-changes"></a> Major changes to the run data objects
 
 We formally refer to the object structure that we store information about runs in as the "`runData` object". These are the objects stored in a few different places, for example in the array of the schedule in the `runDataArray` replicant, and the currently active run that is stored in the `runDataActiveRun` replicant. This object has undergone a few changes that you may need to take note of.
@@ -32,9 +33,11 @@ We formally refer to the object structure that we store information about runs i
 - Added `teamLastID` and `playerLastID` to store the last IDs used for teams/players, *not intended for layout use*.
 - Removed the `screens` and `cameras` arrays because they had never actually been used anyway.
 
+
 ### <a name="support-bundles"></a> Split some functionality off into smaller "support bundles"
 
 Some of the functionality of this bundle has been split off into separate bundles so as to not bloat this main one too much; this is (mainly) the parts relating to donation tracking. See the [Extra Support Bundles](../README.md#extra-support-bundles) section in the main README file. The unsupported/undocumented "ESAController" code was also moved to [esamarathon/speedcontrol-esacontroller](https://github.com/esamarathon/speedcontrol-esacontroller), but we advise you don't rely on it if you really happen to be using it. The experimental/undocumented Twitch (auto)highlighting functionality was also moved to [speedcontrol-highlighting](https://github.com/speedcontrol/speedcontrol-highlighting).
+
 
 ### <a name="message-rep-changes"></a> Changes to messages/replicants sent out by this bundle
 
@@ -48,17 +51,21 @@ The `timerSplit` and `timerReset` messages (badly named; used to know when a tea
 
 Also, as a general note, if a message/replicant is not mentioned in the [API Documentation](API.md), assume it could change at any point.
 
+
 ### <a name="g4g-removed"></a> Removed Gaming4Good donation tracker support
 
 As this wasn't used very much and we weren't sure how well it worked any more, we decided to remove this functionality.
+
 
 ### <a name="removed-graphics"></a> Removed some leftover graphics related files
 
 In the `graphics` folder there used to be some left over files that you could use to aid you in developing your layout bundles, but they were outdated and better off being put in another bundle.
 
+
 ### <a name="edit-mode"></a> Removed editing mode
 
 A while ago this bundle used to have a feature where if you coded your layout bundles correctly you could edit them on the fly in your browser. This wasn't kept up to date in a while and is something that can easily be done in streaming applications instead of in a webpage.
+
 
 ### <a name="force-refresh-intermission"></a> Removed the "Force Refresh Intermission" button
 

@@ -18,6 +18,7 @@ This bundle doesn't come with any graphics, you will need to create them yoursel
 
 **If you were developing bundles that relied on this bundle before v1.x was released, please check [Migrating-from-v0.9-to-v1.x.md](READMES/Migrating-from-v0.9-to-v1.x.md).**
 
+
 ## Installation
 
 You will need [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://git-scm.com/) installed to install NodeCG, then see the [NodeCG documentation](http://nodecg.com/) on how to install that. I also suggest installing `nodecg-cli`; information on that is also on the documentation just linked.
@@ -37,6 +38,7 @@ nodecg setup
 nodecg install speedcontrol/nodecg-speedcontrol
 nodecg start
 ```
+
 
 ## Basic Usage
 
@@ -72,6 +74,7 @@ Once you have done the above, make sure to turn the auto-sync on in the panel, o
 
 ![Twitch Control Logged In](READMES/img/twitch-control-2.png)
 
+
 ## Extra Support Bundles
 
 Alongside the main bundle, there are some extra bundles that we maintain that you may also want to use for speedrunning marathons. See their GitHub pages for more detailed information on how to use them. Be warned they are somewhat undocumented as of now.
@@ -80,6 +83,7 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 - [speedcontrol-tiltify](https://github.com/speedcontrol/speedcontrol-tiltify): Adds a frequently updating donation total amount for a Tiltify campaign you can use in layouts.
 - [speedcontrol-srcomtracker](https://github.com/speedcontrol/speedcontrol-srcomtracker): Adds frequently updating donation total/goals/bidwars and messages for new donations for a marathon on [speedrun.com](https://www.speedrun.com) if they are enabled, that you can use in your layouts.
 - [speedcontrol-flagcarrier](https://github.com/speedcontrol/speedcontrol-flagcarrier): Adds a server and replicants that can receive requests from ESA's [FlagCarrier android app](https://play.google.com/store/apps/details?id=de.oromit.flagcarrier) so this information can be used in your layouts.
+
 
 ## Where has this bundle been used before?
 
@@ -95,6 +99,7 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 - [A Race Against Time 3](https://www.twitch.tv/araceagainsttime) marathon
 - [Power Up With Pride: Winter Pride 2018](https://www.twitch.tv/powerupwithpride) marathon
 
+
 ## Authors/Contributors
 
 Originally developed by Charleon, now mainly developed by zoton2.
@@ -103,6 +108,7 @@ With help from:
 - btrim
 - Zephyyrr
 - Planks
+
 
 ## Contribution/Development
 
