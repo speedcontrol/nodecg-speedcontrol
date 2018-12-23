@@ -11,6 +11,8 @@ It is suggested you add this bundle as to your `bundleDependencies` when making 
 
 ## `runData` Object Structure
 
+Various places in this bundle store information in the format we refer to as a "`runData` object".
+
 Example object:
 ```
 {
@@ -93,7 +95,7 @@ The `teams` array will contain (if anything) "`team` objects".
 
 The `players` array in "`team` objects" will contain (if anything) "`player` objects".
 
-- `name` *String* Name of the players.
+- `name` *String* Name of the player.
 - `id` *Integer* Unique player ID ***in this run only***.
 - `teamID` *Integer* ID of the team this player is on.
 - `country` *String* country code of the country where this player is from, usually pulled from [speedrun.com](https://www.speedrun.com).
