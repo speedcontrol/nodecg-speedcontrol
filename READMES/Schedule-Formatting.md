@@ -1,5 +1,7 @@
 # Schedule Formatting
 
+**If you were developing bundles that relied on this bundle before v1.x was released, please check [Migrating from v0.9 to v1.x](Migrating-from-v0.9-to-v1.x.md).**
+
 Speedcontrol supports importing schedules from [Horaro](https://horaro.org/). How you format your schedules is somewhat flexible, but here is some information if you have issues.
 
 

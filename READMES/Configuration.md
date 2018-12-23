@@ -1,5 +1,7 @@
 # Configuration
 
+**If you were developing bundles that relied on this bundle before v1.x was released, please check [Migrating from v0.9 to v1.x](Migrating-from-v0.9-to-v1.x.md).**
+
 Speedcontrol can be used without any configuration, but you will need to do this to get most features to work, such as Twitch integration.
 
 We use the normal [NodeCG bundle configuration](https://nodecg.com/tutorial-bundle-configuration.html) so see that page for some basic details on where the configuration file should go. *tl;dr:* put a JSON file called `nodecg-speedcontrol.json` in your NodeCG installation's `cfg` folder.
