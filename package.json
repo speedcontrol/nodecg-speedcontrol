@@ -1,6 +1,6 @@
 {
   "name": "nodecg-speedcontrol",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/speedcontrol/nodecg-speedcontrol.git"
