@@ -15,10 +15,10 @@ Example object:
 ```
 {
 	game: "WarioWare: Smooth Moves",
-	gameTwitch: "",
+	gameTwitch: "WarioWare: Smooth Moves",
 	system: "Wii",
-	region: "",
-	release: "",
+	region: "PAL",
+	release: "2006",
 	category: "Any%",
 	estimate: "00:53:00",
 	estimateS: 3180,
@@ -28,7 +28,7 @@ Example object:
 	scheduledS: 1532590140,
 	teams: [
 		{
-			name: "",
+			name: "Mario",
 			id: 0,
 			players: [
 				{
@@ -43,7 +43,7 @@ Example object:
 			]
 		},
 		{
-			name: "",
+			name: "Luigi",
 			id: 1,
 			players: [
 				{
@@ -58,14 +58,47 @@ Example object:
 			]
 		}
 	],
-	customData: {},
-	teamLastID: 1,
-	playerLastID: 1,
+	customData: {
+		gameShort: "Game (Short)"
+	},
 	id: 81
 }
 ```
 
-(document the structure here)
+- `game` *String* The name of the game being ran.
+- `gameTwitch` *String* The name of the game in the Twitch directory.
+- `system` *String* The system/platform/console the run is being done on.
+- `region` *String* Region the copy of the game is from.
+- `release` *String* Stores information on when the game was released.
+- `category` *String* Category that is being ran.
+- `estimate` *String* Run estimate in a human readable string.
+- `estimateS` *Integer* Same as above but in seconds.
+- `setupTime` *String* Run setup time (to be added to the end of the run) in a human readable string.
+- `setupTimeS` *Integer* Same as above but in seconds.
+- `scheduled` *String* Timestamp for when the run is scheduled, with the timezone. Only applicable for runs imported from Horaro.
+- `scheduledS` *Integer* Same as above but as a unix timestamp.
+- `teams` *Array* Teams that are doing this run. Length can be 0 (no teams/players), 1 (single player run or co-op) or 2 or more (race and/or co-op race).
+- `customData` *Object* Contains `key: "data"` information; key is from your configuration for custom data.
+- `id` *Integer* Unique run ID in the currently set schedule of runs.
+
+#### `teams` Array: `team` Object
+
+The `teams` array will contain (if anything) "`team` objects".
+
+- `name` *String* Custom name of the team, if one has been set.
+- `id` *Integer* Unique team ID ***in this run only***.
+- `players` *Array* Players in this team. Length could be 0 (but probably never), 1 (single player run or race, if there are more teams) or 2 or more (co-op and/or co-op race, if there are more teams).
+
+#### `players` Array: `player` Object
+
+The `players` array in "`team` objects" will contain (if anything) "`player` objects".
+
+- `name` *String* Name of the players.
+- `id` *Integer* Unique player ID ***in this run only***.
+- `teamID` *Integer* ID of the team this player is on.
+- `country` *String* country code of the country where this player is from, usually pulled from [speedrun.com](https://www.speedrun.com).
+- `social` *Object* Contains information on this player's social media references.
+  - `twitch` *String* Username of this player on [twitch.tv](https://www.twitch.tv).
 
 
 ## Replicants
@@ -85,8 +118,8 @@ An object with data on the current status of the timer, updated every 100ms.
 The default object state:
 ```
 {
-	time: '00:00:00',
-	state: 'stopped',
+	time: "00:00:00",
+	state: "stopped",
 	milliseconds: 0,
 	timestamp: 0,
 	teamFinishTimes: {}
@@ -98,6 +131,24 @@ The default object state:
 - `milliseconds` is the current time, but in milliseconds for calculations.
 - `timestamp` is a `Date.now()` timestamp of when the run was started.
 - `teamFinishTimes` is a keyed object for the time a team has finished, if this run was a race. The key is the teams ID; the value is a copy of the `timer` replicant at the time (minus the `teamFinishTimes` value).
+
+An example of the object, during a race while the timer is still running but team with ID 1 has finished:
+```
+{
+	time: "00:14:51",
+	state: "running",
+	milliseconds: 891053,
+	timestamp: 1545591937067,
+	teamFinishTimes: {
+		1: {
+			time: "00:14:37",
+			state: "running",
+			milliseconds: 877274,
+			timestamp: 1545591923282
+		}
+	}
+}
+```
 
 
 ## Messages Sent
