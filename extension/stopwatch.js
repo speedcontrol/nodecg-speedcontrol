@@ -18,7 +18,7 @@ var runDataActiveRun = nodecg.Replicant('runDataActiveRun');
 var runFinishTimes = nodecg.Replicant('runFinishTimes', {defaultValue: {}});
 
 // Storage for the stopwatch data.
-var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0, timestamp: 0};
+var defaultStopwatch = {time: '00:00:00', state: 'stopped', milliseconds: 0, timestamp: 0, teamFinishTimes: {}};
 var stopwatch = nodecg.Replicant('stopwatch', {defaultValue: clone(defaultStopwatch)});
 
 // Sets up the timer with a single split.
@@ -49,6 +49,8 @@ nodecg.listenFor('pauseTime', pause);
 nodecg.listenFor('finishTime', finish);
 nodecg.listenFor('resetTime', reset);
 nodecg.listenFor('setTime', edit);
+nodecg.listenFor('teamFinishTime', teamFinishTime);
+nodecg.listenFor('teamFinishTimeUndo', teamFinishTimeUndo);
 
 // This stuff runs every 1/10th a second to keep the time updated.
 setInterval(tick, 100);
@@ -106,6 +108,16 @@ function edit(time) {
 		stopwatch.value.time = msToTime(ms);
 		stopwatch.value.milliseconds = ms;
 	}
+}
+
+function teamFinishTime(id) {
+	var stopwatchCopy = clone(stopwatch.value);
+	delete stopwatchCopy.teamFinishTimes;
+	stopwatch.value.teamFinishTimes[id] = stopwatchCopy;
+}
+
+function teamFinishTimeUndo(id) {
+	delete stopwatch.value.teamFinishTimes[id];
 }
 
 // Game Time is used so we can edit the timer easily.

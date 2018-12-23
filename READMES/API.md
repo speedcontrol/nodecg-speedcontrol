@@ -83,7 +83,8 @@ The default object state:
 	time: '00:00:00',
 	state: 'stopped',
 	milliseconds: 0,
-	timestamp: 0
+	timestamp: 0,
+	teamFinishTimes: {}
 }
 ```
 
@@ -91,6 +92,7 @@ The default object state:
 - `state` is the current state; can be `stopped` (timer is at 0), `running` (timer is currently running), `paused` (timer was running but has been paused) or `finished` (timer has been ended and is showing the final time).
 - `milliseconds` is the current time, but in milliseconds for calculations.
 - `timestamp` is a `Date.now()` timestamp of when the run was started.
+- `teamFinishTimes` is a keyed object for the time a team has finished, if this run was a race. The key is the teams ID; the value is a copy of the `stopwatch` replicant at the time (minus the `teamFinishTimes` value).
 
 
 ## Messages Sent
@@ -98,18 +100,6 @@ The default object state:
 #### `> nodecg.listenFor('twitchAdStarted', 'nodecg-speedcontrol', callback)`
 
 Emitted when a Twitch ad is successfully started via this bundle. Calls back with an object that contains `duration` which is an integer on how long the ads will run for.
-
-#### `> nodecg.listenFor('resetTime', 'nodecg-speedcontrol', callback)`
-
-Emitted when the stopwatch/timer is reset, mainly useful for removing finshing times of teams from a layout.
-
-#### `> nodecg.listenFor('teamFinish', 'nodecg-speedcontrol', callback)`
-
-Emitted when a team finishes in a run, only useful if the run is a race and you want to show what time they finished on your layouts. Calls back with an integer which is the index of the team in the current run.
-
-#### `> nodecg.listenFor('teamUndoFinish', 'nodecg-speedcontrol', callback)`
-
-Emitted when a teams finish state is undone, in case their finish was accidental, mainly useful for removing that time from the layout if you used the above message to print it. Calls back with an integer which is the index of the team in the current run.
 
 
 ## Messages Received

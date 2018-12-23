@@ -226,13 +226,15 @@ $(function () {
 			      $('#playerTimersHeader').show();
 
             $('.personalSplitButton').click(function () {
-                var index = $(this).attr('id').replace('split', '');
-                nodecg.sendMessage('teamFinish', index);
+				var index = $(this).attr('id').replace('split', '');
+				var id = runDataActiveRunReplicant.value.teams[index].id;
+                nodecg.sendMessage('teamFinishTime', id);
                 splitTimer(index);
             });
             $('.personalResetButton').click(function () {
-                var index = $(this).attr('id').replace('resetTime', '');
-                nodecg.sendMessage('teamUndoFinish', index);
+				var index = $(this).attr('id').replace('resetTime', '');
+				var id = runDataActiveRunReplicant.value.teams[index].id;
+                nodecg.sendMessage('teamFinishTimeUndo', id);
                 unSplitTimer(index);
             });
 
@@ -371,14 +373,15 @@ $(function () {
             OnStop();
         })
 
-        nodecg.listenFor("split_timer", "nodecg-speedcontrol", function(id) {
+        nodecg.listenFor("split_timer", "nodecg-speedcontrol", function(index) {
             console.log("SPLIT-EVENT");
-            console.log(id);
+			console.log(index);
+			var id = runDataActiveRunReplicant.value.teams[index].id;
             if (moreThanOneTeam) {
-                nodecg.sendMessage('teamFinish', id);
+                nodecg.sendMessage('teamFinishTime', id);
             }
-            nodecg.sendMessage('teamFinish', id);
-            splitTimer(id);
+            nodecg.sendMessage('teamFinishTime', id);
+            splitTimer(index);
         })
     }
 

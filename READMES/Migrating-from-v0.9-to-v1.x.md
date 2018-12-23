@@ -6,7 +6,7 @@ If you have the bundle listed as a dependency in your bundle (`nodecg.bundleDepe
 
 - [Major changes to the run data objects.](#run-data-changes)
 - [Split some functionality off into smaller "support bundles".](#support-bundles)
-- [Messages timerSplit/timerReset renamed to teamFinish/teamUndoFinish.](#timer-messages-rename)
+- [Changes to messages/replicants sent out by this bundle.](#message-rep-changes)
 - [Removed Gaming4Good donation tracker support.](#g4g-removed)
 - [Removed some leftover graphics related files.](#removed-graphics)
 - [Removed editing mode.](#edit-mode)
@@ -36,10 +36,15 @@ We formally refer to the object structure that we store information about runs i
 
 Some of the functionality of this bundle has been split off into separate bundles so as to not bloat this main one too much; this is (mainly) the parts relating to donation tracking. See the [Extra Support Bundles](../README.md#extra-support-bundles) section in the main README file. The unsupported/undocumented "ESAController" code was also moved to [esamarathon/speedcontrol-esacontroller](https://github.com/esamarathon/speedcontrol-esacontroller), but we advise you don't rely on it if you really happen to be using it. The experimental/undocumented Twitch (auto)highlighting functionality was also moved to [speedcontrol-highlighting](https://github.com/speedcontrol/speedcontrol-highlighting).
 
-### <a name="timer-messages-rename"></a> Messages timerSplit/timerReset renamed to teamFinish/teamUndoFinish
-These messages sent by this bundle have been renamed to better reflect what information they actually send:
-- `timerSplit` > `teamFinish`
-- `timerReset` > `teamUndoFinish`
+### <a name="message-rep-changes"></a> Changes to messages/replicants sent out by this bundle
+
+The `runEnded` message has been removed; internally we only used this for ESAController, and this functionality can be replicated by listening to the `stopwatch` replicant.
+
+If you listen to `startTime`, `pauseTime`, `setTime`, `resetTime` or `finishTime` for any reason, these are still available but it's not recommended you listen to these, because they're not reliable ways of knowing what has actually happened and may be changed in the future. Listen to the `stopwatch` replicant instead.
+
+The `timerSplit` and `timerReset` messages (badly named; used to know when a team has finished/unfinished in a race) have been removed, and their functionality has been replicated in the `stopwatch` replicant (see the [API Documentation](API.md)).
+
+Also, as a general note, if a message/replicant is not mentioned in the [API Documentation](API.md), assume it could change at any point.
 
 ### <a name="g4g-removed"></a> Removed Gaming4Good donation tracker support
 
