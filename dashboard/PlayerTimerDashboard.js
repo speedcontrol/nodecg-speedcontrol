@@ -118,7 +118,6 @@ $(function () {
 
         if (stoppedTimers >= splitsBeforeStoppingMainTimer) {
             nodecg.sendMessage("finishTime");
-            nodecg.sendMessage("runEnded")
         }
 
         finishedTimersReplicant.value = splitTimes;
@@ -308,7 +307,6 @@ $(function () {
 
     function OnStop() {
         nodecg.sendMessage("finishTime");
-        nodecg.sendMessage("runEnded", 0);
         if ($('#play').text().trim() === "pause") {
             var options = {
                 label: "play",
