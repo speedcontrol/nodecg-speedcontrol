@@ -165,3 +165,8 @@ Emitted when a Twitch ad is successfully started via this bundle. Calls back wit
 #### `> nodecg.sendMessageToBundle('playTwitchAd', 'nodecg-speedcontrol', callback)`
 
 Used to tell the Twitch API to run ads if applicable to your channel and you have the Twitch API integration enabled. Calls back with `error, data` format, data is an object that contains `duration` which is an integer on how long the ads will run for if successful.
+
+
+## Example Bundles
+
+- [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext), our own simple example bundle.
