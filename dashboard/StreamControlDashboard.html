@@ -32,6 +32,11 @@
 			font-size: 13px;
 			font-style: italic;
 		}
+
+		#logoutButton {
+			float: right;
+			font-size: 12px;
+		}
     </style>
 </head>
 <body>
@@ -41,7 +46,7 @@
 		Click the image above to connect to Twitch to auto-sync data. This must be done with the account of the channel you are going to stream to.
 	</span>
 	<span id="streamControlHideShow">
-	<button id="playTwitchAdButton">Play 3m Twitch Ad</button>
+	<button type="button" id="logoutButton">Log Out</button>
     <p id="helpMessage">Auto-sync title/game and FFZ names?</p>
 		<div id="enableTwitchSynchronization">
 			<input type="radio" name="enableTwitchSynchronizationRadio" id="enableTwitchSynchronizationRadioOn" value="On"> <label for="enableTwitchSynchronizationRadioOn">On</label>
@@ -53,6 +58,8 @@
 		<input id="streamControlGame" placeholder="Stream Game" data-validate="required">
 		<input id="streamControlTwitchNames" placeholder="Twitch Names" data-validate="required">
 		<button type="button" id="streamControlSubmit">Update</button>
+		<hr>
+		<button id="playTwitchAdButton">Play 3m Twitch Ad</button>
 	</span>
 	<span id="streamControlInit">You have not enabled this!</span>
 </div>

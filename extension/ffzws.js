@@ -28,6 +28,8 @@ if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twi
 		accessToken = accessTokenReplicant.value;
 		if (newValue && !oldValue)
 			connectToWS(() => {/* connection to ws done */});
+		else if (!newValue && oldValue)
+			disconnectFromWS();
 	});
 	accessTokenReplicant.on('change', (newVal, oldVal) => {
 		accessToken = newVal;
@@ -62,9 +64,10 @@ function connectToWS(callback) {
 
 	// If we disconnect, just run this function again after a delay to reconnect.
 	ffzWS.once('close', function() {
-		nodecg.log.warn('Connection to FrankerFaceZ closed, will reconnect in 10 seconds.');
 		ffzWSConnected = false;
 		clearTimeout(pingTimeout);
+		if (!twitchChannelName.value) return; // Don't try to reconnect if there's no channel name set anymore.
+		nodecg.log.warn('Connection to FrankerFaceZ closed, will reconnect in 10 seconds.');
 		setTimeout(connectToWS, 10000);
 	});
 
@@ -107,6 +110,12 @@ function connectToWS(callback) {
 			}
 		}
 	});
+}
+
+function disconnectFromWS() {
+	nodecg.log.info('Connection to FrankerFaceZ closed.');
+	ffzWS.close();
+	nodecg.unlisten('updateFFZFollowing', setFFZFollowing);
 }
 
 // Used to update the following buttons/emoticons on Twitch.

@@ -11,6 +11,7 @@ $(function() {
     var $enableTwitchSynchronizationRadios = $('#enableTwitchSynchronization');
     var $enableTwitchSynchronizationRadio = $('input[name=enableTwitchSynchronizationRadio]');
 	var $playTwitchAdButton = $('#playTwitchAdButton');
+	var logoutButton = $('#logoutButton');
 		
 	if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable) {
 		$streamControlInit.hide();
@@ -23,6 +24,7 @@ $(function() {
 	$enableTwitchSynchronizationRadios.controlgroup();
     $streamControlSubmit.button();
 	$playTwitchAdButton.button();
+	logoutButton.button();
 	
     var streamControlConfigurationReplicant = nodecg.Replicant('streamControlConfiguration');
     streamControlConfigurationReplicant.on('change', function (newVal, oldVal) {
@@ -32,7 +34,15 @@ $(function() {
 				$enableTwitchSynchronizationRadios.buttonset('refresh');
             }
         }
-    });
+	});
+	
+	logoutButton.on('click', () => {
+		if (confirm("Are you sure you want to log out of the Twitch integration?")) {
+			nodecg.sendMessage('twitchLogout', () => {
+				location.reload();
+			});
+		}
+	});
 
     $enableTwitchSynchronizationRadio.change(function () {
         var configuration = streamControl_GetOrCreateStreamControlConfiguration();
@@ -125,13 +135,22 @@ $(function() {
 	// Used to update the contents of the title/game box automatically frequently.
 	var twitchChannelInfoReplicant = nodecg.Replicant('twitchChannelInfo', {persistent: false});
 	twitchChannelInfoReplicant.on('change', function(newValue, oldValue) {
+		if (newValue && newValue.display_name)
+			logoutButton.html(`Log Out<br>(${newValue.display_name})`)
+
 		if (newValue && autoUpdateTwitchBoxes) {
 			if (newValue.status) {$streamControlTitle.val(newValue.status);}
 			if (newValue.game) {$streamControlGame.val(newValue.game);}
 			
 			// Remove ad button if the channel isn't partnered.
-			if (newValue.partner) $playTwitchAdButton.show();
-			else $playTwitchAdButton.hide();
+			if (newValue.partner) {
+				$playTwitchAdButton.show();
+				$playTwitchAdButton.prev().show(); // horizontal line above button
+			}
+			else {
+				$playTwitchAdButton.hide();
+				$playTwitchAdButton.prev().hide(); // horizontal line above button
+			}
 		}
 	});
 });

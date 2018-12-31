@@ -33,6 +33,7 @@ if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twi
 			nodecg.listenFor('updateChannel', updateChannel);
 			nodecg.listenFor('playTwitchAd', playTwitchAd);
 			nodecg.listenFor('twitchGameSearch', gameSearch);
+			nodecg.listenFor('twitchLogout', logout);
 			
 			requestOptions.headers['Authorization'] = 'OAuth '+accessToken.value;
 			
@@ -68,6 +69,7 @@ if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twi
 				nodecg.listenFor('updateChannel', updateChannel);
 				nodecg.listenFor('playTwitchAd', playTwitchAd);
 				nodecg.listenFor('twitchGameSearch', gameSearch);
+				nodecg.listenFor('twitchLogout', logout);
 				
 				nodecg.sendMessage('twitchAPIReady');
 			});
@@ -206,6 +208,36 @@ function gameSearch(searchQuery, callback) {
 			callback(replyData);
 		});
 	});
+}
+
+function logout(data, callback) {
+	// Clear all the replicants.
+	resetReplicant('twitchAccessToken');
+	resetReplicant('twitchRefreshToken');
+	resetReplicant('twitchChannelInfo');
+	resetReplicant('twitchChannelID');
+	resetReplicant('twitchChannelName');
+	resetReplicant('streamControlConfiguration');
+	resetReplicant('ffzFollowButtons');
+
+	// Remove the OAuth from the header.
+	requestOptions.headers['Authorization'] = undefined;
+
+	// Clear the timeout that checks the channel information.
+	clearTimeout(channelInfoTimeout);
+
+	// Unlisten to messages.
+	nodecg.unlisten('updateChannel', updateChannel);
+	nodecg.unlisten('playTwitchAd', playTwitchAd);
+	nodecg.unlisten('twitchGameSearch', gameSearch);
+	nodecg.unlisten('twitchLogout', logout);
+
+	callback();
+}
+
+function resetReplicant(name) {
+	var rep = nodecg.Replicant(name);
+	rep.value = undefined;
 }
 
 // Prints error details to the console if needed.
