@@ -115,7 +115,7 @@ Either `undefined` if none is set, or a `runData` object (see above) of the curr
 
 #### `> nodecg.Replicant('timer', 'nodecg-speedcontrol')`
 
-An object with data on the current status of the timer, updated every 100ms.
+An object with data on the current status of the timer.
 
 The default object state:
 ```
@@ -128,6 +128,7 @@ The default object state:
 }
 ```
 
+The timer parts of this object are usually updated every 100ms.
 - `time` is the current human readable time it is at (same as printed on the *Run Timer* panel).
 - `state` is the current state; can be `stopped` (timer is at 0), `running` (timer is currently running), `paused` (timer was running but has been paused) or `finished` (timer has been ended and is showing the final time).
 - `milliseconds` is the current time, but in milliseconds for calculations.
