@@ -16,7 +16,8 @@ var twitchChannelName;
 if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.enable && nodecg.bundleConfig.twitch.ffzIntegration) {
 	nodecg.log.info("FrankerFaceZ integration is enabled.");
 
-	nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
+	if (!nodecg.bundleConfig.twitch.ffzUseRepeater)
+		nodecg.listenFor('updateFFZFollowing', setFFZFollowing);
 	
 	// Used to store whatever the WS says are the current buttons on the page.
 	ffzFollowButtonsReplicant = nodecg.Replicant('ffzFollowButtons', {persistent: false});
