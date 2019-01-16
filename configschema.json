@@ -10,7 +10,6 @@
 				"clientSecret": {"type": "string", "default": "CLIENT_SECRET"},
 				"redirectURI": {"type": "string", "default": "http://localhost:9090/nodecg-speedcontrol/twitchauth"},
 				"ffzIntegration": {"type": "boolean", "default": false},
-				"ffzUseRepeater": {"type": "boolean"},
 				"streamTitle": {"type": "string", "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"},
 				"streamDefaultGame": {"type": "string", "default": "Games + Demos"}
 			}
