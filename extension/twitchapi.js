@@ -58,21 +58,41 @@ if (nodecg.bundleConfig && nodecg.bundleConfig.twitch && nodecg.bundleConfig.twi
 			refreshToken.value = resp.body.refresh_token;
 			requestOptions.headers['Authorization'] = 'OAuth '+resp.body.access_token;
 			
-			needle.get('https://api.twitch.tv/kraken', requestOptions, (err, resp) => {
-				// Get user ID from Twitch, because v5 requires this for everything.
-				twitchChannelID.value = resp.body.token.user_id;
-				twitchChannelName.value = resp.body.token.user_name;
-				clearTimeout(channelInfoTimeout);
-				getCurrentChannelInfo();
-				
-				// Setting up listeners.
-				nodecg.listenFor('updateChannel', updateChannel);
-				nodecg.listenFor('playTwitchAd', playTwitchAd);
-				nodecg.listenFor('twitchGameSearch', gameSearch);
-				nodecg.listenFor('twitchLogout', logout);
-				
-				nodecg.sendMessage('twitchAPIReady');
-			});
+			if (nodecg.bundleConfig.twitch.channelName) {
+				needle.get(`https://api.twitch.tv/kraken/users?login=${nodecg.bundleConfig.twitch.channelName}`, requestOptions, (err, resp) => {
+					// Get user ID from Twitch, because v5 requires this for everything.
+					twitchChannelID.value = resp.body.users[0]._id;
+					twitchChannelName.value = resp.body.users[0].name;
+					clearTimeout(channelInfoTimeout);
+					getCurrentChannelInfo();
+					
+					// Setting up listeners.
+					nodecg.listenFor('updateChannel', updateChannel);
+					nodecg.listenFor('playTwitchAd', playTwitchAd);
+					nodecg.listenFor('twitchGameSearch', gameSearch);
+					nodecg.listenFor('twitchLogout', logout);
+					
+					nodecg.sendMessage('twitchAPIReady');
+				});
+			}
+
+			else {
+				needle.get('https://api.twitch.tv/kraken', requestOptions, (err, resp) => {
+					// Get user ID from Twitch, because v5 requires this for everything.
+					twitchChannelID.value = resp.body.token.user_id;
+					twitchChannelName.value = resp.body.token.user_name;
+					clearTimeout(channelInfoTimeout);
+					getCurrentChannelInfo();
+					
+					// Setting up listeners.
+					nodecg.listenFor('updateChannel', updateChannel);
+					nodecg.listenFor('playTwitchAd', playTwitchAd);
+					nodecg.listenFor('twitchGameSearch', gameSearch);
+					nodecg.listenFor('twitchLogout', logout);
+					
+					nodecg.sendMessage('twitchAPIReady');
+				});
+			}
 		});
 	});
 	nodecg.mount(app);
