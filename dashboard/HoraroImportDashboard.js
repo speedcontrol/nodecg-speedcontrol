@@ -81,7 +81,7 @@ $(() => {
 					foundColumns.category = true;
 				}
 				
-				if ((columns[i].toLowerCase().indexOf('system') >= 0 || columns[i].toLowerCase().indexOf('platform') >= 0) && !foundColumns.system) {
+				if ((columns[i].toLowerCase().indexOf('system') >= 0 || columns[i].toLowerCase().indexOf('platform') >= 0 || columns[i].toLowerCase().indexOf('console') >= 0) && !foundColumns.system) {
 					$('#systemColumns').val(i);
 					foundColumns.system = true;
 				}
