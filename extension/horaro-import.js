@@ -287,7 +287,7 @@ function querySRComForUserData(url, callback) {
 		function() {return !success},
 		function(callback) {
 			needle.get(url, (err, resp) => {
-				if (!err) {
+				if (!err && resp && resp.body && resp.parser === 'json') {
 					success = true;
 					if (resp.body.data.length > 0)
 						callback(resp.body.data[0]);
