@@ -30,6 +30,7 @@ $(function () {
                     disableMainResetButton(false);
                     playerTimer_disablePersonalSplitButton(true);
                     playerTimer_disablePersonalResetButton(true);
+					if (oldVal) nodecg.sendMessageToBundle("forceRefreshIntermission", "esaw19-layouts");
 					toggleEditButton(true);
                 }
                 break;
