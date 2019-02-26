@@ -94,7 +94,7 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 - [SpeedSouls Charity Marathon 2017 and 2018](https://www.twitch.tv/speedsouls)
 - [Themeathon Pre-Marathon 2018](https://www.twitch.tv/themeathon)
 - Several [Voltathon](https://www.twitch.tv/voltagegg) marathons
-- Several [DegenDash](https://www.twitch.tv/degendash) marathons
+- All [DegenDash](https://www.twitch.tv/degendash) marathons
 - Some marathons on [The Fast Force](https://www.twitch.tv/thefastforce) Twitch channel
 - [A Race Against Time 3](https://www.twitch.tv/araceagainsttime) marathon
 - [Power Up With Pride: Winter Pride 2018](https://www.twitch.tv/powerupwithpride) marathon
