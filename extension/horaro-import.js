@@ -195,7 +195,7 @@ nodecg.listenFor('importScheduleData', (columns, callback) => {
 });
 
 function setScheduleData(url, callback) {
-	needle.get(url, (err, resp) => {
+	needle.get(encodeURI(url), (err, resp) => {
 		scheduleData = resp.body;
 		callback();
 	});
@@ -286,7 +286,7 @@ function querySRComForUserData(url, callback) {
 	async.whilst(
 		function() {return !success},
 		function(callback) {
-			needle.get(url, (err, resp) => {
+			needle.get(encodeURI(url), (err, resp) => {
 				if (!err && resp && resp.body && resp.parser === 'json') {
 					success = true;
 					if (resp.body.data.length > 0)
