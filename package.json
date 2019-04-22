@@ -17,10 +17,10 @@
     "clone": "^2.1.2",
     "livesplit-core": "^0.10.2",
     "markdown-it": "^8.4.2",
-    "needle": "^2.2.4",
+    "needle": "^2.3.0",
     "remove-markdown": "^0.3.0",
     "twitch-js": "^1.2.17",
-    "ws": "^6.2.0"
+    "ws": "^6.2.1"
   },
   "description": "NodeCG bundle to help facilitate the running of speedrunning marathons, including overlays.",
   "license": "MIT",
