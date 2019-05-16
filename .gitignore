@@ -1,3 +1,6 @@
-# Node / Bower
-bower_components/
 node_modules/
+bower_components/
+.cache/
+
+# Ignore built files (for now).
+/extension/

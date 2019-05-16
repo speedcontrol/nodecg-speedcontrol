@@ -1,10 +1,16 @@
 {
   "name": "nodecg-speedcontrol",
   "version": "1.0.1",
+  "description": "NodeCG bundle to help facilitate the running of speedrunning marathons, including overlays.",
+  "homepage": "https://github.com/speedcontrol/nodecg-speedcontrol#readme",
+  "bugs": {
+    "url": "https://github.com/speedcontrol/nodecg-speedcontrol/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/speedcontrol/nodecg-speedcontrol.git"
   },
+  "license": "MIT",
   "author": "zoton2",
   "contributors": [
     "Charleon",
@@ -12,22 +18,32 @@
     "Zephyyrr",
     "Planks"
   ],
+  "scripts": {
+    "build": "npm run build:extension",
+    "build:extension": "trash extension && npx tsc -b tsconfig.json",
+    "start": "node ../..",
+    "watch": "npm run watch:extension",
+    "watch:extension": "trash extension && npx tsc -b tsconfig.json -w"
+  },
   "dependencies": {
     "async": "^2.6.2",
     "clone": "^2.1.2",
     "livesplit-core": "^0.10.2",
     "markdown-it": "^8.4.2",
-    "needle": "^2.3.0",
+    "needle": "^2.4.0",
     "remove-markdown": "^0.3.0",
     "twitch-js": "^1.2.17",
-    "ws": "^6.2.1"
+    "ws": "^7.0.0"
   },
-  "description": "NodeCG bundle to help facilitate the running of speedrunning marathons, including overlays.",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/speedcontrol/nodecg-speedcontrol/issues"
+  "devDependencies": {
+    "@types/needle": "^2.0.4",
+    "@types/node": "^12.0.2",
+    "@types/ws": "^6.0.1",
+    "trash-cli": "^2.0.0",
+    "tslint": "^5.16.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "typescript": "^3.4.5"
   },
-  "homepage": "https://github.com/speedcontrol/nodecg-speedcontrol#readme",
   "nodecg": {
     "compatibleRange": "^1.0.0",
     "dashboardPanels": [
