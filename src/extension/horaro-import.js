@@ -1,5 +1,5 @@
 'use strict';
-var nodecg = require('./utils/nodecg-api-context').get();
+var nodecg = require('./util/nodecg-api-context').get();
 var needle = require('needle');
 var async = require('async');
 var clone = require('clone');

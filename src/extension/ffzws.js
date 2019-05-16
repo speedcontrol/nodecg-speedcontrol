@@ -4,7 +4,7 @@ var WebSocket = require('ws');
 var TwitchJS = require('twitch-js');
 var async = require('async');
 
-var nodecg = require('./utils/nodecg-api-context').get();
+var nodecg = require('./util/nodecg-api-context').get();
 var accessToken;
 var messageNumber;
 var ffzWS;

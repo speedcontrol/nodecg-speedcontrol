@@ -4,7 +4,7 @@ var async = require('async');
 const express = require('express');
 const app = express();
 var channelInfoTimeout;
-var nodecg = require('./utils/nodecg-api-context').get();
+var nodecg = require('./util/nodecg-api-context').get();
 
 // Default Twitch request options needed.
 var requestOptions = {
