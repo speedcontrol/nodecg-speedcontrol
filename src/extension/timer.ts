@@ -176,3 +176,7 @@ nodecg.listenFor('stopTimer', (teamID: number) => {
     finish();
   }
 });
+
+nodecg.listenFor('resetTimer', () => {
+  reset();
+});
