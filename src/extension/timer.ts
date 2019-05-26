@@ -4,6 +4,7 @@
 
 import clone from 'clone';
 import livesplitCore from 'livesplit-core';
+import { RunData, RunFinishTimes, Timer } from '../../types';
 import * as nodecgApiContext from './util/nodecg-api-context';
 
 const nodecg = nodecgApiContext.get();
@@ -15,59 +16,6 @@ const LS_TIMER_PHASE = {
   Ended: 2,
   Paused: 3,
 };
-
-interface RunData {
-  game?: string;
-  gameTwitch?: string;
-  system?: string;
-  region?: string;
-  release?: string;
-  category?: string;
-  estimate?: string;
-  estimateS?: number;
-  setupTime?: string;
-  setupTimeS?: number;
-  scheduled?: string;
-  scheduledS?: number;
-  teams: RunDataTeams[];
-  customData: {
-    [key: string]: string;
-  };
-  id: number;
-}
-
-interface RunDataTeams {
-  name?: string;
-  id: number;
-  players: RunDataPlayer[];
-}
-
-interface RunDataPlayer {
-  name: string;
-  id: number;
-  teamID: number;
-  country?: string;
-  social: {
-    twitch?: string;
-  };
-}
-
-interface TimerBasic {
-  time: string;
-  state: string;
-  milliseconds: number;
-  timestamp: number;
-}
-
-interface Timer extends TimerBasic {
-  teamFinishTimes: {
-    [id: number]: TimerBasic;
-  };
-}
-
-interface RunFinishTimes {
-  [id: number]: string;
-}
 
 const runDataActiveRun = nodecg.Replicant<RunData>('runDataActiveRun');
 const runFinishTimes = nodecg.Replicant<RunFinishTimes>('runFinishTimes', { defaultValue: {} });
@@ -125,7 +73,7 @@ function tick() {
   }
 }
 
-function start(force: boolean) {
+function start(force?: boolean) {
   // Catch if timer is running and we called this function.
   if (!force && stopwatch.value.state === 'running') {
     return;
@@ -210,3 +158,23 @@ function timeToMS(duration: string) {
   if (ts.length === 2) ts.unshift('00'); // Adds 0 hours if they are not specified.
   return Date.UTC(1970, 0, 1, parseInt(ts[0], 0), parseInt(ts[1], 0), parseInt(ts[2], 0));
 }
+
+nodecg.listenFor('startTimer', () => {
+  start();
+});
+
+nodecg.listenFor('stopTimer', (teamID: number) => {
+
+  if (!Number.isInteger(teamID) || !runDataActiveRun.value) {
+    return;
+  }
+
+  teamFinishTime(teamID);
+
+  const amountOfTeamsTotal = runDataActiveRun.value.teams.length;
+  const amountOfTeamsFinished = Object.keys(stopwatch.value.teamFinishTimes).length;
+
+  if (amountOfTeamsFinished >= amountOfTeamsTotal) {
+    finish();
+  }
+});
