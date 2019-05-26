@@ -36,14 +36,14 @@ interface RunDataPlayer {
 
 interface TimerBasic {
   time: string;
-  state: string;
+  state: "stopped" | "running" | "paused" | "finished";
   milliseconds: number;
   timestamp: number;
 }
 
 export interface Timer extends TimerBasic {
   teamFinishTimes: {
-    [id: number]: TimerBasic;
+    [id: string]: TimerBasic;
   };
 }
 

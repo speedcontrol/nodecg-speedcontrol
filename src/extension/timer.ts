@@ -21,14 +21,7 @@ const runDataActiveRun = nodecg.Replicant<RunData>('runDataActiveRun');
 const runFinishTimes = nodecg.Replicant<RunFinishTimes>('runFinishTimes', { defaultValue: {} });
 
 // Storage for the stopwatch data.
-const defaultStopwatch = {
-  time: '00:00:00',
-  state: 'stopped',
-  milliseconds: 0,
-  timestamp: 0,
-  teamFinishTimes: {},
-};
-const stopwatch = nodecg.Replicant<Timer>('timer', { defaultValue: clone(defaultStopwatch) });
+const stopwatch = nodecg.Replicant<Timer>('timer');
 
 // Sets up the timer with a single split.
 const liveSplitRun = livesplitCore.Run.new();
@@ -138,7 +131,12 @@ function initGameTime(ms: number) {
 
 // Resets stopwatch to it's defaults.
 function resetStopwatchToDefault() {
-  stopwatch.value = clone(defaultStopwatch);
+  // We *should* be able to just do stopwatch.opts.defaultValue but it doesn't work :(
+  stopwatch.value.time = '00:00:00';
+  stopwatch.value.state = 'stopped';
+  stopwatch.value.milliseconds = 0;
+  stopwatch.value.timestamp = 0;
+  stopwatch.value.teamFinishTimes = {};
 }
 
 function msToTime(ms: number) {
