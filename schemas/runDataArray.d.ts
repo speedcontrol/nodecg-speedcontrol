@@ -5,36 +5,6 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type RunDataArray = {
-  game?: string;
-  gameTwitch?: string;
-  system?: string;
-  region?: string;
-  release?: string;
-  category?: string;
-  estimate?: string;
-  estimateS?: number;
-  setupTime?: string;
-  setupTimeS?: number;
-  scheduled?: string;
-  scheduledS?: number;
-  teams: {
-    name?: string;
-    id: number;
-    players: {
-      name: string;
-      id: number;
-      teamID: number;
-      country?: string;
-      social: {
-        twitch?: string;
-      };
-    }[];
-  }[];
-  customData: {
-    [k: string]: string;
-  };
-  teamLastID: number;
-  playerLastID: number;
-  id: number;
-}[];
+export type RunDataArray = ({
+  [k: string]: any;
+} | null)[];
