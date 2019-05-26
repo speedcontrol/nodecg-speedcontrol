@@ -4,7 +4,7 @@
 
 import clone from 'clone';
 import livesplitCore from 'livesplit-core';
-import { RunData, RunFinishTimes, Timer } from '../../types';
+import { RunDataActiveRun, RunFinishTimes, Timer } from '../../schemas';
 import * as nodecgApiContext from './util/nodecg-api-context';
 
 const nodecg = nodecgApiContext.get();
@@ -17,8 +17,8 @@ const LS_TIMER_PHASE = {
   Paused: 3,
 };
 
-const runDataActiveRun = nodecg.Replicant<RunData>('runDataActiveRun');
-const runFinishTimes = nodecg.Replicant<RunFinishTimes>('runFinishTimes', { defaultValue: {} });
+const runDataActiveRun = nodecg.Replicant<RunDataActiveRun>('runDataActiveRun');
+const runFinishTimes = nodecg.Replicant<RunFinishTimes>('runFinishTimes');
 
 // Storage for the stopwatch data.
 const stopwatch = nodecg.Replicant<Timer>('timer');
@@ -92,7 +92,7 @@ function pause() {
 }
 
 function reset() {
-  if (stopwatch.value.state !== 'stopped') {
+  if (stopwatch.value.state !== 'finished') {
     return;
   }
 
