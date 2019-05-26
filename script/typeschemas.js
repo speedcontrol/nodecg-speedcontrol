@@ -1,8 +1,10 @@
 const { compileFromFile } = require('json-schema-to-typescript');
 const fs = require('fs');
 
-process.chdir('./schemas');
-const files = fs.readdirSync(process.cwd());
+console.log('configschema');
+compileFromFile('./configschema.json').then(ts => fs.writeFileSync('./configschema.d.ts', ts));
+
+const files = fs.readdirSync('./schemas');
 const filesProcessed = [];
 
 files.forEach((file) => {
@@ -10,7 +12,7 @@ files.forEach((file) => {
     file = file.replace(/.json$/, '');
     console.log(file);
     filesProcessed.push(file);
-    compileFromFile(`${file}.json`).then(ts => fs.writeFileSync(`${file}.d.ts`, ts));
+    compileFromFile(`./schemas/${file}.json`).then(ts => fs.writeFileSync(`./schemas/${file}.d.ts`, ts));
   }
 });
 
@@ -19,4 +21,4 @@ filesProcessed.forEach((file) => {
   index.push(`export * from './${file}';`);
 });
 
-fs.writeFileSync('index.d.ts', `${index.join('\n')}\n`);
+fs.writeFileSync('./schemas/index.d.ts', `${index.join('\n')}\n`);

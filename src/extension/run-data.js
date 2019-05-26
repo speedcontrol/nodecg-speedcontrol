@@ -2,7 +2,7 @@
 var nodecg = require('./util/nodecg-api-context').get();
 var customData = nodecg.bundleConfig.schedule.customData || [];
 
-var runDataLastID = nodecg.Replicant('runDataLastID', {defaultValue: -1});
+nodecg.Replicant('runDataLastID');
 
 const defaultRunDataObject = nodecg.Replicant('defaultRunDataObject', {defaultValue: {
 	game: '',

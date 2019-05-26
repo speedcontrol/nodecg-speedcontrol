@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": ["object", "null"],
+  "additionalProperties": false,
+  "properties": {
+    "game": { "type": "string" },
+    "gameTwitch": { "type": "string" },
+    "system": { "type": "string" },
+    "region": { "type": "string" },
+    "release": { "type": "string" },
+    "category": { "type": "string" },
+    "estimate": { "type": "string" },
+    "estimateS": { "type": "number" },
+    "setupTime": { "type": "string" },
+    "setupTimeS": { "type": "number" },
+    "scheduled": { "type": "string" },
+    "scheduledS": { "type": "number" },
+    "teams": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "id": { "type": "number" },
+          "players": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "id": { "type": "number" },
+                "teamID": { "type": "number" },
+                "country": { "type": "string" },
+                "social": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "twitch": { "type": "string" }
+                  }
+                }
+              },
+              "required": ["name", "id", "teamID", "social"]
+            }
+          }
+        },
+        "required": ["id", "players"]
+      }
+    },
+    "customData": {
+      "type": "object",
+      "propertyNames": { "type": "string" },
+      "additionalProperties": { "type": "string" }
+    },
+    "teamLastID": { "type": "number", "default": -1 },
+    "playerLastID": { "type": "number", "default": -1 },
+    "id": { "type": "number" }
+  },
+  "required": ["teams", "customData", "teamLastID", "playerLastID", "id"]
+}

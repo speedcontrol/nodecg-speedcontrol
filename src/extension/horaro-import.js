@@ -10,12 +10,12 @@ var runDataArray = [];
 var runNumberIterator = -1;
 var scheduleData;
 
-var defaultSetupTimeReplicant = nodecg.Replicant('defaultSetupTime', {defaultValue: 0});
-var horaroRunDataArrayReplicant = nodecg.Replicant('runDataArray', {defaultValue: []});
-var scheduleImporting = nodecg.Replicant('horaroScheduleImporting', {defaultValue:{importing:false,item:0,total:0}, persistent:false});
+var defaultSetupTimeReplicant = nodecg.Replicant('defaultSetupTime');
+var horaroRunDataArrayReplicant = nodecg.Replicant('runDataArray');
+var scheduleImporting = nodecg.Replicant('horaroScheduleImporting', {persistent: false});
 
 // Temp cache for the user data from SR.com that is kept until the server is restarted.
-var userDataCache = nodecg.Replicant('horaroImportUserDataCache', {defaultValue: {}, persistent: false});
+var userDataCache = nodecg.Replicant('horaroImportUserDataCache', {persistent: false});
 
 var disableSRComLookup = nodecg.bundleConfig.schedule.disableSpeedrunComLookup || false;
 
