@@ -83,17 +83,29 @@ function start(force?: boolean) {
 }
 
 function pause() {
+  if (stopwatch.value.state !== 'running') {
+    return;
+  }
+
   timer!.pause();
   stopwatch.value.state = 'paused';
 }
 
 function reset() {
+  if (stopwatch.value.state !== 'stopped') {
+    return;
+  }
+
   timer!.pause();
   timer!.reset(true);
   resetStopwatchToDefault();
 }
 
 function finish() {
+  if (stopwatch.value.state !== 'running') {
+    return;
+  }
+
   timer!.pause(); // For now this just pauses the timer.
   stopwatch.value.state = 'finished';
   if (runDataActiveRun.value) {
@@ -113,6 +125,11 @@ function edit(time:string) {
 }
 
 function teamFinishTime(id: number) {
+  // Cannot finish if alreay finished.
+  if (stopwatch.value.teamFinishTimes[id]) {
+    return;
+  }
+
   const stopwatchCopy = clone(stopwatch.value);
   delete stopwatchCopy.teamFinishTimes;
   stopwatch.value.teamFinishTimes[id] = stopwatchCopy;
@@ -162,7 +179,6 @@ nodecg.listenFor('startTimer', () => {
 });
 
 nodecg.listenFor('stopTimer', (teamID: number) => {
-
   if (!Number.isInteger(teamID) || !runDataActiveRun.value) {
     return;
   }
