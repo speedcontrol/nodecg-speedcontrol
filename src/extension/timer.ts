@@ -179,15 +179,22 @@ nodecg.listenFor('startTimer', () => {
 });
 
 nodecg.listenFor('stopTimer', (teamID: number) => {
-  if (!Number.isInteger(teamID) || !runDataActiveRun.value) {
+  // Makes the API work even if there is no run set.
+  if (!runDataActiveRun.value) {
+    finish();
+    return;
+  }
+
+  // If we got here, there should be a team ID.
+  if (!Number.isInteger(teamID)) {
     return;
   }
 
   teamFinishTime(teamID);
 
+  // Finish the timer if all the teams have completed.
   const amountOfTeamsTotal = runDataActiveRun.value.teams.length;
   const amountOfTeamsFinished = Object.keys(stopwatch.value.teamFinishTimes).length;
-
   if (amountOfTeamsFinished >= amountOfTeamsTotal) {
     finish();
   }
