@@ -133,7 +133,7 @@ The timer parts of this object are usually updated every 100ms.
 - `state` is the current state; can be `stopped` (timer is at 0), `running` (timer is currently running), `paused` (timer was running but has been paused) or `finished` (timer has been ended and is showing the final time).
 - `milliseconds` is the current time, but in milliseconds for calculations.
 - `timestamp` is a `Date.now()` timestamp of when the run was started.
-- `teamFinishTimes` is a keyed object for the time a team has finished, if this run was a race. The key is the teams ID; the value is a copy of the `timer` replicant at the time (minus the `teamFinishTimes` value).
+- `teamFinishTimes` is a keyed object for the time a team has finished, if this run was a race. The key is the teams ID (as a string due to JavaScript limitations); the value is a copy of the `timer` replicant at the time (minus the `teamFinishTimes` value).
 
 An example of the object, during a race while the timer is still running but team with ID 1 has finished:
 ```
@@ -143,7 +143,7 @@ An example of the object, during a race while the timer is still running but tea
 	milliseconds: 891053,
 	timestamp: 1545591937067,
 	teamFinishTimes: {
-		1: {
+		"1": {
 			time: "00:14:37",
 			state: "running",
 			milliseconds: 877274,
