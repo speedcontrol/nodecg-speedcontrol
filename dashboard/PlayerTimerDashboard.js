@@ -359,32 +359,5 @@ $(function () {
         }).click(OnEdit);
     }
 
-    function Initialize_EventListeners(nodecg) {
-        //console.log(nodecg)
-        nodecg.listenFor("start_run", "nodecg-speedcontrol", function() {
-            OnPlay();
-        })
-
-        nodecg.listenFor("reset_run", "nodecg-speedcontrol", function() {
-            OnReset();
-        })
-
-        nodecg.listenFor("reset_stop", "nodecg-speedcontrol", function() {
-            OnStop();
-        })
-
-        nodecg.listenFor("split_timer", "nodecg-speedcontrol", function(index) {
-            console.log("SPLIT-EVENT");
-			console.log(index);
-			var id = runDataActiveRunReplicant.value.teams[index].id;
-            if (moreThanOneTeam) {
-                nodecg.sendMessage('teamFinishTime', id);
-            }
-            nodecg.sendMessage('teamFinishTime', id);
-            splitTimer(index);
-        })
-    }
-
     playerTimer_InitializeElements();
-    Initialize_EventListeners(nodecg);
 })
