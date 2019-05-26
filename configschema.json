@@ -1,9 +1,11 @@
 {
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"type": "object",
+	"additionalProperties": false,
 	"properties": {
 		"twitch": {
 			"type": "object",
+			"additionalProperties": false,
 			"properties": {
 				"enable": {"type": "boolean", "default": false},
 				"clientID": {"type": "string", "default": "CLIENT_ID"},
@@ -14,10 +16,12 @@
 				"ffzUseRepeater": {"type": "boolean"},
 				"streamTitle": {"type": "string", "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"},
 				"streamDefaultGame": {"type": "string", "default": "Games + Demos"}
-			}
+			},
+			"required": ["clientID", "clientSecret", "redirectURI"]
 		},
 		"schedule": {
 			"type": "object",
+			"additionalProperties": false,
 			"properties": {
 				"defaultURL": {"type": "string", "default": "https://horaro.org/event/schedule"},
 				"ignoreGamesWhileImporting": {
@@ -32,10 +36,12 @@
 					"uniqueItems": true,
 					"items": {
 						"type": "object",
+						"additionalProperties": false,
 						"properties": {
 							"name": {"type": "string"},
 							"key": {"type": "string"}
-						}
+						},
+						"required": ["name", "key"]
 					},
 					"minItems": 1
 				}
