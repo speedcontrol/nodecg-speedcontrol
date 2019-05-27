@@ -6,7 +6,7 @@
  */
 
 export interface HoraroScheduleImporting {
-  importing?: boolean;
-  item?: number;
-  total?: number;
+  importing: boolean;
+  item: number;
+  total: number;
 }

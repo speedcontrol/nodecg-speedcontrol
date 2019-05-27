@@ -6,5 +6,6 @@
     "importing": { "type": "boolean", "default": false },
     "item": { "type": "number", "default": 0 },
     "total": { "type": "number", "default": 0 }
-  }
+  },
+  "required": ["importing", "item", "total"]
 }
