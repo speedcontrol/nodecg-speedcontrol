@@ -4,7 +4,8 @@
 
 import clone from 'clone';
 import livesplitCore from 'livesplit-core';
-import { RunDataActiveRun, RunFinishTimes, Timer } from '../../schemas';
+import { RunFinishTimes } from '../../schemas';
+import { RunDataActiveRun, Timer } from '../../types';
 import * as nodecgApiContext from './util/nodecg-api-context';
 
 const nodecg = nodecgApiContext.get();
