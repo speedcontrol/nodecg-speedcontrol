@@ -21,8 +21,8 @@
   "scripts": {
     "build": "npm run build:extension",
     "build:extension": "trash extension && npx tsc -b tsconfig.json",
-    "typeschemas": "node script/typeschemas.js",
     "start": "node ../..",
+    "typeschemas": "node script/typeschemas.js",
     "watch": "npm run watch:extension",
     "watch:extension": "trash extension && npx tsc -b tsconfig.json -w"
   },

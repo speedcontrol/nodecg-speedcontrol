@@ -114,7 +114,7 @@ function finish() {
   }
 }
 
-function edit(time:string) {
+function edit(time: string) {
   // Check to see if the time was given in the correct format and if it's stopped/paused.
   if (stopwatch.value.state === 'stopped' || stopwatch.value.state === 'paused'
   || time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
