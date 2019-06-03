@@ -1,4 +1,5 @@
-export * from './runDataActiveRun';
-export * from './runDataArray';
-export * from './timer';
+export * from './RunData';
+export * from './RunDataActiveRun';
+export * from './RunDataArray';
+export * from './Timer';
 
