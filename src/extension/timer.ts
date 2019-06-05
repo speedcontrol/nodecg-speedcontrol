@@ -4,7 +4,7 @@
 
 import clone from 'clone';
 import livesplitCore from 'livesplit-core';
-import { RunFinishTimes } from '../../schemas';
+import { DisableTimerChanges, RunFinishTimes } from '../../schemas';
 import { RunDataActiveRun, Timer } from '../../types';
 import * as nodecgApiContext from './util/nodecg-api-context';
 
@@ -20,6 +20,10 @@ const LS_TIMER_PHASE = {
 
 const runDataActiveRun = nodecg.Replicant<RunDataActiveRun>('runDataActiveRun');
 const runFinishTimes = nodecg.Replicant<RunFinishTimes>('runFinishTimes');
+const disableChanges = nodecg.Replicant<DisableTimerChanges>(
+  'disableTimerChanges',
+  { persistent: false },
+);
 
 // Storage for the stopwatch data.
 const stopwatch = nodecg.Replicant<Timer>('timer');
@@ -68,8 +72,8 @@ function tick() {
 }
 
 function start(force?: boolean) {
-  // Catch if timer is running and we called this function.
-  if (!force && stopwatch.value.state === 'running') {
+  // Catch if timer is running and we called this function, or if changes are disabled.
+  if ((!force && stopwatch.value.state === 'running') || disableChanges.value) {
     return;
   }
 
@@ -84,7 +88,8 @@ function start(force?: boolean) {
 }
 
 function pause() {
-  if (stopwatch.value.state !== 'running') {
+  // Catch if timer is not running and we called this function, or if changes are disabled.
+  if (stopwatch.value.state !== 'running' || disableChanges.value) {
     return;
   }
 
@@ -93,7 +98,8 @@ function pause() {
 }
 
 function reset() {
-  if (stopwatch.value.state !== 'finished') {
+  // Catch if timer is not finished and we called this function, or if changes are disabled.
+  if (stopwatch.value.state !== 'finished' || disableChanges.value) {
     return;
   }
 
@@ -103,7 +109,8 @@ function reset() {
 }
 
 function finish() {
-  if (stopwatch.value.state !== 'running') {
+  // Catch if timer is not running and we called this function, or if changes are disabled.
+  if (stopwatch.value.state !== 'running' || disableChanges.value) {
     return;
   }
 
@@ -115,6 +122,11 @@ function finish() {
 }
 
 function edit(time: string) {
+  // Catch if changes are disabled.
+  if (disableChanges.value) {
+    return;
+  }
+
   // Check to see if the time was given in the correct format and if it's stopped/paused.
   if (stopwatch.value.state === 'stopped' || stopwatch.value.state === 'paused'
   || time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
@@ -126,8 +138,8 @@ function edit(time: string) {
 }
 
 function teamFinishTime(id: number) {
-  // Cannot finish if alreay finished.
-  if (stopwatch.value.teamFinishTimes[id]) {
+  // Cannot finish if alreay finished, or if changes are disabled.
+  if (stopwatch.value.teamFinishTimes[id] || disableChanges.value) {
     return;
   }
 
@@ -137,6 +149,11 @@ function teamFinishTime(id: number) {
 }
 
 function teamFinishTimeUndo(id: number) {
+  // Catch if changes are disabled.
+  if (disableChanges.value) {
+    return;
+  }
+
   delete stopwatch.value.teamFinishTimes[id];
 }
 

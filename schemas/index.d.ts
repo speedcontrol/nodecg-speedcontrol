@@ -1,4 +1,5 @@
 export * from './defaultSetupTime';
+export * from './disableTimerChanges';
 export * from './horaroImportUserDataCache';
 export * from './horaroScheduleImporting';
 export * from './runDataActiveRun';
