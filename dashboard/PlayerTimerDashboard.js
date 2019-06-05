@@ -8,6 +8,15 @@ $(function () {
     var lastTimerState = "";
 // Replicant initialization
 
+    const changesDisabled = nodecg.Replicant('timerChangesDisabled');
+    changesDisabled.on('change', (newVal, oldVal) => {
+        if (newVal) {
+            $('#run-timer').addClass('disabled');
+        } else {
+            $('#run-timer').removeClass('disabled');
+        }
+    });
+
     var stopWatchReplicant = nodecg.Replicant('timer');
     stopWatchReplicant.on('change', function (newVal, oldVal) {
         if (!newVal) return;
