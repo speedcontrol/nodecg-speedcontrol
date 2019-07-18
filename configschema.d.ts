@@ -14,6 +14,7 @@ export interface Configschema {
     channelName?: string;
     ffzIntegration?: boolean;
     ffzUseRepeater?: boolean;
+    ffzBlacklist?: any[];
     streamTitle?: string;
     streamDefaultGame?: string;
   };

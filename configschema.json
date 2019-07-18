@@ -14,6 +14,7 @@
 				"channelName": {"type": "string"},
 				"ffzIntegration": {"type": "boolean", "default": false},
 				"ffzUseRepeater": {"type": "boolean"},
+				"ffzBlacklist": {"type": "array", "default": []},
 				"streamTitle": {"type": "string", "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"},
 				"streamDefaultGame": {"type": "string", "default": "Games + Demos"}
 			},

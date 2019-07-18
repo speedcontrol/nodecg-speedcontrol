@@ -125,8 +125,19 @@ function setFFZFollowing(usernames) {
 	nodecg.log.info('Attempting to set FrankerFaceZ Twitch names.');
 	// Checks to make sure we are connected and can do this.
 	if (ffzWSConnected) {
+		const usersToSend = usernames.map(user => user.toLowerCase());
+		const blacklist = nodecg.bundleConfig.twitch.ffzBlacklist.map(user => user.toLowerCase());
+
+		for (let i = 0; i < usersToSend.length;) {
+			if (blacklist.includes(usersToSend[i])) {
+				usersToSend.splice(i, 1);
+			} else {
+				i += 1;
+			}
+		}
+
 		//nodecg.log.info('Sent FrankerFaceZ Twitch names.');
-		sendMessage('update_follow_buttons ' + JSON.stringify([twitchChannelName.value,usernames]), function(message) {
+		sendMessage('update_follow_buttons ' + JSON.stringify([twitchChannelName.value,usersToSend]), function(message) {
 			var updatedClients = JSON.parse(message.substr(3))['updated_clients'];
 			nodecg.log.info('FrankerFaceZ buttons have been updated for ' + updatedClients + ' viewers.');
 		});
