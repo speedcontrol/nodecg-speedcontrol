@@ -330,7 +330,7 @@ $(function () {
 				},
 				success: function(result) {
 					// We look for an exact match (case insensitive) here so games like super metroid fall back to twitch search instead
-					if ((result.data.length > 0) && (runData.game.toLowerCase() == result.data[0].name.toLowerCase())) {
+					if ((result.data.length > 0) && (runData.game.toLowerCase() == result.data[0].names.international.toLowerCase())) {
 						twitchGameName = result.data[0].names.twitch;
 					} else {
 						console.log ("No exact game match on speedrun.com for "+ runData.game);
@@ -359,9 +359,9 @@ $(function () {
 				// This is mostly a fallback to serve games like Super Metroid that aren't on SRcom at all.
 				// For this we strip out punctuation and anything between brackets for more hits
 				var string = runData.game;
-				var string = string.replace(/\s*\(.*?\)\s*/g, ''); // between brackets
-				var string = string.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // specified punctuation
-				var string = string.toLowerCase(); // like someone would type it manually
+				//string = string.replace(/\s*\(.*?\)\s*/g, ''); // between brackets
+				//string = string.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // specified punctuation
+				string = string.toLowerCase(); // like someone would type it manually
 
 				console.log ("Twitch Search: " + string);
 				nodecg.sendMessage('twitchGameSearch', string, function(replyData) {
