@@ -169,7 +169,7 @@ $(function () {
 			}
 		}).click(function() {
 			if (changingEnabled) {
-				nodecg.sendMessage("resetTime");
+				nodecg.sendMessage("resetTimeForce");
 				runPlayer_playRun($(this).attr('id'));
 			}
 		});
@@ -185,7 +185,7 @@ $(function () {
             }
 			
 			// Resets the timer
-			nodecg.sendMessage("resetTime");
+			nodecg.sendMessage("resetTimeForce");
 
 			// Loads the next run
 			runPlayer_playNextRun();

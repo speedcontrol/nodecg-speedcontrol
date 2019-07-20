@@ -54,6 +54,7 @@ nodecg.listenFor('startTime', start);
 nodecg.listenFor('pauseTime', pause);
 nodecg.listenFor('finishTime', finish);
 nodecg.listenFor('resetTime', reset);
+nodecg.listenFor('resetTimeForce', forceReset);
 nodecg.listenFor('setTime', edit);
 nodecg.listenFor('teamFinishTime', teamFinishTime);
 nodecg.listenFor('teamFinishTimeUndo', teamFinishTimeUndo);
@@ -100,6 +101,18 @@ function pause() {
 function reset() {
   // Catch if timer is not finished and we called this function, or if changes are disabled.
   if (stopwatch.value.state !== 'finished' || changesDisabled.value) {
+    return;
+  }
+
+  timer!.pause();
+  timer!.reset(true);
+  resetStopwatchToDefault();
+}
+
+// Ignores if changes are disabled or not, used by the dashboard.
+function forceReset() {
+  // Catch if timer is not finished and we called this function.
+  if (stopwatch.value.state !== 'finished') {
     return;
   }
 
