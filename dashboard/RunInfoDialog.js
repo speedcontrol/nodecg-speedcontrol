@@ -153,7 +153,7 @@ function loadRun(runIDtoLoad) {
 
 	// If we're editing a run, add the team/player fields.
 	if (runID !== undefined) {
-			Array.prototype.forEach.call(runDataCurrent.teams, (team) => {
+		runDataCurrent.teams.forEach(team => {
 			var teamElement = addTeam(team);
 			team.players.forEach(player => $('.playersContainer', teamElement).append(addPlayer(player)));
 			teamsContainer.append(teamElement);

@@ -30,12 +30,12 @@ $(function () {
 
 	function runControl_GetPlayers(runData) {
 		var shouldSayTeams = runData.teams.length > 1;
-        // if any teams have more than 1 player, we should say teams
-		Array.prototype.forEach.call(runData.teams, (team) => {
+		// if any teams have more than 1 player, we should say teams
+		runData.teams.forEach( function(team, index) {
 			shouldSayTeams = team.players.length > 1;
 		});
 		var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
-        Array.prototype.forEach.call(runData.teams, (team, index) => {
+		$.each(runData.teams, function (index, team) {
 			if (index > 0) {
 				playerString += '<tr><td class="rowTitle"></td>';
 			}
