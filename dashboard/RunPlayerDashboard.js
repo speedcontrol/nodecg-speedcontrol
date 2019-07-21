@@ -92,11 +92,11 @@ $(function () {
 	function runPlayer_getPlayers(runData) {
 			var shouldSayTeams = runData.teams.length > 1;
 			// if any teams have more than 1 player, we should say teams
-			runData.teams.forEach( function(team, index) {
+			Array.prototype.forEach.call(runData.teams, (team, index) => {
 				shouldSayTeams = team.players.length > 1;
 			});
-			var playerString = '<tr> <td class="rowTitle">'+ (shouldSayTeams ? 'Teams' : 'Players')+ '</td>';
-			$.each(runData.teams, function (index, team) {
+			var playerString = '<tr> <td class="rowTitle">' + (shouldSayTeams ? 'Teams' : 'Players') + '</td>';
+			Array.prototype.forEach.call(runData.teams, (team, index) => {
 				if (index > 0) {
 					playerString += '<tr><td class="rowTitle"></td>';
 				}
@@ -288,7 +288,7 @@ $(function () {
 
 	 		// Gets Twitch channel names from the runData and puts them in an array to send to the FFZ WS script.
 			var twitchNames = [];
-			runData.teams.forEach((team) => {
+			Array.prototype.forEach.call(runData.teams, (team) => {
 				team.players.forEach((player) => {
 					if (player.social.twitch)
 						twitchNames.push(player.social.twitch);
@@ -384,7 +384,7 @@ $(function () {
 	function formPlayerNamesString(runData) {
 		var namesArray = [];
 		var namesList = 'No Player(s)';
-		runData.teams.forEach(team => {
+		Array.prototype.forEach.call(runData.teams, (team) => {
 			var teamPlayerArray = [];
 			team.players.forEach(player => {teamPlayerArray.push(player.name);});
 			namesArray.push(teamPlayerArray.join(', '));
