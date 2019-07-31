@@ -1,0 +1,67 @@
+{
+  "name": "nodecg-vue-ts-template",
+  "version": "1.0.0",
+  "description": "Template for NodeCG bundles that use Vue.js and TypeScript.",
+  "homepage": "https://github.com/zoton2/nodecg-vue-ts-template#readme",
+  "bugs": {
+    "url": "https://github.com/zoton2/nodecg-vue-ts-template/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoton2/nodecg-vue-ts-template.git"
+  },
+  "license": "MIT",
+  "author": "zoton2",
+  "scripts": {
+    "build": "npm run build:extension && npm run build:browser",
+    "build:browser": "trash .cache && cross-env NODE_ENV=production npm run bundle",
+    "build:extension": "trash extension && npx tsc -b tsconfig.json",
+    "bundle": "trash graphics && trash dashboard && node script/bundle.js",
+    "start": "node ../..",
+    "watch": "run-p watch:*",
+    "watch:browser": "npm run bundle",
+    "watch:extension": "trash extension && npx tsc -b tsconfig.json -w"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "@vue/component-compiler-utils": "^3.0.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-import-resolver-typescript": "^1.1.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-vue": "^5.2.3",
+    "npm-run-all": "^4.1.5",
+    "parcel-bundler": "^1.12.3",
+    "trash-cli": "^3.0.0",
+    "typescript": "^3.5.3",
+    "vue": "^2.6.10",
+    "vue-hot-reload-api": "^2.3.3",
+    "vue-template-compiler": "^2.6.10",
+    "vuetype": "^0.3.2"
+  },
+  "alias": {
+    "vue": "./node_modules/vue/dist/vue.esm.js"
+  },
+  "nodecg": {
+    "compatibleRange": "^1.0.0",
+    "dashboardPanels": [
+      {
+        "name": "example",
+        "title": "Example",
+        "file": "example.html"
+      }
+    ],
+    "graphics": [
+      {
+        "file": "example.html",
+        "width": 1920,
+        "height": 1080
+      }
+    ]
+  },
+  "vue": {
+    "runtimeCompiler": true
+  }
+}
