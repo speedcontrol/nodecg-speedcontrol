@@ -23,15 +23,9 @@
     "watch:extension": "trash extension && npx tsc -b tsconfig.json -w"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^1.13.0",
-    "@typescript-eslint/parser": "^1.13.0",
     "@vue/component-compiler-utils": "^3.0.0",
     "cross-env": "^5.2.0",
-    "eslint": "^6.1.0",
-    "eslint-config-airbnb-base": "^13.2.0",
-    "eslint-import-resolver-typescript": "^1.1.1",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-vue": "^5.2.3",
+    "nodecg": "^1.4.1",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.3",
     "trash-cli": "^3.0.0",
