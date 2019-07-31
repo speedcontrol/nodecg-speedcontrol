@@ -1,2 +1,2 @@
 # nodecg-vue-ts-template
-Template bundle for NodeCG bundles that use TypeScript and Vue.js.
+Template for NodeCG bundles that use Vue.js and TypeScript.
