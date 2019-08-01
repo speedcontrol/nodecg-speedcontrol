@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.server.json',
+    project: './tsconfig.extension.json',
   },
   plugins: [
     '@typescript-eslint',

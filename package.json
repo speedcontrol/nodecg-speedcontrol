@@ -15,16 +15,15 @@
   "scripts": {
     "build": "run-s build:*",
     "build:browser": "trash .cache && cross-env NODE_ENV=production npm run bundle",
-    "build:extension": "trash extension && npx tsc -b tsconfig.server.json",
+    "build:extension": "trash extension && npx tsc -b tsconfig.extension.json",
     "bundle": "trash graphics && trash dashboard && node script/bundle.js",
     "start": "node ../..",
     "watch": "run-p watch:*",
     "watch:browser": "npm run bundle",
-    "watch:extension": "trash extension && npx tsc -b tsconfig.server.json -w",
-    "lint": "run-s lint:**",
-    "lint:browser:dashboard": "cd src/dashboard && npx eslint . --ext .ts,.vue,.html --ignore-path ../../.eslintignore --fix",
-    "lint:browser:graphics": "cd src/graphics && npx eslint . --ext .ts,.vue,.html --ignore-path ../../.eslintignore --fix",
-    "lint:extension": "npx eslint src/extension/**/*.ts --fix",
+    "watch:extension": "trash extension && npx tsc -b tsconfig.extension.json -w",
+    "autofix": "run-s autofix:*",
+    "autofix:browser": "npx eslint --fix --ext .ts,.vue,.html src/dashboard && eslint --fix --ext .js,.vue src/graphics",
+    "autofix:extension": "npx eslint --fix --ext .ts src/extension",
     "typeschemas": "node script/typeschemas.js"
   },
   "devDependencies": {
