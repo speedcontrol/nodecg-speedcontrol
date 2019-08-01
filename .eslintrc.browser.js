@@ -3,7 +3,7 @@ module.exports = {
   parser: 'vue-eslint-parser',
   parserOptions: {
     parser: '@typescript-eslint/parser',
-    project: './tsconfig.browser.json',
+    project: './tsconfig.json',
   },
   env: {
     browser: true,
