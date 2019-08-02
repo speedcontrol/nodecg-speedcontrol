@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "array",
+  "items": {
+    "$comment": "Setting that this can be null because of an issue in json-schema-defaults.",
+    "type": [
+      "object",
+      "null"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "game": {
+        "type": "string"
+      },
+      "gameTwitch": {
+        "type": "string"
+      },
+      "system": {
+        "type": "string"
+      },
+      "region": {
+        "type": "string"
+      },
+      "release": {
+        "type": "string"
+      },
+      "category": {
+        "type": "string"
+      },
+      "estimate": {
+        "type": "string"
+      },
+      "estimateS": {
+        "type": "number"
+      },
+      "setupTime": {
+        "type": "string"
+      },
+      "setupTimeS": {
+        "type": "number"
+      },
+      "scheduled": {
+        "type": "string"
+      },
+      "scheduledS": {
+        "type": "number"
+      },
+      "teams": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "players": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "teamID": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "social": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "twitch": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "id",
+                  "teamID",
+                  "social"
+                ]
+              }
+            }
+          },
+          "required": [
+            "id",
+            "players"
+          ]
+        }
+      },
+      "customData": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string"
+        },
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "teams",
+      "customData",
+      "id"
+    ]
+  }
+}
