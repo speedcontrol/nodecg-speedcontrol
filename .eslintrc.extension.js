@@ -15,4 +15,11 @@ module.exports = {
     '@typescript-eslint/indent': ['error', 2],
     'import/no-unresolved': [2, { ignore: ['nodecg/types/server'] }],
   },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+    },
+  },
 };
