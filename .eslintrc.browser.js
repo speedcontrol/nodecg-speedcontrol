@@ -3,7 +3,7 @@ module.exports = {
   parser: 'vue-eslint-parser',
   parserOptions: {
     parser: '@typescript-eslint/parser',
-    project: './tsconfig.browser.json',
+    project: 'tsconfig.browser.json',
   },
   env: {
     browser: true,
@@ -12,6 +12,9 @@ module.exports = {
   extends: [
     'airbnb-base',
     'plugin:vue/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
   ],
   globals: {
     Atomics: 'readonly',
@@ -21,9 +24,12 @@ module.exports = {
   },
   plugins: [
     'vue',
+    '@typescript-eslint',
   ],
   rules: {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
     'vue/html-self-closing': ['error', { html: { component: 'never' } }],
     'no-new': ['off'],
   },

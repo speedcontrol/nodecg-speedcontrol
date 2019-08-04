@@ -2,24 +2,19 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.extension.json',
+    project: 'tsconfig.extension.json',
   },
   plugins: [
     '@typescript-eslint',
   ],
   extends: [
-    'plugin:@typescript-eslint/recommended',
     'airbnb-base',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
   ],
   rules: {
     '@typescript-eslint/indent': ['error', 2],
-    'import/no-unresolved': [2, { ignore: ['nodecg/types/server'] }],
-  },
-  settings: {
-    'import/resolver': {
-      node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      },
-    },
   },
 };
