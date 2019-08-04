@@ -1,11 +1,12 @@
 import clone from 'clone';
+import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line
 import Vue from 'vue';
 import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
 const replicantNames = ['runDataArray', 'runDataActiveRun'];
-const replicants: any[] = [];
+const replicants: ReplicantBrowser<unknown>[] = [];
 
 const store = new Vuex.Store({
   state: {
@@ -22,7 +23,7 @@ const store = new Vuex.Store({
 replicantNames.forEach((name) => {
   const replicant = nodecg.Replicant(name);
 
-  replicant.on('change', (newVal: any) => {
+  replicant.on('change', (newVal) => {
     store.commit('updateReplicant', {
       name: replicant.name,
       value: clone(newVal),
