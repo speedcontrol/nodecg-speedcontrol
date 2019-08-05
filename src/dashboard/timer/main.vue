@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import TimerTime from './components/Time.vue';
+import TimerTime from './components/TimerTime.vue';
 import StartButton from './components/StartButton.vue';
 import ResetButton from './components/ResetButton.vue';
 import StopButton from './components/StopButton.vue';
