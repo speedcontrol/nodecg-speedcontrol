@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { nodecg } from '../nodecg';
+import { nodecg } from '../_misc/nodecg';
 
 export default Vue.extend({
   methods: {

@@ -1,11 +1,10 @@
 import Vue from 'vue';
-import { createStore } from '../store';
+import * as replicantStore from '../_misc/replicant-store';
 import App from './main.vue';
 
-createStore().then((store) => {
+replicantStore.create().then(() => {
   new Vue({
     el: '#App',
-    store,
     render: h => h(App),
   });
 });

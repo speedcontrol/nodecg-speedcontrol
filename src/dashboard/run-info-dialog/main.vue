@@ -64,15 +64,24 @@
 <script lang="ts">
 import Vue from 'vue';
 import Team from './components/Team.vue';
-import { store } from '../store';
+import { store as repStore } from '../_misc/replicant-store';
+import store from './store';
 
 export default Vue.extend({
   components: {
     Team,
   },
   computed: {
-    runData() {
-      return store.state.runData;
+    game: {
+      get() {
+        return store.state.runData.game;
+      },
+      set(value: string | undefined) {
+        store.commit('updateRunData', {
+          value,
+          name: 'game',
+        });
+      },
     },
   },
 });
