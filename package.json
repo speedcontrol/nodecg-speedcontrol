@@ -59,6 +59,12 @@
         "width": 2
       },
       {
+        "name": "timer",
+        "title": "Timer",
+        "file": "timer.html",
+        "width": 2
+      },
+      {
         "name": "run-info",
         "title": "Add/Edit Run Info",
         "width": 5,
@@ -82,6 +88,7 @@
   },
   "dependencies": {
     "clone": "^2.1.2",
+    "livesplit-core": "^0.10.2",
     "uuid": "^3.3.2"
   }
 }
