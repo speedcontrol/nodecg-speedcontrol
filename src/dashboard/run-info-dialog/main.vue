@@ -1,18 +1,17 @@
 <template>
   <div id="App">
     <div id="RunDataGeneral">
-      <input
-        ref="Game"
+      <generic-text-input
+        object-key="game"
         title="Game"
-        placeholder="Game"
-        :value="runData.game"
       >
-      <input
-        ref="GameTwitch"
+      </generic-text-input>
+      <generic-text-input
+        object-key="gameTwitch"
         title="Game (Twitch)"
-        placeholder="Game (Twitch)"
-        :value="runData.gameTwitch"
       >
+      </generic-text-input>
+      <!--
       <input
         ref="Category"
         title="Category"
@@ -48,28 +47,27 @@
         title="Setup Time (HH:MM:SS)"
         placeholder="Setup Time (HH:MM:SS)"
         :value="runData.setupTime"
-      >
+      >-->
     </div>
     <div id="Teams">
-      <team
+      <!--<team
         v-for="team in runData.teams"
         :key="team.id"
         :team="team"
       >
-      </team>
+      </team>-->
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Team from './components/Team.vue';
-import { store as repStore } from '../_misc/replicant-store';
+import GenericTextInput from './components/GenericTextInput.vue';
 import store from './store';
 
 export default Vue.extend({
   components: {
-    Team,
+    GenericTextInput,
   },
   computed: {
     game: {

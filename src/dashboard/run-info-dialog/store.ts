@@ -11,7 +11,6 @@ export default new Vuex.Store({
   mutations: {
     updateRunData(state, { name, value }) {
       Vue.set(state.runData, name, value);
-      console.log(state.runData);
     },
   },
 });
