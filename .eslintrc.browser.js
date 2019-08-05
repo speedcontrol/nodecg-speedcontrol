@@ -28,8 +28,8 @@ module.exports = {
   ],
   rules: {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
-    'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': 'error',
+    'no-unused-vars': ['off'],
+    '@typescript-eslint/no-unused-vars': ['error'],
     'vue/html-self-closing': ['error', { html: { component: 'never' } }],
     'no-new': ['off'],
   },

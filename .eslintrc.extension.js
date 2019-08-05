@@ -16,5 +16,7 @@ module.exports = {
   ],
   rules: {
     '@typescript-eslint/indent': ['error', 2],
+    '@typescript-eslint/explicit-member-accessibility': ['off'],
+    'no-new': ['off'],
   },
 };
