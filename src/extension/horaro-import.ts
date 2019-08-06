@@ -4,8 +4,8 @@ import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { mapSeries } from 'p-iteration';
 import removeMd from 'remove-markdown';
 import uuid from 'uuid/v4';
-import { msToTimeStr, nullToUndefined } from './util/helpers';
 import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line
+import { msToTimeStr, nullToUndefined, sleep } from './util/helpers';
 import * as nodecgApiContext from './util/nodecg-api-context';
 
 const md = new MarkdownIt();
@@ -24,6 +24,20 @@ interface HoraroScheduleItem {
   options: {
     setup?: string;
   };
+}
+
+/**
+ * Not everything but the relevant things for us in this file.
+ */
+interface SRcomUserData {
+  location: {
+    country: {
+      code: string;
+    };
+  } | null;
+  twitch: {
+    uri: string;
+  } | null;
 }
 
 /**
@@ -54,6 +68,71 @@ function parseMarkdown(str?: string): ParsedMarkdown {
   }
 }
 
+/**
+ * Used to look up a user's data on speedrun.com with an arbitrary string,
+ * usually name or Twitch username. If nothing is specified, will resolve immediately.
+ * @param str String to attempt to look up the user by.
+ */
+function querySRcomUserData(str: string | undefined): Promise<SRcomUserData> {
+  return new Promise(async (resolve, reject): Promise<void> => {
+    if (!str) {
+      resolve();
+    } else {
+      try {
+        const resp = await needle(
+          'get',
+          encodeURI(`https://www.speedrun.com/api/v1/users?max=1&lookup=${str.toLowerCase()}`),
+        );
+        // needs checks to see if this data is valid before trying to parse it/return it
+        resolve(resp.body.data[0]);
+      } catch (err) {
+        // needs some retrying logic in here
+        reject();
+      }
+    }
+  });
+}
+
+/**
+ * Attempt to get information about a player using several options.
+ * @param name Name to attempt to use.
+ * @param twitchURL Twitch URL to attempt to use.
+ */
+function parseSRcomUserData(name: string | undefined, twitchURL: string | undefined): Promise<{
+  country: string | undefined;
+  twitchURL: string | undefined;
+}> {
+  return new Promise(async (resolve): Promise<void> => {
+    const foundData: {
+      country: string | undefined;
+      twitchURL: string | undefined;
+    } = {
+      country: undefined,
+      twitchURL: undefined,
+    };
+
+    // Get username from Twitch URL.
+    const twitchUsername = (
+      twitchURL && twitchURL.includes('twitch.tv')
+    ) ? twitchURL.split('/')[twitchURL.split('/').length - 1] : undefined;
+
+    // First query using Twitch username, then normal name if needed.
+    let data = await querySRcomUserData(twitchUsername);
+    if (!data) {
+      data = await querySRcomUserData(name);
+    }
+
+    // Parse data if possible.
+    if (data) {
+      foundData.country = (data.location) ? data.location.country.code : undefined;
+      foundData.twitchURL = (data.twitch && data.twitch.uri) ? data.twitch.uri : undefined;
+    }
+
+    await sleep(1000);
+    resolve(foundData);
+  });
+}
+
 function parseSchedule(): Promise<RunDataArray> {
   return new Promise(async (resolve, reject): Promise<void> => {
     try {
@@ -68,7 +147,7 @@ function parseSchedule(): Promise<RunDataArray> {
         player: 1,
       };
 
-      const resp = await needle('get', 'https://horaro.org/esa/2019-one.json');
+      const resp = await needle('get', 'https://horaro.org/esa/tceu19.json');
       const runItems: HoraroScheduleItem[] = resp.body.schedule.items;
       const defaultSetupTime: number = resp.body.schedule.setup_t;
 
@@ -106,45 +185,54 @@ function parseSchedule(): Promise<RunDataArray> {
 
           // Mapping team string into something more manageable.
           // vs/vs.
-          const teamsRaw = await mapSeries(playerList.split(/\s+vs\.?\s+/), (team): {
-            name: string | undefined;
-            players: string[];
-          } => {
-            const nameMatch = team.match(/^(.+)(?=:\s)/);
-            return {
-              name: (nameMatch) ? nameMatch[0] : undefined,
-              players: team.replace(/^(.+)(:\s)/, '').split(/\s*,\s*/),
-            };
-          });
+          const teamsRaw = await mapSeries(
+            playerList.split(/\s+vs\.?\s+/),
+            (team): {
+              name: string | undefined;
+              players: string[];
+            } => {
+              const nameMatch = team.match(/^(.+)(?=:\s)/);
+              return {
+                name: (nameMatch) ? nameMatch[0] : undefined,
+                players: team.replace(/^(.+)(:\s)/, '').split(/\s*,\s*/),
+              };
+            },
+          );
 
           // Mapping team information from above into needed format.
-          runData.teams = await mapSeries(teamsRaw, async (rawTeam): Promise<RunDataTeam> => {
-            const team: RunData['teams'][0] = {
-              id: uuid(),
-              name: parseMarkdown(rawTeam.name).str,
-              players: [],
-            };
+          runData.teams = await mapSeries(
+            teamsRaw,
+            async (rawTeam): Promise<RunDataTeam> => {
+              const team: RunDataTeam = {
+                id: uuid(),
+                name: parseMarkdown(rawTeam.name).str,
+                players: [],
+              };
 
-            // Mapping player information into needed format.
-            team.players = await mapSeries(
-              rawTeam.players,
-              async (rawPlayer): Promise<RunDataPlayer> => {
-                const { str, url } = parseMarkdown(rawPlayer);
-                return {
-                  name: str || '',
-                  id: uuid(),
-                  teamID: team.id,
-                  social: {
-                    twitch: (
-                      url && url.includes('twitch.tv')
-                    ) ? url.split('/')[url.split('/').length - 1] : undefined,
-                  },
-                };
-              },
-            );
+              // Mapping player information into needed format.
+              team.players = await mapSeries(
+                rawTeam.players,
+                async (rawPlayer): Promise<RunDataPlayer> => {
+                  const { str, url } = parseMarkdown(rawPlayer);
+                  const { country, twitchURL } = await parseSRcomUserData(str, url);
+                  const usedURL = url || twitchURL; // Always favour URL from Horaro.
+                  return {
+                    name: str || '',
+                    id: uuid(),
+                    teamID: team.id,
+                    country,
+                    social: {
+                      twitch: (
+                        usedURL && usedURL.includes('twitch.tv')
+                      ) ? usedURL.split('/')[usedURL.split('/').length - 1] : undefined,
+                    },
+                  };
+                },
+              );
 
-            return team;
-          });
+              return team;
+            },
+          );
         }
 
         return runData;
