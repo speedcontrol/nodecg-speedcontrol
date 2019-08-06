@@ -28,6 +28,10 @@
   },
   "devDependencies": {
     "@types/clone": "^0.1.30",
+    "@types/markdown-it": "0.0.8",
+    "@types/needle": "^2.0.4",
+    "@types/remove-markdown": "^0.1.1",
+    "@types/uuid": "^3.4.5",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "@vue/component-compiler-utils": "^3.0.0",
@@ -89,6 +93,9 @@
   "dependencies": {
     "clone": "^2.1.2",
     "livesplit-core": "^0.10.2",
+    "markdown-it": "^9.0.1",
+    "needle": "^2.4.0",
+    "remove-markdown": "^0.3.0",
     "uuid": "^3.3.2"
   }
 }

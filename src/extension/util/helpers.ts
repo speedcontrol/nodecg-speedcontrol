@@ -28,3 +28,12 @@ export function msToTimeStr(ms: number): string {
   const hours = Math.floor(ms / (1000 * 60 * 60));
   return `${padTimeNumber(hours)}:${padTimeNumber(minutes)}:${padTimeNumber(seconds)}`;
 }
+
+/**
+ * Takes a variable that may be null and returns undefined if it is. If not, nothing is changed.
+ * @param varToCheck Variable to check that may be null.
+ */
+// eslint-disable-next-line
+export function nullToUndefined(varToCheck: any): any {
+  return (varToCheck === null) ? undefined : varToCheck;
+}

@@ -1,4 +1,5 @@
 import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line
+import HoraroImport from './horaro-import';
 import TimerApp from './timer';
 import * as nodecgApiContext from './util/nodecg-api-context';
 
@@ -7,4 +8,5 @@ export = (nodecg: NodeCG): void => {
   nodecgApiContext.set(nodecg);
 
   new TimerApp();
-};
+  new HoraroImport();
+}

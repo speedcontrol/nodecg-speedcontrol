@@ -21,7 +21,7 @@ export default class TimerApp {
 
   constructor() {
     this.nodecg = nodecgApiContext.get();
-    this.timerRep = this.nodecg.Replicant<Timer>('timer');
+    this.timerRep = this.nodecg.Replicant('timer');
 
     // Sets up the timer with a single split.
     const liveSplitRun = livesplitCore.Run.new();
