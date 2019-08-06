@@ -1,3 +1,5 @@
+import { RunDataTeam } from './RunDataTeam';
+
 export interface RunData {
   game?: string;
   gameTwitch?: string;
@@ -11,19 +13,7 @@ export interface RunData {
   setupTimeS?: number;
   scheduled?: string;
   scheduledS?: number;
-  teams: {
-    name?: string;
-    id: string;
-    players: {
-      name: string;
-      id: string;
-      teamID: string;
-      country?: string;
-      social: {
-        twitch?: string;
-      };
-    }[];
-  }[];
+  teams: RunDataTeam[];
   customData: {
     [key: string]: string;
   };
