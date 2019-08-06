@@ -11,8 +11,8 @@ import * as nodecgApiContext from './util/nodecg-api-context';
 const md = new MarkdownIt();
 
 interface ParsedMarkdown {
-  url: string | undefined;
-  str: string | undefined;
+  url?: string;
+  str?: string;
 }
 
 interface HoraroScheduleItem {
@@ -47,10 +47,7 @@ interface SRcomUserData {
  * @param str Markdowned string you wish to parse.
  */
 function parseMarkdown(str?: string): ParsedMarkdown {
-  const results: ParsedMarkdown = {
-    url: undefined,
-    str: undefined,
-  };
+  const results: ParsedMarkdown = {};
   if (!str) {
     return results;
   }
@@ -73,7 +70,7 @@ function parseMarkdown(str?: string): ParsedMarkdown {
  * usually name or Twitch username. If nothing is specified, will resolve immediately.
  * @param str String to attempt to look up the user by.
  */
-function querySRcomUserData(str: string | undefined): Promise<SRcomUserData> {
+function querySRcomUserData(str?: string): Promise<SRcomUserData> {
   return new Promise(async (resolve, reject): Promise<void> => {
     if (!str) {
       resolve();
@@ -98,18 +95,15 @@ function querySRcomUserData(str: string | undefined): Promise<SRcomUserData> {
  * @param name Name to attempt to use.
  * @param twitchURL Twitch URL to attempt to use.
  */
-function parseSRcomUserData(name: string | undefined, twitchURL: string | undefined): Promise<{
-  country: string | undefined;
-  twitchURL: string | undefined;
+function parseSRcomUserData(name?: string, twitchURL?: string): Promise<{
+  country?: string;
+  twitchURL?: string;
 }> {
   return new Promise(async (resolve): Promise<void> => {
     const foundData: {
-      country: string | undefined;
-      twitchURL: string | undefined;
-    } = {
-      country: undefined,
-      twitchURL: undefined,
-    };
+      country?: string;
+      twitchURL?: string;
+    } = {};
 
     // Get username from Twitch URL.
     const twitchUsername = (
@@ -187,10 +181,7 @@ function parseSchedule(): Promise<RunDataArray> {
           // vs/vs.
           const teamsRaw = await mapSeries(
             playerList.split(/\s+vs\.?\s+/),
-            (team): {
-              name: string | undefined;
-              players: string[];
-            } => {
+            (team): { name?: string; players: string[] } => {
               const nameMatch = team.match(/^(.+)(?=:\s)/);
               return {
                 name: (nameMatch) ? nameMatch[0] : undefined,
