@@ -37,3 +37,13 @@ export function msToTimeStr(ms: number): string {
 export function nullToUndefined(varToCheck: any): any {
   return (varToCheck === null) ? undefined : varToCheck;
 }
+
+/**
+ * Allow a script to wait for an amount of milliseconds.
+ * @param ms Milliseconds to sleep for.
+ */
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve): void => {
+    setTimeout(resolve, ms);
+  });
+}
