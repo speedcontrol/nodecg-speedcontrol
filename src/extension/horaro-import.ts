@@ -153,11 +153,11 @@ function parseSchedule(): Promise<RunDataArray> {
         };
 
         // General Run Data
-        runData.game = nullToUndefined(run.data[columns.game]);
-        runData.system = nullToUndefined(run.data[columns.system]);
-        runData.category = nullToUndefined(run.data[columns.category]);
-        runData.region = nullToUndefined(run.data[columns.region]);
-        runData.release = nullToUndefined(run.data[columns.release]);
+        const generalDataList = ['game', 'gameTwitch', 'system', 'category', 'region', 'release'];
+        generalDataList.forEach((type): void => {
+          // @ts-ignore: double check the list above and make sure they are on RunData!
+          runData[type] = parseMarkdown(nullToUndefined(run.data[columns[type]])).str;
+        });
 
         // Scheduled Date/Time
         runData.scheduledS = run.scheduled_t;
