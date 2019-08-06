@@ -58,7 +58,9 @@ export default Vue.extend({
       }
     },
     finishEdit() {
-      nodecg.sendMessage('editTimer', this.time);
+      if (this.time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+        nodecg.sendMessage('editTimer', this.time);
+      }
       this.editing = false;
     },
     abandonEdit() {

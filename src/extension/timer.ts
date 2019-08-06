@@ -149,7 +149,8 @@ export default class TimerApp {
    */
   editTimer(time: string): void {
     // Check to see if the time was given in the correct format and if it's stopped/paused.
-    if ((this.timerRep.value.state === 'stopped' || this.timerRep.value.state === 'paused') && time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+    if ((this.timerRep.value.state === 'stopped' || this.timerRep.value.state === 'paused')
+    && time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
       const ms = timeStrToMS(time);
       this.setTime(ms);
     }
