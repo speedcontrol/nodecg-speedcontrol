@@ -1,10 +1,11 @@
 import MarkdownIt from 'markdown-it';
 import needle from 'needle';
-import { NodeCG, Replicant } from "nodecg/types/server"; // eslint-disable-line
+import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
+import { mapSeries } from 'p-iteration';
 import removeMd from 'remove-markdown';
 import uuid from 'uuid/v4';
-import { RunData, RunDataArray } from '../../types';
 import { msToTimeStr, nullToUndefined } from './util/helpers';
+import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line
 import * as nodecgApiContext from './util/nodecg-api-context';
 
 const md = new MarkdownIt();
@@ -71,7 +72,7 @@ function parseSchedule(): Promise<RunDataArray> {
       const runItems: HoraroScheduleItem[] = resp.body.schedule.items;
       const defaultSetupTime: number = resp.body.schedule.setup_t;
 
-      const runDataArray = runItems.map((run): RunData => {
+      const runDataArray = await mapSeries(runItems, async (run): Promise<RunData> => {
         const runData: RunData = {
           teams: [],
           customData: {},
@@ -105,7 +106,7 @@ function parseSchedule(): Promise<RunDataArray> {
 
           // Mapping team string into something more manageable.
           // vs/vs.
-          const teamsRaw = playerList.split(/\s+vs\.?\s+/).map((team): {
+          const teamsRaw = await mapSeries(playerList.split(/\s+vs\.?\s+/), (team): {
             name: string | undefined;
             players: string[];
           } => {
@@ -117,7 +118,7 @@ function parseSchedule(): Promise<RunDataArray> {
           });
 
           // Mapping team information from above into needed format.
-          runData.teams = teamsRaw.map((rawTeam): RunData['teams'][0] => {
+          runData.teams = await mapSeries(teamsRaw, async (rawTeam): Promise<RunDataTeam> => {
             const team: RunData['teams'][0] = {
               id: uuid(),
               name: parseMarkdown(rawTeam.name).str,
@@ -125,17 +126,22 @@ function parseSchedule(): Promise<RunDataArray> {
             };
 
             // Mapping player information into needed format.
-            team.players = rawTeam.players.map((rawPlayer): RunData['teams'][0]['players'][0] => {
-              const { str, url } = parseMarkdown(rawPlayer);
-              return {
-                name: str || '',
-                id: uuid(),
-                teamID: team.id,
-                social: {
-                  twitch: (url && url.includes('twitch.tv')) ? url.split('/')[url.split('/').length - 1] : undefined,
-                },
-              };
-            });
+            team.players = await mapSeries(
+              rawTeam.players,
+              async (rawPlayer): Promise<RunDataPlayer> => {
+                const { str, url } = parseMarkdown(rawPlayer);
+                return {
+                  name: str || '',
+                  id: uuid(),
+                  teamID: team.id,
+                  social: {
+                    twitch: (
+                      url && url.includes('twitch.tv')
+                    ) ? url.split('/')[url.split('/').length - 1] : undefined,
+                  },
+                };
+              },
+            );
 
             return team;
           });
