@@ -9,6 +9,7 @@ import { msToTimeStr, nullToUndefined, sleep } from './util/helpers';
 import * as nodecgApiContext from './util/nodecg-api-context';
 
 const md = new MarkdownIt();
+let nodecg: NodeCG;
 
 interface ParsedMarkdown {
   url?: string;
@@ -152,7 +153,7 @@ function parseSchedule(): Promise<RunDataArray> {
       const runItems: HoraroScheduleItem[] = resp.body.schedule.items;
       const defaultSetupTime: number = resp.body.schedule.setup_t;
 
-      const runDataArray = await mapSeries(runItems, async (run): Promise<RunData> => {
+      const runDataArray = await mapSeries(runItems, async (run, index): Promise<RunData> => {
         const runData: RunData = {
           teams: [],
           customData: {},
@@ -233,6 +234,7 @@ function parseSchedule(): Promise<RunDataArray> {
           );
         }
 
+        nodecg.log.debug('Horaro Schedule Import: Successfully imported %s/%s.', index + 1, runItems.length);
         return runData;
       });
 
@@ -250,7 +252,8 @@ export default class HoraroImport {
   /* eslint-enable */
 
   constructor() {
-    this.nodecg = nodecgApiContext.get();
+    nodecg = nodecgApiContext.get();
+    this.nodecg = nodecg;
     this.runDataArray = this.nodecg.Replicant('runDataArray');
 
     this.nodecg.log.info('Starting import of Horaro schedule.');
