@@ -71,21 +71,28 @@ function parseMarkdown(str?: string): ParsedMarkdown {
  * @param str String to attempt to look up the user by.
  */
 function querySRcomUserData(str?: string): Promise<SRcomUserData> {
-  return new Promise(async (resolve, reject): Promise<void> => {
+  return new Promise(async (resolve): Promise<void> => {
     if (!str) {
       resolve();
     } else {
-      try {
-        const resp = await needle(
-          'get',
-          encodeURI(`https://www.speedrun.com/api/v1/users?max=1&lookup=${str.toLowerCase()}`),
-        );
-        // needs checks to see if this data is valid before trying to parse it/return it
-        resolve(resp.body.data[0]);
-      } catch (err) {
-        // needs some retrying logic in here
-        reject();
-      }
+      let success = true;
+      do {
+        try {
+          /* eslint-disable-next-line */
+          const resp = await needle(
+            'get',
+            encodeURI(`https://www.speedrun.com/api/v1/users?max=1&lookup=${str.toLowerCase()}`),
+          );
+          // @ts-ignore: parser exists but isn't in the typings
+          if (resp.parser === 'json') {
+            resolve(resp.body.data[0]);
+          } else {
+            resolve();
+          }
+        } catch (err) {
+          success = false;
+        }
+      } while (!success);
     }
   });
 }
