@@ -57,6 +57,12 @@
     "compatibleRange": "^1.0.0",
     "dashboardPanels": [
       {
+        "name": "run-player",
+        "title": "Run Player",
+        "file": "run-player.html",
+        "width": 3
+      },
+      {
         "name": "add-run",
         "title": "Add Run",
         "file": "add-run.html",
