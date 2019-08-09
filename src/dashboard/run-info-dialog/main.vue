@@ -74,7 +74,7 @@ export default Vue.extend({
       get() {
         return store.state.runData.game;
       },
-      set(value: string | undefined) {
+      set(value?: string) {
         store.commit('updateRunData', {
           value,
           name: 'game',
