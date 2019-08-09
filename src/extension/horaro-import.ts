@@ -34,17 +34,20 @@ interface HoraroScheduleItem {
   };
 }
 
-interface ColumnsOptions {
-  game: number;
-  gameTwitch: number;
-  category: number;
-  system: number;
-  region: number;
-  release: number;
-  player: number;
-  custom: {
-    [k: string]: number;
+interface ImportOptions {
+  columns: {
+    game: number;
+    gameTwitch: number;
+    category: number;
+    system: number;
+    region: number;
+    release: number;
+    player: number;
+    custom: {
+      [k: string]: number;
+    };
   };
+  split: 0 | 1;
 }
 
 /**
@@ -184,17 +187,20 @@ function parseSchedule(): Promise<RunDataArray> {
   return new Promise(async (resolve, reject): Promise<void> => {
     try {
       // Needs to be assigned somewhere else.
-      const columns: ColumnsOptions = {
-        game: 0,
-        gameTwitch: -1,
-        category: 3,
-        system: 2,
-        region: -1,
-        release: -1,
-        player: 1,
-        custom: {
-          layout: 5,
+      const opts: ImportOptions = {
+        columns: {
+          game: 0,
+          gameTwitch: -1,
+          category: 3,
+          system: 2,
+          region: -1,
+          release: -1,
+          player: 1,
+          custom: {
+            layout: 5,
+          },
         },
+        split: 0,
       };
 
       if (!config.schedule.defaultURL) {
@@ -206,7 +212,7 @@ function parseSchedule(): Promise<RunDataArray> {
 
       // Filtering out any games on the ignore list before processing them all.
       const newRunDataArray = await mapSeries(runItems.filter((run): boolean => (
-        !checkGameAgainstIgnoreList(run.data[columns.game])
+        !checkGameAgainstIgnoreList(run.data[opts.columns.game])
       )), async (run, index): Promise<RunData> => {
         // If a run with the same hash exists already, assume it's the same and use the same UUID.
         const hash = generateRunHash(run.data);
@@ -222,7 +228,7 @@ function parseSchedule(): Promise<RunDataArray> {
         const generalDataList = ['game', 'gameTwitch', 'system', 'category', 'region', 'release'];
         generalDataList.forEach((type): void => {
           // @ts-ignore: double check the list above and make sure they are on RunData!
-          runData[type] = parseMarkdown(nullToUndefined(run.data[columns[type]])).str;
+          runData[type] = parseMarkdown(nullToUndefined(run.data[opts.columns[type]])).str;
         });
 
         // Scheduled Date/Time
@@ -239,8 +245,8 @@ function parseSchedule(): Promise<RunDataArray> {
         runData.setupTimeS = defaultSetupTime;
 
         // Custom Data
-        Object.keys(columns.custom).forEach((col): void => {
-          const { str } = parseMarkdown(nullToUndefined(run.data[columns.custom[col]]));
+        Object.keys(opts.columns.custom).forEach((col): void => {
+          const { str } = parseMarkdown(nullToUndefined(run.data[opts.columns.custom[col]]));
           if (str) {
             runData.customData[col] = str;
           }
@@ -248,18 +254,22 @@ function parseSchedule(): Promise<RunDataArray> {
 
         // Players
         // (do we need this if? I like it for organisation at least)
-        if (run.data[columns.player]) {
-          const playerList: string = nullToUndefined(run.data[columns.player]) || '';
+        if (run.data[opts.columns.player]) {
+          const playerList: string = nullToUndefined(run.data[opts.columns.player]);
 
           // Mapping team string into something more manageable.
-          // vs/vs.
+          const teamSplittingRegex = [
+            /\s+vs\.?\s+/, // vs/vs.
+            /\s*,\s*/, // Comma (,)
+          ];
           const teamsRaw = await mapSeries(
-            playerList.split(/\s+vs\.?\s+/),
+            playerList.split(teamSplittingRegex[opts.split]),
             (team): { name?: string; players: string[] } => {
               const nameMatch = team.match(/^(.+)(?=:\s)/);
               return {
                 name: (nameMatch) ? nameMatch[0] : undefined,
-                players: team.replace(/^(.+)(:\s)/, '').split(/\s*,\s*/),
+                players: (opts.split === 0)
+                  ? team.replace(/^(.+)(:\s)/, '').split(/\s*,\s*/) : [team.replace(/^(.+)(:\s)/, '')],
               };
             },
           );
@@ -327,7 +337,7 @@ export default class HoraroImport {
     this.runDataArray = runDataArray;
 
     this.nodecg.listenFor('importSchedule', (): void => {
-      this.nodecg.log.info('Starting import of Horaro schedule.');
+      this.nodecg.log.info('Started importing Horaro schedule.');
       parseSchedule().then((runs): void => {
         this.runDataArray.value = runs;
         this.nodecg.log.info('Successfully imported Horaro schedule.');
