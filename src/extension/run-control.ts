@@ -56,7 +56,7 @@ export default class RunControl {
         if (currentIndex > 0) {
           [previous,, next] = this.runDataArray.value.slice(currentIndex - 1);
         } else { // We're at the start and can't splice -1.
-          [,, next] = this.runDataArray.value.slice(0);
+          [, next] = this.runDataArray.value.slice(0);
         }
       } else if (previousIndex >= 0) { // Found previous run in array, use for reference.
         [previous,, next] = this.runDataArray.value.slice(previousIndex);
