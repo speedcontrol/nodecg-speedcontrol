@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultURL": {
+          "type": "string",
+          "default": "https://horaro.org/zoton2testevent/speedcontrol.json?named=true&key=zoton2test"
+        },
+        "ignoreGamesWhileImporting": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "disableSpeedrunComLookup": {
+          "type": "boolean",
+          "default": false
+        },
+        "customData": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "key"
+            ]
+          }
+        }
+      },
+      "required": [
+        "defaultURL",
+        "disableSpeedrunComLookup"
+      ]
+    }
+  },
+  "required": [
+    "schedule"
+  ]
+}
