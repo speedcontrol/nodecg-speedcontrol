@@ -1,9 +1,6 @@
 import { RunDataArray } from '../../../types';
 import * as nodecgApiContext from './nodecg-api-context';
 
-const nodecg = nodecgApiContext.get();
-const runDataArray = nodecg.Replicant<RunDataArray>('runDataArray');
-
 /**
  * Checks if number needs a 0 adding to the start and does so if needed.
  * @param num Number which you want to turn into a padded string.
@@ -59,7 +56,9 @@ export function sleep(ms: number): Promise<void> {
  * @param id Unique ID of the run you want to attempt to find in the ran data array.
  */
 export function findRunIndexFromId(id?: string): number {
-  return runDataArray.value.findIndex((run): boolean => (
+  // @ts-ignore
+  const arr: RunDataArray = nodecgApiContext.get().readReplicant('runDataArray');
+  return arr.findIndex((run): boolean => (
     run.id === id
   ));
 }
