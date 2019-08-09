@@ -39,7 +39,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import clone from 'clone';
 import Run from './components/Run.vue';
 import { store } from '../_misc/replicant-store';
 import { RunData } from '../../../types';
@@ -55,15 +54,16 @@ export default Vue.extend({
     runDataActiveRun() {
       return store.state.runDataActiveRun;
     },
-    nextRun(): RunData | null {
-      const currentRunId = (this.runDataActiveRun) ? this.runDataActiveRun.id : undefined;
-      const currentRunIndex = this.runDataArray.findIndex(run => run.id === currentRunId);
-      return clone(this.runDataArray[currentRunIndex + 1]) || null;
+    runDataSurroundingRuns() {
+      return store.state.runDataSurroundingRuns;
+    },
+    nextRun(): RunData | undefined {
+      return this.runDataArray.find(run => run.id === this.runDataSurroundingRuns.next);
     },
   },
   methods: {
     returnToStart() {
-      nodecg.sendMessage('removeActiveRun').then(() => {
+      nodecg.sendMessage('returnToStart').then(() => {
         // run removal successful
       }).catch(() => {
         // run removal unsuccessful
@@ -71,7 +71,7 @@ export default Vue.extend({
     },
     playNextRun() {
       if (this.nextRun) {
-        nodecg.sendMessage('changeActiveRun', this.nextRun.id).then(() => {
+        nodecg.sendMessage('changeToNextRun').then(() => {
           // run change successful
         }).catch(() => {
           // run change unsuccessful
