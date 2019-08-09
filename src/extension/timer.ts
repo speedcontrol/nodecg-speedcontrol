@@ -1,8 +1,9 @@
 import livesplitCore from 'livesplit-core';
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { Timer } from '../../types';
-import { msToTimeStr, timeStrToMS } from './util/helpers';
-import * as nodecgApiContext from './util/nodecg-api-context';
+import Helpers from './util/helpers';
+
+const { msToTimeStr, timeStrToMS } = Helpers;
 
 // Cross references for LiveSplit's TimerPhases.
 const LS_TIMER_PHASE = {
@@ -19,8 +20,8 @@ export default class TimerApp {
   private timer: livesplitCore.Timer;
   /* eslint-enable */
 
-  constructor() {
-    this.nodecg = nodecgApiContext.get();
+  constructor(nodecg_: NodeCG) {
+    this.nodecg = nodecg_;
     this.timerRep = this.nodecg.Replicant('timer');
 
     // Sets up the timer with a single split.

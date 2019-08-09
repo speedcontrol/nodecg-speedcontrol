@@ -6,9 +6,9 @@ import { mapSeries } from 'p-iteration';
 import removeMd from 'remove-markdown';
 import uuid from 'uuid/v4';
 import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line
-import { msToTimeStr, nullToUndefined, sleep } from './util/helpers';
-import * as nodecgApiContext from './util/nodecg-api-context';
+import Helpers from './util/helpers';
 
+const { msToTimeStr, nullToUndefined, sleep } = Helpers;
 const md = new MarkdownIt();
 let nodecg: NodeCG;
 let runDataArray: Replicant<RunDataArray>;
@@ -262,12 +262,14 @@ function parseSchedule(): Promise<RunDataArray> {
 export default class HoraroImport {
   /* eslint-disable */
   private nodecg: NodeCG;
+  private h: Helpers;
   private runDataArray: Replicant<RunDataArray>;
   /* eslint-enable */
 
-  constructor() {
-    nodecg = nodecgApiContext.get();
+  constructor(nodecg_: NodeCG) {
+    nodecg = nodecg_;
     this.nodecg = nodecg;
+    this.h = new Helpers(nodecg_);
     runDataArray = this.nodecg.Replicant('runDataArray');
     this.runDataArray = runDataArray;
 
