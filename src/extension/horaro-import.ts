@@ -268,15 +268,17 @@ export default class HoraroImport {
   constructor() {
     nodecg = nodecgApiContext.get();
     this.nodecg = nodecg;
-
-    this.nodecg.log.info('Starting import of Horaro schedule.');
-    parseSchedule().then((runDataArray): void => {
-      this.runDataArray.value = runDataArray;
-      this.nodecg.log.info('Successfully imported Horaro schedule.');
-    }).catch((): void => {
-      this.nodecg.log.warn('Error importing Horaro schedule.');
     runDataArray = this.nodecg.Replicant('runDataArray');
     this.runDataArray = runDataArray;
+
+    this.nodecg.listenFor('importSchedule', (): void => {
+      this.nodecg.log.info('Starting import of Horaro schedule.');
+      parseSchedule().then((runs): void => {
+        this.runDataArray.value = runs;
+        this.nodecg.log.info('Successfully imported Horaro schedule.');
+      }).catch((): void => {
+        this.nodecg.log.warn('Error importing Horaro schedule.');
+      });
     });
   }
 }
