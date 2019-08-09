@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import MarkdownIt from 'markdown-it';
 import needle from 'needle';
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
@@ -10,6 +11,7 @@ import * as nodecgApiContext from './util/nodecg-api-context';
 
 const md = new MarkdownIt();
 let nodecg: NodeCG;
+let runDataArray: Replicant<RunDataArray>;
 
 interface ParsedMarkdown {
   url?: string;
@@ -135,6 +137,14 @@ function parseSRcomUserData(name?: string, twitchURL?: string): Promise<{
   });
 }
 
+/**
+ * Generates a hash based on the contents of the string based run data from Horaro.
+ * @param colData Array of strings (or nulls), obtained from the Horaro JSON data.
+ */
+function generateRunHash(colData: (string | null)[]): string {
+  return crypto.createHash('sha1').update(colData.join(), 'utf8').digest('hex');
+}
+
 function parseSchedule(): Promise<RunDataArray> {
   return new Promise(async (resolve, reject): Promise<void> => {
     try {
@@ -153,11 +163,15 @@ function parseSchedule(): Promise<RunDataArray> {
       const runItems: HoraroScheduleItem[] = resp.body.schedule.items;
       const defaultSetupTime: number = resp.body.schedule.setup_t;
 
-      const runDataArray = await mapSeries(runItems, async (run, index): Promise<RunData> => {
+      const newRunDataArray = await mapSeries(runItems, async (run, index): Promise<RunData> => {
+        // If a run with the same hash exists already, assume it's the same and use the same UUID.
+        const hash = generateRunHash(run.data);
+        const matchingOldRun = runDataArray.value.find((oldRun): boolean => oldRun.hash === hash);
         const runData: RunData = {
           teams: [],
           customData: {},
-          id: uuid(),
+          id: (matchingOldRun) ? matchingOldRun.id : uuid(),
+          hash,
         };
 
         // General Run Data
@@ -238,7 +252,7 @@ function parseSchedule(): Promise<RunDataArray> {
         return runData;
       });
 
-      resolve(runDataArray);
+      resolve(newRunDataArray);
     } catch (err) {
       reject(err);
     }
@@ -254,7 +268,6 @@ export default class HoraroImport {
   constructor() {
     nodecg = nodecgApiContext.get();
     this.nodecg = nodecg;
-    this.runDataArray = this.nodecg.Replicant('runDataArray');
 
     this.nodecg.log.info('Starting import of Horaro schedule.');
     parseSchedule().then((runDataArray): void => {
@@ -262,6 +275,8 @@ export default class HoraroImport {
       this.nodecg.log.info('Successfully imported Horaro schedule.');
     }).catch((): void => {
       this.nodecg.log.warn('Error importing Horaro schedule.');
+    runDataArray = this.nodecg.Replicant('runDataArray');
+    this.runDataArray = runDataArray;
     });
   }
 }

@@ -108,6 +108,9 @@
     },
     "id": {
       "type": "string"
+    },
+    "hash": {
+      "type": "string"
     }
   },
   "required": [
