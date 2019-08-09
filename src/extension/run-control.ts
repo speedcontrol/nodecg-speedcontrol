@@ -1,7 +1,7 @@
 import clone from 'clone';
 import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
-import { RunDataSurroundingRuns } from '../../schemas';
+import { RunDataActiveRunSurrounding } from '../../schemas';
 import { RunData, RunDataActiveRun, RunDataArray } from '../../types';
 import { findRunIndexFromId } from './util/helpers';
 import * as nodecgApiContext from './util/nodecg-api-context';
@@ -13,7 +13,7 @@ export default class RunControl {
   private nodecg: NodeCG;
   private runDataArray: Replicant<RunDataArray>;
   private runDataActiveRun: Replicant<RunDataActiveRun>;
-  private runDataSurroundingRuns: Replicant<RunDataSurroundingRuns>;
+  private runDataActiveRunSurrounding: Replicant<RunDataActiveRunSurrounding>;
   /* eslint-enable */
 
   constructor() {
@@ -21,11 +21,11 @@ export default class RunControl {
     this.nodecg = nodecg;
     this.runDataArray = this.nodecg.Replicant('runDataArray');
     this.runDataActiveRun = this.nodecg.Replicant('runDataActiveRun');
-    this.runDataSurroundingRuns = this.nodecg.Replicant('runDataSurroundingRuns');
+    this.runDataActiveRunSurrounding = this.nodecg.Replicant('runDataActiveRunSurrounding');
 
     this.nodecg.listenFor('changeActiveRun', (id: string, ack): void => this.changeActiveRun(id, ack));
     this.nodecg.listenFor('changeToNextRun', (msg: undefined, ack): void => (
-      this.changeActiveRun(this.runDataSurroundingRuns.value.next, ack)
+      this.changeActiveRun(this.runDataActiveRunSurrounding.value.next, ack)
     ));
     this.nodecg.listenFor('returnToStart', (msg: undefined, ack): void => this.removeActiveRun(ack));
 
@@ -49,8 +49,8 @@ export default class RunControl {
 
       // Try to find currently set runs in the run data array.
       const currentIndex = findRunIndexFromId(current.id);
-      const previousIndex = findRunIndexFromId(this.runDataSurroundingRuns.value.previous);
-      const nextIndex = findRunIndexFromId(this.runDataSurroundingRuns.value.next);
+      const previousIndex = findRunIndexFromId(this.runDataActiveRunSurrounding.value.previous);
+      const nextIndex = findRunIndexFromId(this.runDataActiveRunSurrounding.value.next);
 
       if (currentIndex >= 0) { // Found current run in array.
         if (currentIndex > 0) {
@@ -65,7 +65,7 @@ export default class RunControl {
       }
     }
 
-    this.runDataSurroundingRuns.value = {
+    this.runDataActiveRunSurrounding.value = {
       previous: (previous) ? previous.id : undefined,
       current: (current) ? current.id : undefined,
       next: (next) ? next.id : undefined,

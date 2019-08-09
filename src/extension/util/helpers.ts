@@ -53,12 +53,10 @@ export function sleep(ms: number): Promise<void> {
 
 /**
  * Attempt to find a run in the run data array from it's ID.
- * @param id Unique ID of the run you want to attempt to find in the ran data array.
+ * @param id Unique ID of the run you want to attempt to find in the run data array.
  */
 export function findRunIndexFromId(id?: string): number {
   // @ts-ignore
   const arr: RunDataArray = nodecgApiContext.get().readReplicant('runDataArray');
-  return arr.findIndex((run): boolean => (
-    run.id === id
-  ));
+  return arr.findIndex((run): boolean => run.id === id);
 }

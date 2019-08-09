@@ -54,11 +54,11 @@ export default Vue.extend({
     runDataActiveRun() {
       return store.state.runDataActiveRun;
     },
-    runDataSurroundingRuns() {
-      return store.state.runDataSurroundingRuns;
+    runDataActiveRunSurrounding() {
+      return store.state.runDataActiveRunSurrounding;
     },
     nextRun(): RunData | undefined {
-      return this.runDataArray.find(run => run.id === this.runDataSurroundingRuns.next);
+      return this.runDataArray.find(run => run.id === this.runDataActiveRunSurrounding.next);
     },
   },
   methods: {

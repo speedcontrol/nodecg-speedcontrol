@@ -5,7 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface RunDataSurroundingRuns {
+export interface RunDataActiveRunSurrounding {
   previous?: string;
   current?: string;
   next?: string;

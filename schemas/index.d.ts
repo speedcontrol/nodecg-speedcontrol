@@ -1,4 +1,4 @@
 export * from './runDataActiveRun';
+export * from './runDataActiveRunSurrounding';
 export * from './runDataArray';
-export * from './runDataSurroundingRuns';
 export * from './timer';
