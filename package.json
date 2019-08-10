@@ -29,6 +29,7 @@
   "dependencies": {
     "clone": "^2.1.2",
     "livesplit-core": "^0.10.2",
+    "lodash": "^4.17.15",
     "markdown-it": "^9.0.1",
     "needle": "^2.4.0",
     "p-iteration": "^1.1.8",
@@ -37,6 +38,7 @@
   },
   "devDependencies": {
     "@types/clone": "^0.1.30",
+    "@types/lodash": "^4.14.136",
     "@types/markdown-it": "0.0.8",
     "@types/needle": "^2.0.4",
     "@types/remove-markdown": "^0.1.1",

@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import _ from 'lodash';
 import MarkdownIt from 'markdown-it';
 import needle from 'needle';
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
@@ -180,7 +181,7 @@ function checkGameAgainstIgnoreList(game: string | null): boolean {
   }
   const list = config.schedule.ignoreGamesWhileImporting || [];
   return !!list.find((str): boolean => !!str.toLowerCase().match(
-    new RegExp(`\\b${game.toLowerCase()}\\b`),
+    new RegExp(`\\b${_.escapeRegExp(game.toLowerCase())}\\b`),
   ));
 }
 
