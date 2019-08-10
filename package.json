@@ -112,7 +112,7 @@
       {
         "name": "alert",
         "title": "",
-        "width": 5,
+        "width": 3,
         "file": "alert.html",
         "dialog": true
       }

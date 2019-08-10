@@ -2,8 +2,8 @@
   <div id="App">
     <component
       :is="currentComponent"
-      @confirm="closeDialog(true)"
-      @dismiss="closeDialog(false)"
+      @confirm="close(true)"
+      @dismiss="close(false)"
     ></component>
   </div>
 </template>
@@ -11,17 +11,18 @@
 <script lang="ts">
 import Vue, { VueConstructor } from 'vue';
 import HoraroImportConfirm from './components/horaro-import-confirm.vue';
+import { nodecg } from '../_misc/nodecg';
 
 export default Vue.extend({
   data() {
     return {
-      dialog: {} as any,
+      dialog: undefined as any,
       currentComponent: undefined as VueConstructor | undefined,
       callbackFunc: undefined as Function | undefined,
     };
   },
   mounted() {
-    this.dialog = nodecg.getDialog('alert');
+    this.dialog = nodecg.getDialog('alert') as any;
 
     // Attaching this function to the window for easy access from dashboard panels.
     (window as any).open = (opts: { name: string; func: Function; }) => this.open(opts);
@@ -32,13 +33,18 @@ export default Vue.extend({
   },
   methods: {
     open(opts: { name: string; func?: Function; }) {
-      if (opts.name === 'HoraroImportConfirm') {
-        this.currentComponent = HoraroImportConfirm;
-      }
+      this.currentComponent = ((name) => {
+        switch (name) {
+          case 'HoraroImportConfirm':
+            return HoraroImportConfirm;
+          default:
+            return undefined;
+        }
+      })(opts.name);
       this.callbackFunc = opts.func;
       this.dialog.open();
     },
-    closeDialog(confirm: boolean) {
+    close(confirm: boolean) {
       // Trigger callback function passed earlier if set.
       if (this.callbackFunc) {
         this.callbackFunc(confirm);

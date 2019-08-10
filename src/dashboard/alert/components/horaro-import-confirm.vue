@@ -2,6 +2,7 @@
   <div>
     <div>
       Importing will remove all currently added runs, continue?
+      <br><br>The currently active run will not be modified.
     </div>
     <br>
     <div class="DialogButtons">
