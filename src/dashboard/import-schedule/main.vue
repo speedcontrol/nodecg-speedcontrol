@@ -2,7 +2,7 @@
   <div id="App">
     <button
       :disabled="importStatus.importing"
-      @click="importSchedule"
+      @click="importScheduleConfirm"
     >
       Import Schedule
     </button>
@@ -25,8 +25,17 @@ export default Vue.extend({
     },
   },
   methods: {
-    importSchedule() {
-      nodecg.sendMessage('importSchedule');
+    importScheduleConfirm() {
+      const alertDialog = nodecg.getDialog('alert') as any;
+      alertDialog.querySelector('iframe').contentWindow.open({
+        name: 'HoraroImportConfirm',
+        func: this.importSchedule,
+      });
+    },
+    importSchedule(confirm: boolean) {
+      if (confirm) {
+        nodecg.sendMessage('importSchedule');
+      }
     },
   },
 });

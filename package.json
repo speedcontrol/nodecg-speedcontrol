@@ -108,6 +108,13 @@
             "type": "dismiss"
           }
         ]
+      },
+      {
+        "name": "alert",
+        "title": "",
+        "width": 5,
+        "file": "alert.html",
+        "dialog": true
       }
     ]
   },
