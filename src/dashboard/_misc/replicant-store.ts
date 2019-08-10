@@ -2,7 +2,7 @@ import clone from 'clone';
 import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { RunDataActiveRunSurrounding } from '../../../schemas';
+import { HoraroImportStatus, RunDataActiveRunSurrounding } from '../../../schemas';
 import { RunDataActiveRun, RunDataArray, Timer } from '../../../types';
 
 Vue.use(Vuex);
@@ -11,6 +11,7 @@ const replicantNames = [
   'runDataArray',
   'runDataActiveRun',
   'runDataActiveRunSurrounding',
+  'horaroImportStatus',
   'timer',
 ];
 const replicants: ReplicantBrowser<unknown>[] = [];
@@ -20,6 +21,7 @@ export const store = new Vuex.Store({
     runDataArray: [] as RunDataArray,
     runDataActiveRun: null as RunDataActiveRun,
     runDataActiveRunSurrounding: {} as RunDataActiveRunSurrounding,
+    horaroImportStatus: {} as HoraroImportStatus,
     timer: {} as Timer,
   },
   mutations: {

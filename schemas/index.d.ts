@@ -1,3 +1,4 @@
+export * from './horaroImportStatus';
 export * from './runDataActiveRun';
 export * from './runDataActiveRunSurrounding';
 export * from './runDataArray';

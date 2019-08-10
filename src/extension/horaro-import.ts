@@ -6,6 +6,7 @@ import { mapSeries } from 'p-iteration';
 import removeMd from 'remove-markdown';
 import uuid from 'uuid/v4';
 import { Configschema } from '../../configschema';
+import { HoraroImportStatus } from '../../schemas';
 import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line
 import Helpers from './util/helpers';
 
@@ -14,9 +15,8 @@ const md = new MarkdownIt();
 let nodecg: NodeCG;
 let config: Configschema;
 let runDataArray: Replicant<RunDataArray>;
-const userDataCache: {
-  [k: string]: SRcomUserData;
-} = {};
+let importStatus: Replicant<HoraroImportStatus>;
+const userDataCache: { [k: string]: SRcomUserData } = {};
 
 interface ParsedMarkdown {
   url?: string;
@@ -183,8 +183,18 @@ function checkGameAgainstIgnoreList(game: string | null): boolean {
   ));
 }
 
+/**
+ * Resets the replicant's values to default.
+ */
+function resetImportStatus(): void {
+  importStatus.value.importing = false;
+  importStatus.value.item = 0;
+  importStatus.value.total = 0;
+}
+
 function parseSchedule(): Promise<RunDataArray> {
   return new Promise(async (resolve, reject): Promise<void> => {
+    importStatus.value.importing = true;
     try {
       // Needs to be assigned somewhere else.
       const opts: ImportOptions = {
@@ -213,7 +223,10 @@ function parseSchedule(): Promise<RunDataArray> {
       // Filtering out any games on the ignore list before processing them all.
       const newRunDataArray = await mapSeries(runItems.filter((run): boolean => (
         !checkGameAgainstIgnoreList(run.data[opts.columns.game])
-      )), async (run, index): Promise<RunData> => {
+      )), async (run, index, arr): Promise<RunData> => {
+        importStatus.value.item = index + 1;
+        importStatus.value.total = arr.length;
+
         // If a run with the same hash exists already, assume it's the same and use the same UUID.
         const hash = generateRunHash(run.data);
         const matchingOldRun = runDataArray.value.find((oldRun): boolean => oldRun.hash === hash);
@@ -314,8 +327,10 @@ function parseSchedule(): Promise<RunDataArray> {
         return runData;
       });
 
+      resetImportStatus();
       resolve(newRunDataArray);
     } catch (err) {
+      resetImportStatus();
       reject(err);
     }
   });
@@ -333,10 +348,14 @@ export default class HoraroImport {
     this.nodecg = nodecg;
     this.h = new Helpers(nodecg_);
     config = this.h.bundleConfig();
-    runDataArray = this.nodecg.Replicant('runDataArray');
+    runDataArray = nodecg_.Replicant('runDataArray');
+    importStatus = nodecg_.Replicant('horaroImportStatus', { persistent: false });
     this.runDataArray = runDataArray;
 
     this.nodecg.listenFor('importSchedule', (): void => {
+      if (importStatus.value.importing) {
+        return;
+      }
       this.nodecg.log.info('Started importing Horaro schedule.');
       parseSchedule().then((runs): void => {
         this.runDataArray.value = runs;
