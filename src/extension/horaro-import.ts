@@ -6,7 +6,7 @@ import { mapSeries } from 'p-iteration';
 import removeMd from 'remove-markdown';
 import uuid from 'uuid/v4';
 import { Configschema } from '../../configschema';
-import { HoraroImportStatus } from '../../schemas';
+import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
 import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line
 import Helpers from './util/helpers';
 
@@ -16,6 +16,7 @@ let nodecg: NodeCG;
 let config: Configschema;
 let runDataArray: Replicant<RunDataArray>;
 let importStatus: Replicant<HoraroImportStatus>;
+let defaultSetupTime: Replicant<DefaultSetupTime>;
 const userDataCache: { [k: string]: SRcomUserData } = {};
 
 interface ParsedMarkdown {
@@ -218,7 +219,8 @@ function parseSchedule(): Promise<RunDataArray> {
       }
       const resp = await needle('get', config.schedule.defaultURL);
       const runItems: HoraroScheduleItem[] = resp.body.schedule.items;
-      const defaultSetupTime: number = resp.body.schedule.setup_t;
+      const setupTime: number = resp.body.schedule.setup_t;
+      defaultSetupTime.value = setupTime;
 
       // Filtering out any games on the ignore list before processing them all.
       const newRunDataArray = await mapSeries(runItems.filter((run): boolean => (
@@ -254,8 +256,8 @@ function parseSchedule(): Promise<RunDataArray> {
 
         // Setup Time
         // (need to do custom setup times here as well)
-        runData.setupTime = msToTimeStr(defaultSetupTime * 1000);
-        runData.setupTimeS = defaultSetupTime;
+        runData.setupTime = msToTimeStr(setupTime * 1000);
+        runData.setupTimeS = setupTime;
 
         // Custom Data
         Object.keys(opts.columns.custom).forEach((col): void => {
@@ -350,6 +352,7 @@ export default class HoraroImport {
     config = this.h.bundleConfig();
     runDataArray = nodecg_.Replicant('runDataArray');
     importStatus = nodecg_.Replicant('horaroImportStatus', { persistent: false });
+    defaultSetupTime = nodecg_.Replicant('defaultSetupTime');
     this.runDataArray = runDataArray;
 
     this.nodecg.listenFor('importSchedule', (): void => {
