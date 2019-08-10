@@ -33,6 +33,7 @@
     "markdown-it": "^9.0.1",
     "needle": "^2.4.0",
     "p-iteration": "^1.1.8",
+    "parse-duration": "^0.1.1",
     "remove-markdown": "^0.3.0",
     "uuid": "^3.3.2"
   },

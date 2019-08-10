@@ -4,6 +4,7 @@ import MarkdownIt from 'markdown-it';
 import needle from 'needle';
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { mapSeries } from 'p-iteration';
+import parseDuration from 'parse-duration';
 import removeMd from 'remove-markdown';
 import uuid from 'uuid/v4';
 import { Configschema } from '../../configschema';
@@ -31,7 +32,7 @@ interface HoraroScheduleItem {
   scheduled: string;
   scheduled_t: number;
   data: (string | null)[];
-  options: {
+  options?: {
     setup?: string;
   };
 }
@@ -256,9 +257,15 @@ function parseSchedule(): Promise<RunDataArray> {
         runData.estimate = msToTimeStr(run.length_t * 1000);
 
         // Setup Time
-        // (need to do custom setup times here as well)
-        runData.setupTime = msToTimeStr(setupTime * 1000);
-        runData.setupTimeS = setupTime;
+        let runSetupTime = setupTime * 1000;
+        if (run.options && run.options.setup) {
+          const duration = parseDuration(run.options.setup);
+          if (duration > 0) {
+            runSetupTime = duration;
+          }
+        }
+        runData.setupTime = msToTimeStr(runSetupTime);
+        runData.setupTimeS = runSetupTime / 1000;
 
         // Custom Data
         Object.keys(opts.columns.custom).forEach((col): void => {
