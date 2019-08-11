@@ -2,7 +2,7 @@
   <div id="App">
     <div>
       <button
-        @click="returnToStart"
+        @click="returnToStartConfirm"
       >
         Return To Start
       </button>
@@ -62,12 +62,21 @@ export default Vue.extend({
     },
   },
   methods: {
-    returnToStart() {
-      nodecg.sendMessage('returnToStart').then(() => {
-        // run removal successful
-      }).catch(() => {
-        // run removal unsuccessful
+    returnToStartConfirm() {
+      const alertDialog = nodecg.getDialog('alert') as any;
+      alertDialog.querySelector('iframe').contentWindow.open({
+        name: 'ReturnToStartConfirm',
+        func: this.returnToStart,
       });
+    },
+    returnToStart(confirm: boolean) {
+      if (confirm) {
+        nodecg.sendMessage('returnToStart').then(() => {
+          // run removal successful
+        }).catch(() => {
+          // run removal unsuccessful
+        });
+      }
     },
     playNextRun() {
       if (this.nextRun) {

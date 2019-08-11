@@ -11,6 +11,7 @@
 <script lang="ts">
 import Vue, { VueConstructor } from 'vue';
 import HoraroImportConfirm from './components/horaro-import-confirm.vue';
+import ReturnToStartConfirm from './components/return-to-start-confirm.vue';
 import { nodecg } from '../_misc/nodecg';
 
 export default Vue.extend({
@@ -37,6 +38,8 @@ export default Vue.extend({
         switch (name) {
           case 'HoraroImportConfirm':
             return HoraroImportConfirm;
+          case 'ReturnToStartConfirm':
+            return ReturnToStartConfirm;
           default:
             return undefined;
         }
