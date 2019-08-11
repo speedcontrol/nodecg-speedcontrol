@@ -2,7 +2,7 @@ import clone from 'clone';
 import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { RunDataActiveRunSurrounding } from '../../schemas';
-import { RunData, RunDataActiveRun, RunDataArray } from '../../types';
+import { RunData, RunDataActiveRun, RunDataArray, Timer } from '../../types'; // eslint-disable-line
 import Helpers from './util/helpers';
 
 const { processAck } = Helpers;
@@ -14,6 +14,7 @@ export default class RunControl {
   private array: Replicant<RunDataArray>;
   private activeRun: Replicant<RunDataActiveRun>;
   private activeRunSurrounding: Replicant<RunDataActiveRunSurrounding>;
+  private timer: Replicant<Timer>;
   /* eslint-enable */
 
   constructor(nodecg: NodeCG) {
@@ -22,6 +23,7 @@ export default class RunControl {
     this.array = this.nodecg.Replicant('runDataArray');
     this.activeRun = this.nodecg.Replicant('runDataActiveRun');
     this.activeRunSurrounding = this.nodecg.Replicant('runDataActiveRunSurrounding');
+    this.timer = this.nodecg.Replicant('timer');
 
     this.nodecg.listenFor('changeActiveRun', (id: string, ack): void => this.changeActiveRun(id, ack));
     this.nodecg.listenFor('changeToNextRun', (msg: undefined, ack): void => (
@@ -80,14 +82,15 @@ export default class RunControl {
   changeActiveRun(id?: string, ack?: ListenForCb): void {
     const runData = this.array.value.find((run): boolean => run.id === id);
     let err: Error | null = null;
-    if (runData) {
+    if (['running', 'paused'].includes(this.timer.value.state)) {
+      err = new Error('Cannot change run while timer is running/paused.');
+    } else if (runData) {
       this.activeRun.value = clone(runData);
     } else if (!id) {
       err = new Error('No run ID was supplied.');
     } else {
       err = new Error(`Run with ID ${id} not found.`);
     }
-
     processAck(err, ack);
   }
 
@@ -96,7 +99,12 @@ export default class RunControl {
    * @param ack Acknowledgement callback.
    */
   removeActiveRun(ack?: ListenForCb): void {
-    this.activeRun.value = null;
-    processAck(null, ack);
+    let err: Error | null = null;
+    if (['running', 'paused'].includes(this.timer.value.state)) {
+      err = new Error('Cannot change run while timer is running/paused.');
+    } else {
+      this.activeRun.value = null;
+    }
+    processAck(err, ack);
   }
 }

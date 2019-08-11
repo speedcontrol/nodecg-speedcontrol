@@ -2,6 +2,7 @@
   <div id="App">
     <div>
       <button
+        :disabled="!runDataActiveRun || disableChange"
         @click="returnToStartConfirm"
       >
         Return To Start
@@ -17,6 +18,7 @@
     <br>
     <div v-if="nextRun">
       <button
+        :disabled="disableChange"
         @click="playNextRun"
       >
         Play
@@ -59,6 +61,9 @@ export default Vue.extend({
     },
     nextRun(): RunData | undefined {
       return this.runDataArray.find(run => run.id === this.runDataActiveRunSurrounding.next);
+    },
+    disableChange() {
+      return ['running', 'paused'].includes(store.state.timer.state);
     },
   },
   methods: {
