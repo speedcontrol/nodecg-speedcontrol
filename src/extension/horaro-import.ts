@@ -15,6 +15,7 @@ import Helpers from './util/helpers';
 const {
   msToTimeStr,
   nullToUndefined,
+  nullToNegOne,
   sleep,
   processAck,
 } = Helpers;
@@ -141,7 +142,7 @@ export default class HoraroImport {
         }
         const resp = await needle('get', encodeURI(jsonURL));
         if (resp.statusCode !== 200) {
-          throw new Error('HTTP status code not 200');
+          throw new Error('HTTP status code not 200.');
         }
         this.scheduleDataCache[dashUUID] = resp.body;
         resolve(resp.body);
@@ -158,8 +159,8 @@ export default class HoraroImport {
    */
   importSchedule(opts: ImportOptions, dashUUID: string): Promise<RunDataArray> {
     return new Promise(async (resolve, reject): Promise<void> => {
-      this.importStatus.value.importing = true;
       try {
+        this.importStatus.value.importing = true;
         if (!this.config.schedule.defaultURL) {
           throw new Error('Schedule URL is not defined.');
         }
@@ -170,7 +171,7 @@ export default class HoraroImport {
 
         // Filtering out any games on the ignore list before processing them all.
         const newRunDataArray = await mapSeries(runItems.filter((run): boolean => (
-          !this.checkGameAgainstIgnoreList(run.data[opts.columns.game])
+          !this.checkGameAgainstIgnoreList(run.data[nullToNegOne(opts.columns.game)])
         )), async (run, index, arr): Promise<RunData> => {
           this.importStatus.value.item = index + 1;
           this.importStatus.value.total = arr.length;
@@ -191,7 +192,16 @@ export default class HoraroImport {
           const generalDataList = ['game', 'gameTwitch', 'system', 'category', 'region', 'release'];
           generalDataList.forEach((type): void => {
             // @ts-ignore: double check the list above and make sure they are on RunData!
-            runData[type] = this.parseMarkdown(nullToUndefined(run.data[opts.columns[type]])).str;
+            runData[type] = this.parseMarkdown(
+              nullToUndefined(
+                run.data[
+                  nullToNegOne(
+                    // @ts-ignore: same as above
+                    opts.columns[type]
+                  )
+                ]
+              )
+            ).str;
           });
 
           // Scheduled Date/Time
@@ -215,7 +225,15 @@ export default class HoraroImport {
 
           // Custom Data
           Object.keys(opts.columns.custom).forEach((col): void => {
-            const { str } = this.parseMarkdown(nullToUndefined(run.data[opts.columns.custom[col]]));
+            const { str } = this.parseMarkdown(
+              nullToUndefined(
+                run.data[
+                  nullToNegOne(
+                    opts.columns.custom[col]
+                  )
+                ]
+              )
+            );
             if (str) {
               runData.customData[col] = str;
             }
@@ -223,8 +241,8 @@ export default class HoraroImport {
 
           // Players
           // (do we need this if? I like it for organisation at least)
-          if (run.data[opts.columns.player]) {
-            const playerList: string = nullToUndefined(run.data[opts.columns.player]);
+          if (run.data[nullToNegOne(opts.columns.player)]) {
+            const playerList: string = nullToUndefined(run.data[nullToNegOne(opts.columns.player)]);
 
             // Mapping team string into something more manageable.
             const teamSplittingRegex = [

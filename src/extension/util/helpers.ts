@@ -51,6 +51,15 @@ export default class Helpers {
   }
 
   /**
+   * Takes a variable that should be a number but may be null and
+   * returns -1 if it is. If not, nothing is changed.
+   * @param varToCheck Number or null that should be a number.
+   */
+  static nullToNegOne(varToCheck: number | null): number {
+    return (varToCheck === null) ? -1 : varToCheck;
+  }
+
+  /**
    * Allow a script to wait for an amount of milliseconds.
    * @param ms Milliseconds to sleep for.
    */
