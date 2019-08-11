@@ -16,7 +16,7 @@
     </button>
     <br>
     <!-- Message before schedule data is loaded -->
-    <div v-if="!loaded">
+    <div v-if="!loaded && !importStatus.importing">
       <br>Insert the Horaro schedule URL above and press
       the "Load Schedule Data" button to continue.
     </div>
@@ -29,14 +29,16 @@
         v-for="option in runDataOptions"
         :key="option.key"
         :obj-key="option.key"
-        :text="option.text"
+        :name="option.name"
+        :custom="option.custom"
         :columns="columns"
       ></dropdown>
       <br><br>
       Split Players:
       <a
         href="#"
-        title="This option dictates how the players in your relevant schedule column are split; check the README for more information."
+        title="This option dictates how the players in your relevant schedule column are split;
+check the README for more information."
       >
         ?
       </a>
@@ -91,13 +93,13 @@ export default Vue.extend({
       loaded: false,
       columns: [],
       runDataOptions: [
-        { text: 'Game', key: 'game' },
-        { text: 'Game (Twitch)', key: 'gameTwitch' },
-        { text: 'Category', key: 'category' },
-        { text: 'System', key: 'system' },
-        { text: 'Region', key: 'region' },
-        { text: 'Released', key: 'release' },
-        { text: 'Player(s)', key: 'player' },
+        { name: 'Game', key: 'game' },
+        { name: 'Game (Twitch)', key: 'gameTwitch' },
+        { name: 'Category', key: 'category' },
+        { name: 'System', key: 'system' },
+        { name: 'Region', key: 'region' },
+        { name: 'Released', key: 'release' },
+        { name: 'Player(s)', key: 'player' },
       ],
     };
   },
@@ -115,6 +117,19 @@ export default Vue.extend({
         });
       },
     },
+  },
+  created() {
+    // Add dropdowns for custom data on page load.
+    const customData: {
+      name: string;
+      key: string;
+    }[] = nodecg.bundleConfig.schedule.customData || [];
+    this.runDataOptions = this.runDataOptions.concat(
+      customData.map((col) => {
+        store.commit('addCustomColumn', { name: col.key });
+        return { name: col.name, key: col.key, custom: true };
+      }),
+    );
   },
   methods: {
     loadSchedule() {

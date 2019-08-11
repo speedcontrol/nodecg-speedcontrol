@@ -6,7 +6,7 @@
       :value="null"
       disabled
     >
-      Select Column: {{ text }}
+      Select Column: {{ name }}
     </option>
     <option
       :value="-1"
@@ -14,11 +14,11 @@
       N/A
     </option>
     <option
-      v-for="(name, index) in columns"
-      :key="name"
+      v-for="(colName, index) in columns"
+      :key="colName"
       :value="index"
     >
-      {{ name }}
+      {{ colName }}
     </option>
   </select>
 </template>
@@ -33,9 +33,13 @@ export default Vue.extend({
       type: String,
       default: 'game',
     },
-    text: {
+    name: {
       type: String,
       default: 'Game',
+    },
+    custom: {
+      type: Boolean,
+      default: false,
     },
     columns: {
       type: Array,
@@ -49,12 +53,16 @@ export default Vue.extend({
       // Vetur doesn't think "this" exists in here?
       get(): number {
         // objKey must exist in the columns object!
+        if ((this as any).custom) {
+          return (store.state.opts.columns.custom as any)[(this as any).objKey];
+        }
         return (store.state.opts.columns as any)[(this as any).objKey];
       },
       set(value: number) {
         store.commit('updateColumn', {
           name: (this as any).objKey,
           value,
+          custom: (this as any).custom,
         });
       },
     },

@@ -20,8 +20,15 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    updateColumn(state, { name, value }) {
-      Vue.set(state.opts.columns, name, value);
+    updateColumn(state, { name, value, custom }) {
+      if (custom) {
+        Vue.set(state.opts.columns.custom, name, value);
+      } else {
+        Vue.set(state.opts.columns, name, value);
+      }
+    },
+    addCustomColumn(state, { name }) {
+      Vue.set(state.opts.columns.custom, name, null);
     },
     updateSplit(state, { value }) {
       Vue.set(state.opts, 'split', value);
