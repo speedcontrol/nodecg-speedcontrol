@@ -26,10 +26,10 @@ export default class RunControl {
     this.timer = this.nodecg.Replicant('timer');
 
     this.nodecg.listenFor('changeActiveRun', (id: string, ack): void => this.changeActiveRun(id, ack));
-    this.nodecg.listenFor('changeToNextRun', (msg: undefined, ack): void => (
+    this.nodecg.listenFor('changeToNextRun', (msg, ack): void => (
       this.changeActiveRun(this.activeRunSurrounding.value.next, ack)
     ));
-    this.nodecg.listenFor('returnToStart', (msg: undefined, ack): void => this.removeActiveRun(ack));
+    this.nodecg.listenFor('returnToStart', (msg, ack): void => this.removeActiveRun(ack));
 
     this.activeRun.on('change', (): void => this.changeSurroundingRuns());
     this.array.on('change', (): void => this.changeSurroundingRuns());
@@ -86,6 +86,7 @@ export default class RunControl {
       err = new Error('Cannot change run while timer is running/paused.');
     } else if (runData) {
       this.activeRun.value = clone(runData);
+      this.nodecg.sendMessage('resetTimer');
     } else if (!id) {
       err = new Error('No run ID was supplied.');
     } else {
@@ -104,6 +105,7 @@ export default class RunControl {
       err = new Error('Cannot change run while timer is running/paused.');
     } else {
       this.activeRun.value = null;
+      this.nodecg.sendMessage('resetTimer');
     }
     processAck(err, ack);
   }
