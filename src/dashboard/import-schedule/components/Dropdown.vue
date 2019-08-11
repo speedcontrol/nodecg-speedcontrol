@@ -1,7 +1,6 @@
 <template>
   <select
     v-model="selected"
-    class="Dropdown"
   >
     <option
       :value="null"

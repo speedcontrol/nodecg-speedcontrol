@@ -23,5 +23,8 @@ export default new Vuex.Store({
     updateColumn(state, { name, value }) {
       Vue.set(state.opts.columns, name, value);
     },
+    updateSplit(state, { value }) {
+      Vue.set(state.opts, 'split', value);
+    },
   },
 });

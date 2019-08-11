@@ -23,6 +23,8 @@
     <!-- Dropdowns after data is imported to toggle settings -->
     <div v-if="loaded && !importStatus.importing">
       <br>
+      Select the correct columns that match the data type below:
+      <!--, if the one auto-selected is wrong:-->
       <dropdown
         v-for="option in runDataOptions"
         :key="option.key"
@@ -30,6 +32,22 @@
         :text="option.text"
         :columns="columns"
       ></dropdown>
+      <br><br>
+      Split Players:
+      <a
+        href="#"
+        title="This option dictates how the players in your relevant schedule column are split; check the README for more information."
+      >
+        ?
+      </a>
+      <select v-model="splitOption">
+        <option :value="0">
+          vs/vs. [Teams]
+        </option>
+        <option :value="1">
+          Comma (,) [No Teams]
+        </option>
+      </select>
     </div>
     <!-- Message while importing is in progress -->
     <div v-else-if="importStatus.importing">
@@ -87,6 +105,16 @@ export default Vue.extend({
     importStatus() {
       return repStore.state.horaroImportStatus;
     },
+    splitOption: {
+      get() {
+        return store.state.opts.split;
+      },
+      set(value: number) {
+        store.commit('updateSplit', {
+          value,
+        });
+      },
+    },
   },
   methods: {
     loadSchedule() {
@@ -133,7 +161,7 @@ export default Vue.extend({
     width: 100%;
   }
 
-  .Dropdown {
+  select {
     width: 100%;
   }
 </style>
