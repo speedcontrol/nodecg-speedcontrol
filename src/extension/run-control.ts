@@ -5,8 +5,6 @@ import { RunDataActiveRunSurrounding } from '../../schemas';
 import { RunData, RunDataActiveRun, RunDataArray } from '../../types';
 import Helpers from './util/helpers';
 
-let nodecg: NodeCG;
-
 export default class RunControl {
   /* eslint-disable */
   private nodecg: NodeCG;
@@ -16,10 +14,9 @@ export default class RunControl {
   private activeRunSurrounding: Replicant<RunDataActiveRunSurrounding>;
   /* eslint-enable */
 
-  constructor(nodecg_: NodeCG) {
-    nodecg = nodecg_;
+  constructor(nodecg: NodeCG) {
     this.nodecg = nodecg;
-    this.h = new Helpers(nodecg_);
+    this.h = new Helpers(nodecg);
     this.array = this.nodecg.Replicant('runDataArray');
     this.activeRun = this.nodecg.Replicant('runDataActiveRun');
     this.activeRunSurrounding = this.nodecg.Replicant('runDataActiveRunSurrounding');

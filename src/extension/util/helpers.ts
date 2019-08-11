@@ -5,8 +5,8 @@ import { RunDataArray } from '../../../types';
 export default class Helpers {
   private nodecg: NodeCG;
 
-  constructor(nodecg_: NodeCG) {
-    this.nodecg = nodecg_;
+  constructor(nodecg: NodeCG) {
+    this.nodecg = nodecg;
   }
 
   /**

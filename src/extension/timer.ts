@@ -20,8 +20,8 @@ export default class TimerApp {
   private timer: livesplitCore.Timer;
   /* eslint-enable */
 
-  constructor(nodecg_: NodeCG) {
-    this.nodecg = nodecg_;
+  constructor(nodecg: NodeCG) {
+    this.nodecg = nodecg;
     this.timerRep = this.nodecg.Replicant('timer');
 
     // Sets up the timer with a single split.
