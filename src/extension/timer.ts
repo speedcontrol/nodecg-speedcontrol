@@ -58,7 +58,7 @@ export default class TimerApp {
    * @param forceMS Force the timer to start with this amount of milliseconds already.
    */
   startTimer(force?: boolean, ack?: ListenForCb): void {
-    if (!force && this.timerRep.value.state !== 'stopped' && this.timerRep.value.state !== 'paused') {
+    if (!force && !['stopped', 'paused'].includes(this.timerRep.value.state)) {
       processAck(true, ack);
       return;
     }
@@ -131,7 +131,7 @@ export default class TimerApp {
    */
   editTimer(time: string, ack?: ListenForCb): void {
     // Check to see if the time was given in the correct format and if it's stopped/paused.
-    if ((this.timerRep.value.state === 'stopped' || this.timerRep.value.state === 'paused')
+    if ((['stopped', 'paused'].includes(this.timerRep.value.state))
     && time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
       const ms = timeStrToMS(time);
       this.setTime(ms);
