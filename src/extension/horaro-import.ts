@@ -20,10 +20,19 @@ let runDataArray: Replicant<RunDataArray>;
 let importStatus: Replicant<HoraroImportStatus>;
 let defaultSetupTime: Replicant<DefaultSetupTime>;
 const userDataCache: { [k: string]: SRcomUserData } = {};
+const scheduleDataCache: { [k: string]: HoraroSchedule } = {};
 
 interface ParsedMarkdown {
   url?: string;
   str?: string;
+}
+
+// Some really simple typings for the schedule data.
+interface HoraroSchedule {
+  schedule: {
+    setup_t: number;
+    items: HoraroScheduleItem[];
+  };
 }
 
 interface HoraroScheduleItem {
@@ -195,33 +204,47 @@ function resetImportStatus(): void {
   importStatus.value.total = 0;
 }
 
-function parseSchedule(): Promise<RunDataArray> {
+/**
+ * Load schedule data in from Horaro, store in a temporary cache and return it.
+ * @param url URL of Horaro schedule.
+ * @param dashUUID UUID of dashboard element, generated on panel load and passed here.
+ */
+function loadSchedule(url: string, dashUUID: string): Promise<HoraroSchedule> {
+  return new Promise(async (resolve, reject): Promise<void> => {
+    try {
+      let jsonURL = `${url}.json`;
+      if (url.match((/\?key=/))) { // If schedule URL has a key in it, extract it correctly.
+        const urlMatch = (url.match(/(.*?)(?=(\?key=))/) as RegExpMatchArray)[0];
+        const keyMatch = (url.match(/(?<=(\?key=))(.*?)$/) as RegExpMatchArray)[0];
+        jsonURL = `${urlMatch}.json?key=${keyMatch}`;
+      }
+      const resp = await needle('get', encodeURI(jsonURL));
+      if (resp.statusCode !== 200) {
+        throw new Error('HTTP status code not 200');
+      }
+      scheduleDataCache[dashUUID] = resp.body;
+      resolve(resp.body);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+/**
+ * Parses schedule data loaded in above function.
+ * @param opts Options on how the schedule data should be parsed, including column numbers.
+ * @param dashUUID UUID of dashboard element, generated on panel load and passed here.
+ */
+function parseSchedule(opts: ImportOptions, dashUUID: string): Promise<RunDataArray> {
   return new Promise(async (resolve, reject): Promise<void> => {
     importStatus.value.importing = true;
     try {
-      // Needs to be assigned somewhere else.
-      const opts: ImportOptions = {
-        columns: {
-          game: 0,
-          gameTwitch: -1,
-          category: 3,
-          system: 2,
-          region: -1,
-          release: -1,
-          player: 1,
-          custom: {
-            layout: 5,
-          },
-        },
-        split: 0,
-      };
-
       if (!config.schedule.defaultURL) {
         throw new Error('Schedule URL is not defined.');
       }
-      const resp = await needle('get', config.schedule.defaultURL);
-      const runItems: HoraroScheduleItem[] = resp.body.schedule.items;
-      const setupTime: number = resp.body.schedule.setup_t;
+      const data = scheduleDataCache[dashUUID];
+      const runItems: HoraroScheduleItem[] = data.schedule.items;
+      const setupTime: number = data.schedule.setup_t;
       defaultSetupTime.value = setupTime;
 
       // Filtering out any games on the ignore list before processing them all.
@@ -363,15 +386,33 @@ export default class HoraroImport {
     defaultSetupTime = nodecg_.Replicant('defaultSetupTime');
     this.runDataArray = runDataArray;
 
-    this.nodecg.listenFor('importSchedule', (): void => {
+    this.nodecg.listenFor('loadSchedule', (opts: {
+      url: string;
+      dashUUID: string;
+    }, ack): void => {
+      loadSchedule(opts.url, opts.dashUUID).then((data): void => {
+        if (ack && !ack.handled) {
+          ack(null, data);
+        }
+      }).catch((err): void => {
+        if (ack && !ack.handled) {
+          ack(err);
+        }
+      });
+    });
+
+    this.nodecg.listenFor('importSchedule', (opts: {
+      opts: ImportOptions;
+      dashUUID: string;
+    }): void => {
       if (importStatus.value.importing) {
         return;
       }
       this.nodecg.log.info('Started importing Horaro schedule.');
-      parseSchedule().then((runs): void => {
+      parseSchedule(opts.opts, opts.dashUUID).then((runs): void => {
         this.runDataArray.value = runs;
         this.nodecg.log.info('Successfully imported Horaro schedule.');
-      }).catch((err: Error): void => {
+      }).catch((err): void => {
         this.nodecg.log.warn('Error importing Horaro schedule:', err);
       });
     });
