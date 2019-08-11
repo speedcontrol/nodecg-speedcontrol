@@ -5,6 +5,8 @@ import { RunDataActiveRunSurrounding } from '../../schemas';
 import { RunData, RunDataActiveRun, RunDataArray } from '../../types';
 import Helpers from './util/helpers';
 
+const { processAck } = Helpers;
+
 export default class RunControl {
   /* eslint-disable */
   private nodecg: NodeCG;
@@ -86,9 +88,7 @@ export default class RunControl {
       err = new Error(`Run with ID ${id} not found.`);
     }
 
-    if (ack && !ack.handled) {
-      ack(err);
-    }
+    processAck(err, ack);
   }
 
   /**
@@ -97,8 +97,6 @@ export default class RunControl {
    */
   removeActiveRun(ack?: ListenForCb): void {
     this.activeRun.value = null;
-    if (ack && !ack.handled) {
-      ack(null);
-    }
+    processAck(null, ack);
   }
 }

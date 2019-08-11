@@ -1,3 +1,4 @@
+import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
 import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line
 import { Configschema } from '../../../configschema';
 import { RunDataArray } from '../../../types';
@@ -74,5 +75,17 @@ export default class Helpers {
    */
   bundleConfig(): Configschema {
     return this.nodecg.bundleConfig;
+  }
+
+  /**
+   * Simple helper function to handle NodeCG message acknoledgements.
+   * @param err Error to supply if any.
+   * @param ack The acknoledgement function itself.
+   * @param msg Anything else you want to send alongside.
+   */
+  static processAck(err: Error | boolean | null, ack?: ListenForCb, msg?: unknown): void {
+    if (ack && !ack.handled) {
+      ack(err, msg);
+    }
   }
 }

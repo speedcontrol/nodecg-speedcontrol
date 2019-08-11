@@ -12,7 +12,12 @@ import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
 import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line
 import Helpers from './util/helpers';
 
-const { msToTimeStr, nullToUndefined, sleep } = Helpers;
+const {
+  msToTimeStr,
+  nullToUndefined,
+  sleep,
+  processAck,
+} = Helpers;
 
 interface ParsedMarkdown {
   url?: string;
@@ -92,13 +97,9 @@ export default class HoraroImport {
       dashUUID: string;
     }, ack): void => {
       this.loadSchedule(opts.url, opts.dashUUID).then((data): void => {
-        if (ack && !ack.handled) {
-          ack(null, data);
-        }
+        processAck(null, ack, data);
       }).catch((err): void => {
-        if (ack && !ack.handled) {
-          ack(err);
-        }
+        processAck(err, ack);
       });
     });
 
@@ -113,17 +114,13 @@ export default class HoraroImport {
         this.nodecg.log.info('Started importing Horaro schedule.');
         this.importSchedule(opts.opts, opts.dashUUID).then((): void => {
           this.nodecg.log.info('Successfully imported Horaro schedule.');
-          if (ack && !ack.handled) {
-            ack(null);
-          }
+          processAck(null, ack);
         }).catch((err): void => {
           throw err;
         });
       } catch (err) {
         this.nodecg.log.warn('Error importing Horaro schedule:', err);
-        if (ack && !ack.handled) {
-          ack(err);
-        }
+        processAck(err, ack);
       }
     });
   }

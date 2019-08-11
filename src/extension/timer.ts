@@ -1,9 +1,10 @@
 import livesplitCore from 'livesplit-core';
+import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { Timer } from '../../types';
 import Helpers from './util/helpers';
 
-const { msToTimeStr, timeStrToMS } = Helpers;
+const { msToTimeStr, timeStrToMS, processAck } = Helpers;
 
 // Cross references for LiveSplit's TimerPhases.
 const LS_TIMER_PHASE = {
@@ -39,12 +40,12 @@ export default class TimerApp {
       this.startTimer(true);
     }
 
-    this.nodecg.listenFor('startTimer', (): void => this.startTimer());
-    this.nodecg.listenFor('pauseTimer', (): void => this.pauseTimer());
-    this.nodecg.listenFor('resetTimer', (): void => this.resetTimer());
-    this.nodecg.listenFor('stopTimer', (): void => this.stopTimer());
-    this.nodecg.listenFor('undoStopTimer', (): void => this.undoStopTimer());
-    this.nodecg.listenFor('editTimer', (time): void => this.editTimer(time));
+    this.nodecg.listenFor('startTimer', (msg, ack): void => this.startTimer(false, ack));
+    this.nodecg.listenFor('pauseTimer', (msg, ack): void => this.pauseTimer(ack));
+    this.nodecg.listenFor('resetTimer', (msg, ack): void => this.resetTimer(ack));
+    this.nodecg.listenFor('stopTimer', (msg, ack): void => this.stopTimer(ack));
+    this.nodecg.listenFor('undoStopTimer', (msg, ack): void => this.undoStopTimer(ack));
+    this.nodecg.listenFor('editTimer', (time, ack): void => this.editTimer(time, ack));
 
     setInterval(
       (): void => this.tick(),
@@ -56,8 +57,9 @@ export default class TimerApp {
    * Start/resume the timer, depending on the current state.
    * @param forceMS Force the timer to start with this amount of milliseconds already.
    */
-  startTimer(force?: boolean): void {
+  startTimer(force?: boolean, ack?: ListenForCb): void {
     if (!force && this.timerRep.value.state !== 'stopped' && this.timerRep.value.state !== 'paused') {
+      processAck(true, ack);
       return;
     }
 
@@ -68,62 +70,74 @@ export default class TimerApp {
     }
     this.setGameTime(this.timerRep.value.milliseconds);
     this.timerRep.value.state = 'running';
+    processAck(null, ack);
   }
 
   /**
    * Pause the timer.
    */
-  pauseTimer(): void {
+  pauseTimer(ack?: ListenForCb): void {
     if (this.timerRep.value.state !== 'running') {
+      processAck(true, ack);
       return;
     }
     this.timer.pause();
     this.timerRep.value.state = 'paused';
+    processAck(null, ack);
   }
 
   /**
    * Reset the timer.
    */
-  resetTimer(): void {
+  resetTimer(ack?: ListenForCb): void {
     if (this.timerRep.value.state === 'stopped') {
+      processAck(true, ack);
       return;
     }
     this.timer.reset(false);
     this.resetTimerRepToDefault();
+    processAck(null, ack);
   }
 
   /**
    * Stop/finish the timer.
    */
-  stopTimer(): void {
+  stopTimer(ack?: ListenForCb): void {
     if (this.timerRep.value.state !== 'running') {
+      processAck(true, ack);
       return;
     }
     this.timer.split();
     this.timerRep.value.state = 'finished';
+    processAck(null, ack);
   }
 
   /**
    * Undo the timer from being stopped.
    */
-  undoStopTimer(): void {
+  undoStopTimer(ack?: ListenForCb): void {
     if (this.timerRep.value.state !== 'finished') {
+      processAck(true, ack);
       return;
     }
     this.timer.undoSplit();
     this.timerRep.value.state = 'running';
+    processAck(null, ack);
   }
 
   /**
    * Edit the timer time (if stopped/paused).
    * @param time Time string (HH:MM:SS).
    */
-  editTimer(time: string): void {
+  editTimer(time: string, ack?: ListenForCb): void {
     // Check to see if the time was given in the correct format and if it's stopped/paused.
     if ((this.timerRep.value.state === 'stopped' || this.timerRep.value.state === 'paused')
     && time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
       const ms = timeStrToMS(time);
       this.setTime(ms);
+      processAck(null, ack);
+    } else {
+      processAck(true, ack);
     }
   }
 
