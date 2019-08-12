@@ -197,10 +197,10 @@ export default class HoraroImport {
                 run.data[
                   nullToNegOne(
                     // @ts-ignore: same as above
-                    opts.columns[type]
+                    opts.columns[type],
                   )
-                ]
-              )
+                ],
+              ),
             ).str;
           });
 
@@ -229,10 +229,10 @@ export default class HoraroImport {
               nullToUndefined(
                 run.data[
                   nullToNegOne(
-                    opts.columns.custom[col]
+                    opts.columns.custom[col],
                   )
-                ]
-              )
+                ],
+              ),
             );
             if (str) {
               runData.customData[col] = str;
