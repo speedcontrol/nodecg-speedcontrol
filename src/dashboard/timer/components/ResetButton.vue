@@ -21,7 +21,11 @@ export default Vue.extend({
   },
   methods: {
     button() {
-      nodecg.sendMessage('resetTimer');
+      nodecg.sendMessage('resetTimer').then(() => {
+        // successful
+      }).catch(() => {
+        // error
+      });
     },
   },
 });

@@ -34,9 +34,17 @@ export default Vue.extend({
     button() {
       const { state } = store.state.timer;
       if (state === 'stopped' || state === 'paused') {
-        nodecg.sendMessage('startTimer');
+        nodecg.sendMessage('startTimer').then(() => {
+          // successful
+        }).catch(() => {
+          // error
+        });
       } else if (state === 'running') {
-        nodecg.sendMessage('pauseTimer');
+        nodecg.sendMessage('pauseTimer').then(() => {
+          // successful
+        }).catch(() => {
+          // error
+        });
       }
     },
   },

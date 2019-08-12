@@ -59,7 +59,11 @@ export default Vue.extend({
     },
     finishEdit() {
       if (this.time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-        nodecg.sendMessage('editTimer', this.time);
+        nodecg.sendMessage('editTimer', this.time).then(() => {
+          // successful
+        }).catch(() => {
+          // error
+        });
       }
       this.editing = false;
     },

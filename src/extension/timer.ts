@@ -64,12 +64,12 @@ export default class TimerApp {
   startTimer(force?: boolean, ack?: ListenForCb): void {
     // Error if the timer is finished.
     if (this.timerRep.value.state === 'finished') {
-      processAck(true, ack);
+      processAck(new Error('Cannot start/resume timer as it is in the finished state.'), ack);
       return;
     }
     // Error if the timer isn't stopped or paused (and we're not forcing it).
     if (!force && !['stopped', 'paused'].includes(this.timerRep.value.state)) {
-      processAck(true, ack);
+      processAck(new Error('Cannot start/resume timer as it is not stopped/pasued.'), ack);
       return;
     }
 
@@ -90,7 +90,7 @@ export default class TimerApp {
   pauseTimer(ack?: ListenForCb): void {
     // Error if the timer isn't running.
     if (this.timerRep.value.state !== 'running') {
-      processAck(true, ack);
+      processAck(new Error('Cannot pause the timer as it is not running.'), ack);
       return;
     }
     this.timer.pause();
@@ -105,7 +105,7 @@ export default class TimerApp {
   resetTimer(ack?: ListenForCb): void {
     // Error if the timer is stopped.
     if (this.timerRep.value.state === 'stopped') {
-      processAck(true, ack);
+      processAck(new Error('Cannot reset the timer as it is stopped.'), ack);
       return;
     }
     this.timer.reset(false);
@@ -121,17 +121,17 @@ export default class TimerApp {
   stopTimer(uuid?: string, ack?: ListenForCb): void {
     // Error if timer is not running.
     if (this.timerRep.value.state !== 'running') {
-      processAck(true, ack);
+      processAck(new Error('Cannot stop the timer as it is not running.'), ack);
       return;
     }
     // Error if there's an active run but no UUID was sent.
     if (!uuid && this.activeRun.value) {
-      processAck(true, ack);
+      processAck(new Error('Cannot stop the timer as a run is active but no team ID was supplied.'), ack);
       return;
     }
     // Error if the team has already finished.
     if (uuid && this.timerRep.value.teamFinishTimes[uuid]) {
-      processAck(true, ack);
+      processAck(new Error('Cannot stop the timer as the specified team has already finished.'), ack);
       return;
     }
 
@@ -161,12 +161,12 @@ export default class TimerApp {
   undoTimer(uuid?: string, ack?: ListenForCb): void {
     // Error if timer is not finished or running.
     if (!['finished', 'running'].includes(this.timerRep.value.state)) {
-      processAck(true, ack);
+      processAck(new Error('Cannot undo the timer as it is not finished/running.'), ack);
       return;
     }
     // Error if there's an active run but no UUID was sent.
     if (!uuid && this.activeRun.value) {
-      processAck(true, ack);
+      processAck(new Error('Cannot undo the timer as a run is active but no team ID was supplied.'), ack);
       return;
     }
 
@@ -190,15 +190,19 @@ export default class TimerApp {
    * @param ack NodeCG message acknowledgement.
    */
   editTimer(time: string, ack?: ListenForCb): void {
-    // Check to see if the time was given in the correct format and if it's stopped/paused.
-    if ((['stopped', 'paused'].includes(this.timerRep.value.state))
-    && time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-      const ms = timeStrToMS(time);
-      this.setTime(ms);
-      processAck(null, ack);
-    } else {
-      processAck(true, ack);
+    // Error if the timer is not stopped/paused.
+    if (['stopped', 'paused'].includes(this.timerRep.value.state)) {
+      processAck(new Error('Cannot edit the timer as it is not stopped/paused.'), ack);
+      return;
     }
+    // Error if the string formatting is not correct.
+    if (!time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+      processAck(new Error('Cannot edit the timer as the supplied string is in the incorrect format.'), ack);
+      return;
+    }
+    const ms = timeStrToMS(time);
+    this.setTime(ms);
+    processAck(null, ack);
   }
 
   /**
