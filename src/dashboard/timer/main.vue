@@ -3,8 +3,26 @@
     <timer-time></timer-time>
     <start-button></start-button>
     <reset-button></reset-button>
-    <stop-button></stop-button>
-    <undo-stop-button></undo-stop-button>
+    <!-- Will not show if more than 1 team -->
+    <stop-button
+      v-if="teams.length <= 1"
+      :info="teams[0]"
+    ></stop-button>
+    <!-- Will not show if more than 1 team -->
+    <undo-button
+      v-if="teams.length <= 1"
+      :info="teams[0]"
+    ></undo-button>
+    <!-- Will only show if more than 1 team -->
+    <div v-if="teams.length > 1">
+      <br>
+      <team
+        v-for="(team, index) in teams"
+        :key="team.id"
+        :info="team"
+        :index="index"
+      ></team>
+    </div>
   </div>
 </template>
 
@@ -14,7 +32,9 @@ import TimerTime from './components/TimerTime.vue';
 import StartButton from './components/StartButton.vue';
 import ResetButton from './components/ResetButton.vue';
 import StopButton from './components/StopButton.vue';
-import UndoStopButton from './components/UndoStopButton.vue';
+import UndoButton from './components/UndoButton.vue';
+import Team from './components/Team.vue';
+import { store } from '../_misc/replicant-store';
 
 export default Vue.extend({
   components: {
@@ -22,7 +42,13 @@ export default Vue.extend({
     StartButton,
     ResetButton,
     StopButton,
-    UndoStopButton,
+    UndoButton,
+    Team,
+  },
+  computed: {
+    teams() {
+      return (store.state.runDataActiveRun) ? store.state.runDataActiveRun.teams : [];
+    },
   },
 });
 </script>

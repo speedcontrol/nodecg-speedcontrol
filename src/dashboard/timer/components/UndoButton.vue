@@ -3,7 +3,7 @@
     :disabled="isDisabled"
     @click="button"
   >
-    Stop
+    Undo
   </button>
 </template>
 
@@ -13,7 +13,7 @@ import { nodecg } from '../../_misc/nodecg';
 import { store } from '../../_misc/replicant-store';
 
 export default Vue.extend({
-  name: 'StopButton',
+  name: 'UndoButton',
   props: {
     info: {
       type: Object,
@@ -27,13 +27,18 @@ export default Vue.extend({
   computed: {
     isDisabled(): boolean {
       return (
-        this.info.id && !!store.state.timer.teamFinishTimes[this.info.id as string]
-      ) || store.state.timer.state !== 'running';
+        // If no team information has been supplied.
+        !this.info.id && store.state.timer.state !== 'finished'
+      ) || (
+        // If team information is supplied, need to check if the team is finished.
+        !!this.info.id && (!store.state.timer.teamFinishTimes[this.info.id as string]
+        || !['running', 'finished'].includes(store.state.timer.state))
+      );
     },
   },
   methods: {
     button() {
-      nodecg.sendMessage('stopTimer', this.info.id);
+      nodecg.sendMessage('undoTimer', this.info.id);
     },
   },
 });
