@@ -28,9 +28,7 @@
       <dropdown
         v-for="option in runDataOptions"
         :key="option.key"
-        :obj-key="option.key"
-        :name="option.name"
-        :custom="option.custom"
+        :option="option"
         :columns="columns"
       ></dropdown>
       <br><br>
@@ -63,7 +61,7 @@ check the README for more information."
     >
       Importing {{ importStatus.item }}/{{ importStatus.total }}
     </button>
-    <!-- Import Button, not not importing -->
+    <!-- Import Button, if not importing -->
     <button
       v-else
       :disabled="!loaded"
@@ -120,16 +118,7 @@ export default Vue.extend({
   },
   created() {
     // Add dropdowns for custom data on page load.
-    const customData: {
-      name: string;
-      key: string;
-    }[] = nodecg.bundleConfig.schedule.customData || [];
-    this.runDataOptions = this.runDataOptions.concat(
-      customData.map((col) => {
-        store.commit('addCustomColumn', { name: col.key });
-        return { name: col.name, key: col.key, custom: true };
-      }),
-    );
+    this.addCustomDataDropdowns();
   },
   methods: {
     loadSchedule() {
@@ -142,6 +131,25 @@ export default Vue.extend({
       }).catch(() => {
         this.loaded = false;
       });
+    },
+    addCustomDataDropdowns() {
+      const customData: {
+        name: string;
+        key: string;
+      }[] = nodecg.bundleConfig.schedule.customData || [];
+      this.runDataOptions = this.runDataOptions.concat(
+        customData.map((col) => {
+          store.commit('addCustomColumn', { name: col.key });
+          return {
+            name: col.name,
+            key: col.key,
+            custom: true,
+            predict: [
+              col.name.toLowerCase(),
+            ],
+          };
+        }),
+      );
     },
     importConfirm() {
       const alertDialog = nodecg.getDialog('alert') as any;

@@ -6,7 +6,7 @@
       :value="null"
       disabled
     >
-      Select Column: {{ name }}
+      Select Column: {{ option.name }}
     </option>
     <option
       :value="-1"
@@ -29,17 +29,15 @@ import store from '../store';
 
 export default Vue.extend({
   props: {
-    objKey: {
-      type: String,
-      default: 'game',
-    },
-    name: {
-      type: String,
-      default: 'Game',
-    },
-    custom: {
-      type: Boolean,
-      default: false,
+    option: {
+      type: Object,
+      default() {
+        return {
+          name: 'Game',
+          key: 'game',
+          custom: false,
+        };
+      },
     },
     columns: {
       type: Array,
@@ -52,17 +50,17 @@ export default Vue.extend({
     selected: {
       // Vetur doesn't think "this" exists in here?
       get(): number {
-        // objKey must exist in the columns object!
-        if ((this as any).custom) {
-          return (store.state.opts.columns.custom as any)[(this as any).objKey];
+        // key must exist in the columns object!
+        if ((this as any).option.custom) {
+          return (store.state.opts.columns.custom as any)[(this as any).option.key];
         }
-        return (store.state.opts.columns as any)[(this as any).objKey];
+        return (store.state.opts.columns as any)[(this as any).option.key];
       },
       set(value: number) {
         store.commit('updateColumn', {
-          name: (this as any).objKey,
+          name: (this as any).option.key,
           value,
-          custom: (this as any).custom,
+          custom: (this as any).option.custom,
         });
       },
     },
