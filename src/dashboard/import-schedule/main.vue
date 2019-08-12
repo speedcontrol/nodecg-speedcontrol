@@ -75,6 +75,7 @@ check the README for more information."
 <script lang="ts">
 import Vue from 'vue';
 import uuid from 'uuid/v4';
+import _ from 'lodash';
 import { nodecg } from '../_misc/nodecg';
 import { store as repStore } from '../_misc/replicant-store';
 import store from './store';
@@ -91,14 +92,64 @@ export default Vue.extend({
       loaded: false,
       columns: [],
       runDataOptions: [
-        { name: 'Game', key: 'game' },
-        { name: 'Game (Twitch)', key: 'gameTwitch' },
-        { name: 'Category', key: 'category' },
-        { name: 'System', key: 'system' },
-        { name: 'Region', key: 'region' },
-        { name: 'Released', key: 'release' },
-        { name: 'Player(s)', key: 'player' },
-      ],
+        {
+          name: 'Game',
+          key: 'game',
+          predict: [
+            'game',
+          ],
+        },
+        {
+          name: 'Game (Twitch)',
+          key: 'gameTwitch',
+          predict: [
+            // none yet
+          ],
+        },
+        {
+          name: 'Category',
+          key: 'category',
+          predict: [
+            'category',
+          ],
+        },
+        {
+          name: 'System',
+          key: 'system',
+          predict: [
+            'system',
+            'platform',
+            'column',
+          ],
+        },
+        {
+          name: 'Region',
+          key: 'region',
+          predict: [
+            'region',
+          ],
+        },
+        {
+          name: 'Released',
+          key: 'release',
+          predict: [
+            'release',
+          ],
+        },
+        {
+          name: 'Player(s)',
+          key: 'player',
+          predict: [
+            'player',
+            'runner',
+          ],
+        },
+      ] as {
+        name: string;
+        key: string;
+        predict: string[];
+        custom?: boolean;
+      }[],
     };
   },
   computed: {
@@ -128,6 +179,7 @@ export default Vue.extend({
       }).then((data) => {
         this.loaded = true;
         this.columns = data.schedule.columns;
+        this.predictColumns();
       }).catch(() => {
         this.loaded = false;
       });
@@ -150,6 +202,26 @@ export default Vue.extend({
           };
         }),
       );
+    },
+    predictColumns() {
+      this.runDataOptions.forEach((option) => {
+        if (!option.predict.length) {
+          return; // Ignore if no way to predict.
+        }
+        // There's got to be a cleaner way to do this?
+        const regexArr: string[] = [];
+        option.predict.forEach(prediction => regexArr.push(`\\b${_.escapeRegExp(prediction)}\\b`));
+        const regex = new RegExp(regexArr.join('|'));
+
+        const index = this.columns.findIndex((col: string) => !!col.toLowerCase().match(regex));
+        if (index >= 0) {
+          store.commit('updateColumn', {
+            name: option.key,
+            value: index,
+            custom: option.custom,
+          });
+        }
+      });
     },
     importConfirm() {
       const alertDialog = nodecg.getDialog('alert') as any;
