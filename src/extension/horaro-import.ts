@@ -110,7 +110,7 @@ export default class HoraroImport {
     }, ack): void => {
       try {
         if (this.importStatus.value.importing) {
-          throw new Error('A schedule is already being imported.');
+          throw new Error('Cannot import schedule as a schedule is already being imported.');
         }
         this.nodecg.log.info('Started importing Horaro schedule.');
         this.importSchedule(opts.opts, opts.dashUUID).then((): void => {
@@ -142,7 +142,7 @@ export default class HoraroImport {
         }
         const resp = await needle('get', encodeURI(jsonURL));
         if (resp.statusCode !== 200) {
-          throw new Error('HTTP status code not 200.');
+          throw new Error('Cannot load schedule as HTTP status code was not 200.');
         }
         this.scheduleDataCache[dashUUID] = resp.body;
         resolve(resp.body);
@@ -161,9 +161,6 @@ export default class HoraroImport {
     return new Promise(async (resolve, reject): Promise<void> => {
       try {
         this.importStatus.value.importing = true;
-        if (!this.config.schedule.defaultURL) {
-          throw new Error('Schedule URL is not defined.');
-        }
         const data = this.scheduleDataCache[dashUUID];
         const runItems: HoraroScheduleItem[] = data.schedule.items;
         const setupTime: number = data.schedule.setup_t;

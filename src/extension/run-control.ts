@@ -88,9 +88,9 @@ export default class RunControl {
       this.activeRun.value = clone(runData);
       this.nodecg.sendMessage('resetTimer');
     } else if (!id) {
-      err = new Error('No run ID was supplied.');
+      err = new Error('Cannot change run as no run ID was supplied.');
     } else {
-      err = new Error(`Run with ID ${id} not found.`);
+      err = new Error(`Cannot change run as a run with ID ${id} was not found.`);
     }
     processAck(err, ack);
   }
