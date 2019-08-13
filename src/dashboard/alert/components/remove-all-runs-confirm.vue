@@ -1,7 +1,8 @@
 <template>
   <div>
     <div>
-      Are you sure you want to return to the start?
+      Are you sure you want to remove all runs?
+      <br><br>This will also remove the currently active run.
     </div>
     <br>
     <div class="DialogButtons">

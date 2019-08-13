@@ -12,6 +12,7 @@
 import Vue, { VueConstructor } from 'vue';
 import HoraroImportConfirm from './components/horaro-import-confirm.vue';
 import ReturnToStartConfirm from './components/return-to-start-confirm.vue';
+import RemoveAllRunsConfirm from './components/remove-all-runs-confirm.vue';
 import { nodecg } from '../_misc/nodecg';
 
 export default Vue.extend({
@@ -40,6 +41,8 @@ export default Vue.extend({
             return HoraroImportConfirm;
           case 'ReturnToStartConfirm':
             return ReturnToStartConfirm;
+          case 'RemoveAllRunsConfirm':
+            return RemoveAllRunsConfirm;
           default:
             return undefined;
         }

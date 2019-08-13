@@ -75,9 +75,9 @@
         "width": 3
       },
       {
-        "name": "add-run",
-        "title": "Add Run",
-        "file": "add-run.html",
+        "name": "add-remove-runs",
+        "title": "Add/Remove Runs",
+        "file": "add-remove-runs.html",
         "width": 2
       },
       {

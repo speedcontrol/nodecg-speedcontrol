@@ -30,6 +30,7 @@ export default class RunControl {
       this.changeActiveRun(this.activeRunSurrounding.value.next, ack)
     ));
     this.nodecg.listenFor('returnToStart', (msg, ack): void => this.removeActiveRun(ack));
+    this.nodecg.listenFor('removeAllRuns', (msg, ack): void => this.removeAllRuns(ack));
 
     this.activeRun.on('change', (): void => this.changeSurroundingRuns());
     this.array.on('change', (): void => this.changeSurroundingRuns());
@@ -77,7 +78,7 @@ export default class RunControl {
   /**
    * Change the active run to the one specified if it exists.
    * @param id The unique ID of the run you wish to change to.
-   * @param ack Acknowledgement callback.
+   * @param ack NodeCG message acknowledgement.
    */
   changeActiveRun(id?: string, ack?: ListenForCb): void {
     const runData = this.array.value.find((run): boolean => run.id === id);
@@ -97,7 +98,7 @@ export default class RunControl {
 
   /**
    * Removes the active run from the relevant replicant.
-   * @param ack Acknowledgement callback.
+   * @param ack NodeCG message acknowledgement.
    */
   removeActiveRun(ack?: ListenForCb): void {
     let err: Error | null = null;
@@ -105,6 +106,22 @@ export default class RunControl {
       err = new Error('Cannot change run while timer is running/paused.');
     } else {
       this.activeRun.value = null;
+      this.nodecg.sendMessage('resetTimer');
+    }
+    processAck(err, ack);
+  }
+
+  /**
+   * Removes all runs in the array and the currently active run.
+   * @param ack NodeCG message acknowledgement.
+   */
+  removeAllRuns(ack?: ListenForCb): void {
+    let err: Error | null = null;
+    if (['running', 'paused'].includes(this.timer.value.state)) {
+      err = new Error('Cannot remove all runs while timer is running/paused.');
+    } else {
+      this.array.value.length = 0;
+      this.removeActiveRun();
       this.nodecg.sendMessage('resetTimer');
     }
     processAck(err, ack);
