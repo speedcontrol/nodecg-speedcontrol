@@ -78,13 +78,15 @@
         "name": "add-remove-runs",
         "title": "Add/Remove Runs",
         "file": "add-remove-runs.html",
-        "width": 2
+        "width": 2,
+        "workspace": "Run Modifications"
       },
       {
-        "name": "import-schedule",
-        "title": "Import Schedule",
-        "file": "import-schedule.html",
-        "width": 2
+        "name": "horaro-schedule-import",
+        "title": "Horaro Schedule Import",
+        "file": "horaro-schedule-import.html",
+        "width": 2,
+        "workspace": "Run Modifications"
       },
       {
         "name": "timer",
