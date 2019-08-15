@@ -76,6 +76,13 @@
         "width": 3
       },
       {
+        "name": "run-editor",
+        "title": "Run Editor",
+        "file": "run-editor.html",
+        "width": 3,
+        "workspace": "Run Modifications"
+      },
+      {
         "name": "add-remove-runs",
         "title": "Add/Remove Runs",
         "file": "add-remove-runs.html",
