@@ -26,6 +26,7 @@ export default class RunControl {
     this.timer = this.nodecg.Replicant('timer');
 
     this.nodecg.listenFor('changeActiveRun', (id: string, ack): void => this.changeActiveRun(id, ack));
+    this.nodecg.listenFor('removeRun', (id: string, ack): void => this.removeRun(id, ack));
     this.nodecg.listenFor('changeToNextRun', (msg, ack): void => (
       this.changeActiveRun(this.activeRunSurrounding.value.next, ack)
     ));
@@ -92,6 +93,24 @@ export default class RunControl {
       err = new Error('Cannot change run as no run ID was supplied.');
     } else {
       err = new Error(`Cannot change run as a run with ID ${id} was not found.`);
+    }
+    processAck(err, ack);
+  }
+
+  /**
+   * Deletes a run from the run data array.
+   * @param id The unique ID of the run you wish to delete.
+   * @param ack NodeCG message acknowledgement.
+   */
+  removeRun(id?: string, ack?: ListenForCb): void {
+    const runIndex = this.array.value.findIndex((run): boolean => run.id === id);
+    let err: Error | null = null;
+    if (runIndex >= 0) {
+      this.array.value.splice(runIndex, 1);
+    } else if (!id) {
+      err = new Error('Cannot delete run as no run ID was supplied.');
+    } else {
+      err = new Error(`Cannot delete run as a run with ID ${id} was not found.`);
     }
     processAck(err, ack);
   }

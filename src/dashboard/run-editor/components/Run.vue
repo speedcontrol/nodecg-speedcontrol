@@ -1,5 +1,8 @@
 <template>
   <div class="Run">
+    <button @click="removeRunConfirm">
+      Remove
+    </button>
     <span>
       {{ runData.game }}
     </span>
@@ -16,6 +19,25 @@ export default Vue.extend({
       default() {
         return {};
       },
+    },
+  },
+  methods: {
+    removeRunConfirm() {
+      const alertDialog = nodecg.getDialog('alert') as any;
+      alertDialog.querySelector('iframe').contentWindow.open({
+        name: 'RemoveRunConfirm',
+        data: { runData: this.runData },
+        func: this.removeRun,
+      });
+    },
+    removeRun(confirm: boolean) {
+      if (confirm) {
+        nodecg.sendMessage('removeRun', this.runData.id).then(() => {
+          // run change successful
+        }).catch(() => {
+          // run change unsuccessful
+        });
+      }
     },
   },
 });
