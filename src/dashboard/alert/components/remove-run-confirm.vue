@@ -7,12 +7,12 @@
     <br>
     <div class="DialogButtons">
       <button
-        @click="$emit('confirm')"
+        @click="confirm"
       >
         OK
       </button>
       <button
-        @click="$emit('dismiss')"
+        @click="dismiss"
       >
         Cancel
       </button>
@@ -30,6 +30,14 @@ export default Vue.extend({
       default() {
         return {};
       },
+    },
+  },
+  methods: {
+    confirm() {
+      this.$emit('confirm');
+    },
+    dismiss() {
+      this.$emit('dismiss');
     },
   },
 });

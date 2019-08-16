@@ -46,23 +46,28 @@ export default Vue.extend({
       data?: { [k: string ]: any };
       func?: Function;
     }) {
-      this.currentComponent = ((name) => {
-        switch (name) {
-          case 'HoraroImportConfirm':
-            return HoraroImportConfirm;
-          case 'ReturnToStartConfirm':
-            return ReturnToStartConfirm;
-          case 'RemoveAllRunsConfirm':
-            return RemoveAllRunsConfirm;
-          case 'RemoveRunConfirm':
-            return RemoveRunConfirm;
-          default:
-            return undefined;
-        }
-      })(opts.name);
-      this.callbackFunc = opts.func;
-      this.alertData = (opts.data) ? opts.data : {};
+      // Waits for dialog to actually open before doing stuff.
       this.dialog.open();
+      document.addEventListener('dialog-opened', () => {
+        this.currentComponent = ((name) => {
+          switch (name) {
+            case 'HoraroImportConfirm':
+              return HoraroImportConfirm;
+            case 'ReturnToStartConfirm':
+              return ReturnToStartConfirm;
+            case 'RemoveAllRunsConfirm':
+              return RemoveAllRunsConfirm;
+            case 'RemoveRunConfirm':
+              return RemoveRunConfirm;
+            default:
+              return undefined;
+          }
+        })(opts.name);
+        this.callbackFunc = opts.func;
+        this.alertData = (opts.data) ? opts.data : {};
+      }, { once: true });
+      document.addEventListener('dialog-confirmed', this.confirm, { once: true });
+      document.addEventListener('dialog-dismissed', this.dismiss, { once: true });
     },
     close(confirm: boolean) {
       // Trigger callback function passed earlier if set.
@@ -74,6 +79,14 @@ export default Vue.extend({
       this.currentComponent = undefined;
       this.alertData = {};
       this.callbackFunc = undefined;
+    },
+    confirm() {
+      // do confirm stuff here
+      document.removeEventListener('dialog-dismissed', this.dismiss);
+    },
+    dismiss() {
+      // do dismiss stuff here
+      document.removeEventListener('dialog-confirmed', this.confirm);
     },
   },
 });

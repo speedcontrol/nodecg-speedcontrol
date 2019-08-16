@@ -11,7 +11,7 @@
         OK
       </button>
       <button
-        @click="$emit('dismiss')"
+        @click="dismiss"
       >
         Cancel
       </button>
@@ -23,10 +23,6 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  mounted() {
-    // We need to do this because dialog-dismissed can be triggered in other ways as well.
-    document.addEventListener('dialog-dismissed', () => this.dismiss());
-  },
   methods: {
     confirm() {
       // do stuff
@@ -38,6 +34,7 @@ export default Vue.extend({
     },
     dismiss() {
       // do other stuff
+      this.$emit('dismiss');
     },
   },
 });

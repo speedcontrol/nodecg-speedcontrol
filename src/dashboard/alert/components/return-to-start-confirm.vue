@@ -6,12 +6,12 @@
     <br>
     <div class="DialogButtons">
       <button
-        @click="$emit('confirm')"
+        @click="confirm"
       >
         OK
       </button>
       <button
-        @click="$emit('dismiss')"
+        @click="dismiss"
       >
         Cancel
       </button>
@@ -22,7 +22,16 @@
 <script lang="ts">
 import Vue from 'vue';
 
-export default Vue.extend({});
+export default Vue.extend({
+  methods: {
+    confirm() {
+      this.$emit('confirm');
+    },
+    dismiss() {
+      this.$emit('dismiss');
+    },
+  },
+});
 </script>
 
 <style scoped>
