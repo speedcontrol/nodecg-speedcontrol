@@ -25,12 +25,21 @@
     </div>
     <div>
       <!-- Teams -->
-      <team
-        v-for="team in runData.teams"
-        :key="team.id"
-        :team-data="team"
-      ></team>
+      <draggable
+        v-model="runData.teams"
+      >
+        <transition-group name="list">
+          <team
+            v-for="team in runData.teams"
+            :key="team.id"
+            :team-data="team"
+          ></team>
+        </transition-group>
+      </draggable>
     </div>
+    <br><button @click="addNewTeam">
+      Add New Team
+    </button>
     <br><div class="DialogButtons">
       <button
         @click="close(true)"
@@ -53,9 +62,12 @@ import Team from './components/Team.vue';
 import { nodecg } from '../_misc/nodecg';
 import { RunData } from '../../../types';
 
+const draggable = require('vuedraggable'); // Don't need types now :)
+
 export default Vue.extend({
   components: {
     Team,
+    draggable,
   },
   data() {
     return {
@@ -106,6 +118,7 @@ export default Vue.extend({
           this.newRun = false;
         } else {
           store.commit('resetRunData');
+          store.commit('addNewTeam');
           this.newRun = true;
         }
       }, { once: true });
@@ -123,6 +136,9 @@ export default Vue.extend({
     dismiss() {
       document.removeEventListener('dialog-confirmed', this.confirm);
     },
+    addNewTeam() {
+      store.commit('addNewTeam');
+    },
   },
 });
 </script>
@@ -134,5 +150,18 @@ export default Vue.extend({
 
   .DialogButtons {
     float: right;
+  }
+
+  .list-move {
+    transition: transform 0.2s;
+  }
+  .list-enter, .list-leave-to
+  /* .logo-list-complete-leave-active below version 2.1.8 */ {
+    opacity: 0;
+    transition: transform 0.2s;
+    transition: opacity 0.2s;
+  }
+  .list-leave-active {
+    position: absolute;
   }
 </style>

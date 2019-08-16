@@ -18,11 +18,15 @@
       placeholder="Country Code"
       title="Country Code"
     >
+    <button @click="removePlayer">
+      Remove
+    </button>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import store from '../store';
 
 export default Vue.extend({
   name: 'Player',
@@ -32,6 +36,14 @@ export default Vue.extend({
       default() {
         return {};
       },
+    },
+  },
+  methods: {
+    removePlayer() {
+      store.commit('removePlayer', {
+        teamID: this.playerData.teamID,
+        id: this.playerData.id,
+      });
     },
   },
 });
@@ -49,6 +61,6 @@ export default Vue.extend({
   }
 
   .Country {
-    width: 80px;
+    width: 100px;
   }
 </style>
