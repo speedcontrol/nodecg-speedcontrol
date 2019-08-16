@@ -27,7 +27,7 @@ export default Vue.extend({
     };
   },
   mounted() {
-    this.dialog = nodecg.getDialog('alert') as any;
+    this.dialog = nodecg.getDialog('alert-dialog') as any;
 
     // Attaching this function to the window for easy access from dashboard panels.
     (window as any).open = (opts: {

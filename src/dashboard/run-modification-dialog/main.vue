@@ -48,7 +48,7 @@ export default Vue.extend({
     },
   },
   mounted() {
-    this.dialog = nodecg.getDialog('run-info') as any;
+    this.dialog = nodecg.getDialog('run-modification-dialog') as any;
 
     // Attaching this function to the window for easy access from dashboard panels.
     (window as any).open = (runData?: RunData) => this.open(runData);

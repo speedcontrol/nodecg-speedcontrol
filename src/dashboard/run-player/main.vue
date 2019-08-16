@@ -68,7 +68,7 @@ export default Vue.extend({
   },
   methods: {
     returnToStartConfirm() {
-      const alertDialog = nodecg.getDialog('alert') as any;
+      const alertDialog = nodecg.getDialog('alert-dialog') as any;
       alertDialog.querySelector('iframe').contentWindow.open({
         name: 'ReturnToStartConfirm',
         func: this.returnToStart,

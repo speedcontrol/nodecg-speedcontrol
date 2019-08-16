@@ -224,7 +224,7 @@ export default Vue.extend({
       });
     },
     importConfirm() {
-      const alertDialog = nodecg.getDialog('alert') as any;
+      const alertDialog = nodecg.getDialog('alert-dialog') as any;
       alertDialog.querySelector('iframe').contentWindow.open({
         name: 'HoraroImportConfirm',
         func: this.import,

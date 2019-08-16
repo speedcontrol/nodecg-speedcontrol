@@ -76,16 +76,16 @@
         "width": 3
       },
       {
-        "name": "run-editor",
+        "name": "run-editor-dash",
         "title": "Run Editor",
-        "file": "run-editor.html",
+        "file": "run-editor-dash.html",
         "width": 3,
         "workspace": "Run Modifications"
       },
       {
-        "name": "add-remove-runs",
+        "name": "add-remove-runs-dash",
         "title": "Add/Remove Runs",
-        "file": "add-remove-runs.html",
+        "file": "add-remove-runs-dash.html",
         "width": 2,
         "workspace": "Run Modifications"
       },
@@ -110,17 +110,17 @@
         "workspace": "Scene Editing"
       },
       {
-        "name": "run-info",
+        "name": "run-modification-dialog",
         "title": "",
         "width": 5,
-        "file": "run-info.html",
+        "file": "run-modification-dialog.html",
         "dialog": true
       },
       {
-        "name": "alert",
+        "name": "alert-dialog",
         "title": "",
         "width": 3,
-        "file": "alert.html",
+        "file": "alert-dialog.html",
         "dialog": true
       }
     ]

@@ -27,11 +27,11 @@ export default Vue.extend({
   },
   methods: {
     editRun() {
-      const runInfoDialog = nodecg.getDialog('run-info') as any;
+      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any;
       runInfoDialog.querySelector('iframe').contentWindow.open(this.runData);
     },
     removeRunConfirm() {
-      const alertDialog = nodecg.getDialog('alert') as any;
+      const alertDialog = nodecg.getDialog('alert-dialog') as any;
       alertDialog.querySelector('iframe').contentWindow.open({
         name: 'RemoveRunConfirm',
         data: { runData: this.runData },
