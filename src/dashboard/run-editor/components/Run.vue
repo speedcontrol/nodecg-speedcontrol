@@ -1,5 +1,8 @@
 <template>
   <div class="Run">
+    <button @click="editRun">
+      Edit
+    </button>
     <button @click="removeRunConfirm">
       Remove
     </button>
@@ -11,6 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { nodecg } from '../../_misc/nodecg';
 
 export default Vue.extend({
   props: {
@@ -22,6 +26,10 @@ export default Vue.extend({
     },
   },
   methods: {
+    editRun() {
+      const runInfoDialog = nodecg.getDialog('run-info') as any;
+      runInfoDialog.querySelector('iframe').contentWindow.open(this.runData);
+    },
     removeRunConfirm() {
       const alertDialog = nodecg.getDialog('alert') as any;
       alertDialog.querySelector('iframe').contentWindow.open({

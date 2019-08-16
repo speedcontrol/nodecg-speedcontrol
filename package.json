@@ -111,20 +111,10 @@
       },
       {
         "name": "run-info",
-        "title": "Add/Edit Run Info",
+        "title": "",
         "width": 5,
-        "file": "run-info-dialog.html",
-        "dialog": true,
-        "dialogButtons": [
-          {
-            "name": "add/edit run",
-            "type": "confirm"
-          },
-          {
-            "name": "cancel",
-            "type": "dismiss"
-          }
-        ]
+        "file": "run-info.html",
+        "dialog": true
       },
       {
         "name": "alert",

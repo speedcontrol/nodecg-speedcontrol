@@ -25,8 +25,8 @@ export default Vue.extend({
   },
   methods: {
     openAddDialog() {
-      const dialog = nodecg.getDialog('run-info') as any;
-      dialog.open();
+      const runInfoDialog = nodecg.getDialog('run-info') as any;
+      runInfoDialog.querySelector('iframe').contentWindow.open();
     },
     removeAllRunsConfirm() {
       const alertDialog = nodecg.getDialog('alert') as any;
