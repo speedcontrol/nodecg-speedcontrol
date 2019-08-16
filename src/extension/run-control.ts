@@ -5,7 +5,7 @@ import { RunDataActiveRunSurrounding } from '../../schemas';
 import { RunData, RunDataActiveRun, RunDataArray, Timer } from '../../types'; // eslint-disable-line
 import Helpers from './util/helpers';
 
-const { processAck } = Helpers;
+const { processAck, timeStrToMS, msToTimeStr } = Helpers;
 
 export default class RunControl {
   /* eslint-disable */
@@ -27,6 +27,7 @@ export default class RunControl {
 
     this.nodecg.listenFor('changeActiveRun', (id: string, ack): void => this.changeActiveRun(id, ack));
     this.nodecg.listenFor('removeRun', (id: string, ack): void => this.removeRun(id, ack));
+    this.nodecg.listenFor('modifyRun', (data, ack): void => this.modifyRun(data, ack));
     this.nodecg.listenFor('changeToNextRun', (msg, ack): void => (
       this.changeActiveRun(this.activeRunSurrounding.value.next, ack)
     ));
@@ -113,6 +114,43 @@ export default class RunControl {
       err = new Error(`Cannot delete run as a run with ID ${id} was not found.`);
     }
     processAck(err, ack);
+  }
+
+  /**
+   * Either edits a run (if we currently have it) or adds it.
+   * @param runData Run Data object.
+   * @param ack NodeCG message acknowledgement.
+   */
+  modifyRun(runData: RunData, ack?: ListenForCb): void {
+    const data = runData;
+    // Verify and convert estimate.
+    if (data.estimate && data.estimate.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+      const ms = timeStrToMS(data.estimate);
+      data.estimate = msToTimeStr(ms);
+      data.estimateS = ms / 1000;
+    } else {
+      delete data.estimate;
+      delete data.estimateS;
+    }
+
+    // Verify and convert setup time.
+    if (data.setupTime && data.setupTime.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+      const ms = timeStrToMS(data.setupTime);
+      data.setupTime = msToTimeStr(ms);
+      data.setupTimeS = ms / 1000;
+    } else {
+      delete data.setupTime;
+      delete data.setupTimeS;
+    }
+
+    const index = this.h.findRunIndexFromId(runData.id);
+    if (index >= 0) { // Run already exists, edit it.
+      this.array.value[index] = runData;
+      // update the active run as well? maybe prompt user if nessecary
+    } else { // Run is new, add it.
+      this.array.value.push(runData);
+    }
+    processAck(null, ack);
   }
 
   /**

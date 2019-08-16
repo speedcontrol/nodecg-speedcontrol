@@ -18,11 +18,23 @@ export default new Vuex.Store({
   },
   mutations: {
     updateRunData(state, { value }) {
-      Vue.set(state, 'runData', value);
+      Vue.set(state, 'runData', clone(value));
     },
     resetRunData(state) {
       Vue.set(state, 'runData', clone(defaultRunData));
       Vue.set(state.runData, 'id', uuid());
+    },
+  },
+  actions: {
+    saveRunData(context) {
+      nodecg.sendMessage(
+        'modifyRun',
+        context.state.runData,
+      ).then(() => {
+        // done
+      }).catch(() => {
+        // failed
+      });
     },
   },
 });
