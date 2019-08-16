@@ -6,7 +6,7 @@
     <h1 v-else>
       Edit Run
     </h1>
-    <div>
+    <div class="GeneralInputs">
       <!-- Normal Inputs -->
       <input
         v-for="input in inputs"
@@ -40,15 +40,23 @@
     <br><button @click="addNewTeam">
       Add New Team
     </button>
+    <br><br><div v-if="activeBtn">
+      <input
+        v-model="runListUpdate"
+        type="checkbox"
+      > Also update run in run list.
+    </div>
+    <div v-else-if="active">
+      <input
+        v-model="activeRunUpdate"
+        type="checkbox"
+      > Also update active run.
+    </div>
     <br><div class="DialogButtons">
-      <button
-        @click="close(true)"
-      >
+      <button @click="close(true)">
         OK
       </button>
-      <button
-        @click="close(false)"
-      >
+      <button @click="close(false)">
         Cancel
       </button>
     </div>
@@ -58,21 +66,24 @@
 <script lang="ts">
 import Vue from 'vue';
 import store from './store';
+import { store as repStore } from '../_misc/replicant-store';
 import Team from './components/Team.vue';
 import { nodecg } from '../_misc/nodecg';
 import { RunData } from '../../../types';
 
-const draggable = require('vuedraggable'); // Don't need types now :)
+const Draggable = require('vuedraggable'); // Don't need types now :)
 
 export default Vue.extend({
   components: {
     Team,
-    draggable,
+    Draggable,
   },
   data() {
     return {
       dialog: undefined as any,
       newRun: true,
+      activeBtn: false,
+      active: false,
       inputs: [
         { key: 'game', name: 'Game' },
         { key: 'gameTwitch', name: 'Game (Twitch)' },
@@ -94,6 +105,22 @@ export default Vue.extend({
         store.commit('updateRunData', { value });
       },
     },
+    runListUpdate: {
+      get() {
+        return store.state.runListUpdate;
+      },
+      set(value: boolean) {
+        store.commit('toggleRunListUpdateBool', { value });
+      },
+    },
+    activeRunUpdate: {
+      get() {
+        return store.state.activeRunUpdate;
+      },
+      set(value: boolean) {
+        store.commit('toggleActiveRunUpdateBool', { value });
+      },
+    },
     customData() {
       return nodecg.bundleConfig.schedule.customData || [];
     },
@@ -102,24 +129,42 @@ export default Vue.extend({
     this.dialog = nodecg.getDialog('run-modification-dialog') as any;
 
     // Attaching this function to the window for easy access from dashboard panels.
-    (window as any).open = (runData?: RunData) => this.open(runData);
+    (window as any).open = (opts?: {
+      runData?: RunData;
+      active?: boolean;
+    }) => this.open(opts);
 
     // Small hack to make the NodeCG dialog look a little better for us, not perfect yet.
     const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;
     elem.style.marginBottom = '12px';
   },
   methods: {
-    open(value?: RunData) {
+    open(opts?: {
+      runData?: RunData;
+      activeBtn?: boolean;
+    }) {
       // Waits for dialog to actually open before changing storage.
       this.dialog.open();
       document.addEventListener('dialog-opened', () => {
-        if (value) {
-          store.commit('updateRunData', { value });
+        if (opts && opts.runData) {
+          store.commit('updateRunData', { value: opts.runData });
           this.newRun = false;
         } else {
           store.commit('resetRunData');
           store.commit('addNewTeam');
           this.newRun = true;
+        }
+        this.activeBtn = !!opts && !!opts.activeBtn;
+        this.active = (
+          !!opts
+          && !!opts.runData
+          && !!repStore.state.runDataActiveRun
+          && opts.runData.id === repStore.state.runDataActiveRun.id
+        );
+        if (this.activeBtn) {
+          this.activeRunUpdate = true;
+        } else {
+          this.runListUpdate = true;
         }
       }, { once: true });
       document.addEventListener('dialog-confirmed', this.confirm, { once: true });
@@ -144,7 +189,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  input {
+  .GeneralInputs > input {
     width: 100%;
   }
 

@@ -1,5 +1,11 @@
 <template>
   <div id="App">
+    <button
+      :disabled="!activeRun"
+      @click="editActiveRun"
+    >
+      Edit Currently Active Run
+    </button>
     <draggable v-model="runDataArray">
       <transition-group name="list">
         <run
@@ -35,6 +41,20 @@ export default Vue.extend({
           value,
         });
       },
+    },
+    activeRun() {
+      return store.state.runDataActiveRun;
+    },
+  },
+  methods: {
+    editActiveRun() {
+      if (this.activeRun) {
+        const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any;
+        runInfoDialog.querySelector('iframe').contentWindow.open({
+          runData: this.activeRun,
+          activeBtn: true,
+        });
+      }
     },
   },
 });

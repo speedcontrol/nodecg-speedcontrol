@@ -27,7 +27,9 @@ export default class RunControl {
 
     this.nodecg.listenFor('changeActiveRun', (id: string, ack): void => this.changeActiveRun(id, ack));
     this.nodecg.listenFor('removeRun', (id: string, ack): void => this.removeRun(id, ack));
-    this.nodecg.listenFor('modifyRun', (data, ack): void => this.modifyRun(data, ack));
+    this.nodecg.listenFor('modifyRun', (data, ack): void => this.modifyRun(
+      data.runData, data.runListUpdate, data.activeRunUpdate, ack,
+    ));
     this.nodecg.listenFor('changeToNextRun', (msg, ack): void => (
       this.changeActiveRun(this.activeRunSurrounding.value.next, ack)
     ));
@@ -119,9 +121,16 @@ export default class RunControl {
   /**
    * Either edits a run (if we currently have it) or adds it.
    * @param runData Run Data object.
+   * @param runListUpdate If to attempt to update the run in the Run Data array or not.
+   * @param activeRunUpdate If to attempt to update the active run using this data or not.
    * @param ack NodeCG message acknowledgement.
    */
-  modifyRun(runData: RunData, ack?: ListenForCb): void {
+  modifyRun(
+    runData: RunData,
+    runListUpdate: boolean = true,
+    activeRunUpdate: boolean = true,
+    ack?: ListenForCb,
+  ): void {
     const data = runData;
     // Verify and convert estimate.
     if (data.estimate && data.estimate.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
@@ -143,12 +152,16 @@ export default class RunControl {
       delete data.setupTimeS;
     }
 
-    const index = this.h.findRunIndexFromId(runData.id);
+    const index = this.h.findRunIndexFromId(data.id);
     if (index >= 0) { // Run already exists, edit it.
-      this.array.value[index] = runData;
-      // update the active run as well? maybe prompt user if nessecary
+      if (activeRunUpdate) {
+        this.activeRun.value = clone(data);
+      }
+      if (runListUpdate) {
+        this.array.value[index] = clone(data);
+      }
     } else { // Run is new, add it.
-      this.array.value.push(runData);
+      this.array.value.push(clone(data));
     }
     processAck(null, ack);
   }
