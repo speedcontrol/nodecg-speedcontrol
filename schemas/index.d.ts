@@ -4,3 +4,5 @@ export * from './runDataActiveRun';
 export * from './runDataActiveRunSurrounding';
 export * from './runDataArray';
 export * from './timer';
+export * from './twitchAPIData';
+export * from './twitchChannelData';

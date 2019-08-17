@@ -3,6 +3,34 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "twitch": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "clientID": {
+          "type": "string",
+          "default": ""
+        },
+        "clientSecret": {
+          "type": "string",
+          "default": ""
+        },
+        "redirectURI": {
+          "type": "string",
+          "default": "http://localhost:9090/nodecg-speedcontrol/twitchauth"
+        }
+      },
+      "required": [
+        "enabled",
+        "clientID",
+        "clientSecret",
+        "redirectURI"
+      ]
+    },
     "schedule": {
       "type": "object",
       "additionalProperties": false,
@@ -56,6 +84,7 @@
     }
   },
   "required": [
+    "twitch",
     "schedule"
   ]
 }

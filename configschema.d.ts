@@ -6,6 +6,12 @@
  */
 
 export interface Configschema {
+  twitch: {
+    enabled: boolean;
+    clientID: string;
+    clientSecret: string;
+    redirectURI: string;
+  };
   schedule: {
     defaultURL: string;
     ignoreGamesWhileImporting?: string[];

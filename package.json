@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "clone": "^2.1.2",
+    "express": "^4.17.1",
     "livesplit-core": "^0.10.2",
     "lodash": "^4.17.15",
     "markdown-it": "^9.0.1",
@@ -101,6 +102,12 @@
         "title": "Timer",
         "file": "timer.html",
         "width": 2
+      },
+      {
+        "name": "twitch-control",
+        "title": "Twitch Control",
+        "file": "twitch-control.html",
+        "width": 3
       },
       {
         "name": "player-layout",
