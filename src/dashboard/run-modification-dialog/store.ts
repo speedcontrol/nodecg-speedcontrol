@@ -3,6 +3,10 @@ import uuid from 'uuid/v4';
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { RunData, RunDataPlayer, RunDataTeam } from '../../../types';
+import Helpers from '../_misc/helpers';
+import { store as repStore } from '../_misc/replicant-store';
+
+const { msToTimeStr } = Helpers;
 
 Vue.use(Vuex);
 
@@ -50,6 +54,12 @@ export default new Vuex.Store({
     },
     resetRunData(state) {
       Vue.set(state, 'runData', clone(defaultRunData));
+      if (repStore.state.defaultSetupTime) { // Fill in default setup time if available.
+        Vue.set(state.runData, 'setupTimeS', repStore.state.defaultSetupTime);
+        Vue.set(state.runData, 'setupTime', msToTimeStr(
+          repStore.state.defaultSetupTime * 1000,
+        ));
+      }
       Vue.set(state.runData, 'id', uuid());
     },
     addNewTeam(state) {
