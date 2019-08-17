@@ -1,5 +1,8 @@
 <template>
   <div class="Run">
+    <button @click="duplicateRun">
+      Duplicate
+    </button>
     <button @click="editRun">
       Edit
     </button>
@@ -26,6 +29,13 @@ export default Vue.extend({
     },
   },
   methods: {
+    duplicateRun() {
+      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any;
+      runInfoDialog.querySelector('iframe').contentWindow.open({
+        mode: 'Duplicate',
+        runData: this.runData,
+      });
+    },
     editRun() {
       const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any;
       runInfoDialog.querySelector('iframe').contentWindow.open({

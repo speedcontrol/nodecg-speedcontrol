@@ -3,6 +3,9 @@
     <h1 v-if="mode === 'New'">
       Add Run
     </h1>
+    <h1 v-else-if="mode === 'Duplicate'">
+      Duplicate Run
+    </h1>
     <h1 v-else>
       Edit Run
     </h1>
@@ -70,6 +73,7 @@ enum Mode {
   New = 'New',
   EditActive = 'EditActive',
   EditOther = 'EditOther',
+  Duplicate = 'Duplicate',
 }
 
 export default Vue.extend({
@@ -130,8 +134,12 @@ export default Vue.extend({
       this.dialog.open();
       document.addEventListener('dialog-opened', () => {
         this.mode = opts.mode;
+        this.err = undefined;
         if (opts.runData) {
           store.commit('updateRunData', { value: opts.runData });
+          if (opts.mode === 'Duplicate') {
+            store.commit('setAsDuplicate');
+          }
         } else {
           store.commit('resetRunData');
           store.commit('addNewTeam');
@@ -144,6 +152,7 @@ export default Vue.extend({
       store.commit('addNewTeam');
     },
     attemptSave() {
+      this.err = undefined;
       store.dispatch('saveRunData').then(() => {
         this.close(true);
       }).catch((err) => {

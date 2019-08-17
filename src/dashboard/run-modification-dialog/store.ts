@@ -10,6 +10,7 @@ enum Mode {
   New = 'New',
   EditActive = 'EditActive',
   EditOther = 'EditOther',
+  Duplicate = 'Duplicate',
 }
 
 const defaultRunData: RunData = {
@@ -34,6 +35,7 @@ export default new Vuex.Store({
   state: {
     runData: clone(defaultRunData),
     mode: 'New' as Mode,
+    prevID: undefined as string | undefined,
   },
   mutations: {
     updateRunData(state, { value }) {
@@ -41,6 +43,10 @@ export default new Vuex.Store({
     },
     updateMode(state, { value }) {
       Vue.set(state, 'mode', value);
+    },
+    setAsDuplicate(state) {
+      Vue.set(state, 'prevID', state.runData.id);
+      Vue.set(state.runData, 'id', uuid());
     },
     resetRunData(state) {
       Vue.set(state, 'runData', clone(defaultRunData));
@@ -86,7 +92,11 @@ export default new Vuex.Store({
     saveRunData({ state }) {
       return new Promise(async (resolve, reject) => {
         try {
-          await nodecg.sendMessage('modifyRun', state.runData);
+          await nodecg.sendMessage('modifyRun', {
+            runData: state.runData,
+            prevID: state.prevID,
+          });
+          Vue.set(state, 'prevID', undefined);
           resolve();
         } catch (err) {
           reject(err);

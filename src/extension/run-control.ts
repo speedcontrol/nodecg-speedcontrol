@@ -28,7 +28,7 @@ export default class RunControl {
 
     this.nodecg.listenFor('changeActiveRun', (id, ack): void => this.changeActiveRun(id, ack));
     this.nodecg.listenFor('removeRun', (id, ack): void => this.removeRun(id, ack));
-    this.nodecg.listenFor('modifyRun', (data, ack): void => this.modifyRun(data, ack));
+    this.nodecg.listenFor('modifyRun', (data, ack): void => this.modifyRun(data.runData, data.prevID, ack));
     this.nodecg.listenFor('changeToNextRun', (msg, ack): void => (
       this.changeActiveRun(this.activeRunSurrounding.value.next, ack)
     ));
@@ -120,9 +120,10 @@ export default class RunControl {
   /**
    * Either edits a run (if we currently have it) or adds it.
    * @param runData Run Data object.
+   * @param prevID ID of the run that this run will be inserted after if applicable.
    * @param ack NodeCG message acknowledgement.
    */
-  modifyRun(runData: RunData, ack?: ListenForCb): void {
+  modifyRun(runData: RunData, prevID?: string, ack?: ListenForCb): void {
     // Loops through data, removes any keys that are falsey.
     const data = _.pickBy(runData, _.identity) as RunData;
     data.customData = _.pickBy(data.customData, _.identity);
@@ -136,12 +137,18 @@ export default class RunControl {
       return teamData;
     });
 
+    // Check all teams have players, if not throw an error.
+    if (!data.teams.every((team): boolean => !!team.players.length)) {
+      processAck(new Error('Cannot accept run data as team(s) are missing player(s).'), ack);
+      return;
+    }
+
     // Check all players have names, if not throw an error.
     const allNamesAdded = data.teams.every((team): boolean => (
       team.players.every((player): boolean => !!player.name)
     ));
     if (!allNamesAdded) {
-      processAck(new Error('Cannot modify run data as player(s) are missing name(s).'), ack);
+      processAck(new Error('Cannot accept run data as player(s) are missing name(s).'), ack);
       return;
     }
 
@@ -172,7 +179,8 @@ export default class RunControl {
       }
       this.array.value[index] = clone(data);
     } else { // Run is new, add it.
-      this.array.value.push(clone(data));
+      const prevIndex = this.h.findRunIndexFromId(prevID);
+      this.array.value.splice(prevIndex + 1 || this.array.value.length, 0, clone(data));
     }
 
     processAck(null, ack);
