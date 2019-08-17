@@ -23,8 +23,8 @@
     <!-- Dropdowns after data is imported to toggle settings -->
     <div v-if="loaded && !importStatus.importing">
       <br>
-      Select the correct columns that match the data type below:
-      <!--, if the one auto-selected is wrong:-->
+      Select the correct columns that match the data type below,
+      if the one auto-selected is wrong:
       <dropdown
         v-for="option in runDataOptions"
         :key="option.key"
@@ -90,7 +90,7 @@ export default Vue.extend({
       dashUUID: uuid(), // Temp ID for this page load.
       url: nodecg.bundleConfig.schedule.defaultURL,
       loaded: false,
-      columns: [],
+      columns: [] as string[],
       runDataOptions: [
         {
           name: 'Game',
@@ -208,12 +208,9 @@ export default Vue.extend({
         if (!option.predict.length) {
           return; // Ignore if no way to predict.
         }
-        // There's got to be a cleaner way to do this?
-        const regexArr: string[] = [];
-        option.predict.forEach(prediction => regexArr.push(`\\b${_.escapeRegExp(prediction)}\\b`));
-        const regex = new RegExp(regexArr.join('|'));
-
-        const index = this.columns.findIndex((col: string) => !!col.toLowerCase().match(regex));
+        const index = this.columns.findIndex(
+          col => option.predict.some(pred => !!col.toLowerCase().includes(pred)),
+        );
         if (index >= 0) {
           store.commit('updateColumn', {
             name: option.key,
