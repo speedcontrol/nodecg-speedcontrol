@@ -26,7 +26,7 @@ export default Vue.extend({
   methods: {
     openAddDialog() {
       const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any;
-      runInfoDialog.querySelector('iframe').contentWindow.open();
+      runInfoDialog.querySelector('iframe').contentWindow.open({ mode: 'New' });
     },
     removeAllRunsConfirm() {
       const alertDialog = nodecg.getDialog('alert-dialog') as any;

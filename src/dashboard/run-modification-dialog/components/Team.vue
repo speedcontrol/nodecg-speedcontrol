@@ -33,13 +33,13 @@ import Vue from 'vue';
 import store from '../store';
 import Player from './Player.vue';
 
-const draggable = require('vuedraggable'); // Don't need types now :)
+const Draggable = require('vuedraggable'); // Don't need types now :)
 
 export default Vue.extend({
   name: 'Team',
   components: {
     Player,
-    draggable,
+    Draggable,
   },
   props: {
     teamData: {

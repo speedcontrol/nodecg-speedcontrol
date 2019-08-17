@@ -6,6 +6,12 @@ import { RunData, RunDataPlayer, RunDataTeam } from '../../../types';
 
 Vue.use(Vuex);
 
+enum Mode {
+  New = 'New',
+  EditActive = 'EditActive',
+  EditOther = 'EditOther',
+}
+
 const defaultRunData: RunData = {
   teams: [],
   customData: {},
@@ -27,20 +33,18 @@ const defaultPlayer: RunDataPlayer = {
 export default new Vuex.Store({
   state: {
     runData: clone(defaultRunData),
-    runListUpdate: false,
-    activeRunUpdate: false,
+    mode: 'New' as Mode,
   },
   mutations: {
     updateRunData(state, { value }) {
       Vue.set(state, 'runData', clone(value));
-      Vue.set(state, 'runListUpdate', false);
-      Vue.set(state, 'activeRunUpdate', false);
+    },
+    updateMode(state, { value }) {
+      Vue.set(state, 'mode', value);
     },
     resetRunData(state) {
       Vue.set(state, 'runData', clone(defaultRunData));
       Vue.set(state.runData, 'id', uuid());
-      Vue.set(state, 'runListUpdate', false);
-      Vue.set(state, 'activeRunUpdate', false);
     },
     addNewTeam(state) {
       const teamData = clone(defaultTeam);
@@ -77,26 +81,16 @@ export default new Vuex.Store({
         state.runData.teams[teamIndex].players.splice(playerIndex, 1);
       }
     },
-    toggleRunListUpdateBool(state, { value }) {
-      Vue.set(state, 'runListUpdate', value);
-    },
-    toggleActiveRunUpdateBool(state, { value }) {
-      Vue.set(state, 'activeRunUpdate', value);
-    },
   },
   actions: {
-    saveRunData(context) {
-      nodecg.sendMessage(
-        'modifyRun',
-        {
-          runData: context.state.runData,
-          runListUpdate: context.state.runListUpdate,
-          activeRunUpdate: context.state.activeRunUpdate,
-        },
-      ).then(() => {
-        // done
-      }).catch(() => {
-        // failed
+    saveRunData({ state }) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await nodecg.sendMessage('modifyRun', state.runData);
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
       });
     },
   },

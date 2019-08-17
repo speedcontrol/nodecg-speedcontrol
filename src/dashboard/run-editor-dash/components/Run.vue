@@ -28,7 +28,10 @@ export default Vue.extend({
   methods: {
     editRun() {
       const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any;
-      runInfoDialog.querySelector('iframe').contentWindow.open({ runData: this.runData });
+      runInfoDialog.querySelector('iframe').contentWindow.open({
+        mode: 'EditOther',
+        runData: this.runData,
+      });
     },
     removeRunConfirm() {
       const alertDialog = nodecg.getDialog('alert-dialog') as any;

@@ -1,8 +1,9 @@
 import clone from 'clone';
+import _ from 'lodash';
 import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { RunDataActiveRunSurrounding } from '../../schemas';
-import { RunData, RunDataActiveRun, RunDataArray, Timer } from '../../types'; // eslint-disable-line
+import { RunData, RunDataActiveRun, RunDataArray, RunDataPlayer, RunDataTeam, Timer } from '../../types'; // eslint-disable-line
 import Helpers from './util/helpers';
 
 const { processAck, timeStrToMS, msToTimeStr } = Helpers;
@@ -25,11 +26,9 @@ export default class RunControl {
     this.activeRunSurrounding = this.nodecg.Replicant('runDataActiveRunSurrounding');
     this.timer = this.nodecg.Replicant('timer');
 
-    this.nodecg.listenFor('changeActiveRun', (id: string, ack): void => this.changeActiveRun(id, ack));
-    this.nodecg.listenFor('removeRun', (id: string, ack): void => this.removeRun(id, ack));
-    this.nodecg.listenFor('modifyRun', (data, ack): void => this.modifyRun(
-      data.runData, data.runListUpdate, data.activeRunUpdate, ack,
-    ));
+    this.nodecg.listenFor('changeActiveRun', (id, ack): void => this.changeActiveRun(id, ack));
+    this.nodecg.listenFor('removeRun', (id, ack): void => this.removeRun(id, ack));
+    this.nodecg.listenFor('modifyRun', (data, ack): void => this.modifyRun(data, ack));
     this.nodecg.listenFor('changeToNextRun', (msg, ack): void => (
       this.changeActiveRun(this.activeRunSurrounding.value.next, ack)
     ));
@@ -121,17 +120,31 @@ export default class RunControl {
   /**
    * Either edits a run (if we currently have it) or adds it.
    * @param runData Run Data object.
-   * @param runListUpdate If to attempt to update the run in the Run Data array or not.
-   * @param activeRunUpdate If to attempt to update the active run using this data or not.
    * @param ack NodeCG message acknowledgement.
    */
-  modifyRun(
-    runData: RunData,
-    runListUpdate: boolean = true,
-    activeRunUpdate: boolean = true,
-    ack?: ListenForCb,
-  ): void {
-    const data = runData;
+  modifyRun(runData: RunData, ack?: ListenForCb): void {
+    // Loops through data, removes any keys that are falsey.
+    const data = _.pickBy(runData, _.identity) as RunData;
+    data.customData = _.pickBy(data.customData, _.identity);
+    data.teams = data.teams.map((team): RunDataTeam => {
+      const teamData = _.pickBy(team, _.identity) as RunDataTeam;
+      teamData.players = teamData.players.map((player): RunDataPlayer => {
+        const playerData = _.pickBy(player, _.identity) as RunDataPlayer;
+        playerData.social = _.pickBy(playerData.social, _.identity);
+        return playerData;
+      });
+      return teamData;
+    });
+
+    // Check all players have names, if not throw an error.
+    const allNamesAdded = data.teams.every((team): boolean => (
+      team.players.every((player): boolean => !!player.name)
+    ));
+    if (!allNamesAdded) {
+      processAck(new Error('Cannot modify run data as player(s) are missing name(s).'), ack);
+      return;
+    }
+
     // Verify and convert estimate.
     if (data.estimate && data.estimate.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
       const ms = timeStrToMS(data.estimate);
@@ -154,15 +167,14 @@ export default class RunControl {
 
     const index = this.h.findRunIndexFromId(data.id);
     if (index >= 0) { // Run already exists, edit it.
-      if (activeRunUpdate) {
+      if (this.activeRun.value && data.id === this.activeRun.value.id) {
         this.activeRun.value = clone(data);
       }
-      if (runListUpdate) {
-        this.array.value[index] = clone(data);
-      }
+      this.array.value[index] = clone(data);
     } else { // Run is new, add it.
       this.array.value.push(clone(data));
     }
+
     processAck(null, ack);
   }
 

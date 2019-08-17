@@ -1,11 +1,17 @@
 <template>
   <div id="App">
-    <h1 v-if="newRun">
+    <h1 v-if="mode === 'New'">
       Add Run
     </h1>
     <h1 v-else>
       Edit Run
     </h1>
+    <div
+      v-if="err"
+      class="Error"
+    >
+      ERROR: {{ err.message }}<br><br>
+    </div>
     <div class="GeneralInputs">
       <!-- Normal Inputs -->
       <input
@@ -40,20 +46,8 @@
     <br><button @click="addNewTeam">
       Add New Team
     </button>
-    <br><br><div v-if="activeBtn">
-      <input
-        v-model="runListUpdate"
-        type="checkbox"
-      > Also update run in run list.
-    </div>
-    <div v-else-if="active">
-      <input
-        v-model="activeRunUpdate"
-        type="checkbox"
-      > Also update active run.
-    </div>
     <br><div class="DialogButtons">
-      <button @click="close(true)">
+      <button @click="attemptSave">
         OK
       </button>
       <button @click="close(false)">
@@ -66,12 +60,17 @@
 <script lang="ts">
 import Vue from 'vue';
 import store from './store';
-import { store as repStore } from '../_misc/replicant-store';
 import Team from './components/Team.vue';
 import { nodecg } from '../_misc/nodecg';
 import { RunData } from '../../../types';
 
 const Draggable = require('vuedraggable'); // Don't need types now :)
+
+enum Mode {
+  New = 'New',
+  EditActive = 'EditActive',
+  EditOther = 'EditOther',
+}
 
 export default Vue.extend({
   components: {
@@ -81,9 +80,7 @@ export default Vue.extend({
   data() {
     return {
       dialog: undefined as any,
-      newRun: true,
-      activeBtn: false,
-      active: false,
+      err: undefined as Error | undefined,
       inputs: [
         { key: 'game', name: 'Game' },
         { key: 'gameTwitch', name: 'Game (Twitch)' },
@@ -105,20 +102,12 @@ export default Vue.extend({
         store.commit('updateRunData', { value });
       },
     },
-    runListUpdate: {
+    mode: {
       get() {
-        return store.state.runListUpdate;
+        return store.state.mode;
       },
-      set(value: boolean) {
-        store.commit('toggleRunListUpdateBool', { value });
-      },
-    },
-    activeRunUpdate: {
-      get() {
-        return store.state.activeRunUpdate;
-      },
-      set(value: boolean) {
-        store.commit('toggleActiveRunUpdateBool', { value });
+      set(value: Mode) {
+        store.commit('updateMode', { value });
       },
     },
     customData() {
@@ -129,66 +118,57 @@ export default Vue.extend({
     this.dialog = nodecg.getDialog('run-modification-dialog') as any;
 
     // Attaching this function to the window for easy access from dashboard panels.
-    (window as any).open = (opts?: {
-      runData?: RunData;
-      active?: boolean;
-    }) => this.open(opts);
+    (window as any).open = (opts: { mode: Mode; runData?: RunData; }) => this.open(opts);
 
     // Small hack to make the NodeCG dialog look a little better for us, not perfect yet.
     const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;
     elem.style.marginBottom = '12px';
   },
   methods: {
-    open(opts?: {
-      runData?: RunData;
-      activeBtn?: boolean;
-    }) {
+    open(opts: { mode: Mode; runData?: RunData; }) {
       // Waits for dialog to actually open before changing storage.
       this.dialog.open();
       document.addEventListener('dialog-opened', () => {
-        if (opts && opts.runData) {
+        this.mode = opts.mode;
+        if (opts.runData) {
           store.commit('updateRunData', { value: opts.runData });
-          this.newRun = false;
         } else {
           store.commit('resetRunData');
           store.commit('addNewTeam');
-          this.newRun = true;
-        }
-        this.activeBtn = !!opts && !!opts.activeBtn;
-        this.active = (
-          !!opts
-          && !!opts.runData
-          && !!repStore.state.runDataActiveRun
-          && opts.runData.id === repStore.state.runDataActiveRun.id
-        );
-        if (this.activeBtn) {
-          this.activeRunUpdate = true;
-        } else {
-          this.runListUpdate = true;
         }
       }, { once: true });
       document.addEventListener('dialog-confirmed', this.confirm, { once: true });
       document.addEventListener('dialog-dismissed', this.dismiss, { once: true });
+    },
+    addNewTeam() {
+      store.commit('addNewTeam');
+    },
+    attemptSave() {
+      store.dispatch('saveRunData').then(() => {
+        this.close(true);
+      }).catch((err) => {
+        this.err = err;
+      });
     },
     close(confirm: boolean) {
       this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line
       this.dialog.close();
     },
     confirm() {
-      store.dispatch('saveRunData');
       document.removeEventListener('dialog-dismissed', this.dismiss);
     },
     dismiss() {
       document.removeEventListener('dialog-confirmed', this.confirm);
-    },
-    addNewTeam() {
-      store.commit('addNewTeam');
     },
   },
 });
 </script>
 
 <style scoped>
+  .Error {
+    color: red;
+  }
+
   .GeneralInputs > input {
     width: 100%;
   }

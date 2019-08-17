@@ -24,11 +24,11 @@ import Run from './components/Run.vue';
 import { store } from '../_misc/replicant-store';
 import { RunData } from '../../../types';
 
-const draggable = require('vuedraggable'); // Don't need types now :)
+const Draggable = require('vuedraggable'); // Don't need types now :)
 
 export default Vue.extend({
   components: {
-    draggable,
+    Draggable,
     Run,
   },
   computed: {
@@ -51,8 +51,8 @@ export default Vue.extend({
       if (this.activeRun) {
         const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any;
         runInfoDialog.querySelector('iframe').contentWindow.open({
+          mode: 'EditActive',
           runData: this.activeRun,
-          activeBtn: true,
         });
       }
     },
