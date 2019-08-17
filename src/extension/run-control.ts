@@ -153,20 +153,30 @@ export default class RunControl {
     }
 
     // Verify and convert estimate.
-    if (data.estimate && data.estimate.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-      const ms = timeStrToMS(data.estimate);
-      data.estimate = msToTimeStr(ms);
-      data.estimateS = ms / 1000;
+    if (data.estimate) {
+      if (data.estimate.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+        const ms = timeStrToMS(data.estimate);
+        data.estimate = msToTimeStr(ms);
+        data.estimateS = ms / 1000;
+      } else { // Throw error if format is incorrect.
+        processAck(new Error('Cannot accept run data as estimate is in incorrect format.'), ack);
+        return;
+      }
     } else {
       delete data.estimate;
       delete data.estimateS;
     }
 
     // Verify and convert setup time.
-    if (data.setupTime && data.setupTime.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-      const ms = timeStrToMS(data.setupTime);
-      data.setupTime = msToTimeStr(ms);
-      data.setupTimeS = ms / 1000;
+    if (data.setupTime) {
+      if (data.setupTime.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+        const ms = timeStrToMS(data.setupTime);
+        data.setupTime = msToTimeStr(ms);
+        data.setupTimeS = ms / 1000;
+      } else { // Throw error if format is incorrect.
+        processAck(new Error('Cannot accept run data as setup time is in incorrect format.'), ack);
+        return;
+      }
     } else {
       delete data.setupTime;
       delete data.setupTimeS;
