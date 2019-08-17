@@ -162,8 +162,8 @@ export default class HoraroImport {
       try {
         this.importStatus.value.importing = true;
         const data = this.scheduleDataCache[dashUUID];
-        const runItems: HoraroScheduleItem[] = data.schedule.items;
-        const setupTime: number = data.schedule.setup_t;
+        const runItems = data.schedule.items;
+        const setupTime = data.schedule.setup_t;
         this.defaultSetupTime.value = setupTime;
 
         // Filtering out any games on the ignore list before processing them all.
