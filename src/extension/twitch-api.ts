@@ -301,11 +301,13 @@ export default class TwitchAPI {
           duration: 180,
         },
       );
-      this.nodecg.log.info('Twitch commercial started successfully.');
       if (resp.statusCode !== 200) {
         throw new Error(JSON.stringify(resp.body));
       }
-      processAck(null, ack);
+      this.nodecg.log.info('Twitch commercial started successfully.');
+      this.nodecg.sendMessage('twitchCommercialStarted', { duration: 180 });
+      this.nodecg.sendMessage('twitchAdStarted', { duration: 180 }); // Legacy
+      processAck(null, ack, { duration: 180 });
     } catch (err) {
       this.nodecg.log.warn('Error starting Twitch commercial:', err.message);
       processAck(err, ack);

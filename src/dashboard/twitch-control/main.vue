@@ -12,7 +12,7 @@
       ><img src="./twitch-login.png"></a>
       <br><br>Click the image above to connect to Twitch to auto-sync data.
     </div>
-    <!-- Enabled, logging in server-side -->
+    <!-- Enabled, authenticating server-side -->
     <div v-else-if="apiData.state === 'authenticating'">
       Authenticating...
     </div>
