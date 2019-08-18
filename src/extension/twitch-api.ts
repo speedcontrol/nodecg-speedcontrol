@@ -157,6 +157,7 @@ export default class TwitchAPI {
   request(method: NeedleHttpVerbs, endpoint: string, data: BodyData = {}): Promise<NeedleResponse> {
     return new Promise(async (resolve, reject): Promise<void> => {
       try {
+        this.nodecg.log.debug(`Twitch API request processing on ${endpoint}.`);
         let reattempt = false;
         let resp;
         do {
@@ -174,6 +175,10 @@ export default class TwitchAPI {
             },
           );
           if (resp.statusCode === 401 && !reattempt) {
+            this.nodecg.log.debug(
+              `Twitch API request resulted in ${resp.statusCode} on ${endpoint}:`,
+              JSON.stringify(resp.body),
+            );
             await this.refreshToken(); // eslint-disable-line
             reattempt = true;
             // Can a 401 mean something else?
@@ -182,9 +187,9 @@ export default class TwitchAPI {
             // Do we need to retry here?
           }
         } while (reattempt);
+        this.nodecg.log.debug(`Twitch API request successful on ${endpoint}.`);
         resolve(resp);
       } catch (err) {
-        // Debug log as the other functions should handle the *correct* logging!
         this.nodecg.log.debug(`Twitch API error on ${endpoint}:`, err);
         reject(err);
       }
