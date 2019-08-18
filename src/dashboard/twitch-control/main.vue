@@ -55,7 +55,7 @@ export default Vue.extend({
     apiData() {
       return store.state.twitchAPIData;
     },
-    channelData() {
+    channelInfo() {
       return store.state.twitchChannelInfo;
     },
     url() {
