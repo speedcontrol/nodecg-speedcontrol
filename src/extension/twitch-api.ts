@@ -247,12 +247,12 @@ export default class TwitchAPI {
   }
 
   /**
-   * Attempts to run a commercial on the set channel.
+   * Attempts to start a commercial on the set channel.
    * @param ack NodeCG message acknowledgement.
    */
   async startCommercial(ack?: ListenForCb): Promise<void> {
     try {
-      this.nodecg.log.info('Requested a Twitch commercial to be played.');
+      this.nodecg.log.info('Requested a Twitch commercial to be started.');
       const resp = await this.request(
         'post',
         `/channels/${this.data.value.channelID}/commercial`,
@@ -266,7 +266,7 @@ export default class TwitchAPI {
       }
       processAck(null, ack);
     } catch (err) {
-      this.nodecg.log.warn('Error running Twitch commercial:', err.message);
+      this.nodecg.log.warn('Error starting Twitch commercial:', err.message);
       processAck(err, ack);
     }
   }
