@@ -1,9 +1,12 @@
 import express from 'express';
-import needle, { NeedleResponse } from 'needle';
+import needle, { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
+import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { Configschema } from '../../configschema';
 import { TwitchAPIData, TwitchChannelData } from '../../schemas';
 import Helpers from './util/helpers';
+
+const { processAck } = Helpers;
 
 export default class TwitchAPI {
   /* eslint-disable */
@@ -29,14 +32,14 @@ export default class TwitchAPI {
 
       if (this.data.value.accessToken) {
         this.validateToken().then((): void => {
-          this.data.value.ready = true;
-          this.getChannelInfo();
-          nodecg.log.info('Twitch integration is ready.');
+          this.setUp();
         }).catch(async (): Promise<void> => {
-          await this.refreshToken();
-          this.data.value.ready = true;
-          this.getChannelInfo();
-          nodecg.log.info('Twitch integration is ready.');
+          try {
+            await this.refreshToken();
+            this.setUp();
+          } catch (err) {
+            nodecg.log.warn('Issue activating Twitch integration, you need to relogin.');
+          }
         });
       }
 
@@ -60,17 +63,29 @@ export default class TwitchAPI {
           const resp2 = await this.validateToken();
           this.data.value.channelID = resp2.user_id;
           this.data.value.channelName = resp2.login;
-          this.data.value.ready = true;
-          this.getChannelInfo();
-          nodecg.log.info('Twitch integration is ready.');
+          this.setUp();
           res.send('<b>Twitch authentication is now complete, feel free to close this window/tab.</b>');
+          nodecg.log.info('Twitch authentication successful.');
         } catch (err) {
           res.send('<b>Error while processing the Twitch authentication, please try again.</b>');
+          nodecg.log.warn('Issue with Twitch authentication.');
         }
       });
 
       nodecg.mount(app);
     }
+  }
+
+  /**
+   * General set up stuff, done from above.
+   */
+  setUp(): void {
+    global.clearTimeout(this.channelDataTO as NodeJS.Timeout);
+    this.data.value.ready = true;
+    this.getChannelInfo();
+    this.nodecg.listenFor('startTwitchCommercial', (msg, ack): Promise<void> => this.startCommercial(ack));
+    this.nodecg.listenFor('playTwitchAd', (msg, ack): Promise<void> => this.startCommercial(ack)); // Legacy
+    this.nodecg.log.info('Twitch integration is ready.');
   }
 
   /**
@@ -94,11 +109,9 @@ export default class TwitchAPI {
             },
           },
         );
-        if (resp.statusCode === 401) {
-          throw new Error('401');
-        } else if (resp.statusCode !== 200) {
-          throw new Error(`${resp.statusCode}`);
-          // we need to retry here at some point
+        if (resp.statusCode !== 200) {
+          throw new Error(JSON.stringify(resp.body));
+          // Do we need to retry here?
         }
         resolve(resp.body);
       } catch (err) {
@@ -108,10 +121,10 @@ export default class TwitchAPI {
   }
 
   /**
-   * Make a GET request to Twitch API v5.
+   * Make a request to Twitch API v5.
    * @param url Twitch API v5 endpoint you want to access.
    */
-  get(endpoint: string): Promise<NeedleResponse> {
+  request(method: NeedleHttpVerbs, endpoint: string, data: BodyData = {}): Promise<NeedleResponse> {
     return new Promise(async (resolve, reject): Promise<void> => {
       try {
         let tokenValid = false;
@@ -119,9 +132,9 @@ export default class TwitchAPI {
         do {
           // eslint-disable-next-line
           resp = await needle(
-            'get',
+            method,
             `https://api.twitch.tv/kraken${endpoint}`,
-            {},
+            data,
             {
               headers: {
                 Accept: 'application/vnd.twitchtv.v5+json',
@@ -132,16 +145,18 @@ export default class TwitchAPI {
           );
           if (resp.statusCode === 401) {
             await this.refreshToken(); // eslint-disable-line
-            // sometimes a 401 could mean something else?
+            // Can a 401 mean something else?
           } else if (resp.statusCode !== 200) {
-            throw new Error(`${resp.statusCode}`);
-            // we need to retry here at some point
+            throw new Error(JSON.stringify(resp.body));
+            // Do we need to retry here?
           } else {
             tokenValid = true;
           }
         } while (!tokenValid);
         resolve(resp);
       } catch (err) {
+        // Debug log as the other functions should handle the *correct* logging!
+        this.nodecg.log.debug(`Twitch API error on ${endpoint}:`, err);
         reject(err);
       }
     });
@@ -163,12 +178,9 @@ export default class TwitchAPI {
             client_secret: this.config.twitch.clientSecret,
           }, /* eslint-enable */
         );
-        if (resp.statusCode === 401) {
-          throw new Error('401');
-          // I assume we can't do anything
-        } else if (resp.statusCode !== 200) {
-          throw new Error(`${resp.statusCode}`);
-          // we need to retry here at some point
+        if (resp.statusCode !== 200) {
+          throw new Error(JSON.stringify(resp.body));
+          // Do we need to retry here?
         }
         this.data.value.accessToken = resp.body.access_token;
         this.data.value.refreshToken = resp.body.refresh_token;
@@ -184,14 +196,46 @@ export default class TwitchAPI {
    */
   async getChannelInfo(): Promise<void> {
     try {
-      const resp = await this.get(`/channels/${this.data.value.channelID}`);
-      this.channelDataTO = setTimeout((): Promise<void> => this.getChannelInfo(), 60 * 1000);
+      const resp = await this.request('get', `/channels/${this.data.value.channelID}`);
       if (resp.statusCode !== 200) {
-        throw new Error(`${resp.statusCode}`);
+        throw new Error(JSON.stringify(resp.body));
       }
       this.channelData.value = resp.body;
+      this.channelDataTO = global.setTimeout(
+        (): Promise<void> => this.getChannelInfo(),
+        60 * 1000,
+      );
     } catch (err) {
-      // no data :(
+      // Try again after 10 seconds.
+      this.channelDataTO = global.setTimeout(
+        (): Promise<void> => this.getChannelInfo(),
+        10 * 1000,
+      );
+    }
+  }
+
+  /**
+   * Attempts to run a commercial on the set channel.
+   * @param ack NodeCG message acknowledgement.
+   */
+  async startCommercial(ack?: ListenForCb): Promise<void> {
+    try {
+      this.nodecg.log.info('Requested a Twitch commercial to be played.');
+      const resp = await this.request(
+        'post',
+        `/channels/${this.data.value.channelID}/commercial`,
+        {
+          duration: 180,
+        },
+      );
+      this.nodecg.log.info('Twitch commercial started successfully.');
+      if (resp.statusCode !== 200) {
+        throw new Error(JSON.stringify(resp.body));
+      }
+      processAck(null, ack);
+    } catch (err) {
+      this.nodecg.log.warn('Error running Twitch commercial:', err.message);
+      processAck(err, ack);
     }
   }
 }

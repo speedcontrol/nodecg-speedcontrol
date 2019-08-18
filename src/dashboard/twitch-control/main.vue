@@ -16,6 +16,9 @@
     <div v-else>
       Title: {{ channelData.status }}
       <br>Game: {{ channelData.game }}
+      <br><br><button @click="startCommercial">
+        Start 3m Commercial
+      </button>
     </div>
   </div>
 </template>
@@ -45,6 +48,15 @@ export default Vue.extend({
 &response_type=code
 &scope=channel_editor+user_read+chat:read+chat:edit+channel_commercial
 &force_verify=true`;
+    },
+  },
+  methods: {
+    startCommercial() {
+      nodecg.sendMessage('startTwitchCommercial').then(() => {
+        // successful
+      }).catch(() => {
+        // unsuccessful
+      });
     },
   },
 });
