@@ -82,9 +82,10 @@ export default class TwitchAPI {
   setUp(): void {
     global.clearTimeout(this.channelDataTO as NodeJS.Timeout);
     this.data.value.ready = true;
-    this.getChannelInfo();
+    this.getChannelData();
     this.nodecg.listenFor('startTwitchCommercial', (msg, ack): Promise<void> => this.startCommercial(ack));
     this.nodecg.listenFor('playTwitchAd', (msg, ack): Promise<void> => this.startCommercial(ack)); // Legacy
+    this.nodecg.listenFor('updateChannelData', (msg, ack): Promise<void> => this.updateChannelData(msg.status, msg.game, ack));
     this.nodecg.log.info('Twitch integration is ready.');
   }
 
@@ -194,7 +195,7 @@ export default class TwitchAPI {
   /**
    * Gets the channel's information and stores it in a replicant every 60 seconds.
    */
-  async getChannelInfo(): Promise<void> {
+  async getChannelData(): Promise<void> {
     try {
       const resp = await this.request('get', `/channels/${this.data.value.channelID}`);
       if (resp.statusCode !== 200) {
@@ -202,15 +203,46 @@ export default class TwitchAPI {
       }
       this.channelData.value = resp.body;
       this.channelDataTO = global.setTimeout(
-        (): Promise<void> => this.getChannelInfo(),
+        (): Promise<void> => this.getChannelData(),
         60 * 1000,
       );
     } catch (err) {
       // Try again after 10 seconds.
       this.channelDataTO = global.setTimeout(
-        (): Promise<void> => this.getChannelInfo(),
+        (): Promise<void> => this.getChannelData(),
         10 * 1000,
       );
+    }
+  }
+
+  /**
+   * Attempts to update the title/game on the set channel.
+   * @param status Title to set.
+   * @param game Game to set.
+   * @param ack NodeCG message acknowledgement.
+   */
+  async updateChannelData(status: string, game: string, ack?: ListenForCb): Promise<void> {
+    try {
+      this.nodecg.log.info('Attempting to update Twitch channel information.');
+      const resp = await this.request(
+        'put',
+        `/channels/${this.data.value.channelID}`,
+        {
+          channel: {
+            status,
+            game,
+          },
+        },
+      );
+      if (resp.statusCode !== 200) {
+        throw new Error(JSON.stringify(resp.body));
+      }
+      this.nodecg.log.info('Successfully updated Twitch channel information.');
+      this.channelData.value = resp.body;
+      processAck(null, ack);
+    } catch (err) {
+      this.nodecg.log.warn('Error updating Twitch channel information:', err.message);
+      processAck(err, ack);
     }
   }
 

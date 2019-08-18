@@ -14,8 +14,19 @@
     </div>
     <!-- Ready server-side -->
     <div v-else>
-      Title: {{ channelData.status }}
-      <br>Game: {{ channelData.game }}
+      <input
+        v-model="title"
+        @focus="focus = true"
+        @blur="focus = false"
+      >
+      <input
+        v-model="game"
+        @focus="focus = true"
+        @blur="focus = false"
+      >
+      <button @click="updateChannelData">
+        Update
+      </button>
       <br><br><button @click="startCommercial">
         Start 3m Commercial
       </button>
@@ -30,6 +41,13 @@ import { Configschema } from '../../../configschema';
 import { store } from '../_misc/replicant-store';
 
 export default Vue.extend({
+  data() {
+    return {
+      focus: false,
+      title: '',
+      game: '',
+    };
+  },
   computed: {
     config() {
       return nodecg.bundleConfig.twitch;
@@ -50,7 +68,28 @@ export default Vue.extend({
 &force_verify=true`;
     },
   },
+  watch: {
+    channelData: {
+      handler(val) {
+        if (!this.focus) {
+          this.title = val.status;
+          this.game = val.game;
+        }
+      },
+      immediate: true,
+    },
+  },
   methods: {
+    updateChannelData() {
+      nodecg.sendMessage('updateChannelData', {
+        status: this.title,
+        game: this.game,
+      }).then(() => {
+        // successful
+      }).catch(() => {
+        // unsuccessful
+      });
+    },
     startCommercial() {
       nodecg.sendMessage('startTwitchCommercial').then(() => {
         // successful
@@ -61,3 +100,14 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped>
+  input {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+  }
+</style>
