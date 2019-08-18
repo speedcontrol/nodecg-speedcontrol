@@ -3,7 +3,7 @@ import needle, { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
 import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { Configschema } from '../../configschema';
-import { TwitchAPIData, TwitchChannelData } from '../../schemas';
+import { TwitchAPIData, TwitchChannelInfo } from '../../schemas';
 import Helpers from './util/helpers';
 
 const { processAck } = Helpers;
@@ -14,8 +14,8 @@ export default class TwitchAPI {
   private h: Helpers;
   private config: Configschema;
   private data: Replicant<TwitchAPIData>
-  private channelData: Replicant<TwitchChannelData>
-  private channelDataTO: NodeJS.Timeout | undefined;
+  private channelInfo: Replicant<TwitchChannelInfo>
+  private channelInfoTO: NodeJS.Timeout | undefined;
   /* eslint-enable */
 
   constructor(nodecg: NodeCG) {
@@ -23,7 +23,7 @@ export default class TwitchAPI {
     this.h = new Helpers(nodecg);
     this.config = this.h.bundleConfig();
     this.data = nodecg.Replicant('twitchAPIData');
-    this.channelData = nodecg.Replicant('twitchChannelData');
+    this.channelInfo = nodecg.Replicant('twitchChannelInfo');
     const app = express();
     this.data.value.ready = false; // Set this to false on every start.
 
@@ -80,12 +80,12 @@ export default class TwitchAPI {
    * General set up stuff, done from above.
    */
   setUp(): void {
-    global.clearTimeout(this.channelDataTO as NodeJS.Timeout);
+    global.clearTimeout(this.channelInfoTO as NodeJS.Timeout);
     this.data.value.ready = true;
-    this.getChannelData();
+    this.getChannelInfo();
     this.nodecg.listenFor('startTwitchCommercial', (msg, ack): Promise<void> => this.startCommercial(ack));
     this.nodecg.listenFor('playTwitchAd', (msg, ack): Promise<void> => this.startCommercial(ack)); // Legacy
-    this.nodecg.listenFor('updateChannelData', (msg, ack): Promise<void> => this.updateChannelData(msg.status, msg.game, ack));
+    this.nodecg.listenFor('updateChannelInfo', (msg, ack): Promise<void> => this.updateChannelInfo(msg.status, msg.game, ack));
     this.nodecg.log.info('Twitch integration is ready.');
   }
 
@@ -195,21 +195,21 @@ export default class TwitchAPI {
   /**
    * Gets the channel's information and stores it in a replicant every 60 seconds.
    */
-  async getChannelData(): Promise<void> {
+  async getChannelInfo(): Promise<void> {
     try {
       const resp = await this.request('get', `/channels/${this.data.value.channelID}`);
       if (resp.statusCode !== 200) {
         throw new Error(JSON.stringify(resp.body));
       }
-      this.channelData.value = resp.body;
-      this.channelDataTO = global.setTimeout(
-        (): Promise<void> => this.getChannelData(),
+      this.channelInfo.value = resp.body;
+      this.channelInfoTO = global.setTimeout(
+        (): Promise<void> => this.getChannelInfo(),
         60 * 1000,
       );
     } catch (err) {
       // Try again after 10 seconds.
-      this.channelDataTO = global.setTimeout(
-        (): Promise<void> => this.getChannelData(),
+      this.channelInfoTO = global.setTimeout(
+        (): Promise<void> => this.getChannelInfo(),
         10 * 1000,
       );
     }
@@ -221,7 +221,7 @@ export default class TwitchAPI {
    * @param game Game to set.
    * @param ack NodeCG message acknowledgement.
    */
-  async updateChannelData(status: string, game: string, ack?: ListenForCb): Promise<void> {
+  async updateChannelInfo(status: string, game: string, ack?: ListenForCb): Promise<void> {
     try {
       this.nodecg.log.info('Attempting to update Twitch channel information.');
       const resp = await this.request(
@@ -238,7 +238,7 @@ export default class TwitchAPI {
         throw new Error(JSON.stringify(resp.body));
       }
       this.nodecg.log.info('Successfully updated Twitch channel information.');
-      this.channelData.value = resp.body;
+      this.channelInfo.value = resp.body;
       processAck(null, ack);
     } catch (err) {
       this.nodecg.log.warn('Error updating Twitch channel information:', err.message);

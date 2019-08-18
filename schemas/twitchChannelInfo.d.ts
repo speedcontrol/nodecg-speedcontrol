@@ -5,6 +5,6 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface TwitchChannelData {
+export interface TwitchChannelInfo {
   [k: string]: any;
 }

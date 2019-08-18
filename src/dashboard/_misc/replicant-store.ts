@@ -2,7 +2,7 @@ import clone from 'clone';
 import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { DefaultSetupTime, HoraroImportStatus, RunDataActiveRunSurrounding, TwitchAPIData, TwitchChannelData } from '../../../schemas'; // eslint-disable-line
+import { DefaultSetupTime, HoraroImportStatus, RunDataActiveRunSurrounding, TwitchAPIData, TwitchChannelInfo } from '../../../schemas'; // eslint-disable-line
 import { RunDataActiveRun, RunDataArray, Timer } from '../../../types';
 
 Vue.use(Vuex);
@@ -15,7 +15,7 @@ const replicantNames = [
   'defaultSetupTime',
   'timer',
   'twitchAPIData',
-  'twitchChannelData',
+  'twitchChannelInfo',
 ];
 const replicants: ReplicantBrowser<unknown>[] = [];
 
@@ -28,7 +28,7 @@ export const store = new Vuex.Store({
     defaultSetupTime: 0 as DefaultSetupTime,
     timer: {} as Timer,
     twitchAPIData: {} as TwitchAPIData,
-    twitchChannelData: {} as TwitchChannelData,
+    twitchChannelInfo: {} as TwitchChannelInfo,
   },
   mutations: {
     updateReplicant(state, { name, value }) {

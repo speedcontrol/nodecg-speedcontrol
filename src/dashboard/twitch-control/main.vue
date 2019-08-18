@@ -24,7 +24,7 @@
         @focus="focus = true"
         @blur="focus = false"
       >
-      <button @click="updateChannelData">
+      <button @click="updateChannelInfo">
         Update
       </button>
       <br><br><button @click="startCommercial">
@@ -56,7 +56,7 @@ export default Vue.extend({
       return store.state.twitchAPIData;
     },
     channelData() {
-      return store.state.twitchChannelData;
+      return store.state.twitchChannelInfo;
     },
     url() {
       const config = this.config as Configschema['twitch'];
@@ -69,7 +69,7 @@ export default Vue.extend({
     },
   },
   watch: {
-    channelData: {
+    channelInfo: {
       handler(val) {
         if (!this.focus) {
           this.title = val.status;
@@ -80,8 +80,8 @@ export default Vue.extend({
     },
   },
   methods: {
-    updateChannelData() {
-      nodecg.sendMessage('updateChannelData', {
+    updateChannelInfo() {
+      nodecg.sendMessage('updateChannelInfo', {
         status: this.title,
         game: this.game,
       }).then(() => {
