@@ -25,12 +25,24 @@ export default class TwitchAPI {
     this.data = nodecg.Replicant('twitchAPIData');
     this.channelInfo = nodecg.Replicant('twitchChannelInfo');
     const app = express();
-    this.data.value.ready = false; // Set this to false on every start.
+    this.data.value.state = 'off'; // Set this to "off" on every start.
 
     if (this.config.twitch.enabled) {
       nodecg.log.info('Twitch integration is enabled.');
 
+      this.nodecg.listenFor('updateChannelInfo', (msg, ack): Promise<void> => this.updateChannelInfo(msg.status, msg.game, ack));
+      this.nodecg.listenFor('startTwitchCommercial', (msg, ack): Promise<void> => this.startCommercial(ack));
+      this.nodecg.listenFor('playTwitchAd', (msg, ack): Promise<void> => this.startCommercial(ack)); // Legacy
+      this.nodecg.listenFor('twitchLogout', (msg, ack): void => {
+        this.logout().then((): void => {
+          processAck(null, ack);
+        }).catch((err): void => {
+          processAck(err, ack);
+        });
+      });
+
       if (this.data.value.accessToken) {
+        this.data.value.state = 'authenticating';
         this.validateToken().then((): void => {
           this.setUp();
         }).catch(async (): Promise<void> => {
@@ -38,7 +50,8 @@ export default class TwitchAPI {
             await this.refreshToken();
             this.setUp();
           } catch (err) {
-            nodecg.log.warn('Issue activating Twitch integration, you need to relogin.');
+            nodecg.log.warn('Issue activating Twitch integration.');
+            try { await this.logout(); } catch { /* err */ }
           }
         });
       }
@@ -46,6 +59,7 @@ export default class TwitchAPI {
       // Route that receives Twitch's auth code when the user does the flow from the dashboard.
       app.get('/nodecg-speedcontrol/twitchauth', async (req, res): Promise<void> => {
         try {
+          this.data.value.state = 'authenticating';
           const resp1 = await needle(
             'post',
             'https://id.twitch.tv/oauth2/token',
@@ -64,11 +78,12 @@ export default class TwitchAPI {
           this.data.value.channelID = resp2.user_id;
           this.data.value.channelName = resp2.login;
           this.setUp();
-          res.send('<b>Twitch authentication is now complete, feel free to close this window/tab.</b>');
           nodecg.log.info('Twitch authentication successful.');
+          res.send('<b>Twitch authentication is now complete, feel free to close this window/tab.</b>');
         } catch (err) {
-          res.send('<b>Error while processing the Twitch authentication, please try again.</b>');
           nodecg.log.warn('Issue with Twitch authentication.');
+          try { await this.logout(); } catch { /* err */ }
+          res.send('<b>Error while processing the Twitch authentication, please try again.</b>');
         }
       });
 
@@ -81,12 +96,26 @@ export default class TwitchAPI {
    */
   setUp(): void {
     global.clearTimeout(this.channelInfoTO as NodeJS.Timeout);
-    this.data.value.ready = true;
+    this.data.value.state = 'on';
     this.getChannelInfo();
-    this.nodecg.listenFor('startTwitchCommercial', (msg, ack): Promise<void> => this.startCommercial(ack));
-    this.nodecg.listenFor('playTwitchAd', (msg, ack): Promise<void> => this.startCommercial(ack)); // Legacy
-    this.nodecg.listenFor('updateChannelInfo', (msg, ack): Promise<void> => this.updateChannelInfo(msg.status, msg.game, ack));
     this.nodecg.log.info('Twitch integration is ready.');
+  }
+
+  /**
+   * Logs out of the Twitch integration.
+   */
+  logout(): Promise<void> {
+    return new Promise((resolve, reject): void => {
+      if (this.data.value.state === 'off') {
+        reject(new Error('Twitch integration is not ready.'));
+        return;
+      }
+      this.data.value = { state: 'off' };
+      this.channelInfo.value = {};
+      global.clearTimeout(this.channelInfoTO as NodeJS.Timeout);
+      this.nodecg.log.info('Twitch integration successfully logged out.');
+      resolve();
+    });
   }
 
   /**
@@ -168,6 +197,7 @@ export default class TwitchAPI {
   refreshToken(): Promise<void> {
     return new Promise(async (resolve, reject): Promise<void> => {
       try {
+        this.nodecg.log.info('Attempting to refresh Twitch access token.');
         const resp = await needle(
           'post',
           'https://id.twitch.tv/oauth2/token',
@@ -182,10 +212,13 @@ export default class TwitchAPI {
           throw new Error(JSON.stringify(resp.body));
           // Do we need to retry here?
         }
+        this.nodecg.log.info('Successfully refreshed Twitch access token.');
         this.data.value.accessToken = resp.body.access_token;
         this.data.value.refreshToken = resp.body.refresh_token;
         resolve();
       } catch (err) {
+        this.nodecg.log.warn('Error refreshing Twitch access token, you need to relogin.');
+        try { await this.logout(); } catch { /* err */ }
         reject(err);
       }
     });
@@ -207,6 +240,7 @@ export default class TwitchAPI {
       );
     } catch (err) {
       // Try again after 10 seconds.
+      this.nodecg.log.warn('Error getting Twitch channel information:', err.message);
       this.channelInfoTO = global.setTimeout(
         (): Promise<void> => this.getChannelInfo(),
         10 * 1000,
@@ -221,6 +255,10 @@ export default class TwitchAPI {
    * @param ack NodeCG message acknowledgement.
    */
   async updateChannelInfo(status: string, game: string, ack?: ListenForCb): Promise<void> {
+    if (this.data.value.state !== 'on') {
+      processAck(new Error('Twitch integration is not ready.'), ack);
+      return;
+    }
     try {
       this.nodecg.log.info('Attempting to update Twitch channel information.');
       const resp = await this.request(
@@ -250,6 +288,10 @@ export default class TwitchAPI {
    * @param ack NodeCG message acknowledgement.
    */
   async startCommercial(ack?: ListenForCb): Promise<void> {
+    if (this.data.value.state !== 'on') {
+      processAck(new Error('Twitch integration is not ready.'), ack);
+      return;
+    }
     try {
       this.nodecg.log.info('Requested a Twitch commercial to be started.');
       const resp = await this.request(

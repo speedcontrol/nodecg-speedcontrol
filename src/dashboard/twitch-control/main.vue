@@ -4,17 +4,27 @@
     <div v-if="!config.enabled">
       Twitch integration is not enabled.
     </div>
-    <!-- Enabled but not ready server-side -->
-    <div v-else-if="!apiData.ready">
+    <!-- Enabled but not logged in server-side -->
+    <div v-else-if="apiData.state === 'off'">
       <a
         :href="url"
         target="_blank"
       ><img src="./twitch-login.png"></a>
       <br><br>Click the image above to connect to Twitch to auto-sync data.
     </div>
+    <!-- Enabled, logging in server-side -->
+    <div v-else-if="apiData.state === 'authenticating'">
+      Authenticating...
+    </div>
     <!-- Ready server-side -->
     <div v-else>
-      <input
+      <button
+        id="Logout"
+        @click="logout"
+      >
+        Logout ({{ apiData.channelName }})
+      </button>
+      <br><br><input
         v-model="title"
         @focus="focus = true"
         @blur="focus = false"
@@ -97,6 +107,13 @@ export default Vue.extend({
         // unsuccessful
       });
     },
+    logout() {
+      nodecg.sendMessage('twitchLogout').then(() => {
+        // successful
+      }).catch(() => {
+        // unsuccessful
+      });
+    },
   },
 });
 </script>
@@ -109,5 +126,10 @@ export default Vue.extend({
 
   button {
     width: 100%;
+  }
+
+  #Logout {
+    width: unset;
+    float: right;
   }
 </style>

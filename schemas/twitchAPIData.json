@@ -3,9 +3,14 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "ready": {
-      "type": "boolean",
-      "default": false
+    "state": {
+      "type": "string",
+      "enum": [
+        "off",
+        "authenticating",
+        "on"
+      ],
+      "default": "off"
     },
     "accessToken": {
       "type": "string"
@@ -21,6 +26,6 @@
     }
   },
   "required": [
-    "ready"
+    "state"
   ]
 }

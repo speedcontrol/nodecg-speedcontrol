@@ -6,7 +6,7 @@
  */
 
 export interface TwitchAPIData {
-  ready: boolean;
+  state: "off" | "authenticating" | "on";
   accessToken?: string;
   refreshToken?: string;
   channelName?: string;
