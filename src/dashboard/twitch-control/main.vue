@@ -1,10 +1,10 @@
 <template>
   <div id="App">
-    <!-- Not enabled -->
+    <!-- Not enabled. -->
     <div v-if="!config.enabled">
       Twitch integration is not enabled.
     </div>
-    <!-- Enabled but not logged in server-side -->
+    <!-- Enabled but not logged in server-side. -->
     <div v-else-if="apiData.state === 'off'">
       <a
         :href="url"
@@ -12,11 +12,11 @@
       ><img src="./twitch-login.png"></a>
       <br><br>Click the image above to connect to Twitch to auto-sync data.
     </div>
-    <!-- Enabled, authenticating server-side -->
+    <!-- Enabled, authenticating server-side. -->
     <div v-else-if="apiData.state === 'authenticating'">
       Authenticating...
     </div>
-    <!-- Ready server-side -->
+    <!-- Ready server-side. -->
     <div v-else>
       <button
         id="Logout"
@@ -26,13 +26,15 @@
       </button>
       <br><br><input
         v-model="title"
-        @focus="focus = true"
-        @blur="focus = false"
+        @input="inputActivity"
+        @focus="inputActivity"
+        @blur="inputActivity"
       >
       <input
         v-model="game"
-        @focus="focus = true"
-        @blur="focus = false"
+        @input="inputActivity"
+        @focus="inputActivity"
+        @blur="inputActivity"
       >
       <button @click="updateChannelInfo">
         Update
@@ -46,6 +48,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import _ from 'lodash';
 import { nodecg } from '../_misc/nodecg';
 import { Configschema } from '../../../configschema';
 import { store } from '../_misc/replicant-store';
@@ -80,16 +83,33 @@ export default Vue.extend({
   },
   watch: {
     channelInfo: {
-      handler(val) {
-        if (!this.focus) {
-          this.title = val.status;
-          this.game = val.game;
-        }
+      handler() {
+        this.updateInputs();
       },
       immediate: true,
     },
   },
+  created() {
+    this.blurInput = _.debounce(this.blurInput, 20 * 1000);
+  },
   methods: {
+    inputActivity(evt: Event) {
+      if (['input', 'focus'].includes(evt.type)) {
+        this.focus = true;
+        this.blurInput(evt);
+      } else if (evt.type === 'blur') {
+        this.focus = false;
+      }
+    },
+    blurInput(evt: Event) {
+      (evt.target as HTMLTextAreaElement).blur();
+    },
+    updateInputs() {
+      if (!this.focus) {
+        this.title = this.channelInfo.status;
+        this.game = this.channelInfo.game;
+      }
+    },
     updateChannelInfo() {
       nodecg.sendMessage('updateChannelInfo', {
         status: this.title,
