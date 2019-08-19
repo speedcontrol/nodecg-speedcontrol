@@ -157,7 +157,7 @@ export default class TwitchAPI {
   request(method: NeedleHttpVerbs, endpoint: string, data: BodyData = {}): Promise<NeedleResponse> {
     return new Promise(async (resolve, reject): Promise<void> => {
       try {
-        this.nodecg.log.debug(`Twitch API request processing on ${endpoint}.`);
+        this.nodecg.log.debug(`Twitch API ${method.toUpperCase()} request processing on ${endpoint}.`);
         let reattempt = false;
         let resp;
         do {
@@ -176,7 +176,7 @@ export default class TwitchAPI {
           );
           if (resp.statusCode === 401 && !reattempt) {
             this.nodecg.log.debug(
-              `Twitch API request resulted in ${resp.statusCode} on ${endpoint}:`,
+              `Twitch API ${method.toUpperCase()} request resulted in ${resp.statusCode} on ${endpoint}:`,
               JSON.stringify(resp.body),
             );
             await this.refreshToken(); // eslint-disable-line
@@ -187,10 +187,10 @@ export default class TwitchAPI {
             // Do we need to retry here?
           }
         } while (reattempt);
-        this.nodecg.log.debug(`Twitch API request successful on ${endpoint}.`);
+        this.nodecg.log.debug(`Twitch API ${method.toUpperCase()} request successful on ${endpoint}.`);
         resolve(resp);
       } catch (err) {
-        this.nodecg.log.debug(`Twitch API error on ${endpoint}:`, err);
+        this.nodecg.log.debug(`Twitch API ${method.toUpperCase()} request error on ${endpoint}:`, err);
         reject(err);
       }
     });
