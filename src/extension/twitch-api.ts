@@ -6,7 +6,7 @@ import { TwitchAPIData, TwitchChannelInfo } from '../../schemas';
 import * as events from './util/events';
 import Helpers from './util/helpers';
 
-const { cgListenForHelper } = Helpers;
+const { cgListenForHelper, to } = Helpers;
 
 export default class TwitchAPI {
   /* eslint-disable */
@@ -50,6 +50,11 @@ export default class TwitchAPI {
           .then((): void => { ack(null); })
           .catch((err): void => { ack(err); });
       });
+      events.listenFor('twitchGameSearch', (data, ack): void => {
+        this.searchForGame(data)
+          .then((data_): void => { ack(null, data_); })
+          .catch((err): void => { ack(err); });
+      });
 
       if (this.data.value.accessToken) {
         this.data.value.state = 'authenticating';
@@ -61,7 +66,7 @@ export default class TwitchAPI {
             this.setUp();
           } catch (err) {
             nodecg.log.warn('Issue activating Twitch integration.');
-            try { await this.logout(); } catch { /* err */ }
+            await to(this.logout());
           }
         });
       }
@@ -92,7 +97,7 @@ export default class TwitchAPI {
           res.send('<b>Twitch authentication is now complete, feel free to close this window/tab.</b>');
         } catch (err) {
           nodecg.log.warn('Issue with Twitch authentication.');
-          try { await this.logout(); } catch { /* err */ }
+          await to(this.logout());
           res.send('<b>Error while processing the Twitch authentication, please try again.</b>');
         }
       });
@@ -181,6 +186,7 @@ export default class TwitchAPI {
                 Accept: 'application/vnd.twitchtv.v5+json',
                 'Content-Type': 'application/json',
                 Authorization: `OAuth ${this.data.value.accessToken}`,
+                'Client-ID': this.h.bundleConfig().twitch.clientID,
               },
             },
           );
@@ -233,7 +239,7 @@ export default class TwitchAPI {
         resolve();
       } catch (err) {
         this.nodecg.log.warn('Error refreshing Twitch access token, you need to relogin.');
-        try { await this.logout(); } catch { /* err */ }
+        await to(this.logout());
         reject(err);
       }
     });
@@ -302,7 +308,7 @@ export default class TwitchAPI {
   /**
    * Attempts to start a commercial on the set channel.
    */
-  async startCommercial(): Promise<{ duration: number }> {
+  startCommercial(): Promise<{ duration: number }> {
     return new Promise(async (resolve, reject): Promise<void> => {
       if (this.data.value.state !== 'on') {
         reject(new Error('Twitch integration is not ready.'));
@@ -326,6 +332,32 @@ export default class TwitchAPI {
         resolve({ duration: 180 });
       } catch (err) {
         this.nodecg.log.warn('Error starting Twitch commercial:', err.message);
+        reject(err);
+      }
+    });
+  }
+
+  /**
+   * Returns the correct name of a game in the Twitch directory based on a search.
+   * @param query String you wish to try to find a game with.
+   */
+  searchForGame(query: string): Promise<string> {
+    return new Promise(async (resolve, reject): Promise<void> => {
+      if (this.data.value.state !== 'on') {
+        reject(new Error('Twitch integration is not ready.'));
+        return;
+      } try {
+        const resp = await this.request(
+          'get',
+          `/search/games?query=${encodeURI(query)}`,
+        );
+        if (resp.statusCode !== 200) {
+          throw new Error(JSON.stringify(resp.body));
+        } else if (!resp.body.games || !resp.body.games.length) {
+          throw new Error(`No game matches on Twitch for "${query}"`);
+        }
+        resolve(resp.body.games[0].name);
+      } catch (err) {
         reject(err);
       }
     });

@@ -1,9 +1,11 @@
 export interface SendMessageArgsMap {
   updateChannelInfo: { status: string; game: string };
+  twitchGameSearch: string;
 }
 
 export interface SendMessageReturnMap {
   updateChannelInfo: void;
+  twitchGameSearch: string;
 }
 
 export interface SendMessageAck {

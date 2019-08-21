@@ -11,6 +11,7 @@ const {
   msToTimeStr,
   cgListenForHelper,
   formPlayerNamesStr,
+  to,
 } = Helpers;
 
 export default class RunControl {
@@ -104,7 +105,7 @@ export default class RunControl {
    * @param id The unique ID of the run you wish to change to.
    */
   changeActiveRun(id?: string): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise(async (resolve, reject): Promise<void> => {
       const runData = this.array.value.find((run): boolean => run.id === id);
       if (['running', 'paused'].includes(this.timer.value.state)) {
         reject(new Error('Cannot change run while timer is running/paused.'));
@@ -115,8 +116,9 @@ export default class RunControl {
             .replace(new RegExp('{{game}}', 'g'), runData.game || '')
             .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
             .replace(new RegExp('{{category}}', 'g'), runData.category || '');
-          const game = runData.game || this.h.bundleConfig().twitch.streamDefaultGame;
-          events.sendMessage('updateChannelInfo', { status, game }).catch();
+          let [, game] = await to(events.sendMessage('twitchGameSearch', runData.game));
+          game = game || this.h.bundleConfig().twitch.streamDefaultGame;
+          await to(events.sendMessage('updateChannelInfo', { status, game }));
         }
 
         this.activeRun.value = clone(runData);

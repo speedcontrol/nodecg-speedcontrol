@@ -118,4 +118,18 @@ export default class Helpers {
       .then((): void => { Helpers.processAck(null, ack); })
       .catch((err: Error): void => { Helpers.processAck(err, ack); });
   }
+
+  /**
+   * 
+   * @param promise 
+   */
+  // eslint-disable-next-line
+  static async to(promise: Promise<any>): Promise<[Error | null, any?]> {
+    try {
+      const data = await promise;
+      return [null, data];
+    } catch (err) {
+      return [err];
+    }
+  }
 }
