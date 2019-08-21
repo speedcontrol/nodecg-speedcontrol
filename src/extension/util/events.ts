@@ -15,9 +15,9 @@ export function sendMessage<K extends keyof SendMessageArgsMap>(
   data?: SendMessageArgsMap[K],
 ): Promise<SendMessageReturnMap[K]> {
   return new Promise((resolve, reject): void => {
-    emitter.emit(name, data, (err: Error | null, msg?: any): void => {
+    emitter.emit(name, data, (err: Error | null, data_?: any): void => {
       if (!err) {
-        resolve(msg);
+        resolve(data_);
       } else {
         reject(err);
       }

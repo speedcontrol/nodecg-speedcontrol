@@ -6,7 +6,7 @@ import { TwitchAPIData, TwitchChannelInfo } from '../../schemas';
 import * as events from './util/events';
 import Helpers from './util/helpers';
 
-const { processAck } = Helpers;
+const { cgListenForHelper } = Helpers;
 
 export default class TwitchAPI {
   /* eslint-disable */
@@ -32,24 +32,16 @@ export default class TwitchAPI {
 
       // NodeCG messaging system.
       this.nodecg.listenFor('updateChannelInfo', (data, ack): void => {
-        this.updateChannelInfo(data.status, data.game)
-          .then((): void => { processAck(null, ack); })
-          .catch((err): void => { processAck(err, ack); });
+        cgListenForHelper(this.updateChannelInfo(data.status, data.game), ack);
       });
       this.nodecg.listenFor('startTwitchCommercial', (data, ack): void => {
-        this.startCommercial()
-          .then((data_): void => { processAck(null, ack, data_); })
-          .catch((err): void => { processAck(err, ack); });
+        cgListenForHelper(this.startCommercial(), ack);
       });
       this.nodecg.listenFor('playTwitchAd', (data, ack): void => { // Legacy
-        this.startCommercial()
-          .then((data_): void => { processAck(null, ack, data_); })
-          .catch((err): void => { processAck(err, ack); });
+        cgListenForHelper(this.startCommercial(), ack);
       });
       this.nodecg.listenFor('twitchLogout', (data, ack): void => {
-        this.logout()
-          .then((): void => { processAck(null, ack); })
-          .catch((err): void => { processAck(err, ack); });
+        cgListenForHelper(this.logout(), ack);
       });
 
       // Our messaging system.
@@ -115,7 +107,7 @@ export default class TwitchAPI {
   setUp(): void {
     global.clearTimeout(this.channelInfoTO as NodeJS.Timeout);
     this.data.value.state = 'on';
-    this.getChannelInfo();
+    this.refreshChannelInfo();
     this.nodecg.log.info('Twitch integration is ready.');
   }
 
@@ -250,7 +242,7 @@ export default class TwitchAPI {
   /**
    * Gets the channel's information and stores it in a replicant every 60 seconds.
    */
-  async getChannelInfo(): Promise<void> {
+  async refreshChannelInfo(): Promise<void> {
     try {
       const resp = await this.request('get', `/channels/${this.data.value.channelID}`);
       if (resp.statusCode !== 200) {
@@ -258,14 +250,14 @@ export default class TwitchAPI {
       }
       this.channelInfo.value = resp.body;
       this.channelInfoTO = global.setTimeout(
-        (): Promise<void> => this.getChannelInfo(),
+        (): Promise<void> => this.refreshChannelInfo(),
         60 * 1000,
       );
     } catch (err) {
       // Try again after 10 seconds.
       this.nodecg.log.warn('Error getting Twitch channel information:', err.message);
       this.channelInfoTO = global.setTimeout(
-        (): Promise<void> => this.getChannelInfo(),
+        (): Promise<void> => this.refreshChannelInfo(),
         10 * 1000,
       );
     }

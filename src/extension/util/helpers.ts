@@ -90,11 +90,22 @@ export default class Helpers {
    * Simple helper function to handle NodeCG message acknoledgements.
    * @param err Error to supply if any.
    * @param ack The acknoledgement function itself.
-   * @param msg Anything else you want to send alongside.
+   * @param data Anything else you want to send alongside.
    */
-  static processAck(err: Error | boolean | null, ack?: ListenForCb, msg?: unknown): void {
+  static processAck(err: Error | boolean | null, ack?: ListenForCb, data?: unknown): void {
     if (ack && !ack.handled) {
-      ack(err, msg);
+      ack(err, data);
     }
+  }
+
+  /**
+   * Simple helper function that takes a promise and processes the acknowledgement.
+   * @param func Function that returns a promise.
+   * @param ack NodeCG message acknowledgement.
+   */
+  static cgListenForHelper(func: Promise<unknown>, ack?: ListenForCb): void {
+    func
+      .then((): void => { Helpers.processAck(null, ack); })
+      .catch((err: Error): void => { Helpers.processAck(err, ack); });
   }
 }
