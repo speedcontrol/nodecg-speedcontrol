@@ -116,7 +116,11 @@ export default class RunControl {
             .replace(new RegExp('{{game}}', 'g'), runData.game || '')
             .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
             .replace(new RegExp('{{category}}', 'g'), runData.category || '');
-          let [, game] = await to(events.sendMessage('twitchGameSearch', runData.game));
+          let game = runData.gameTwitch;
+          [, game] = (!game)
+            ? await to(events.sendMessage('srcomTwitchGameSearch', runData.game))
+            : [null, game];
+          [, game] = await to(events.sendMessage('twitchGameSearch', game));
           game = game || this.h.bundleConfig().twitch.streamDefaultGame;
           await to(events.sendMessage('updateChannelInfo', { status, game }));
         }

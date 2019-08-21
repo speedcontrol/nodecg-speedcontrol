@@ -120,8 +120,8 @@ export default class Helpers {
   }
 
   /**
-   * 
-   * @param promise 
+   * Takes a promise and returns error and result as an array.
+   * @param promise Promise you want to process.
    */
   // eslint-disable-next-line
   static async to(promise: Promise<any>): Promise<[Error | null, any?]> {
