@@ -5,5 +5,6 @@ export * from './RunDataActiveRun';
 export * from './RunDataArray';
 export * from './RunDataPlayer';
 export * from './RunDataTeam';
+export * from './Speedruncom';
 export * from './Timer';
 

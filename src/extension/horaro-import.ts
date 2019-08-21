@@ -9,7 +9,8 @@ import removeMd from 'remove-markdown';
 import uuid from 'uuid/v4';
 import { Configschema } from '../../configschema';
 import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
-import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line
+import { RunData, RunDataArray, RunDataPlayer, RunDataTeam, UserData } from '../../types'; // eslint-disable-line
+import * as events from './util/events';
 import Helpers from './util/helpers';
 
 const {
@@ -60,18 +61,6 @@ interface ImportOptions {
   split: 0 | 1;
 }
 
-// Not everything but the relevant things for us in this file.
-interface SRcomUserData {
-  location: {
-    country: {
-      code: string;
-    };
-  } | null;
-  twitch: {
-    uri: string;
-  } | null;
-}
-
 export default class HoraroImport {
   /* eslint-disable */
   private nodecg: NodeCG;
@@ -82,7 +71,7 @@ export default class HoraroImport {
   private importStatus: Replicant<HoraroImportStatus>;
   private defaultSetupTime: Replicant<DefaultSetupTime>;
   private scheduleDataCache: { [k: string]: HoraroSchedule } = {};
-  private userDataCache: { [k: string]: SRcomUserData } = {};
+  private userDataCache: { [k: string]: UserData } = {};
   /* eslint-enable */
 
   constructor(nodecg: NodeCG) {
@@ -338,33 +327,18 @@ export default class HoraroImport {
    * usually name or Twitch username. If nothing is specified, will resolve immediately.
    * @param str String to attempt to look up the user by.
    */
-  querySRcomUserData(str?: string): Promise<SRcomUserData> {
+  querySRcomUserData(str?: string): Promise<UserData> {
     return new Promise(async (resolve): Promise<void> => {
       if (!str || this.config.schedule.disableSpeedrunComLookup) {
         resolve();
-      } else if (this.userDataCache[str]) {
-        resolve(this.userDataCache[str]);
       } else {
-        let success = true;
-        do {
-          try {
-            /* eslint-disable-next-line */
-            const resp = await needle(
-              'get',
-              encodeURI(`https://www.speedrun.com/api/v1/users?max=1&lookup=${str.toLowerCase()}`),
-            );
-            await sleep(1000); // eslint-disable-line
-            // @ts-ignore: parser exists but isn't in the typings
-            if (resp.parser === 'json') {
-              [this.userDataCache[str]] = resp.body.data; // Simple temporary cache storage.
-              resolve(resp.body.data[0]);
-            } else {
-              resolve();
-            }
-          } catch (err) {
-            success = false;
-          }
-        } while (!success);
+        try {
+          const data = await events.sendMessage('srcomUserSearch', str);
+          resolve(data);
+        } catch (err) {
+          resolve(); // If nothing found, currently just resolve.
+        }
+        await sleep(1000);
       }
     });
   }
