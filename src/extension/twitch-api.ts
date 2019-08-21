@@ -175,9 +175,10 @@ export default class TwitchAPI {
     return new Promise(async (resolve, reject): Promise<void> => {
       try {
         this.nodecg.log.debug(`Twitch API ${method.toUpperCase()} request processing on ${endpoint}.`);
-        let reattempt = false;
+        let attempts = 0;
         let resp;
         do {
+          attempts += 1;
           // eslint-disable-next-line
           resp = await needle(
             method,
@@ -192,19 +193,18 @@ export default class TwitchAPI {
               },
             },
           );
-          if (resp.statusCode === 401 && !reattempt) {
+          if (resp.statusCode === 401 && attempts <= 1) {
             this.nodecg.log.debug(
               `Twitch API ${method.toUpperCase()} request resulted in ${resp.statusCode} on ${endpoint}:`,
               JSON.stringify(resp.body),
             );
             await this.refreshToken(); // eslint-disable-line
-            reattempt = true;
             // Can a 401 mean something else?
           } else if (resp.statusCode !== 200) {
             throw new Error(JSON.stringify(resp.body));
             // Do we need to retry here?
           }
-        } while (reattempt);
+        } while (attempts <= 1);
         this.nodecg.log.debug(`Twitch API ${method.toUpperCase()} request successful on ${endpoint}.`);
         resolve(resp);
       } catch (err) {
