@@ -120,7 +120,7 @@ export default class TwitchAPI {
         reject(new Error('Twitch integration is not ready.'));
         return;
       }
-      this.data.value = { state: 'off' };
+      this.data.value = { state: 'off', sync: false };
       this.channelInfo.value = {};
       global.clearTimeout(this.channelInfoTO as NodeJS.Timeout);
       this.nodecg.log.info('Twitch integration successfully logged out.');

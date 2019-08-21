@@ -12,6 +12,10 @@
       ],
       "default": "off"
     },
+    "sync": {
+      "type": "boolean",
+      "default": false
+    },
     "accessToken": {
       "type": "string"
     },
@@ -26,6 +30,7 @@
     }
   },
   "required": [
-    "state"
+    "state",
+    "sync"
   ]
 }

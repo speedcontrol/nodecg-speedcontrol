@@ -24,14 +24,29 @@
       >
         Logout ({{ apiData.channelName }})
       </button>
+      <br><br>Auto-sync title/game?
+      <input
+        v-model="sync"
+        type="radio"
+        name="autoSyncRadio"
+        :value="true"
+      >On
+      <input
+        v-model="sync"
+        type="radio"
+        name="autoSyncRadio"
+        :value="false"
+      >Off
       <br><br><input
         v-model="title"
+        class="TextBox"
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
       >
       <input
         v-model="game"
+        class="TextBox"
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
@@ -70,6 +85,14 @@ export default Vue.extend({
     },
     channelInfo() {
       return store.state.twitchChannelInfo;
+    },
+    sync: {
+      get() {
+        return store.state.twitchAPIData.sync;
+      },
+      set(value: boolean) {
+        store.commit('updateTwitchSyncToggle', { value });
+      },
     },
     url() {
       const config = this.config as Configschema['twitch'];
@@ -139,7 +162,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  input {
+  .TextBox {
     box-sizing: border-box;
     width: 100%;
   }

@@ -48,6 +48,13 @@ export const store = new Vuex.Store({
         rep.value = state.runDataArray;
       }
     },
+    updateTwitchSyncToggle(state, { value }) {
+      const rep = replicants.find(repObj => repObj.name === 'twitchAPIData') as ReplicantBrowser<TwitchAPIData>;
+      if (rep.value) {
+        Vue.set(state.twitchAPIData, 'sync', value);
+        rep.value.sync = value;
+      }
+    },
   },
 });
 
