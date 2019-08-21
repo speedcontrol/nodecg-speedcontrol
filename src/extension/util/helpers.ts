@@ -1,13 +1,23 @@
 import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
 import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line
 import { Configschema } from '../../../configschema';
-import { RunDataArray } from '../../../types';
+import { RunData, RunDataArray } from '../../../types';
 
 export default class Helpers {
   private nodecg: NodeCG;
 
   constructor(nodecg: NodeCG) {
     this.nodecg = nodecg;
+  }
+
+  /**
+   * Takes a run data object and returns a formed string of the player names.
+   * @param runData Run Data object.
+   */
+  static formPlayerNamesStr(runData: RunData): string {
+    return runData.teams.map((team): string => (
+      team.players.map((player): string => player.name).join(', ')
+    )).join(' vs. ') || 'No Player(s)';
   }
 
   /**

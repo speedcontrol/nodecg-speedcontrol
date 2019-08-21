@@ -22,13 +22,23 @@
         "redirectURI": {
           "type": "string",
           "default": "http://localhost:9090/nodecg-speedcontrol/twitchauth"
+        },
+        "streamTitle": {
+          "type": "string",
+          "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"
+        },
+        "streamDefaultGame": {
+          "type": "string",
+          "default": "Games + Demos"
         }
       },
       "required": [
         "enabled",
         "clientID",
         "clientSecret",
-        "redirectURI"
+        "redirectURI",
+        "streamTitle",
+        "streamDefaultGame"
       ]
     },
     "schedule": {

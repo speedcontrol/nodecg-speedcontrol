@@ -11,6 +11,8 @@ export interface Configschema {
     clientID: string;
     clientSecret: string;
     redirectURI: string;
+    streamTitle: string;
+    streamDefaultGame: string;
   };
   schedule: {
     defaultURL: string;

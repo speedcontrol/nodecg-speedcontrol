@@ -3,9 +3,15 @@ import _ from 'lodash';
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { RunDataActiveRunSurrounding } from '../../schemas';
 import { RunData, RunDataActiveRun, RunDataArray, RunDataPlayer, RunDataTeam, Timer } from '../../types'; // eslint-disable-line
+import * as events from './util/events';
 import Helpers from './util/helpers';
 
-const { timeStrToMS, msToTimeStr, cgListenForHelper } = Helpers;
+const {
+  timeStrToMS,
+  msToTimeStr,
+  cgListenForHelper,
+  formPlayerNamesStr,
+} = Helpers;
 
 export default class RunControl {
   /* eslint-disable */
@@ -101,6 +107,14 @@ export default class RunControl {
       if (['running', 'paused'].includes(this.timer.value.state)) {
         reject(new Error('Cannot change run while timer is running/paused.'));
       } else if (runData) {
+        // Constructing Twitch title and game to send off.
+        const status = this.h.bundleConfig().twitch.streamTitle
+          .replace(new RegExp('{{game}}', 'g'), runData.game || '')
+          .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
+          .replace(new RegExp('{{category}}', 'g'), runData.category || '');
+        const game = runData.game || this.h.bundleConfig().twitch.streamDefaultGame;
+        events.sendMessage('updateChannelInfo', { status, game }).catch();
+
         this.activeRun.value = clone(runData);
         this.nodecg.sendMessage('resetTimer');
         resolve();
