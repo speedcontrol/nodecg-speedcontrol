@@ -1,9 +1,9 @@
 import express from 'express';
 import needle, { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
-import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { Configschema } from '../../configschema';
 import { TwitchAPIData, TwitchChannelInfo } from '../../schemas';
+import * as events from './util/events';
 import Helpers from './util/helpers';
 
 const { processAck } = Helpers;
@@ -30,15 +30,33 @@ export default class TwitchAPI {
     if (this.config.twitch.enabled) {
       nodecg.log.info('Twitch integration is enabled.');
 
-      this.nodecg.listenFor('updateChannelInfo', (msg, ack): Promise<void> => this.updateChannelInfo(msg.status, msg.game, ack));
-      this.nodecg.listenFor('startTwitchCommercial', (msg, ack): Promise<void> => this.startCommercial(ack));
-      this.nodecg.listenFor('playTwitchAd', (msg, ack): Promise<void> => this.startCommercial(ack)); // Legacy
-      this.nodecg.listenFor('twitchLogout', (msg, ack): void => {
-        this.logout().then((): void => {
-          processAck(null, ack);
-        }).catch((err): void => {
-          processAck(err, ack);
-        });
+      // NodeCG messaging system.
+      this.nodecg.listenFor('updateChannelInfo', (data, ack): void => {
+        this.updateChannelInfo(data.status, data.game)
+          .then((): void => { processAck(null, ack); })
+          .catch((err): void => { processAck(err, ack); });
+      });
+      this.nodecg.listenFor('startTwitchCommercial', (data, ack): void => {
+        this.startCommercial()
+          .then((data_): void => { processAck(null, ack, data_); })
+          .catch((err): void => { processAck(err, ack); });
+      });
+      this.nodecg.listenFor('playTwitchAd', (data, ack): void => { // Legacy
+        this.startCommercial()
+          .then((data_): void => { processAck(null, ack, data_); })
+          .catch((err): void => { processAck(err, ack); });
+      });
+      this.nodecg.listenFor('twitchLogout', (data, ack): void => {
+        this.logout()
+          .then((): void => { processAck(null, ack); })
+          .catch((err): void => { processAck(err, ack); });
+      });
+
+      // Our messaging system.
+      events.listenFor('updateChannelInfo', (data, ack): void => {
+        this.updateChannelInfo(data.status, data.game)
+          .then((): void => { ack(null); })
+          .catch((err): void => { ack(err); });
       });
 
       if (this.data.value.accessToken) {
@@ -257,65 +275,67 @@ export default class TwitchAPI {
    * Attempts to update the title/game on the set channel.
    * @param status Title to set.
    * @param game Game to set.
-   * @param ack NodeCG message acknowledgement.
    */
-  async updateChannelInfo(status: string, game: string, ack?: ListenForCb): Promise<void> {
-    if (this.data.value.state !== 'on') {
-      processAck(new Error('Twitch integration is not ready.'), ack);
-      return;
-    }
-    try {
-      this.nodecg.log.info('Attempting to update Twitch channel information.');
-      const resp = await this.request(
-        'put',
-        `/channels/${this.data.value.channelID}`,
-        {
-          channel: {
-            status,
-            game,
-          },
-        },
-      );
-      if (resp.statusCode !== 200) {
-        throw new Error(JSON.stringify(resp.body));
+  updateChannelInfo(status: string, game: string): Promise<void> {
+    return new Promise(async (resolve, reject): Promise<void> => {
+      if (this.data.value.state !== 'on') {
+        reject(new Error('Twitch integration is not ready.'));
+        return;
       }
-      this.nodecg.log.info('Successfully updated Twitch channel information.');
-      this.channelInfo.value = resp.body;
-      processAck(null, ack);
-    } catch (err) {
-      this.nodecg.log.warn('Error updating Twitch channel information:', err.message);
-      processAck(err, ack);
-    }
+      try {
+        this.nodecg.log.info('Attempting to update Twitch channel information.');
+        const resp = await this.request(
+          'put',
+          `/channels/${this.data.value.channelID}`,
+          {
+            channel: {
+              status,
+              game,
+            },
+          },
+        );
+        if (resp.statusCode !== 200) {
+          throw new Error(JSON.stringify(resp.body));
+        }
+        this.nodecg.log.info('Successfully updated Twitch channel information.');
+        this.channelInfo.value = resp.body;
+        resolve();
+      } catch (err) {
+        this.nodecg.log.warn('Error updating Twitch channel information:', err.message);
+        reject(err);
+      }
+    });
   }
 
   /**
    * Attempts to start a commercial on the set channel.
-   * @param ack NodeCG message acknowledgement.
    */
-  async startCommercial(ack?: ListenForCb): Promise<void> {
-    if (this.data.value.state !== 'on') {
-      processAck(new Error('Twitch integration is not ready.'), ack);
-      return;
-    }
-    try {
-      this.nodecg.log.info('Requested a Twitch commercial to be started.');
-      const resp = await this.request(
-        'post',
-        `/channels/${this.data.value.channelID}/commercial`,
-        {
-          duration: 180,
-        },
-      );
-      if (resp.statusCode !== 200) {
-        throw new Error(JSON.stringify(resp.body));
+  async startCommercial(): Promise<{ duration: number }> {
+    return new Promise(async (resolve, reject): Promise<void> => {
+      if (this.data.value.state !== 'on') {
+        reject(new Error('Twitch integration is not ready.'));
+        return;
       }
-      this.nodecg.log.info('Twitch commercial started successfully.');
-      this.nodecg.sendMessage('twitchCommercialStarted', { duration: 180 });
-      this.nodecg.sendMessage('twitchAdStarted', { duration: 180 }); // Legacy
-      processAck(null, ack, { duration: 180 });
-    } catch (err) {
-      this.nodecg.log.warn('Error starting Twitch commercial:', err.message);
-      processAck(err, ack);
-    }
+      try {
+        this.nodecg.log.info('Requested a Twitch commercial to be started.');
+        const resp = await this.request(
+          'post',
+          `/channels/${this.data.value.channelID}/commercial`,
+          {
+            duration: 180,
+          },
+        );
+        if (resp.statusCode !== 200) {
+          throw new Error(JSON.stringify(resp.body));
+        }
+        this.nodecg.log.info('Twitch commercial started successfully.');
+        this.nodecg.sendMessage('twitchCommercialStarted', { duration: 180 });
+        this.nodecg.sendMessage('twitchAdStarted', { duration: 180 }); // Legacy
+        resolve({ duration: 180 });
+      } catch (err) {
+        this.nodecg.log.warn('Error starting Twitch commercial:', err.message);
+        reject(err);
+      }
+    });
   }
 }
