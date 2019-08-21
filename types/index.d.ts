@@ -1,4 +1,5 @@
 export * from './Events';
+export * from './ExtensionReturn';
 export * from './RunData';
 export * from './RunDataActiveRun';
 export * from './RunDataArray';
