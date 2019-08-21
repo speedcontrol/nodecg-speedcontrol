@@ -169,7 +169,7 @@ export default class TwitchAPI {
    * Make a request to Twitch API v5.
    * @param url Twitch API v5 endpoint you want to access.
    */
-  request(method: NeedleHttpVerbs, endpoint: string, data: BodyData = {}): Promise<NeedleResponse> {
+  request(method: NeedleHttpVerbs, endpoint: string, data: BodyData = null): Promise<NeedleResponse> {
     return new Promise(async (resolve, reject): Promise<void> => {
       try {
         this.nodecg.log.debug(`Twitch API ${method.toUpperCase()} request processing on ${endpoint}.`);
