@@ -24,7 +24,8 @@
       >
         Logout ({{ apiData.channelName }})
       </button>
-      <br><br>Auto-sync title/game?
+      <br><br>Auto-sync title/game<span
+        v-if="config.ffzIntegration">/featured channels</span>?
       <input
         v-model="sync"
         type="radio"
@@ -46,6 +47,14 @@
       >
       <input
         v-model="game"
+        class="TextBox"
+        @input="inputActivity"
+        @focus="inputActivity"
+        @blur="inputActivity"
+      >
+      <input
+        v-if="config.ffzIntegration"
+        v-model="users"
         class="TextBox"
         @input="inputActivity"
         @focus="inputActivity"
@@ -74,6 +83,7 @@ export default Vue.extend({
       focus: false,
       title: '',
       game: '',
+      users: '',
     };
   },
   computed: {
@@ -105,6 +115,12 @@ export default Vue.extend({
     },
   },
   watch: {
+    apiData: {
+      handler() {
+        this.updateInputs();
+      },
+      immediate: true,
+    },
     channelInfo: {
       handler() {
         this.updateInputs();
@@ -131,6 +147,7 @@ export default Vue.extend({
       if (!this.focus) {
         this.title = this.channelInfo.status;
         this.game = this.channelInfo.game;
+        this.users = this.apiData.featuredChannels.join(', ');
       }
     },
     updateChannelInfo() {
@@ -142,6 +159,16 @@ export default Vue.extend({
       }).catch(() => {
         // unsuccessful
       });
+      if (this.config.ffzIntegration) {
+        nodecg.sendMessage(
+          'ffzUpdateFeaturedChannels',
+          this.users.replace(/\s/g, '').split(','),
+        ).then(() => {
+          // successful
+        }).catch(() => {
+          // unsuccessful
+        });
+      }
     },
     startCommercial() {
       nodecg.sendMessage('startTwitchCommercial').then(() => {

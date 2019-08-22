@@ -7,7 +7,7 @@ import { TwitchAPIData } from '../../schemas';
 import * as events from './util/events';
 import Helpers from './util/helpers';
 
-const { randomInt, to } = Helpers;
+const { randomInt, to, cgListenForHelper } = Helpers;
 
 export default class FFZWS {
   /* eslint-disable */
@@ -28,6 +28,11 @@ export default class FFZWS {
 
     if (this.config.twitch.enabled && this.config.twitch.ffzIntegration) {
       nodecg.log.info('FrankerFaceZ integration is enabled.');
+
+      // NodeCG messaging system.
+      this.nodecg.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
+        cgListenForHelper(this.setChannels(data), ack);
+      });
 
       // Our messaging system.
       events.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
@@ -190,6 +195,10 @@ export default class FFZWS {
    */
   setChannels(names: string[]): Promise<void> {
     return new Promise((resolve, reject): void => {
+      if (!this.config.twitch.ffzIntegration) {
+        reject(new Error('FrankerFaceZ integration is not enabled.'));
+        return;
+      }
       this.nodecg.log.info('Attempting to set FrankerFaceZ featured channels.');
       this.sendMsg(
         `update_follow_buttons ${JSON.stringify([
