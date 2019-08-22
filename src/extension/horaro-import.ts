@@ -333,12 +333,12 @@ export default class HoraroImport {
         resolve();
       } else {
         try {
+          await sleep(1000); // this slows it down even if it's in cache, needs fixing
           const data = await events.sendMessage('srcomUserSearch', str);
           resolve(data);
         } catch (err) {
           resolve(); // If nothing found, currently just resolve.
         }
-        await sleep(1000);
       }
     });
   }

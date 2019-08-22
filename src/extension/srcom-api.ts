@@ -19,7 +19,7 @@ export default class SRComAPI {
         .catch((err): void => { ack(err); });
     });
     events.listenFor('srcomUserSearch', (data, ack): void => {
-      this.searchForTwitchGame(data)
+      this.searchForUserData(data)
         .then((data_): void => { ack(null, data_); })
         .catch((err): void => { ack(err); });
     });
@@ -33,7 +33,6 @@ export default class SRComAPI {
     return new Promise(async (resolve, reject): Promise<void> => {
       try {
         this.nodecg.log.debug(`speedrun.com API request processing on ${endpoint}.`);
-        // eslint-disable-next-line
         const resp = await needle(
           'get',
           `https://www.speedrun.com/api/v1${endpoint}`,
