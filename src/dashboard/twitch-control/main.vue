@@ -25,7 +25,8 @@
         Logout ({{ apiData.channelName }})
       </button>
       <br><br>Auto-sync title/game<span
-        v-if="config.ffzIntegration">/featured channels</span>?
+        v-if="config.ffzIntegration"
+      >/featured channels</span>?
       <input
         v-model="sync"
         type="radio"
