@@ -13,6 +13,7 @@ export interface Configschema {
     redirectURI: string;
     streamTitle: string;
     streamDefaultGame: string;
+    ffzIntegration?: boolean;
   };
   schedule: {
     defaultURL: string;

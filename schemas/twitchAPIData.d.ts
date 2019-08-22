@@ -12,4 +12,5 @@ export interface TwitchAPIData {
   refreshToken?: string;
   channelName?: string;
   channelID?: string;
+  featuredChannels: string[];
 }

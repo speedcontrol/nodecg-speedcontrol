@@ -26,6 +26,7 @@ export default class TwitchAPI {
     this.channelInfo = nodecg.Replicant('twitchChannelInfo');
     const app = express();
     this.data.value.state = 'off'; // Set this to "off" on every start.
+    this.data.value.featuredChannels.length = 0; // Empty on every start;
 
     if (this.config.twitch.enabled) {
       nodecg.log.info('Twitch integration is enabled.');
@@ -53,6 +54,11 @@ export default class TwitchAPI {
       events.listenFor('twitchGameSearch', (data, ack): void => {
         this.searchForGame(data)
           .then((data_): void => { ack(null, data_); })
+          .catch((err): void => { ack(err); });
+      });
+      events.listenFor('twitchRefreshToken', (data, ack): void => {
+        this.refreshToken()
+          .then((): void => { ack(null); })
           .catch((err): void => { ack(err); });
       });
 
@@ -125,7 +131,7 @@ export default class TwitchAPI {
         reject(new Error('Twitch integration is not ready.'));
         return;
       }
-      this.data.value = { state: 'off', sync: false };
+      this.data.value = { state: 'off', sync: false, featuredChannels: [] };
       this.channelInfo.value = {};
       global.clearTimeout(this.channelInfoTO as NodeJS.Timeout);
       this.nodecg.log.info('Twitch integration successfully logged out.');

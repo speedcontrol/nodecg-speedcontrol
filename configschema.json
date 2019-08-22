@@ -30,6 +30,10 @@
         "streamDefaultGame": {
           "type": "string",
           "default": "Games + Demos"
+        },
+        "ffzIntegration": {
+          "type": "boolean",
+          "default": false
         }
       },
       "required": [

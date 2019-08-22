@@ -21,6 +21,19 @@ export default class Helpers {
   }
 
   /**
+   * Takes a run data object and returns an array of all associated Twitch usernames.
+   * @param runData Run Data object.
+   */
+  static getTwitchChannels(runData: RunData): string[] {
+    const channels = runData.teams.map((team): string[] => (
+      team.players
+        .filter((player): boolean => !!player.social.twitch)
+        .map((player): string => player.social.twitch as string)
+    ));
+    return ([] as string[]).concat(...channels);
+  }
+
+  /**
    * Checks if number needs a 0 adding to the start and does so if needed.
    * @param num Number which you want to turn into a padded string.
    */
@@ -131,5 +144,14 @@ export default class Helpers {
     } catch (err) {
       return [err];
     }
+  }
+
+  /**
+   * Returns a random integer between two values.
+   * @param low Lowest number you want to return.
+   * @param high Highest (but not including) number, usually an array length.
+   */
+  static randomInt(low: number, high: number): number {
+    return Math.floor(Math.random() * (high - low) + low);
   }
 }

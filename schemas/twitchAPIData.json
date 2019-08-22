@@ -27,10 +27,18 @@
     },
     "channelID": {
       "type": "string"
+    },
+    "featuredChannels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     }
   },
   "required": [
     "state",
-    "sync"
+    "sync",
+    "featuredChannels"
   ]
 }

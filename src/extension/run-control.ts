@@ -11,6 +11,7 @@ const {
   msToTimeStr,
   cgListenForHelper,
   formPlayerNamesStr,
+  getTwitchChannels,
   to,
 } = Helpers;
 
@@ -122,9 +123,16 @@ export default class RunControl {
             : [null, game];
           [, game] = await to(events.sendMessage('twitchGameSearch', game));
           game = game || this.h.bundleConfig().twitch.streamDefaultGame;
-          await to(events.sendMessage('updateChannelInfo', { status, game }));
-        }
+          to(events.sendMessage('updateChannelInfo', { status, game }));
 
+          // Construct/send featured channels if enabled.
+          if (this.h.bundleConfig().twitch.ffzIntegration) {
+            to(events.sendMessage(
+              'ffzUpdateFeaturedChannels',
+              getTwitchChannels(runData),
+            ));
+          }
+        }
         this.activeRun.value = clone(runData);
         this.nodecg.sendMessage('resetTimer');
         resolve();
