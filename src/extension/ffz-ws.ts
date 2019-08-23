@@ -76,7 +76,7 @@ export default class FFZWS {
 
     this.ws.once('close', (): void => {
       clearTimeout(this.pingTO as NodeJS.Timeout);
-      if (this.twitchAPIData.value.state !== 'on') { // No reconnection if Twitch API is disconnected.
+      if (this.twitchAPIData.value.state === 'on') { // No reconnection if Twitch API is disconnected.
         this.nodecg.log.warn('Connection to FrankerFaceZ closed, will reconnect in 10 seconds.');
         setTimeout((): void => this.connect(), 10 * 1000);
       }
