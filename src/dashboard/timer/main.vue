@@ -5,14 +5,14 @@
       <start-button></start-button>
       <reset-button></reset-button>
       <!-- Will not show if more than 1 team -->
-      <span v-if="teams.length <= 1">
-        <stop-button
-          :info="teams[0]"
-        ></stop-button>
-        <undo-button
-          :info="teams[0]"
-        ></undo-button>
-      </span>
+      <stop-button
+        v-if="teams.length <= 1"
+        :info="teams[0]"
+      ></stop-button>
+      <undo-button
+        v-if="teams.length <= 1"
+        :info="teams[0]"
+      ></undo-button>
     </div>
     <!-- Will only show if more than 1 team -->
     <div
