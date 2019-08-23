@@ -208,7 +208,7 @@ export default class TimerApp {
   editTimer(time: string): Promise<void> {
     return new Promise((resolve, reject): void => {
       // Error if the timer is not stopped/paused.
-      if (['stopped', 'paused'].includes(this.timerRep.value.state)) {
+      if (!['stopped', 'paused'].includes(this.timerRep.value.state)) {
         reject(new Error('Cannot edit the timer as it is not stopped/paused.'));
         return;
       }
