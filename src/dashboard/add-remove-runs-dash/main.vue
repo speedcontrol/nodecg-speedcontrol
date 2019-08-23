@@ -1,14 +1,18 @@
 <template>
   <div id="App">
-    <button @click="openAddDialog">
-      Add New Run
-    </button>
-    <button
+    <v-btn
+      color="#A5D6A7"
+      @click="openAddDialog"
+    >
+      <v-icon>mdi-plus-box</v-icon>Add New Run
+    </v-btn>
+    <v-btn
       :disabled="removeAllDisabled"
+      color="#EF5350"
       @click="removeAllRunsConfirm"
     >
-      Remove All Runs
-    </button>
+      <v-icon>mdi-delete</v-icon>Remove All Runs
+    </v-btn>
   </div>
 </template>
 
@@ -49,7 +53,15 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  button {
+  .v-btn {
     width: 100%;
+  }
+
+  .v-btn:not(:first-of-type) {
+    margin-top: 10px;
+  }
+
+  .v-icon {
+    padding-right: 5px;
   }
 </style>
