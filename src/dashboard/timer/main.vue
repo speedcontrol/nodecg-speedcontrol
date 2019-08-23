@@ -1,21 +1,24 @@
 <template>
   <div id="App">
     <timer-time></timer-time>
-    <start-button></start-button>
-    <reset-button></reset-button>
-    <!-- Will not show if more than 1 team -->
-    <stop-button
-      v-if="teams.length <= 1"
-      :info="teams[0]"
-    ></stop-button>
-    <!-- Will not show if more than 1 team -->
-    <undo-button
-      v-if="teams.length <= 1"
-      :info="teams[0]"
-    ></undo-button>
+    <div id="Controls">
+      <start-button></start-button>
+      <reset-button></reset-button>
+      <!-- Will not show if more than 1 team -->
+      <span v-if="teams.length <= 1">
+        <stop-button
+          :info="teams[0]"
+        ></stop-button>
+        <undo-button
+          :info="teams[0]"
+        ></undo-button>
+      </span>
+    </div>
     <!-- Will only show if more than 1 team -->
-    <div v-if="teams.length > 1">
-      <br>
+    <div
+      v-if="teams.length > 1"
+      id="Teams"
+    >
       <team
         v-for="(team, index) in teams"
         :key="team.id"
@@ -47,8 +50,36 @@ export default Vue.extend({
   },
   computed: {
     teams() {
-      return (store.state.runDataActiveRun) ? store.state.runDataActiveRun.teams : [];
+      return (store.state.runDataActiveRun)
+        ? store.state.runDataActiveRun.teams : [];
     },
   },
 });
 </script>
+
+<style scoped>
+  .v-btn.v-size--default {
+    padding: 0 5px;
+    min-width: 0;
+  }
+
+  #Controls {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+  }
+
+  #Controls .v-btn {
+    flex-basis: 0;
+    flex: 1 1 0;
+  }
+
+  #Controls .v-btn:not(:first-child) {
+    margin-left: 5px;
+  }
+
+  #Teams {
+    padding-top: 10px;
+  }
+</style>

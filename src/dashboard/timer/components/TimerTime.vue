@@ -1,19 +1,17 @@
 <template>
   <div>
-    <input
-      v-if="editing"
-      ref="editInput"
+    <v-text-field
       v-model="time"
+      class="TimerInput"
+      solo
+      single-line
+      hide-details
+      :background-color="bgColour"
+      :readonly="disableEditing"
       @blur="abandonEdit"
       @keyup.enter="finishEdit"
     >
-    <div
-      v-else
-      :class="style"
-      @click="startEdit"
-    >
-      {{ time }}
-    </div>
+    </v-text-field>
   </div>
 </template>
 
@@ -25,7 +23,6 @@ export default Vue.extend({
   name: 'TimerTime',
   data() {
     return {
-      editing: false,
       time: '00:00:00',
     };
   },
@@ -33,62 +30,51 @@ export default Vue.extend({
     serverTime() {
       return store.state.timer.time;
     },
-    style() {
-      return store.state.timer.state;
+    bgColour() {
+      switch (store.state.timer.state) {
+        case 'stopped':
+        case 'paused':
+        default:
+          return '#CFD8DC';
+        case 'running':
+          return '';
+        case 'finished':
+          return '#66BB6A';
+      }
+    },
+    disableEditing() {
+      return ['running', 'finished'].includes(store.state.timer.state);
     },
   },
   watch: {
-    serverTime(val) {
-      this.time = val;
+    serverTime: {
+      handler(val) {
+        this.time = val;
+      },
+      immediate: true,
     },
-  },
-  created() {
-    // For some reason the watcher doesn't get the initial state?
-    this.time = this.serverTime;
   },
   methods: {
-    startEdit() {
-      const { state } = store.state.timer;
-      if (state === 'stopped' || state === 'paused') {
-        this.editing = true;
-        Vue.nextTick().then(() => {
-          const input = this.$refs.editInput as HTMLElement;
-          input.focus();
-        });
-      }
-    },
-    finishEdit() {
+    finishEdit(event) {
       if (this.time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
         nodecg.sendMessage('editTimer', this.time).then(() => {
           // successful
         }).catch(() => {
           // error
         });
+        event.target.blur();
       }
-      this.editing = false;
     },
     abandonEdit() {
-      this.editing = false;
       this.time = this.serverTime;
     },
   },
 });
 </script>
 
-<style scoped>
-  .stopped  {
-    color: grey;
-  }
-
-  .running {
-    color: blue
-  }
-
-  .paused {
-    color: orange;
-  }
-
-  .finished {
-    color: green;
+<style>
+  .TimerInput input {
+    text-align: center;
+    font-size: 25px;
   }
 </style>

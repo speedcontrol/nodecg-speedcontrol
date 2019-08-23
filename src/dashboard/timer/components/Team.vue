@@ -1,15 +1,31 @@
 <template>
-  <div>
+  <div class="Team">
     <stop-button
       :info="info"
     ></stop-button>
     <undo-button
       :info="info"
     ></undo-button>
-    {{ info.name || `Team ${(index + 1)}` }}
-    <span v-if="finishTime">
-      [{{ finishTime }}]
-    </span>
+    <div class="TeamName">
+      <!-- Show team name if it exists -->
+      <span v-if="info.name">info.name</span>
+      <!-- Show player name if only 1 player in team -->
+      <span v-else-if="info.players.length === 1">{{ info.players[0].name }}</span>
+      <!-- Show all player names if no team name is set -->
+      <span v-else>
+        <span
+          v-for="(player, i) in info.players"
+          :key="player.id"
+        >
+          {{ player.name }}<span
+            v-if="i+1 < info.players.length"
+          >,</span>
+        </span>
+      </span>
+      <span v-if="finishTime">
+        [{{ finishTime }}]
+      </span>
+    </div>
   </div>
 </template>
 
@@ -47,3 +63,21 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped>
+  .Team {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 2px 0;
+  }
+
+  .Team > *:not(:last-child) {
+    margin-right: 4px;
+  }
+
+  .v-btn.v-size--default {
+    padding: 0 5px;
+    min-width: 0;
+  }
+</style>

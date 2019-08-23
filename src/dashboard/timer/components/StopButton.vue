@@ -1,10 +1,10 @@
 <template>
-  <button
+  <v-btn
     :disabled="isDisabled"
     @click="button"
   >
-    Stop
-  </button>
+    <v-icon>mdi-check</v-icon>
+  </v-btn>
 </template>
 
 <script lang="ts">

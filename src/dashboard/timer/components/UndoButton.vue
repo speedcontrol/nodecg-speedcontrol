@@ -1,10 +1,10 @@
 <template>
-  <button
+  <v-btn
     :disabled="isDisabled"
     @click="button"
   >
-    Undo
-  </button>
+    <v-icon>mdi-undo</v-icon>
+  </v-btn>
 </template>
 
 <script lang="ts">

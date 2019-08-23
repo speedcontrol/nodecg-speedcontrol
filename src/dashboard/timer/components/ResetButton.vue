@@ -1,10 +1,10 @@
 <template>
-  <button
-    :disabled="isDisabled"
+  <v-btn
+    :disabled="state === 'stopped'"
     @click="button"
   >
-    Reset
-  </button>
+    <v-icon>mdi-rewind</v-icon>
+  </v-btn>
 </template>
 
 <script lang="ts">
@@ -15,8 +15,8 @@ import { store } from '../../_misc/replicant-store';
 export default Vue.extend({
   name: 'ResetButton',
   computed: {
-    isDisabled() {
-      return store.state.timer.state === 'stopped';
+    state() {
+      return store.state.timer.state;
     },
   },
   methods: {

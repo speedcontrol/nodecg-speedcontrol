@@ -1,10 +1,15 @@
 <template>
-  <button
-    :disabled="isDisabled"
+  <v-btn
+    :disabled="state === 'finished'"
     @click="button"
   >
-    {{ text }}
-  </button>
+    <v-icon v-if="state === 'running'">
+      mdi-pause
+    </v-icon>
+    <v-icon v-else>
+      mdi-play
+    </v-icon>
+  </v-btn>
 </template>
 
 <script lang="ts">
@@ -15,31 +20,19 @@ import { store } from '../../_misc/replicant-store';
 export default Vue.extend({
   name: 'StartButton',
   computed: {
-    isDisabled() {
-      return store.state.timer.state === 'finished';
-    },
-    text() {
-      const { state } = store.state.timer;
-      switch (state) {
-        case 'running':
-          return 'Pause';
-        case 'paused':
-          return 'Resume';
-        default:
-          return 'Start';
-      }
+    state() {
+      return store.state.timer.state;
     },
   },
   methods: {
     button() {
-      const { state } = store.state.timer;
-      if (state === 'stopped' || state === 'paused') {
+      if (this.state === 'stopped' || this.state === 'paused') {
         nodecg.sendMessage('startTimer').then(() => {
           // successful
         }).catch(() => {
           // error
         });
-      } else if (state === 'running') {
+      } else if (this.state === 'running') {
         nodecg.sendMessage('pauseTimer').then(() => {
           // successful
         }).catch(() => {
