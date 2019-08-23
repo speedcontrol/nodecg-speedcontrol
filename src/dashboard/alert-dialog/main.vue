@@ -15,6 +15,7 @@ import HoraroImportConfirm from './components/horaro-import-confirm.vue';
 import ReturnToStartConfirm from './components/return-to-start-confirm.vue';
 import RemoveAllRunsConfirm from './components/remove-all-runs-confirm.vue';
 import RemoveRunConfirm from './components/remove-run-confirm.vue';
+import TwitchLogoutConfirm from './components/twitch-logout-confirm.vue';
 import { nodecg } from '../_misc/nodecg';
 
 export default Vue.extend({
@@ -59,6 +60,8 @@ export default Vue.extend({
               return RemoveAllRunsConfirm;
             case 'RemoveRunConfirm':
               return RemoveRunConfirm;
+            case 'TwitchLogoutConfirm':
+              return TwitchLogoutConfirm;
             default:
               return undefined;
           }

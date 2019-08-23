@@ -20,7 +20,7 @@
     <div v-else>
       <button
         id="Logout"
-        @click="logout"
+        @click="logoutConfirm"
       >
         Logout ({{ apiData.channelName }})
       </button>
@@ -178,12 +178,21 @@ export default Vue.extend({
         // unsuccessful
       });
     },
-    logout() {
-      nodecg.sendMessage('twitchLogout').then(() => {
-        // successful
-      }).catch(() => {
-        // unsuccessful
+    logoutConfirm() {
+      const alertDialog = nodecg.getDialog('alert-dialog') as any;
+      alertDialog.querySelector('iframe').contentWindow.open({
+        name: 'TwitchLogoutConfirm',
+        func: this.logout,
       });
+    },
+    logout(confirm: boolean) {
+      if (confirm) {
+        nodecg.sendMessage('twitchLogout').then(() => {
+          // successful
+        }).catch(() => {
+          // unsuccessful
+        });
+      }
     },
   },
 });
