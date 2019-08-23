@@ -6,16 +6,16 @@
     </div>
     <br>
     <div class="DialogButtons">
-      <button
+      <v-btn
         @click="confirm"
       >
         OK
-      </button>
-      <button
+      </v-btn>
+      <v-btn
         @click="dismiss"
       >
         Cancel
-      </button>
+      </v-btn>
     </div>
   </div>
 </template>
