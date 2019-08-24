@@ -1,5 +1,5 @@
 <template>
-  <div id="App">
+  <v-app id="App">
     <!-- Not enabled. -->
     <div v-if="!config.enabled">
       Twitch integration is not enabled.
@@ -10,7 +10,7 @@
         :href="url"
         target="_blank"
       ><img src="./twitch-login.png"></a>
-      <br><br>Click the image above to connect to Twitch to auto-sync data.
+      Click the image above to connect to Twitch to auto-sync data.
     </div>
     <!-- Enabled, authenticating server-side. -->
     <div v-else-if="apiData.state === 'authenticating'">
@@ -18,57 +18,75 @@
     </div>
     <!-- Ready server-side. -->
     <div v-else>
-      <button
-        id="Logout"
-        @click="logoutConfirm"
+      <div id="LogoutContainer">
+        <v-btn
+          id="Logout"
+          small
+          @click="logoutConfirm"
+        >
+          <v-icon small>
+            mdi-logout
+          </v-icon>
+          <span>({{ apiData.channelName }})</span>
+        </v-btn>
+      </div>
+      <div
+        id="AutoSyncContainer"
       >
-        Logout ({{ apiData.channelName }})
-      </button>
-      <br><br>Auto-sync title/game<span
-        v-if="config.ffzIntegration"
-      >/featured channels</span>?
-      <input
-        v-model="sync"
-        type="radio"
-        name="autoSyncRadio"
-        :value="true"
-      >On
-      <input
-        v-model="sync"
-        type="radio"
-        name="autoSyncRadio"
-        :value="false"
-      >Off
-      <br><br><input
+        <v-switch
+          v-model="sync"
+          inset
+          hide-details
+        ></v-switch>
+        Auto-sync title/game<span
+          v-if="config.ffzIntegration"
+        >/featured channels</span>?
+      </div>
+      <v-text-field
         v-model="title"
         class="TextBox"
+        label="Title"
+        hide-details
+        filled
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
-      >
-      <input
+      ></v-text-field>
+      <v-text-field
         v-model="game"
         class="TextBox"
+        label="Game Directory"
+        hide-details
+        filled
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
-      >
-      <input
+      ></v-text-field>
+      <v-text-field
         v-if="config.ffzIntegration"
         v-model="users"
         class="TextBox"
+        label="Featured Channels"
+        hide-details
+        filled
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
+      ></v-text-field>
+      <v-btn
+        block
+        @click="updateChannelInfo"
       >
-      <button @click="updateChannelInfo">
         Update
-      </button>
-      <br><br><button @click="startCommercial">
+      </v-btn>
+      <v-btn
+        block
+        @click="startCommercial"
+      >
         Start 3m Commercial
-      </button>
+      </v-btn>
     </div>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -198,18 +216,36 @@ export default Vue.extend({
 });
 </script>
 
+<style>
+  .v-application--wrap {
+    min-height: 0;
+  }
+
+  .theme--light.v-application {
+    background-color: rgba(0,0,0,0);
+  }
+</style>
+
 <style scoped>
-  .TextBox {
-    box-sizing: border-box;
-    width: 100%;
+  .v-btn {
+    margin-top: 5px;
   }
 
-  button {
-    width: 100%;
+  #AutoSyncContainer > .v-input {
+    margin: 0;
+    padding: 0;
   }
 
-  #Logout {
-    width: unset;
-    float: right;
+  #LogoutContainer {
+    width: 100%;
+    display: flex;
+    padding: 0;
+    justify-content: flex-end;
+  }
+
+  #AutoSyncContainer {
+    display: flex;
+    align-items: center;
+    padding: 10px;
   }
 </style>
