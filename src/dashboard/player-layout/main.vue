@@ -1,16 +1,15 @@
 <template>
   <div id="App">
     This order is only temporary, it does not modify the permenant copy.
-    <br><br>
     <div v-if="!teams.length">
-      No Teams/Run Available
+      <br>No Teams/Run Available
     </div>
     <draggable
       v-else
       v-model="teams"
     >
       <transition-group name="list">
-        <div
+        <v-card
           v-for="(team) in teams"
           :key="team.id"
           class="Team"
@@ -22,7 +21,7 @@
           >
             {{ player.name }}<span v-if="i+1 < team.players.length">,</span>
           </span>
-        </div>
+        </v-card>
       </transition-group>
     </draggable>
   </div>
@@ -69,6 +68,7 @@ export default Vue.extend({
   }
 
   .Team {
+    text-align: center;
     box-sizing: border-box;
     background-color: rgb(216, 216, 216);
     padding: 5px;
