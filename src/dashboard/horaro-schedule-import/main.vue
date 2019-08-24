@@ -1,28 +1,31 @@
 <template>
-  <div id="App">
+  <div
+    id="App"
+    data-app
+  >
     <!-- URL Field -->
-    <input
+    <v-text-field
       id="URL"
       v-model="url"
+      filled
+      hide-details
+      label="Horaro Schedule URL"
       :disabled="importStatus.importing"
-    >
-    <br>
+    ></v-text-field>
     <!-- "Load Schedule Data" Button -->
-    <button
+    <v-btn
       :disabled="importStatus.importing"
       @click="loadSchedule"
     >
       Load Schedule Data
-    </button>
-    <br>
+    </v-btn>
     <!-- Message before schedule data is loaded -->
     <div v-if="!loaded && !importStatus.importing">
-      <br>Insert the Horaro schedule URL above and press
+      Insert the Horaro schedule URL above and press
       the "Load Schedule Data" button to continue.
     </div>
     <!-- Dropdowns after data is imported to toggle settings -->
     <div v-if="loaded && !importStatus.importing">
-      <br>
       Select the correct columns that match the data type below,
       if the one auto-selected is wrong:
       <dropdown
@@ -30,45 +33,46 @@
         :key="option.key"
         :option="option"
         :columns="columns"
+        class="Dropdown"
       ></dropdown>
-      <br><br>
-      Split Players:
+      <br>Split Players:
       <a
         href="#"
         title="This option dictates how the players in your relevant schedule column are split;
 check the README for more information."
+      >?</a>
+      <v-select
+        v-model="splitOption"
+        :items="splitOptionsOpts"
+        label="Player Split"
+        filled
+        single-line
+        hide-details
+        dense
+        :height="27"
+        class="Dropdown"
       >
-        ?
-      </a>
-      <select v-model="splitOption">
-        <option :value="0">
-          vs/vs. [Teams]
-        </option>
-        <option :value="1">
-          Comma (,) [No Teams]
-        </option>
-      </select>
+      </v-select>
     </div>
     <!-- Message while importing is in progress -->
     <div v-else-if="importStatus.importing">
-      <br>Import currently in progress...
+      Import currently in progress...
     </div>
-    <br>
     <!-- Import Button, if importing -->
-    <button
+    <v-btn
       v-if="importStatus.importing"
       :disabled="true"
     >
       Importing {{ importStatus.item }}/{{ importStatus.total }}
-    </button>
+    </v-btn>
     <!-- Import Button, if not importing -->
-    <button
+    <v-btn
       v-else
       :disabled="!loaded"
       @click="importConfirm"
     >
       Import
-    </button>
+    </v-btn>
   </div>
 </template>
 
@@ -149,6 +153,16 @@ export default Vue.extend({
         predict: string[];
         custom?: boolean;
       }[],
+      splitOptionsOpts: [
+        {
+          value: 0,
+          text: 'vs/vs. [Teams]',
+        },
+        {
+          value: 1,
+          text: 'Comma (,) [No Teams]',
+        },
+      ],
     };
   },
   computed: {
@@ -243,16 +257,31 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  #URL {
-    box-sizing: border-box;
+  .v-btn {
     width: 100%;
   }
-
-  button {
-    width: 100%;
+  .v-btn:first-of-type {
+    margin: 5px 0 10px 0;
+  }
+  .v-btn:last-of-type {
+    margin-top: 10px;
   }
 
-  select {
-    width: 100%;
+  .v-select {
+    margin-top: 5px;
+  }
+</style>
+
+<style>
+  .Dropdown .v-input__slot {
+    min-height: 0 !important;
+  }
+
+  .Dropdown .v-label {
+    top: 4px !important;
+  }
+
+  .Dropdown .v-input__append-inner {
+    margin-top: 2px !important;
   }
 </style>

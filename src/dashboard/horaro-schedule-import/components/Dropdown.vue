@@ -1,26 +1,15 @@
 <template>
-  <select
+  <v-select
     v-model="selected"
+    :items="dropdownOpts"
+    :label="option.name"
+    filled
+    single-line
+    hide-details
+    dense
+    :height="27"
   >
-    <option
-      :value="null"
-      disabled
-    >
-      Select Column: {{ option.name }}
-    </option>
-    <option
-      :value="-1"
-    >
-      N/A
-    </option>
-    <option
-      v-for="(colName, index) in columns"
-      :key="colName"
-      :value="index"
-    >
-      {{ colName }}
-    </option>
-  </select>
+  </v-select>
 </template>
 
 <script lang="ts">
@@ -46,6 +35,16 @@ export default Vue.extend({
       },
     },
   },
+  data() {
+    return {
+      dropdownOpts: [
+        {
+          value: -1,
+          text: 'N/A',
+        },
+      ],
+    };
+  },
   computed: {
     selected: {
       // Vetur doesn't think "this" exists in here?
@@ -64,6 +63,14 @@ export default Vue.extend({
         });
       },
     },
+  },
+  created() {
+    this.dropdownOpts = this.dropdownOpts.concat(
+      this.columns.map((value, index) => ({
+        value: index,
+        text: value,
+      })),
+    );
   },
 });
 </script>
