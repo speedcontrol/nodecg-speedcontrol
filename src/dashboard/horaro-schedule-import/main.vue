@@ -32,12 +32,13 @@
         :columns="columns"
         class="Dropdown"
       ></dropdown>
-      <br>Split Players:
-      <a
-        href="#"
-        title="This option dictates how the players in your relevant schedule column are split;
-check the README for more information."
-      >?</a>
+      <br><v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <span v-on="on">Split Players:</span>
+        </template>
+        <span>This option dictates how the players in your relevant schedule column are split;
+          check the README for more information.</span>
+      </v-tooltip>
       <v-select
         v-model="splitOption"
         :items="splitOptionsOpts"
