@@ -216,16 +216,6 @@ export default Vue.extend({
 });
 </script>
 
-<style>
-  .v-application--wrap {
-    min-height: 0;
-  }
-
-  .theme--light.v-application {
-    background-color: rgba(0,0,0,0);
-  }
-</style>
-
 <style scoped>
   .v-btn {
     margin-top: 5px;
