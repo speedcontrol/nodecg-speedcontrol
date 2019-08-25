@@ -9,6 +9,16 @@
     dense
     :height="27"
   >
+    <template v-slot:prepend-item>
+      <v-list-item disabled>
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ option.name }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-divider class="mb-2"></v-divider>
+    </template>
   </v-select>
 </template>
 
