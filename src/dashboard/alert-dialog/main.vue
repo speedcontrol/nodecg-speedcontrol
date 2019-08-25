@@ -1,12 +1,12 @@
 <template>
-  <div id="App">
+  <v-app>
     <component
       :is="currentComponent"
       :alert-data="alertData"
       @confirm="close(true)"
       @dismiss="close(false)"
     ></component>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -26,6 +26,9 @@ export default Vue.extend({
       alertData: {} as { [k: string ]: any },
       callbackFunc: undefined as Function | undefined,
     };
+  },
+  created() {
+    this.$vuetify.theme.dark = true;
   },
   mounted() {
     this.dialog = nodecg.getDialog('alert-dialog') as any;

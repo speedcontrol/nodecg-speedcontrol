@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="App"
-    data-app
-  >
+  <v-app>
     <!-- URL Field -->
     <v-text-field
       id="URL"
@@ -73,7 +70,7 @@ check the README for more information."
     >
       Import
     </v-btn>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">

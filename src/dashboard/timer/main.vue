@@ -1,5 +1,5 @@
 <template>
-  <div id="App">
+  <v-app>
     <timer-time></timer-time>
     <div id="Controls">
       <start-button></start-button>
@@ -26,7 +26,7 @@
         :index="index"
       ></team>
     </div>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">

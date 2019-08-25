@@ -1,5 +1,5 @@
 <template>
-  <div id="App">
+  <v-app>
     This order is only temporary, it does not modify the permenant copy.
     <div v-if="!teams.length">
       <br>No Teams/Run Available
@@ -24,7 +24,7 @@
         </v-card>
       </transition-group>
     </draggable>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">

@@ -1,5 +1,5 @@
 <template>
-  <div id="App">
+  <v-app>
     <h1 v-if="mode === 'New'">
       Add Run
     </h1>
@@ -57,7 +57,7 @@
         Cancel
       </button>
     </div>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -117,6 +117,9 @@ export default Vue.extend({
     customData() {
       return nodecg.bundleConfig.schedule.customData || [];
     },
+  },
+  created() {
+    this.$vuetify.theme.dark = true;
   },
   mounted() {
     this.dialog = nodecg.getDialog('run-modification-dialog') as any;

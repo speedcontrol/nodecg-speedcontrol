@@ -1,5 +1,5 @@
 <template>
-  <v-app id="App">
+  <v-app>
     <!-- Not enabled. -->
     <div v-if="!config.enabled">
       Twitch integration is not enabled.

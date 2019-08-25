@@ -1,5 +1,5 @@
 <template>
-  <div id="App">
+  <v-app>
     <v-btn
       color="#A5D6A7"
       @click="openAddDialog"
@@ -13,7 +13,7 @@
     >
       <v-icon>mdi-delete</v-icon>Remove All Runs
     </v-btn>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">

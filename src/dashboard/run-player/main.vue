@@ -1,5 +1,5 @@
 <template>
-  <div id="App">
+  <v-app>
     <div>
       <button
         :disabled="!runDataActiveRun || disableChange"
@@ -36,7 +36,7 @@
       :key="run.id"
       :run-data="run"
     ></run>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">

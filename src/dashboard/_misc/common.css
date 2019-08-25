@@ -1,0 +1,11 @@
+/* So the <v-app> always has a transparent background,
+otherwise it looks odd in the NodeCG dashboard panels. */
+.v-application {
+  background-color: transparent !important;
+}
+
+/* So the <v-app> doesn't take up 100% height which breaks
+in the NodeCG dashboard panels anyway. */
+.v-application--wrap {
+  min-height: 0 !important;
+}

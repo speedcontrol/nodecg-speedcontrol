@@ -1,5 +1,5 @@
 <template>
-  <div id="App">
+  <v-app>
     <button
       :disabled="!activeRun"
       @click="editActiveRun"
@@ -15,7 +15,7 @@
         ></run>
       </transition-group>
     </draggable>
-  </div>
+  </v-app>
 </template>
 
 <script lang="ts">
