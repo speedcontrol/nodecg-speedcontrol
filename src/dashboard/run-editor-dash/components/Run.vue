@@ -1,25 +1,39 @@
 <template>
-  <div class="Run">
-    <button @click="duplicateRun">
-      Duplicate
-    </button>
-    <button @click="editRun">
-      Edit
-    </button>
-    <button @click="removeRunConfirm">
-      Remove
-    </button>
-    <span>
-      {{ runData.game }}
-    </span>
-  </div>
+  <v-expansion-panel>
+    <v-expansion-panel-header>{{ runData.game }}</v-expansion-panel-header>
+    <v-expansion-panel-content>
+      Category: {{ runData.category }}
+      <br>Estimate: {{ runData.estimate }}
+      <br>System: {{ runData.system }}
+      <br><br>
+      <modify-button
+        icon="mdi-content-duplicate"
+        tooltip="Duplicate Run"
+        @click="duplicateRun"
+      ></modify-button>
+      <modify-button
+        icon="mdi-square-edit-outline"
+        tooltip="Edit Run"
+        @click="editRun"
+      ></modify-button>
+      <modify-button
+        icon="mdi-file-remove-outline"
+        tooltip="Remove Run"
+        @click="removeRunConfirm"
+      ></modify-button>
+    </v-expansion-panel-content>
+  </v-expansion-panel>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { nodecg } from '../../_misc/nodecg';
+import ModifyButton from './ModifyButton.vue';
 
 export default Vue.extend({
+  components: {
+    ModifyButton,
+  },
   props: {
     runData: {
       type: Object,

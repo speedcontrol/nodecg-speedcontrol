@@ -1,20 +1,31 @@
 <template>
   <v-app>
-    <button
+    <v-btn
       :disabled="!activeRun"
+      style="margin-bottom: 10px"
       @click="editActiveRun"
     >
       Edit Currently Active Run
-    </button>
-    <draggable v-model="runDataArray">
-      <transition-group name="list">
-        <run
-          v-for="run in runDataArray"
-          :key="run.id"
-          :run-data="run"
-        ></run>
-      </transition-group>
-    </draggable>
+    </v-btn>
+    <div id="RunList">
+      <v-expansion-panels
+        accordion
+      >
+        <draggable
+          v-model="runDataArray"
+          style="width: 100%"
+        >
+          <transition-group name="list">
+            <run
+              v-for="run in runDataArray"
+              :id="`run-${run.id}`"
+              :key="run.id"
+              :run-data="run"
+            ></run>
+          </transition-group>
+        </draggable>
+      </v-expansion-panels>
+    </div>
   </v-app>
 </template>
 
@@ -61,6 +72,11 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+  #RunList {
+    max-height: 400px;
+    overflow-y: scroll;
+  }
+
   .list-move {
     transition: transform 0.2s;
   }
@@ -72,12 +88,5 @@ export default Vue.extend({
   }
   .list-leave-active {
     position: absolute;
-  }
-
-  .Run {
-    box-sizing: border-box;
-    background-color: rgb(216, 216, 216);
-    padding: 5px;
-    margin-top: 10px;
   }
 </style>
