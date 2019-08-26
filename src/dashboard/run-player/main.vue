@@ -1,41 +1,35 @@
 <template>
   <v-app>
     <div>
-      <button
-        :disabled="!runDataActiveRun || disableChange"
+      <v-btn
+        block
+        :disabled="!activeRun || disableChange"
         @click="returnToStartConfirm"
       >
         Return To Start
-      </button>
+      </v-btn>
     </div>
-    <br>
-    <div v-if="runDataActiveRun">
-      Current Run: {{ runDataActiveRun.game }}
-    </div>
-    <div v-else>
-      At the start of the marathon :)
-    </div>
-    <br>
-    <div v-if="nextRun">
-      <button
+    <div class="NextRun">
+      <v-btn
+        block
         :disabled="disableChange"
         @click="playNextRun"
       >
-        Play
-      </button>
-      <span>
-        Next Run: {{ nextRun.game }}
-      </span>
+        <v-icon>mdi-play</v-icon>{{ nextRun.game }}
+      </v-btn>
     </div>
-    <div v-else>
-      No more runs, marathon done :)
+    <div id="RunList">
+      <v-expansion-panels
+        accordion
+      >
+        <run
+          v-for="run in runDataArray"
+          :id="`run-${run.id}`"
+          :key="run.id"
+          :run-data="run"
+        ></run>
+      </v-expansion-panels>
     </div>
-    <br>
-    <run
-      v-for="run in runDataArray"
-      :key="run.id"
-      :run-data="run"
-    ></run>
   </v-app>
 </template>
 
@@ -53,7 +47,7 @@ export default Vue.extend({
     runDataArray() {
       return store.state.runDataArray;
     },
-    runDataActiveRun() {
+    activeRun() {
       return store.state.runDataActiveRun;
     },
     runDataActiveRunSurrounding() {
@@ -66,7 +60,22 @@ export default Vue.extend({
       return ['running', 'paused'].includes(store.state.timer.state);
     },
   },
+  watch: {
+    activeRun(val) {
+      this.scroll(val);
+    },
+  },
+  mounted() {
+    this.scroll(this.activeRun);
+  },
   methods: {
+    scroll(val) {
+      if (val) {
+        this.$vuetify.goTo(`#run-${val.id}`, { offset: 150, container: '#RunList' });
+      } else {
+        this.$vuetify.goTo(0, { container: '#RunList' });
+      }
+    },
     returnToStartConfirm() {
       const alertDialog = nodecg.getDialog('alert-dialog') as any;
       alertDialog.querySelector('iframe').contentWindow.open({
@@ -95,3 +104,21 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style>
+  button > span {
+    overflow: hidden;
+    flex: unset !important;
+  }
+</style>
+
+<style scoped>
+  #RunList {
+    max-height: 400px;
+    overflow-y: scroll;
+  }
+
+  .v-btn {
+    margin-bottom: 5px;
+  }
+</style>
