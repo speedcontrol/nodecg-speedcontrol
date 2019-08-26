@@ -13,10 +13,12 @@
           v-for="(team) in teams"
           :key="team.id"
           class="Team"
+          color="#d8d8d8"
         >
-          <span v-if="team.name">{{ team.name }}:</span>
+          <span v-if="team.name">{{ team.name }}</span>
           <span
             v-for="(player, i) in team.players"
+            v-else
             :key="player.id"
           >
             {{ player.name }}<span v-if="i+1 < team.players.length">,</span>
@@ -69,8 +71,6 @@ export default Vue.extend({
 
   .Team {
     text-align: center;
-    box-sizing: border-box;
-    background-color: rgb(216, 216, 216);
     padding: 5px;
     margin-top: 10px;
   }

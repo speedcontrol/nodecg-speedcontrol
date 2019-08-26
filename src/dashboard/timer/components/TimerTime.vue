@@ -72,8 +72,8 @@ export default Vue.extend({
 });
 </script>
 
-<style>
-  .TimerInput input {
+<style scoped>
+  .TimerInput >>> input {
     text-align: center;
     font-size: 25px;
   }

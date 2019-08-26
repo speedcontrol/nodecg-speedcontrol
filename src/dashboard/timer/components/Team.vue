@@ -8,7 +8,7 @@
     ></undo-button>
     <div class="TeamName">
       <!-- Show team name if it exists -->
-      <span v-if="info.name">info.name</span>
+      <span v-if="info.name">{{ info.name }}</span>
       <!-- Show player name if only 1 player in team -->
       <span v-else-if="info.players.length === 1">{{ info.players[0].name }}</span>
       <!-- Show all player names if no team name is set -->

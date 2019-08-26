@@ -53,10 +53,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  .v-btn {
-    width: 100%;
-  }
-
   .v-btn:not(:first-of-type) {
     margin-top: 10px;
   }
