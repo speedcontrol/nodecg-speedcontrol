@@ -12,14 +12,27 @@
     <div class="NextRun">
       <v-btn
         block
-        :disabled="disableChange"
+        :disabled="disableChange || !nextRun"
         @click="playNextRun"
       >
-        <v-icon>mdi-play</v-icon>{{ nextRun.game }}
+        <span
+          v-if="nextRun"
+        >
+          <v-icon>mdi-play</v-icon>{{ (nextRun) ? nextRun.game : '' }}
+        </span>
+        <span
+          v-else
+        >
+          End of marathon or no runs imported
+        </span>
       </v-btn>
     </div>
     <div id="RunList">
+      <div v-if="!runDataArray.length">
+        No runs added/imported yet.
+      </div>
       <v-expansion-panels
+        v-else
         accordion
       >
         <run
