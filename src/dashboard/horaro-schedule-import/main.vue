@@ -2,7 +2,6 @@
   <v-app>
     <!-- URL Field -->
     <v-text-field
-      id="URL"
       v-model="url"
       filled
       hide-details
@@ -11,6 +10,7 @@
     ></v-text-field>
     <!-- "Load Schedule Data" Button -->
     <v-btn
+      id="LoadScheduleBtn"
       :disabled="importStatus.importing"
       @click="loadSchedule"
     >
@@ -32,13 +32,17 @@
         :columns="columns"
         class="Dropdown"
       ></dropdown>
-      <br><v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">Split Players:</span>
-        </template>
-        <span>This option dictates how the players in your relevant schedule column are split;
-          check the README for more information.</span>
-      </v-tooltip>
+      <div id="SplitPlayersTxt">
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <span v-on="on">
+              Split Players:
+            </span>
+          </template>
+          <span>This option dictates how the players in your relevant schedule column are split;
+            check the README for more information.</span>
+        </v-tooltip>
+      </div>
       <v-select
         v-model="splitOption"
         :items="splitOptionsOpts"
@@ -59,6 +63,7 @@
     <!-- Import Button, if importing -->
     <v-btn
       v-if="importStatus.importing"
+      id="ImportBtn"
       :disabled="true"
     >
       Importing {{ importStatus.item }}/{{ importStatus.total }}
@@ -66,6 +71,7 @@
     <!-- Import Button, if not importing -->
     <v-btn
       v-else
+      id="ImportBtn"
       :disabled="!loaded"
       @click="importConfirm"
     >
@@ -254,31 +260,26 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped>
-  .v-btn {
-    width: 100%;
-  }
-  .v-btn:first-of-type {
+<style>
+  #LoadScheduleBtn {
     margin: 5px 0 10px 0;
   }
-  .v-btn:last-of-type {
+
+  #ImportBtn {
     margin-top: 10px;
   }
 
-  .v-select {
-    margin-top: 5px;
+  #SplitPlayersTxt {
+    margin-top: 10px;
   }
-</style>
 
-<style>
+  /* Tweaks to dropdowns to make them smaller. */
   .Dropdown .v-input__slot {
     min-height: 0 !important;
   }
-
   .Dropdown .v-label {
     top: 4px !important;
   }
-
   .Dropdown .v-input__append-inner {
     margin-top: 2px !important;
   }
