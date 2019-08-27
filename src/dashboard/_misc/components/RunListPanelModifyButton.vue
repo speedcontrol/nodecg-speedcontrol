@@ -6,6 +6,7 @@
           icon
           outlined
           small
+          :disabled="disabled"
           @click="$emit('click')"
         >
           <v-icon small>{{ icon }}</v-icon>
@@ -29,6 +30,10 @@ export default Vue.extend({
     tooltip: {
       type: String,
       default: '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 });

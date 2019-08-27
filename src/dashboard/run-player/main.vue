@@ -27,34 +27,19 @@
         </span>
       </v-btn>
     </div>
-    <div id="RunList">
-      <div v-if="!runDataArray.length">
-        No runs added/imported yet.
-      </div>
-      <v-expansion-panels
-        v-else
-        accordion
-      >
-        <run
-          v-for="run in runDataArray"
-          :id="`run-${run.id}`"
-          :key="run.id"
-          :run-data="run"
-        ></run>
-      </v-expansion-panels>
-    </div>
+    <run-list></run-list>
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Run from './components/Run.vue';
+import RunList from '../_misc/components/RunList.vue';
 import { store } from '../_misc/replicant-store';
 import { RunData } from '../../../types';
 
 export default Vue.extend({
   components: {
-    Run,
+    RunList,
   },
   computed: {
     runDataArray() {
@@ -73,22 +58,7 @@ export default Vue.extend({
       return ['running', 'paused'].includes(store.state.timer.state);
     },
   },
-  watch: {
-    activeRun(val) {
-      this.scroll(val);
-    },
-  },
-  mounted() {
-    this.scroll(this.activeRun);
-  },
   methods: {
-    scroll(val) {
-      if (val) {
-        this.$vuetify.goTo(`#run-${val.id}`, { offset: 150, container: '#RunList' });
-      } else {
-        this.$vuetify.goTo(0, { container: '#RunList' });
-      }
-    },
     returnToStartConfirm() {
       const alertDialog = nodecg.getDialog('alert-dialog') as any;
       alertDialog.querySelector('iframe').contentWindow.open({
@@ -126,11 +96,6 @@ export default Vue.extend({
 </style>
 
 <style scoped>
-  #RunList {
-    max-height: 400px;
-    overflow-y: scroll;
-  }
-
   .v-btn {
     margin-bottom: 5px;
   }

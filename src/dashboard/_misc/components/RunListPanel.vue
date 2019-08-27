@@ -1,5 +1,7 @@
 <template>
-  <v-expansion-panel>
+  <v-expansion-panel
+    :class="{'grey lighten-2': !editor && activeRun && activeRun.id === runData.id}"
+  >
     <v-expansion-panel-header>
       {{ runData.game }}
     </v-expansion-panel-header>
@@ -36,27 +38,39 @@
         <span>{{ val }}</span>
       </div>
       <div style="margin-top: 10px">
-        <modify-button
-          icon="mdi-content-duplicate"
-          tooltip="Duplicate Run"
-          @click="duplicateRun"
-        ></modify-button>
-        <!-- TO BE IMPLEMENTED -->
-        <!--<modify-button
-          icon="mdi-file-plus-outline"
-          tooltip="Add New Run After"
-          @click="addNewRunAfter"
-        ></modify-button>-->
-        <modify-button
-          icon="mdi-square-edit-outline"
-          tooltip="Edit Run"
-          @click="editRun"
-        ></modify-button>
-        <modify-button
-          icon="mdi-file-remove-outline"
-          tooltip="Remove Run"
-          @click="removeRunConfirm"
-        ></modify-button>
+        <!-- Buttons for "Run Player" dashboard panel. -->
+        <div v-if="!editor">
+          <modify-button
+            icon="mdi-play"
+            tooltip="Play Run"
+            :disabled="disableChange"
+            @click="playRun"
+          ></modify-button>
+        </div>
+        <!-- Buttons for "Run Editor" dashboard panel. -->
+        <div v-else>
+          <modify-button
+            icon="mdi-content-duplicate"
+            tooltip="Duplicate Run"
+            @click="duplicateRun"
+          ></modify-button>
+          <!-- TO BE IMPLEMENTED -->
+          <!--<modify-button
+            icon="mdi-file-plus-outline"
+            tooltip="Add New Run After"
+            @click="addNewRunAfter"
+          ></modify-button>-->
+          <modify-button
+            icon="mdi-square-edit-outline"
+            tooltip="Edit Run"
+            @click="editRun"
+          ></modify-button>
+          <modify-button
+            icon="mdi-file-remove-outline"
+            tooltip="Remove Run"
+            @click="removeRunConfirm"
+          ></modify-button>
+        </div>
       </div>
     </v-expansion-panel-content>
   </v-expansion-panel>
@@ -64,11 +78,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { nodecg } from '../../_misc/nodecg';
-import ModifyButton from './ModifyButton.vue';
+import { nodecg } from '../nodecg';
+import { store } from '../replicant-store';
 import { Configschema } from '../../../../configschema';
+import ModifyButton from './RunListPanelModifyButton.vue';
 
 export default Vue.extend({
+  name: 'RunListPanel',
   components: {
     ModifyButton,
   },
@@ -79,6 +95,10 @@ export default Vue.extend({
         return {};
       },
     },
+    editor: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     playerStr() {
@@ -87,12 +107,25 @@ export default Vue.extend({
         ${team.players.map((player): string => player.name).join(', ')}`
       )).join(' vs. ');
     },
+    disableChange() {
+      return ['running', 'paused'].includes(store.state.timer.state);
+    },
+    activeRun() {
+      return store.state.runDataActiveRun;
+    },
   },
   methods: {
     customDataName(key: string) {
       return (nodecg.bundleConfig as Configschema).schedule.customData.find(
         custom => custom.key === key,
       ).name;
+    },
+    playRun() {
+      nodecg.sendMessage('changeActiveRun', this.runData.id).then(() => {
+        // run change successful
+      }).catch(() => {
+        // run change unsuccessful
+      });
     },
     duplicateRun() {
       const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any;
