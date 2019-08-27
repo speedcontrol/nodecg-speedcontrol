@@ -7,6 +7,15 @@
     >
       Edit Currently Active Run
     </v-btn>
+    <v-text-field
+      v-model="searchTerm"
+      filled
+      label="Search..."
+      append-icon="mdi-magnify"
+      :messages="`
+        ${filteredRunDataArray.length} run${filteredRunDataArray.length === 1 ? '' : 's'} found.
+      `"
+    ></v-text-field>
     <div id="RunList">
       <v-expansion-panels
         accordion
@@ -14,10 +23,11 @@
         <draggable
           v-model="runDataArray"
           style="width: 100%"
+          :disabled="searchTerm"
         >
           <transition-group name="list">
             <run
-              v-for="run in runDataArray"
+              v-for="run in filteredRunDataArray"
               :id="`run-${run.id}`"
               :key="run.id"
               :run-data="run"
@@ -42,6 +52,11 @@ export default Vue.extend({
     Draggable,
     Run,
   },
+  data() {
+    return {
+      searchTerm: '',
+    };
+  },
   computed: {
     runDataArray: {
       get() {
@@ -52,6 +67,14 @@ export default Vue.extend({
           value,
         });
       },
+    },
+    filteredRunDataArray() {
+      return store.state.runDataArray.filter((run) => {
+        const str = this.searchTerm.toLowerCase();
+        return run.game.toLowerCase().includes(str)
+        || !!run.teams.find(team => (team.name && team.name.toLowerCase().includes(str))
+        || !!team.players.find(player => player.name.toLowerCase().includes(str)));
+      });
     },
     activeRun() {
       return store.state.runDataActiveRun;
