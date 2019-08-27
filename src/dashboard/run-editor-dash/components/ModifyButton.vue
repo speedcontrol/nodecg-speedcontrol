@@ -5,9 +5,10 @@
         <v-btn
           icon
           outlined
+          small
           @click="$emit('click')"
         >
-          <v-icon>{{ icon }}</v-icon>
+          <v-icon small>{{ icon }}</v-icon>
         </v-btn>
       </span>
     </template>

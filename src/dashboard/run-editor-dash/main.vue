@@ -73,7 +73,7 @@ export default Vue.extend({
 
 <style scoped>
   #RunList {
-    max-height: 400px;
+    height: 400px;
     overflow-y: scroll;
   }
 
