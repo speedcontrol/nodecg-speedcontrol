@@ -99,6 +99,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    disableChange: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     playerStr() {
@@ -106,9 +110,6 @@ export default Vue.extend({
         `${team.name ? `${team.name}:` : ''}
         ${team.players.map((player): string => player.name).join(', ')}`
       )).join(' vs. ');
-    },
-    disableChange() {
-      return ['running', 'paused'].includes(store.state.timer.state);
     },
     activeRun() {
       return store.state.runDataActiveRun;

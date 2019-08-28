@@ -29,6 +29,7 @@
               :key="run.id"
               :run-data="run"
               :editor="editor"
+              :disable-change="disableChange"
             ></run-list-panel>
           </transition-group>
         </draggable>
@@ -82,6 +83,9 @@ export default Vue.extend({
     },
     activeRun() {
       return store.state.runDataActiveRun;
+    },
+    disableChange() {
+      return ['running', 'paused'].includes(store.state.timer.state);
     },
   },
   watch: {
