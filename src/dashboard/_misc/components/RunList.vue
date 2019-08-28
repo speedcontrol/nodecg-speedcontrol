@@ -3,6 +3,7 @@
     <v-text-field
       v-model="searchTerm"
       filled
+      clearable
       label="Search..."
       append-icon="mdi-magnify"
       :messages="`
@@ -57,7 +58,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      searchTerm: '',
+      searchTerm: null,
     };
   },
   computed: {
@@ -73,7 +74,7 @@ export default Vue.extend({
     },
     filteredRunDataArray() {
       return store.state.runDataArray.filter((run) => {
-        const str = this.searchTerm.toLowerCase();
+        const str = (this.searchTerm) ? this.searchTerm.toLowerCase() : '';
         return run.game.toLowerCase().includes(str)
         || !!run.teams.find(team => (team.name && team.name.toLowerCase().includes(str))
         || !!team.players.find(player => player.name.toLowerCase().includes(str)));
