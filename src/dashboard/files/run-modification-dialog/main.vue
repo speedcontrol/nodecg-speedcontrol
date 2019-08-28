@@ -65,7 +65,7 @@ import Vue from 'vue';
 import store from './store';
 import Team from './components/Team.vue';
 import { nodecg } from '../_misc/nodecg';
-import { RunData } from '../../../types';
+import { RunData } from '../../../../types';
 
 const Draggable = require('vuedraggable'); // Don't need types now :)
 

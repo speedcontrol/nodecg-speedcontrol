@@ -23,14 +23,14 @@
           :disabled="searchTerm || !editor"
         >
           <transition-group name="list">
-            <run-list-panel
+            <run-panel
               v-for="run in filteredRunDataArray"
               :id="`run-${run.id}`"
               :key="run.id"
               :run-data="run"
               :editor="editor"
               :disable-change="disableChange"
-            ></run-list-panel>
+            ></run-panel>
           </transition-group>
         </draggable>
       </v-expansion-panels>
@@ -40,16 +40,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import RunListPanel from './RunListPanel.vue';
-import { store } from '../replicant-store';
-import { RunData } from '../../../../types';
+import RunPanel from './RunPanel.vue';
+import { store } from '../../replicant-store';
+import { RunData } from '../../../../../../types';
 
 const Draggable = require('vuedraggable'); // Don't need types now :)
 
 export default Vue.extend({
   components: {
     Draggable,
-    RunListPanel,
+    RunPanel,
   },
   props: {
     editor: {

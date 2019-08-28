@@ -10,7 +10,7 @@
         :href="url"
         target="_blank"
       ><img src="./twitch-login.png"></a>
-      Click the image above to connect to Twitch to auto-sync data.
+      <br>Click the image above to connect to Twitch to auto-sync data.
     </div>
     <!-- Enabled, authenticating server-side. -->
     <div v-else-if="apiData.state === 'authenticating'">
@@ -93,7 +93,7 @@
 import Vue from 'vue';
 import _ from 'lodash';
 import { nodecg } from '../_misc/nodecg';
-import { Configschema } from '../../../configschema';
+import { Configschema } from '../../../../configschema';
 import { store } from '../_misc/replicant-store';
 
 export default Vue.extend({

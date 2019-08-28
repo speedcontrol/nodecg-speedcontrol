@@ -32,7 +32,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { store } from '../_misc/replicant-store';
-import { RunDataTeam } from '../../../types';
+import { RunDataTeam } from '../../../../types';
 
 const Draggable = require('vuedraggable'); // Don't need types now :)
 

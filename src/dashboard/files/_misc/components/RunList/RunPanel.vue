@@ -78,13 +78,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { nodecg } from '../nodecg';
-import { store } from '../replicant-store';
-import { Configschema } from '../../../../configschema';
-import ModifyButton from './RunListPanelModifyButton.vue';
+import { nodecg } from '../../nodecg';
+import { store } from '../../replicant-store';
+import { Configschema } from '../../../../../../configschema';
+import ModifyButton from './ModifyButton.vue';
 
 export default Vue.extend({
-  name: 'RunListPanel',
+  name: 'RunPanel',
   components: {
     ModifyButton,
   },

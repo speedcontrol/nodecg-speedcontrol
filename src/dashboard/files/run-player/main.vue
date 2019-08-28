@@ -33,9 +33,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import RunList from '../_misc/components/RunList.vue';
+import RunList from '../_misc/components/RunList/RunList.vue';
 import { store } from '../_misc/replicant-store';
-import { RunData } from '../../../types';
+import { RunData } from '../../../../types';
 
 export default Vue.extend({
   components: {

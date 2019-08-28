@@ -14,7 +14,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { store } from '../_misc/replicant-store';
-import RunList from '../_misc/components/RunList.vue';
+import { nodecg } from '../_misc/nodecg';
+import RunList from '../_misc/components/RunList/RunList.vue';
 
 export default Vue.extend({
   components: {

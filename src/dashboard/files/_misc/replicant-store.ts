@@ -2,8 +2,8 @@ import clone from 'clone';
 import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { DefaultSetupTime, HoraroImportStatus, RunDataActiveRunSurrounding, TwitchAPIData, TwitchChannelInfo } from '../../../schemas'; // eslint-disable-line
-import { RunDataActiveRun, RunDataArray, Timer } from '../../../types';
+import { DefaultSetupTime, HoraroImportStatus, RunDataActiveRunSurrounding, TwitchAPIData, TwitchChannelInfo } from '../../../../schemas'; // eslint-disable-line
+import { RunDataActiveRun, RunDataArray, Timer } from '../../../../types';
 
 Vue.use(Vuex);
 
