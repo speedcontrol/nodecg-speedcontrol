@@ -20,6 +20,7 @@
         <draggable
           v-model="runDataArray"
           style="width: 100%"
+          handle=".Handle"
           :disabled="searchTerm || !editor"
         >
           <transition-group name="list">
@@ -30,6 +31,7 @@
               :run-data="run"
               :editor="editor"
               :disable-change="disableChange"
+              :move-disabled="searchTerm || !editor"
             ></run-panel>
           </transition-group>
         </draggable>

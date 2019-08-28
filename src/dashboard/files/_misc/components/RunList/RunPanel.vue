@@ -3,7 +3,15 @@
     :class="{'grey lighten-2': !editor && activeRun && activeRun.id === runData.id}"
   >
     <v-expansion-panel-header>
-      {{ runData.game }}
+      <span>
+        <v-icon
+          v-if="!moveDisabled"
+          class="Handle"
+        >
+          mdi-drag-vertical
+        </v-icon>
+        {{ runData.game }}
+      </span>
     </v-expansion-panel-header>
     <v-expansion-panel-content class="body-2">
       <div v-if="playerStr">
@@ -103,6 +111,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    moveDisabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     playerStr() {
@@ -166,5 +178,9 @@ export default Vue.extend({
 <style scoped>
   .Bold {
     font-weight: bold;
+  }
+
+  .Handle {
+    cursor: move;
   }
 </style>
