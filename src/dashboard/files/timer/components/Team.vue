@@ -1,5 +1,5 @@
 <template>
-  <div class="Team">
+  <div class="Team d-flex align-center">
     <stop-button
       :info="info"
     ></stop-button>
@@ -66,9 +66,6 @@ export default Vue.extend({
 
 <style scoped>
   .Team {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
     padding: 2px 0;
   }
 
@@ -76,7 +73,7 @@ export default Vue.extend({
     margin-right: 4px;
   }
 
-  .v-btn.v-size--default {
+  .Team >>> .v-btn {
     padding: 0 5px;
     min-width: 0;
   }

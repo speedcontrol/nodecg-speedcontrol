@@ -1,10 +1,19 @@
 <template>
-  <v-btn
-    :disabled="isDisabled"
-    @click="button"
-  >
-    <v-icon>mdi-check</v-icon>
-  </v-btn>
+  <div>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <span v-on="on">
+          <v-btn
+            :disabled="isDisabled"
+            @click="button"
+          >
+            <v-icon>mdi-check</v-icon>
+          </v-btn>
+        </span>
+      </template>
+      <span>Stop</span>
+    </v-tooltip>
+  </div>
 </template>
 
 <script lang="ts">

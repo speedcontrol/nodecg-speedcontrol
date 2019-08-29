@@ -1,7 +1,10 @@
 <template>
   <v-app>
     <timer-time></timer-time>
-    <div id="Controls">
+    <div
+      id="Controls"
+      class="d-flex justify-center"
+    >
       <start-button></start-button>
       <reset-button></reset-button>
       <!-- Will not show if more than 1 team -->
@@ -58,25 +61,21 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  .v-btn.v-size--default {
-    padding: 0 5px;
-    min-width: 0;
-  }
-
   #Controls {
-    width: 100%;
-    display: flex;
-    justify-content: center;
     padding-top: 10px;
   }
 
-  #Controls .v-btn {
-    flex-basis: 0;
-    flex: 1 1 0;
+  #Controls > * {
+    flex: 1;
   }
 
-  #Controls .v-btn:not(:first-child) {
+  #Controls > *:not(:first-child) {
     margin-left: 5px;
+  }
+
+  #Controls >>> .v-btn {
+    min-width: 0;
+    width: 100%;
   }
 
   #Teams {

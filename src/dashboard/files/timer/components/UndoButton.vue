@@ -1,10 +1,19 @@
 <template>
-  <v-btn
-    :disabled="isDisabled"
-    @click="button"
-  >
-    <v-icon>mdi-undo</v-icon>
-  </v-btn>
+  <div>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <span v-on="on">
+          <v-btn
+            :disabled="isDisabled"
+            @click="button"
+          >
+            <v-icon>mdi-undo</v-icon>
+          </v-btn>
+        </span>
+      </template>
+      <span>Undo</span>
+    </v-tooltip>
+  </div>
 </template>
 
 <script lang="ts">
