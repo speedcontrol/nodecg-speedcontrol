@@ -78,7 +78,10 @@ export default Vue.extend({
     filteredRunDataArray() {
       return store.state.runDataArray.filter((run) => {
         const str = (this.searchTerm) ? this.searchTerm.toLowerCase() : '';
-        return run.game.toLowerCase().includes(str)
+        if (!run.game && !str) {
+          return true;
+        }
+        return (run.game && run.game.toLowerCase().includes(str))
         || !!run.teams.find(team => (team.name && team.name.toLowerCase().includes(str))
         || !!team.players.find(player => player.name.toLowerCase().includes(str)));
       });
