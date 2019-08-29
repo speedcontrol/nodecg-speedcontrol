@@ -12,6 +12,12 @@
   },
   "license": "MIT",
   "author": "zoton2",
+  "contributors": [
+    "Charleon",
+    "btrim",
+    "Zephyyrr",
+    "Planks"
+  ],
   "scripts": {
     "autofix": "run-s autofix:*",
     "autofix:browser": "npx eslint --fix --ext .ts,.vue,.html src/dashboard",
