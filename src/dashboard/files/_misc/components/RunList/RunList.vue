@@ -31,7 +31,7 @@
               :run-data="run"
               :editor="editor"
               :disable-change="disableChange"
-              :move-disabled="searchTerm || !editor"
+              :move-disabled="!!searchTerm || !editor"
             ></run-panel>
           </transition-group>
         </draggable>
@@ -78,7 +78,7 @@ export default Vue.extend({
     filteredRunDataArray() {
       return store.state.runDataArray.filter((run) => {
         const str = (this.searchTerm) ? this.searchTerm.toLowerCase() : '';
-        if (!run.game && !str) {
+        if (!str) {
           return true;
         }
         return (run.game && run.game.toLowerCase().includes(str))
