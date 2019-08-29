@@ -160,9 +160,6 @@ export default Vue.extend({
       return nodecg.bundleConfig.schedule.customData || [];
     },
   },
-  created() {
-    this.$vuetify.theme.dark = true;
-  },
   mounted() {
     this.dialog = nodecg.getDialog('run-modification-dialog') as any;
 

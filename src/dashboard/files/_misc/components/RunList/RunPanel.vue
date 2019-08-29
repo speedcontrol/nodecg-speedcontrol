@@ -1,6 +1,6 @@
 <template>
   <v-expansion-panel
-    :class="{'grey lighten-2': !editor && activeRun && activeRun.id === runData.id}"
+    :class="{'grey darken-2': !editor && activeRun && activeRun.id === runData.id}"
   >
     <v-expansion-panel-header>
       <span>

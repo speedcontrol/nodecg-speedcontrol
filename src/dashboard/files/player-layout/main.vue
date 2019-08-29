@@ -13,7 +13,6 @@
           v-for="(team) in teams"
           :key="team.id"
           class="Team"
-          color="#d8d8d8"
         >
           <span v-if="team.name">{{ team.name }}</span>
           <span

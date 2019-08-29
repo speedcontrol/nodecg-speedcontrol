@@ -1,14 +1,14 @@
 <template>
   <v-app>
     <v-btn
-      color="#A5D6A7"
+      class="green darken-2"
       @click="openAddDialog"
     >
       <v-icon>mdi-plus-box</v-icon>Add New Run
     </v-btn>
     <v-btn
+      class="red darken-2"
       :disabled="removeAllDisabled"
-      color="#EF5350"
       @click="removeAllRunsConfirm"
     >
       <v-icon>mdi-delete</v-icon>Remove All Runs

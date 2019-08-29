@@ -27,9 +27,6 @@ export default Vue.extend({
       callbackFunc: undefined as Function | undefined,
     };
   },
-  created() {
-    this.$vuetify.theme.dark = true;
-  },
   mounted() {
     this.dialog = nodecg.getDialog('alert-dialog') as any;
 

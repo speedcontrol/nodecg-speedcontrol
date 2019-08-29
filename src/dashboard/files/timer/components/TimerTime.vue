@@ -35,11 +35,11 @@ export default Vue.extend({
         case 'stopped':
         case 'paused':
         default:
-          return '#CFD8DC';
+          return '#455A64';
         case 'running':
           return '';
         case 'finished':
-          return '#66BB6A';
+          return '#388E3C';
       }
     },
     disableEditing() {
