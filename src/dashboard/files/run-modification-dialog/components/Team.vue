@@ -1,21 +1,30 @@
 <template>
-  <div>
-    <br>
-    <input
-      v-model="teamData.name"
-      placeholder="Team Name"
-      title="Team Name"
-    >
-    <div class="Buttons">
-      <button @click="removeTeam">
-        Remove Team
-      </button>
-      <button @click="addNewPlayer">
-        Add New Player
-      </button>
+  <div class="Team">
+    <div class="d-flex align-center">
+      <v-icon
+        large
+        class="TeamHandle"
+      >
+        mdi-drag
+      </v-icon>
+      <text-input
+        v-model="teamData.name"
+        label="Team Name"
+      ></text-input>
+      <modify-button
+        icon="mdi-account-multiple-minus"
+        tooltip="Remove Team"
+        @click="removeTeam"
+      ></modify-button>
+      <modify-button
+        icon="mdi-account-plus"
+        tooltip="Add New Player"
+        @click="addNewPlayer"
+      ></modify-button>
     </div>
     <draggable
       v-model="teamData.players"
+      handle=".PlayerHandle"
     >
       <transition-group name="list">
         <player
@@ -32,14 +41,18 @@
 import Vue from 'vue';
 import store from '../store';
 import Player from './Player.vue';
+import TextInput from './TextInput.vue';
+import ModifyButton from './ModifyButton.vue';
 
 const Draggable = require('vuedraggable'); // Don't need types now :)
 
 export default Vue.extend({
   name: 'Team',
   components: {
+    TextInput,
     Player,
     Draggable,
+    ModifyButton,
   },
   props: {
     teamData: {
@@ -61,20 +74,15 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  .Buttons {
-    float: right;
+  .Team {
+    margin-top: 20px;
   }
 
-  .list-move {
-    transition: transform 0.2s;
+  .v-tooltip {
+    margin-left: 10px;
   }
-  .list-enter, .list-leave-to
-  /* .logo-list-complete-leave-active below version 2.1.8 */ {
-    opacity: 0;
-    transition: transform 0.2s;
-    transition: opacity 0.2s;
-  }
-  .list-leave-active {
-    position: absolute;
+
+  .TeamHandle {
+    cursor: move;
   }
 </style>

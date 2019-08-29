@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <h1 v-if="mode === 'New'">
-      Add Run
+      Add New Run
     </h1>
     <h1 v-else-if="mode === 'Duplicate'">
       Duplicate Run
@@ -9,33 +9,72 @@
     <h1 v-else>
       Edit Run
     </h1>
-    <div
+    <v-alert
       v-if="err"
-      class="Error"
+      type="error"
     >
-      ERROR: {{ err.message }}<br><br>
-    </div>
+      {{ err.message }}
+    </v-alert>
     <div class="GeneralInputs">
       <!-- Normal Inputs -->
-      <input
-        v-for="input in inputs"
-        :key="input.key"
-        v-model="runData[input.key]"
-        :placeholder="input.name"
-        :title="input.name"
-      >
+      <div class="d-flex">
+        <text-input
+          v-model="runData.game"
+          label="Game"
+        ></text-input>
+        <text-input
+          v-model="runData.category"
+          label="Category"
+          left-border
+        ></text-input>
+      </div>
+      <div class="d-flex">
+        <text-input
+          v-model="runData.region"
+          label="Region"
+        ></text-input>
+        <text-input
+          v-model="runData.release"
+          label="Released"
+          left-border
+        ></text-input>
+        <text-input
+          v-model="runData.gameTwitch"
+          label="Game (Twitch)"
+          left-border
+        ></text-input>
+      </div>
+      <div class="d-flex">
+        <text-input
+          v-model="runData.system"
+          label="System"
+        ></text-input>
+        <text-input
+          v-model="runData.estimate"
+          label="Estimate"
+          left-border
+        ></text-input>
+        <text-input
+          v-model="runData.setupTime"
+          label="Setup Time"
+          left-border
+        ></text-input>
+      </div>
       <!-- Custom Data Inputs -->
-      <input
-        v-for="data in customData"
-        :key="data.key"
-        v-model="runData.customData[data.key]"
-        :placeholder="data.name"
-      >
+      <div class="d-flex">
+        <text-input
+          v-for="data in customData"
+          :key="data.key"
+          v-model="runData.customData[data.key]"
+          :label="data.name"
+        ></text-input>
+      </div>
     </div>
     <div>
       <!-- Teams -->
       <draggable
         v-model="runData.teams"
+        handle=".TeamHandle"
       >
         <transition-group name="list">
           <team
@@ -46,16 +85,25 @@
         </transition-group>
       </draggable>
     </div>
-    <br><button @click="addNewTeam">
-      Add New Team
-    </button>
-    <br><div class="DialogButtons">
-      <button @click="attemptSave">
+    <div
+      class="DialogButtons d-flex"
+      style="margin-top: 20px"
+    >
+      <modify-button
+        class="mr-auto"
+        icon="mdi-account-multiple-plus"
+        tooltip="Add New Team"
+        @click="addNewTeam"
+      ></modify-button>
+      <v-btn
+        style="margin-right: 10px"
+        @click="attemptSave"
+      >
         OK
-      </button>
-      <button @click="close(false)">
+      </v-btn>
+      <v-btn @click="close(false)">
         Cancel
-      </button>
+      </v-btn>
     </div>
   </v-app>
 </template>
@@ -63,7 +111,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import store from './store';
+import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
+import ModifyButton from './components/ModifyButton.vue';
 import { nodecg } from '../_misc/nodecg';
 import { RunData } from '../../../../types';
 
@@ -78,23 +128,15 @@ enum Mode {
 
 export default Vue.extend({
   components: {
+    TextInput,
     Team,
     Draggable,
+    ModifyButton,
   },
   data() {
     return {
       dialog: undefined as any,
       err: undefined as Error | undefined,
-      inputs: [
-        { key: 'game', name: 'Game' },
-        { key: 'gameTwitch', name: 'Game (Twitch)' },
-        { key: 'category', name: 'Category' },
-        { key: 'estimate', name: 'Estimate (HH:MM:SS)' },
-        { key: 'system', name: 'System' },
-        { key: 'region', name: 'Region' },
-        { key: 'release', name: 'Released' },
-        { key: 'setupTime', name: 'Setup Time (HH:MM:SS)' },
-      ],
     };
   },
   computed: {
@@ -176,19 +218,7 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped>
-  .Error {
-    color: red;
-  }
-
-  .GeneralInputs > input {
-    width: 100%;
-  }
-
-  .DialogButtons {
-    float: right;
-  }
-
+<style>
   .list-move {
     transition: transform 0.2s;
   }
@@ -200,5 +230,11 @@ export default Vue.extend({
   }
   .list-leave-active {
     position: absolute;
+  }
+</style>
+
+<style scoped>
+  h1 {
+    margin-bottom: 10px;
   }
 </style>
