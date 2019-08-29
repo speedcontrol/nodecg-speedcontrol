@@ -80,6 +80,7 @@
         Update
       </v-btn>
       <v-btn
+        v-if="channelInfo.broadcaster_type === 'partner'"
         block
         @click="startCommercial"
       >
