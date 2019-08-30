@@ -205,10 +205,18 @@ export default class FFZWS {
         return;
       }
       this.nodecg.log.info('Attempting to set FrankerFaceZ featured channels.');
+
+      // Remove any blacklisted names.
+      const toSend = names.filter((name): boolean => (
+        (this.config.twitch.ffzBlacklist || [])
+          .map((x): string => x.toLowerCase())
+          .includes(name.toLowerCase())
+      ));
+
       this.sendMsg(
         `update_follow_buttons ${JSON.stringify([
           this.twitchAPIData.value.channelName,
-          names,
+          toSend,
         ])}`,
       ).then((msg): void => {
         const clients = JSON.parse(msg.substr(3)).updated_clients;

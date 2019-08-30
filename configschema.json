@@ -37,6 +37,16 @@
         "ffzIntegration": {
           "type": "boolean",
           "default": false
+        },
+        "ffzBlacklist": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [
