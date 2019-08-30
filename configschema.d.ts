@@ -15,6 +15,7 @@ export interface Configschema {
     streamTitle: string;
     streamDefaultGame: string;
     ffzIntegration?: boolean;
+    ffzUseRepeater?: boolean;
     ffzBlacklist?: string[];
   };
   schedule: {

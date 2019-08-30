@@ -29,17 +29,20 @@ export default class FFZWS {
     if (this.config.twitch.enabled && this.config.twitch.ffzIntegration) {
       nodecg.log.info('FrankerFaceZ integration is enabled.');
 
-      // NodeCG messaging system.
-      this.nodecg.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
-        cgListenForHelper(this.setChannels(data), ack);
-      });
+      // Only listen if we're not using the repeater function.
+      if (!this.config.twitch.ffzUseRepeater) {
+        // NodeCG messaging system.
+        this.nodecg.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
+          cgListenForHelper(this.setChannels(data), ack);
+        });
 
-      // Our messaging system.
-      events.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
-        this.setChannels(data)
-          .then((): void => { ack(null); })
-          .catch((err): void => { ack(err); });
-      });
+        // Our messaging system.
+        events.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
+          this.setChannels(data)
+            .then((): void => { ack(null); })
+            .catch((err): void => { ack(err); });
+        });
+      }
 
       this.twitchAPIData.on('change', (newVal, oldVal): void => {
         if (newVal.state === 'on' && (!oldVal || oldVal.state !== 'on')) {

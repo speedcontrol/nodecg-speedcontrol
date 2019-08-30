@@ -38,6 +38,10 @@
           "type": "boolean",
           "default": false
         },
+        "ffzUseRepeater": {
+          "type": "boolean",
+          "default": false
+        },
         "ffzBlacklist": {
           "type": [
             "array",
