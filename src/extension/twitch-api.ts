@@ -110,9 +110,10 @@ export default class TwitchAPI {
     return new Promise(async (resolve, reject): Promise<void> => {
       try {
         if (!this.config.twitch.channelName) {
-          const [err, resp] = await to(this.validateToken());
+          let [err, resp] = await to(this.validateToken());
           if (err) {
             await this.refreshToken();
+            [err, resp] = await to(this.validateToken());
           }
           this.data.value.channelID = resp.user_id;
           this.data.value.channelName = resp.login;
