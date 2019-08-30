@@ -1,34 +1,42 @@
 <template>
   <v-app>
-    <timer-time></timer-time>
-    <div
-      id="Controls"
-      class="d-flex justify-center"
-    >
-      <start-button></start-button>
-      <reset-button></reset-button>
-      <!-- Will not show if more than 1 team -->
-      <stop-button
-        v-if="teams.length <= 1"
-        :info="teams[0]"
-      ></stop-button>
-      <undo-button
-        v-if="teams.length <= 1"
-        :info="teams[0]"
-      ></undo-button>
+    <div :class="{ disabled: disableChanges }">
+      <timer-time></timer-time>
+      <div
+        id="Controls"
+        class="d-flex justify-center"
+      >
+        <start-button></start-button>
+        <reset-button></reset-button>
+        <!-- Will not show if more than 1 team -->
+        <stop-button
+          v-if="teams.length <= 1"
+          :info="teams[0]"
+        ></stop-button>
+        <undo-button
+          v-if="teams.length <= 1"
+          :info="teams[0]"
+        ></undo-button>
+      </div>
+      <!-- Will only show if more than 1 team -->
+      <div
+        v-if="teams.length > 1"
+        id="Teams"
+      >
+        <team
+          v-for="(team, index) in teams"
+          :key="team.id"
+          :info="team"
+          :index="index"
+        ></team>
+      </div>
     </div>
-    <!-- Will only show if more than 1 team -->
-    <div
-      v-if="teams.length > 1"
-      id="Teams"
-    >
-      <team
-        v-for="(team, index) in teams"
-        :key="team.id"
-        :info="team"
-        :index="index"
-      ></team>
-    </div>
+    <!-- Hidden toggle for testing -->
+    <!--<v-switch
+      v-model="disableChanges"
+      inset
+      hide-details
+    ></v-switch>-->
   </v-app>
 </template>
 
@@ -56,11 +64,24 @@ export default Vue.extend({
       return (store.state.runDataActiveRun)
         ? store.state.runDataActiveRun.teams : [];
     },
+    disableChanges: {
+      get() {
+        return store.state.timerChangesDisabled;
+      },
+      set(value: boolean) {
+        store.commit('updateTimerDisabledToggle', { value });
+      },
+    },
   },
 });
 </script>
 
 <style scoped>
+  .disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
   #Controls {
     padding-top: 10px;
   }

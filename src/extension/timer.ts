@@ -1,7 +1,7 @@
 import clone from 'clone';
 import livesplitCore from 'livesplit-core';
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
-import { RunFinishTimes } from '../../schemas';
+import { RunFinishTimes, TimerChangesDisabled } from '../../schemas';
 import { RunDataActiveRun, Timer } from '../../types';
 import Helpers from './util/helpers';
 
@@ -20,6 +20,7 @@ export default class TimerApp {
   private timerRep: Replicant<Timer>;
   private activeRun: Replicant<RunDataActiveRun>;
   private runFinishTimes: Replicant<RunFinishTimes>
+  private changesDisabled: Replicant<TimerChangesDisabled>;
   private timer: livesplitCore.Timer;
   /* eslint-enable */
 
@@ -27,6 +28,7 @@ export default class TimerApp {
     this.timerRep = nodecg.Replicant('timer');
     this.activeRun = nodecg.Replicant('runDataActiveRun');
     this.runFinishTimes = nodecg.Replicant('runFinishTimes');
+    this.changesDisabled = nodecg.Replicant('timerChangesDisabled');
 
     // Sets up the timer with a single split.
     const liveSplitRun = livesplitCore.Run.new();
@@ -75,6 +77,11 @@ export default class TimerApp {
    */
   startTimer(force?: boolean): Promise<void> {
     return new Promise((resolve, reject): void => {
+      // Error if the timer is disabled.
+      if (this.changesDisabled.value) {
+        reject(new Error('Cannot start/resume timer as changes are disabled.'));
+        return;
+      }
       // Error if the timer is finished.
       if (this.timerRep.value.state === 'finished') {
         reject(new Error('Cannot start/resume timer as it is in the finished state.'));
@@ -102,6 +109,11 @@ export default class TimerApp {
    */
   pauseTimer(): Promise<void> {
     return new Promise((resolve, reject): void => {
+      // Error if the timer is disabled.
+      if (this.changesDisabled.value) {
+        reject(new Error('Cannot start/resume timer as changes are disabled.'));
+        return;
+      }
       // Error if the timer isn't running.
       if (this.timerRep.value.state !== 'running') {
         reject(new Error('Cannot pause the timer as it is not running.'));
@@ -118,6 +130,11 @@ export default class TimerApp {
    */
   resetTimer(): Promise<void> {
     return new Promise((resolve, reject): void => {
+      // Error if the timer is disabled.
+      if (this.changesDisabled.value) {
+        reject(new Error('Cannot start/resume timer as changes are disabled.'));
+        return;
+      }
       // Error if the timer is stopped.
       if (this.timerRep.value.state === 'stopped') {
         reject(new Error('Cannot reset the timer as it is stopped.'));
@@ -135,6 +152,11 @@ export default class TimerApp {
    */
   stopTimer(uuid?: string): Promise<void> {
     return new Promise((resolve, reject): void => {
+      // Error if the timer is disabled.
+      if (this.changesDisabled.value) {
+        reject(new Error('Cannot start/resume timer as changes are disabled.'));
+        return;
+      }
       // Error if timer is not running.
       if (this.timerRep.value.state !== 'running') {
         reject(new Error('Cannot stop the timer as it is not running.'));
@@ -179,6 +201,11 @@ export default class TimerApp {
    */
   undoTimer(uuid?: string): Promise<void> {
     return new Promise((resolve, reject): void => {
+      // Error if the timer is disabled.
+      if (this.changesDisabled.value) {
+        reject(new Error('Cannot start/resume timer as changes are disabled.'));
+        return;
+      }
       // Error if timer is not finished or running.
       if (!['finished', 'running'].includes(this.timerRep.value.state)) {
         reject(new Error('Cannot undo the timer as it is not finished/running.'));
@@ -214,6 +241,11 @@ export default class TimerApp {
    */
   editTimer(time: string): Promise<void> {
     return new Promise((resolve, reject): void => {
+      // Error if the timer is disabled.
+      if (this.changesDisabled.value) {
+        reject(new Error('Cannot start/resume timer as changes are disabled.'));
+        return;
+      }
       // Error if the timer is not stopped/paused.
       if (!['stopped', 'paused'].includes(this.timerRep.value.state)) {
         reject(new Error('Cannot edit the timer as it is not stopped/paused.'));

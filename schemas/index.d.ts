@@ -5,5 +5,6 @@ export * from './runDataActiveRunSurrounding';
 export * from './runDataArray';
 export * from './runFinishTimes';
 export * from './timer';
+export * from './timerChangesDisabled';
 export * from './twitchAPIData';
 export * from './twitchChannelInfo';
