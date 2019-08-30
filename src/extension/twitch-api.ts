@@ -64,16 +64,11 @@ export default class TwitchAPI {
 
       if (this.data.value.accessToken) {
         this.data.value.state = 'authenticating';
-        this.validateToken().then((): void => {
-          this.setUp();
-        }).catch(async (): Promise<void> => {
-          try {
-            await this.refreshToken();
-            this.setUp();
-          } catch (err) {
-            nodecg.log.warn('Issue activating Twitch integration.');
-            await to(this.logout());
-          }
+        this.setUp().then((): void => {
+          this.nodecg.log.info('Twitch integration is ready.');
+        }).catch((): void => {
+          this.nodecg.log.warn('Issue activating Twitch integration.');
+          to(this.logout());
         });
       }
 
@@ -94,11 +89,7 @@ export default class TwitchAPI {
           );
           this.data.value.accessToken = resp1.body.access_token;
           this.data.value.refreshToken = resp1.body.refresh_token;
-
-          const resp2 = await this.validateToken();
-          this.data.value.channelID = resp2.user_id;
-          this.data.value.channelName = resp2.login;
-          this.setUp();
+          await this.setUp();
           nodecg.log.info('Twitch authentication successful.');
           res.send('<b>Twitch authentication is now complete, feel free to close this window/tab.</b>');
         } catch (err) {
@@ -113,13 +104,35 @@ export default class TwitchAPI {
   }
 
   /**
-   * General set up stuff, done from above.
+   * Setup done on both server boot (if token available) and initial auth flow.
    */
-  setUp(): void {
-    global.clearTimeout(this.channelInfoTO as NodeJS.Timeout);
-    this.data.value.state = 'on';
-    this.refreshChannelInfo();
-    this.nodecg.log.info('Twitch integration is ready.');
+  setUp(): Promise<void> {
+    return new Promise(async (resolve, reject): Promise<void> => {
+      try {
+        if (!this.config.twitch.channelName) {
+          const [err, resp] = await to(this.validateToken());
+          if (err) {
+            await this.refreshToken();
+          }
+          this.data.value.channelID = resp.user_id;
+          this.data.value.channelName = resp.login;
+        } else {
+          const resp = await this.request('get', `/users?login=${this.config.twitch.channelName}`);
+          if (!resp.body.users.length) {
+            throw new Error('channelName specified in the configuration not found on Twitch.');
+          }
+          this.data.value.channelID = resp.body.users[0]._id; // eslint-disable-line
+          this.data.value.channelName = resp.body.users[0].name;
+        }
+
+        global.clearTimeout(this.channelInfoTO as NodeJS.Timeout);
+        this.data.value.state = 'on';
+        this.refreshChannelInfo();
+        resolve();
+      } catch (err) {
+        reject();
+      }
+    });
   }
 
   /**

@@ -11,6 +11,7 @@ export interface Configschema {
     clientID: string;
     clientSecret: string;
     redirectURI: string;
+    channelName?: string;
     streamTitle: string;
     streamDefaultGame: string;
     ffzIntegration?: boolean;
