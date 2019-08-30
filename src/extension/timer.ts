@@ -1,6 +1,7 @@
 import clone from 'clone';
 import livesplitCore from 'livesplit-core';
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
+import { RunFinishTimes } from '../../schemas';
 import { RunDataActiveRun, Timer } from '../../types';
 import Helpers from './util/helpers';
 
@@ -16,16 +17,16 @@ const LS_TIMER_PHASE = {
 
 export default class TimerApp {
   /* eslint-disable */
-  private nodecg: NodeCG;
   private timerRep: Replicant<Timer>;
   private activeRun: Replicant<RunDataActiveRun>;
+  private runFinishTimes: Replicant<RunFinishTimes>
   private timer: livesplitCore.Timer;
   /* eslint-enable */
 
   constructor(nodecg: NodeCG) {
-    this.nodecg = nodecg;
-    this.timerRep = this.nodecg.Replicant('timer');
-    this.activeRun = this.nodecg.Replicant('runDataActiveRun');
+    this.timerRep = nodecg.Replicant('timer');
+    this.activeRun = nodecg.Replicant('runDataActiveRun');
+    this.runFinishTimes = nodecg.Replicant('runFinishTimes');
 
     // Sets up the timer with a single split.
     const liveSplitRun = livesplitCore.Run.new();
@@ -38,27 +39,27 @@ export default class TimerApp {
       const previousTime = this.timerRep.value.milliseconds;
       const timeOffset = previousTime + missedTime;
       this.setTime(timeOffset);
-      this.nodecg.log.info('Timer recovered %s seconds of lost time.', (missedTime / 1000).toFixed(2));
+      nodecg.log.info('Timer recovered %s seconds of lost time.', (missedTime / 1000).toFixed(2));
       this.startTimer(true);
     }
 
     // NodeCG messaging system.
-    this.nodecg.listenFor('startTimer', (data, ack): void => {
+    nodecg.listenFor('startTimer', (data, ack): void => {
       cgListenForHelper(this.startTimer(), ack);
     });
-    this.nodecg.listenFor('pauseTimer', (data, ack): void => {
+    nodecg.listenFor('pauseTimer', (data, ack): void => {
       cgListenForHelper(this.pauseTimer(), ack);
     });
-    this.nodecg.listenFor('resetTimer', (data, ack): void => {
+    nodecg.listenFor('resetTimer', (data, ack): void => {
       cgListenForHelper(this.resetTimer(), ack);
     });
-    this.nodecg.listenFor('stopTimer', (data, ack): void => {
+    nodecg.listenFor('stopTimer', (data, ack): void => {
       cgListenForHelper(this.stopTimer(data), ack);
     });
-    this.nodecg.listenFor('undoTimer', (data, ack): void => {
+    nodecg.listenFor('undoTimer', (data, ack): void => {
       cgListenForHelper(this.undoTimer(data), ack);
     });
-    this.nodecg.listenFor('editTimer', (data, ack): void => {
+    nodecg.listenFor('editTimer', (data, ack): void => {
       cgListenForHelper(this.editTimer(data), ack);
     });
 
@@ -163,6 +164,9 @@ export default class TimerApp {
       if (teamsFinished >= teamsCount) {
         this.timer.split();
         this.timerRep.value.state = 'finished';
+        if (this.activeRun.value) {
+          this.runFinishTimes.value[this.activeRun.value.id] = this.timerRep.value.time;
+        }
       }
 
       resolve();
@@ -195,6 +199,9 @@ export default class TimerApp {
       if (this.timerRep.value.state === 'finished') {
         this.timer.undoSplit();
         this.timerRep.value.state = 'running';
+        if (this.activeRun.value && this.runFinishTimes.value[this.activeRun.value.id]) {
+          delete this.runFinishTimes.value[this.activeRun.value.id];
+        }
       }
 
       resolve();

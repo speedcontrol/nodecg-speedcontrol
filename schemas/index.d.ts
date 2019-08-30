@@ -3,6 +3,7 @@ export * from './horaroImportStatus';
 export * from './runDataActiveRun';
 export * from './runDataActiveRunSurrounding';
 export * from './runDataArray';
+export * from './runFinishTimes';
 export * from './timer';
 export * from './twitchAPIData';
 export * from './twitchChannelInfo';

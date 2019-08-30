@@ -26,7 +26,7 @@ export default class TwitchAPI {
     this.channelInfo = nodecg.Replicant('twitchChannelInfo');
     const app = express();
     this.data.value.state = 'off'; // Set this to "off" on every start.
-    this.data.value.featuredChannels.length = 0; // Empty on every start;
+    this.data.value.featuredChannels.length = 0; // Empty on every start.
 
     if (this.config.twitch.enabled) {
       nodecg.log.info('Twitch integration is enabled.');

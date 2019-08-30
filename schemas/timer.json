@@ -29,8 +29,7 @@
     "teamFinishTimes": {
       "type": "object",
       "propertyNames": {
-        "type": "string",
-        "pattern": "^[0-9]*$"
+        "type": "string"
       },
       "additionalProperties": {
         "type": "object",
