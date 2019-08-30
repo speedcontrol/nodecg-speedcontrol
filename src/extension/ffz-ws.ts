@@ -211,7 +211,7 @@ export default class FFZWS {
 
       // Remove any blacklisted names.
       const toSend = names.filter((name): boolean => (
-        (this.config.twitch.ffzBlacklist || [])
+        !(this.config.twitch.ffzBlacklist || [])
           .map((x): string => x.toLowerCase())
           .includes(name.toLowerCase())
       ));
