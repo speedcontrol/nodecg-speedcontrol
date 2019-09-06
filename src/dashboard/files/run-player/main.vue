@@ -21,9 +21,12 @@
           <v-icon>mdi-play</v-icon>{{ (nextRun) ? nextRun.game : '' }}
         </span>
         <span
-          v-else
+          v-else-if="runDataArray.length"
         >
-          End of marathon or no runs imported
+          End of Marathon
+        </span>
+        <span v-else>
+          No Runs Imported
         </span>
       </v-btn>
     </div>
