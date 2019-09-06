@@ -1,17 +1,27 @@
 <template>
   <div>
-    <v-text-field
-      v-model="time"
-      class="TimerInput"
-      solo
-      single-line
-      hide-details
-      :background-color="bgColour"
-      :readonly="disableEditing"
-      @blur="abandonEdit"
-      @keyup.enter="finishEdit"
+    <v-tooltip
+      bottom
+      :disabled="disableEditing"
     >
-    </v-text-field>
+      <template v-slot:activator="{ on }">
+        <span v-on="on">
+          <v-text-field
+            v-model="time"
+            class="TimerInput"
+            solo
+            single-line
+            hide-details
+            :background-color="bgColour"
+            :readonly="disableEditing"
+            @blur="abandonEdit"
+            @keyup.enter="finishEdit"
+          >
+          </v-text-field>
+        </span>
+      </template>
+      <span>Click to edit, Enter to save</span>
+    </v-tooltip>
   </div>
 </template>
 
