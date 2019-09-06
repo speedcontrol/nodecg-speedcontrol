@@ -1,2 +1,3 @@
-# nodecg-vue-ts-template
-Template for NodeCG bundles that use Vue.js and TypeScript.
+# nodecg-speedcontrol
+
+*v2 README TBD*
