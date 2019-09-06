@@ -2,7 +2,22 @@
   <div>
     <div>
       Are you sure you want to delete this run?
-      <br><br>{{ alertData.runData.game }} - {{ alertData.runData.category }}
+      <div
+        v-if="alertData.runData && alertData.runData.game && alertData.runData.category"
+        style="margin-top: 10px; font-style: italic;"
+      >
+        <span v-if="alertData.runData.game">
+          {{ alertData.runData.game }}
+        </span>
+        <span
+          v-if="alertData.runData.game && alertData.runData.category"
+        >
+          -
+        </span>
+        <span v-if="alertData.runData.category">
+          {{ alertData.runData.category }}
+        </span>
+      </div>
     </div>
     <br>
     <div class="DialogButtons">
