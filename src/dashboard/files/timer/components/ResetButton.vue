@@ -33,7 +33,7 @@ export default Vue.extend({
   },
   methods: {
     button() {
-      nodecg.sendMessage('resetTimer').then(() => {
+      nodecg.sendMessage('timerReset').then(() => {
         // successful
       }).catch(() => {
         // error

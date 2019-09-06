@@ -71,7 +71,6 @@ export default class HoraroImport {
   private importStatus: Replicant<HoraroImportStatus>;
   private defaultSetupTime: Replicant<DefaultSetupTime>;
   private scheduleDataCache: { [k: string]: HoraroSchedule } = {};
-  private userDataCache: { [k: string]: UserData } = {};
   /* eslint-enable */
 
   constructor(nodecg: NodeCG) {

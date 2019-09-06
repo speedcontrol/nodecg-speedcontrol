@@ -41,13 +41,13 @@ export default Vue.extend({
   methods: {
     button() {
       if (this.state === 'stopped' || this.state === 'paused') {
-        nodecg.sendMessage('startTimer').then(() => {
+        nodecg.sendMessage('timerStart').then(() => {
           // successful
         }).catch(() => {
           // error
         });
       } else if (this.state === 'running') {
-        nodecg.sendMessage('pauseTimer').then(() => {
+        nodecg.sendMessage('timerPause').then(() => {
           // successful
         }).catch(() => {
           // error

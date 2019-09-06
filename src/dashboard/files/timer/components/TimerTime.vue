@@ -67,7 +67,7 @@ export default Vue.extend({
   methods: {
     finishEdit(event) {
       if (this.time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-        nodecg.sendMessage('editTimer', this.time).then(() => {
+        nodecg.sendMessage('timerEdit', this.time).then(() => {
           // successful
         }).catch(() => {
           // error

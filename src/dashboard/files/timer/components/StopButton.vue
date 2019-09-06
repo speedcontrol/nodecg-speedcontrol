@@ -45,7 +45,7 @@ export default Vue.extend({
   },
   methods: {
     button() {
-      nodecg.sendMessage('stopTimer', this.info.id).then(() => {
+      nodecg.sendMessage('timerStop', this.info.id).then(() => {
         // successful
       }).catch(() => {
         // error

@@ -123,7 +123,7 @@ export default class RunControl {
             : [null, game];
           [, game] = await to(events.sendMessage('twitchGameSearch', game));
           game = game || this.h.bundleConfig().twitch.streamDefaultGame;
-          to(events.sendMessage('updateChannelInfo', { status, game }));
+          to(events.sendMessage('twitchUpdateChannelInfo', { status, game }));
 
           // Construct/send featured channels if enabled.
           if (this.h.bundleConfig().twitch.ffzIntegration) {
@@ -134,7 +134,7 @@ export default class RunControl {
           }
         }
         this.activeRun.value = clone(runData);
-        this.nodecg.sendMessage('resetTimer');
+        this.nodecg.sendMessage('timerReset');
         resolve();
       } else if (!id) {
         reject(new Error('Cannot change run as no run ID was supplied.'));
@@ -251,7 +251,7 @@ export default class RunControl {
         reject(new Error('Cannot change run while timer is running/paused.'));
       } else {
         this.activeRun.value = null;
-        this.nodecg.sendMessage('resetTimer');
+        this.nodecg.sendMessage('timerReset');
         resolve();
       }
     });
@@ -267,7 +267,7 @@ export default class RunControl {
       } else {
         this.array.value.length = 0;
         this.removeActiveRun();
-        this.nodecg.sendMessage('resetTimer');
+        this.nodecg.sendMessage('timerReset');
         resolve();
       }
     });

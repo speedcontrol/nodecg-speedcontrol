@@ -50,7 +50,7 @@ export default Vue.extend({
   },
   methods: {
     button() {
-      nodecg.sendMessage('undoTimer', this.info.id).then(() => {
+      nodecg.sendMessage('timerUndo', this.info.id).then(() => {
         // successful
       }).catch(() => {
         // error

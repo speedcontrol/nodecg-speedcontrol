@@ -178,7 +178,7 @@ export default Vue.extend({
       }
     },
     updateChannelInfo() {
-      nodecg.sendMessage('updateChannelInfo', {
+      nodecg.sendMessage('twitchUpdateChannelInfo', {
         status: this.title,
         game: this.game,
       }).then(() => {
@@ -198,7 +198,7 @@ export default Vue.extend({
       }
     },
     startCommercial() {
-      nodecg.sendMessage('startTwitchCommercial').then(() => {
+      nodecg.sendMessage('twitchStartCommercial').then(() => {
         // successful
       }).catch(() => {
         // unsuccessful

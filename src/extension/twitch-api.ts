@@ -32,10 +32,10 @@ export default class TwitchAPI {
       nodecg.log.info('Twitch integration is enabled.');
 
       // NodeCG messaging system.
-      this.nodecg.listenFor('updateChannelInfo', (data, ack): void => {
+      this.nodecg.listenFor('twitchUpdateChannelInfo', (data, ack): void => {
         cgListenForHelper(this.updateChannelInfo(data.status, data.game), ack);
       });
-      this.nodecg.listenFor('startTwitchCommercial', (data, ack): void => {
+      this.nodecg.listenFor('twitchStartCommercial', (data, ack): void => {
         cgListenForHelper(this.startCommercial(), ack);
       });
       this.nodecg.listenFor('playTwitchAd', (data, ack): void => { // Legacy
@@ -46,7 +46,7 @@ export default class TwitchAPI {
       });
 
       // Our messaging system.
-      events.listenFor('updateChannelInfo', (data, ack): void => {
+      events.listenFor('twitchUpdateChannelInfo', (data, ack): void => {
         this.updateChannelInfo(data.status, data.game)
           .then((): void => { ack(null); })
           .catch((err): void => { ack(err); });

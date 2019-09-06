@@ -46,22 +46,22 @@ export default class TimerApp {
     }
 
     // NodeCG messaging system.
-    nodecg.listenFor('startTimer', (data, ack): void => {
+    nodecg.listenFor('timerStart', (data, ack): void => {
       cgListenForHelper(this.startTimer(), ack);
     });
-    nodecg.listenFor('pauseTimer', (data, ack): void => {
+    nodecg.listenFor('timerPause', (data, ack): void => {
       cgListenForHelper(this.pauseTimer(), ack);
     });
-    nodecg.listenFor('resetTimer', (data, ack): void => {
+    nodecg.listenFor('timerReset', (data, ack): void => {
       cgListenForHelper(this.resetTimer(), ack);
     });
-    nodecg.listenFor('stopTimer', (data, ack): void => {
+    nodecg.listenFor('timerStop', (data, ack): void => {
       cgListenForHelper(this.stopTimer(data), ack);
     });
-    nodecg.listenFor('undoTimer', (data, ack): void => {
+    nodecg.listenFor('timerUndo', (data, ack): void => {
       cgListenForHelper(this.undoTimer(data), ack);
     });
-    nodecg.listenFor('editTimer', (data, ack): void => {
+    nodecg.listenFor('timerEdit', (data, ack): void => {
       cgListenForHelper(this.editTimer(data), ack);
     });
 
