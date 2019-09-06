@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-tooltip top>
+    <v-tooltip
+      top
+      :disabled="state === 'stopped'"
+    >
       <template v-slot:activator="{ on }">
         <span v-on="on">
           <v-btn
