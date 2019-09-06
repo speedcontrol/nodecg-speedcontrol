@@ -19,23 +19,23 @@
     <!-- Ready server-side. -->
     <div v-else>
       <div id="LogoutContainer">
-          <v-tooltip left>
-            <template v-slot:activator="{ on }">
-              <span v-on="on">
-                <v-btn
-                  id="Logout"
-                  small
-                  @click="logoutConfirm"
-                >
-                  <v-icon small>
-                    mdi-logout
-                  </v-icon>
-                  <span>({{ apiData.channelName }})</span>
-                </v-btn>
-              </span>
-            </template>
-            <span>Logout</span>
-          </v-tooltip>
+        <v-tooltip left>
+          <template v-slot:activator="{ on }">
+            <span v-on="on">
+              <v-btn
+                id="Logout"
+                small
+                @click="logoutConfirm"
+              >
+                <v-icon small>
+                  mdi-logout
+                </v-icon>
+                <span>({{ apiData.channelName }})</span>
+              </v-btn>
+            </span>
+          </template>
+          <span>Logout</span>
+        </v-tooltip>
       </div>
       <div
         id="AutoSyncContainer"
