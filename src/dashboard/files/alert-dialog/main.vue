@@ -11,11 +11,11 @@
 
 <script lang="ts">
 import Vue, { VueConstructor } from 'vue';
-import HoraroImportConfirm from './components/horaro-import-confirm.vue';
-import ReturnToStartConfirm from './components/return-to-start-confirm.vue';
-import RemoveAllRunsConfirm from './components/remove-all-runs-confirm.vue';
-import RemoveRunConfirm from './components/remove-run-confirm.vue';
-import TwitchLogoutConfirm from './components/twitch-logout-confirm.vue';
+import HoraroImportConfirm from './components/HoraroImportConfirm.vue';
+import ReturnToStartConfirm from './components/ReturnToStartConfirm.vue';
+import RemoveAllRunsConfirm from './components/RemoveAllRunsConfirm.vue';
+import RemoveRunConfirm from './components/RemoveRunConfirm.vue';
+import TwitchLogoutConfirm from './components/TwitchLogoutConfirm.vue';
 import { nodecg } from '../_misc/nodecg';
 
 export default Vue.extend({
