@@ -3,6 +3,7 @@ import livesplitCore from 'livesplit-core';
 import { NodeCG, Replicant } from 'nodecg/types/server'; // eslint-disable-line
 import { RunFinishTimes, TimerChangesDisabled } from '../../schemas';
 import { RunDataActiveRun, Timer } from '../../types';
+import * as events from './util/events';
 import Helpers from './util/helpers';
 
 const { msToTimeStr, timeStrToMS, cgListenForHelper } = Helpers;
@@ -63,6 +64,23 @@ export default class TimerApp {
     });
     nodecg.listenFor('timerEdit', (data, ack): void => {
       cgListenForHelper(this.editTimer(data), ack);
+    });
+
+    // Our messaging system.
+    events.listenFor('timerStart', (data, ack): void => {
+      this.startTimer()
+        .then((): void => { ack(null); })
+        .catch((err): void => { ack(err); });
+    });
+    events.listenFor('timerReset', (data, ack): void => {
+      this.resetTimer()
+        .then((): void => { ack(null); })
+        .catch((err): void => { ack(err); });
+    });
+    events.listenFor('timerStop', (data, ack): void => {
+      this.stopTimer(data)
+        .then((): void => { ack(null); })
+        .catch((err): void => { ack(err); });
     });
 
     setInterval(
