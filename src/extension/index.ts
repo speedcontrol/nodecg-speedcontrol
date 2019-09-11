@@ -1,3 +1,5 @@
+/* eslint-disable no-new */
+
 import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line
 import { ExtensionReturn } from '../../types';
 import FFZWS from './ffz-ws';

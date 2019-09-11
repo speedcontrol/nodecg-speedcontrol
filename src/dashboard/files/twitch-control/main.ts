@@ -7,6 +7,6 @@ replicantStore.create().then(() => {
   new Vue({
     vuetify,
     el: '#App',
-    render: h => h(App),
+    render: (h) => h(App),
   });
 });

@@ -130,7 +130,7 @@ export default Vue.extend({
   methods: {
     customDataName(key: string) {
       return (nodecg.bundleConfig as Configschema).schedule.customData.find(
-        custom => custom.key === key,
+        (custom) => custom.key === key,
       ).name;
     },
     playRun() {

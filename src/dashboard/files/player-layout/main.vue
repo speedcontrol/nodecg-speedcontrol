@@ -30,10 +30,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Draggable from 'vuedraggable';
 import { store } from '../_misc/replicant-store';
 import { RunDataTeam } from '../../../../types';
-
-const Draggable = require('vuedraggable'); // Don't need types now :)
 
 export default Vue.extend({
   components: {

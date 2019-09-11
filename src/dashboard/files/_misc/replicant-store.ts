@@ -37,28 +37,28 @@ export const store = new Vuex.Store({
       Vue.set(state, name, value);
     },
     updateActiveRunTeamOrder(state, { value }) {
-      const rep = replicants.find(repObj => repObj.name === 'runDataActiveRun');
+      const rep = replicants.find((repObj) => repObj.name === 'runDataActiveRun');
       if (state.runDataActiveRun && rep && rep.value) {
         Vue.set(state.runDataActiveRun, 'teams', value);
         rep.value = state.runDataActiveRun;
       }
     },
     updateRunOrder(state, { value }) {
-      const rep = replicants.find(repObj => repObj.name === 'runDataArray');
+      const rep = replicants.find((repObj) => repObj.name === 'runDataArray');
       if (state.runDataArray && rep && rep.value) {
         Vue.set(state, 'runDataArray', value);
         rep.value = state.runDataArray;
       }
     },
     updateTwitchSyncToggle(state, { value }) {
-      const rep = replicants.find(repObj => repObj.name === 'twitchAPIData') as ReplicantBrowser<TwitchAPIData>;
+      const rep = replicants.find((repObj) => repObj.name === 'twitchAPIData') as ReplicantBrowser<TwitchAPIData>;
       if (rep.value) {
         Vue.set(state.twitchAPIData, 'sync', value);
         rep.value.sync = value;
       }
     },
     updateTimerDisabledToggle(state, { value }) {
-      const rep = replicants.find(repObj => repObj.name === 'timerChangesDisabled') as ReplicantBrowser<TimerChangesDisabled>;
+      const rep = replicants.find((repObj) => repObj.name === 'timerChangesDisabled') as ReplicantBrowser<TimerChangesDisabled>;
       if (typeof rep.value === 'boolean') {
         Vue.set(state, 'timerChangesDisabled', value);
         rep.value = value;

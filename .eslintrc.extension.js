@@ -9,14 +9,15 @@ module.exports = {
   ],
   extends: [
     'airbnb-base',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:import/errors',
-    'plugin:import/warnings',
     'plugin:import/typescript',
   ],
   rules: {
-    '@typescript-eslint/indent': ['error', 2],
-    '@typescript-eslint/explicit-member-accessibility': ['off'],
-    'no-new': ['off'],
+    'no-async-promise-executor': 'off', // Should try and fix these instead.
+    '@typescript-eslint/ban-ts-ignore': 'off', // Fix this stuff in the future hopefully.
+    'indent': 'off', // Do I need this? (and one below).
+    '@typescript-eslint/indent': ['error', 2], // Do I need this? (and one above).
   },
 };

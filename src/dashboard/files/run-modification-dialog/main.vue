@@ -110,14 +110,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Draggable from 'vuedraggable';
 import store from './store';
 import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
 import ModifyButton from './components/ModifyButton.vue';
 import { nodecg } from '../_misc/nodecg';
 import { RunData } from '../../../../types';
-
-const Draggable = require('vuedraggable'); // Don't need types now :)
 
 enum Mode {
   New = 'New',
@@ -164,14 +163,14 @@ export default Vue.extend({
     this.dialog = nodecg.getDialog('run-modification-dialog') as any;
 
     // Attaching this function to the window for easy access from dashboard panels.
-    (window as any).open = (opts: { mode: Mode; runData?: RunData; }) => this.open(opts);
+    (window as any).open = (opts: { mode: Mode; runData?: RunData }) => this.open(opts);
 
     // Small hack to make the NodeCG dialog look a little better for us, not perfect yet.
     const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;
     elem.style.marginBottom = '12px';
   },
   methods: {
-    open(opts: { mode: Mode; runData?: RunData; }) {
+    open(opts: { mode: Mode; runData?: RunData }) {
       // Waits for dialog to actually open before changing storage.
       this.dialog.open();
       document.addEventListener('dialog-opened', () => {

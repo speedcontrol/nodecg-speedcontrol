@@ -75,7 +75,7 @@ export default new Vuex.Store({
       state.runData.teams.push(teamData);
     },
     addNewPlayer(state, { teamID }) {
-      const teamIndex = state.runData.teams.findIndex(team => teamID === team.id);
+      const teamIndex = state.runData.teams.findIndex((team) => teamID === team.id);
       if (teamIndex >= 0) {
         const data = clone(defaultPlayer);
         data.id = uuid();
@@ -84,15 +84,15 @@ export default new Vuex.Store({
       }
     },
     removeTeam(state, { teamID }) {
-      const teamIndex = state.runData.teams.findIndex(team => teamID === team.id);
+      const teamIndex = state.runData.teams.findIndex((team) => teamID === team.id);
       if (teamIndex >= 0) {
         state.runData.teams.splice(teamIndex, 1);
       }
     },
     removePlayer(state, { teamID, id }) {
-      const teamIndex = state.runData.teams.findIndex(team => teamID === team.id);
+      const teamIndex = state.runData.teams.findIndex((team) => teamID === team.id);
       const playerIndex = (teamIndex >= 0)
-        ? state.runData.teams[teamIndex].players.findIndex(player => id === player.id) : -1;
+        ? state.runData.teams[teamIndex].players.findIndex((player) => id === player.id) : -1;
       if (teamIndex >= 0 && playerIndex >= 0) {
         state.runData.teams[teamIndex].players.splice(playerIndex, 1);
       }

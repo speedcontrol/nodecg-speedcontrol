@@ -226,7 +226,7 @@ export default Vue.extend({
           return; // Ignore if no way to predict.
         }
         const index = this.columns.findIndex(
-          col => option.predict.some(pred => !!col.toLowerCase().includes(pred)),
+          (col) => option.predict.some((pred) => !!col.toLowerCase().includes(pred)),
         );
         if (index >= 0) {
           store.commit('updateColumn', {

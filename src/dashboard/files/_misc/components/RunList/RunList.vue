@@ -42,11 +42,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Draggable from 'vuedraggable';
 import RunPanel from './RunPanel.vue';
 import { store } from '../../replicant-store';
 import { RunData } from '../../../../../../types';
-
-const Draggable = require('vuedraggable'); // Don't need types now :)
 
 export default Vue.extend({
   components: {
@@ -82,8 +81,8 @@ export default Vue.extend({
           return true;
         }
         return (run.game && run.game.toLowerCase().includes(str))
-        || !!run.teams.find(team => (team.name && team.name.toLowerCase().includes(str))
-        || !!team.players.find(player => player.name.toLowerCase().includes(str)));
+        || !!run.teams.find((team) => (team.name && team.name.toLowerCase().includes(str))
+        || !!team.players.find((player) => player.name.toLowerCase().includes(str)));
       });
     },
     activeRun() {

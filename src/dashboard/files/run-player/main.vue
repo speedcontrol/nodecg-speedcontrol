@@ -55,7 +55,7 @@ export default Vue.extend({
       return store.state.runDataActiveRunSurrounding;
     },
     nextRun(): RunData | undefined {
-      return this.runDataArray.find(run => run.id === this.runDataActiveRunSurrounding.next);
+      return this.runDataArray.find((run) => run.id === this.runDataActiveRunSurrounding.next);
     },
     disableChange() {
       return ['running', 'paused'].includes(store.state.timer.state);

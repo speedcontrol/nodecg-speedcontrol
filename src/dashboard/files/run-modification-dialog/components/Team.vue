@@ -39,12 +39,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Draggable from 'vuedraggable';
 import store from '../store';
 import Player from './Player.vue';
 import TextInput from './TextInput.vue';
 import ModifyButton from './ModifyButton.vue';
-
-const Draggable = require('vuedraggable'); // Don't need types now :)
 
 export default Vue.extend({
   name: 'Team',
