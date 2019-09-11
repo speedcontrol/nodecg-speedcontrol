@@ -61,6 +61,6 @@ typings/
 .next
 
 # Built files
-.cache/
+.cache
 /dashboard/
 /extension/
