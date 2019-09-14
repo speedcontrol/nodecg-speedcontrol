@@ -73,9 +73,11 @@ export default class TimerApp {
         .catch((err): void => { ack(err); });
     });
     events.listenFor('timerReset', (data, ack): void => {
-      this.resetTimer()
-        .then((): void => { ack(null); })
-        .catch((err): void => { ack(err); });
+      if (!this.changesDisabled.value) {
+        this.resetTimer()
+          .then((): void => { ack(null); })
+          .catch((err): void => { ack(err); });
+      }
     });
     events.listenFor('timerStop', (data, ack): void => {
       this.stopTimer(data)
@@ -149,10 +151,10 @@ export default class TimerApp {
   resetTimer(): Promise<void> {
     return new Promise((resolve, reject): void => {
       // Error if the timer is disabled.
-      if (this.changesDisabled.value) {
+      /* if (this.changesDisabled.value) {
         reject(new Error('Cannot start/resume timer as changes are disabled.'));
         return;
-      }
+      } */
       // Error if the timer is stopped.
       if (this.timerRep.value.state === 'stopped') {
         reject(new Error('Cannot reset the timer as it is stopped.'));

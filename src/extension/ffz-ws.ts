@@ -199,11 +199,11 @@ export default class FFZWS {
         reject(new Error('FrankerFaceZ integration is not enabled.'));
         return;
       }
-      if (this.config.twitch.channelName) {
+      /* if (this.config.twitch.channelName) {
         reject(new Error(`FrankerFaceZ featured channels cannot be set while
         channelName is set in the configuration file.`));
         return;
-      }
+      } */
       this.nodecg.log.info('Attempting to set FrankerFaceZ featured channels.');
 
       // Remove any blacklisted names.

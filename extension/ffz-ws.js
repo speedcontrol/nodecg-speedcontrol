@@ -255,10 +255,11 @@ var FFZWS = /** @class */ (function () {
                 reject(new Error('FrankerFaceZ integration is not enabled.'));
                 return;
             }
-            if (_this.config.twitch.channelName) {
-                reject(new Error("FrankerFaceZ featured channels cannot be set while\n        channelName is set in the configuration file."));
-                return;
-            }
+            /* if (this.config.twitch.channelName) {
+              reject(new Error(`FrankerFaceZ featured channels cannot be set while
+              channelName is set in the configuration file.`));
+              return;
+            } */
             _this.nodecg.log.info('Attempting to set FrankerFaceZ featured channels.');
             // Remove any blacklisted names.
             var toSend = names.filter(function (name) { return (!(_this.config.twitch.ffzBlacklist || [])

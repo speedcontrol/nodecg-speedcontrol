@@ -69,9 +69,11 @@ var TimerApp = /** @class */ (function () {
                 .catch(function (err) { ack(err); });
         });
         events.listenFor('timerReset', function (data, ack) {
-            _this.resetTimer()
-                .then(function () { ack(null); })
-                .catch(function (err) { ack(err); });
+            if (!_this.changesDisabled.value) {
+                _this.resetTimer()
+                    .then(function () { ack(null); })
+                    .catch(function (err) { ack(err); });
+            }
         });
         events.listenFor('timerStop', function (data, ack) {
             _this.stopTimer(data)
@@ -141,10 +143,10 @@ var TimerApp = /** @class */ (function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             // Error if the timer is disabled.
-            if (_this.changesDisabled.value) {
-                reject(new Error('Cannot start/resume timer as changes are disabled.'));
-                return;
-            }
+            /* if (this.changesDisabled.value) {
+              reject(new Error('Cannot start/resume timer as changes are disabled.'));
+              return;
+            } */
             // Error if the timer is stopped.
             if (_this.timerRep.value.state === 'stopped') {
                 reject(new Error('Cannot reset the timer as it is stopped.'));
