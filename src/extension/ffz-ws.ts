@@ -29,20 +29,17 @@ export default class FFZWS {
     if (this.config.twitch.enabled && this.config.twitch.ffzIntegration) {
       nodecg.log.info('FrankerFaceZ integration is enabled.');
 
-      // Only listen if we're not using the repeater function.
-      if (!this.config.twitch.ffzUseRepeater) {
-        // NodeCG messaging system.
-        this.nodecg.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
-          cgListenForHelper(this.setChannels(data), ack);
-        });
+      // NodeCG messaging system.
+      this.nodecg.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
+        cgListenForHelper(this.setChannels(data), ack);
+      });
 
-        // Our messaging system.
-        events.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
-          this.setChannels(data)
-            .then((): void => { ack(null); })
-            .catch((err): void => { ack(err); });
-        });
-      }
+      // Our messaging system.
+      events.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
+        this.setChannels(data)
+          .then((): void => { ack(null); })
+          .catch((err): void => { ack(err); });
+      });
 
       this.twitchAPIData.on('change', (newVal, oldVal): void => {
         if (newVal.state === 'on' && (!oldVal || oldVal.state !== 'on')) {
@@ -216,19 +213,24 @@ export default class FFZWS {
           .includes(name.toLowerCase())
       ));
 
-      this.sendMsg(
-        `update_follow_buttons ${JSON.stringify([
-          this.twitchAPIData.value.channelName,
-          toSend,
-        ])}`,
-      ).then((msg): void => {
-        const clients = JSON.parse(msg.substr(3)).updated_clients;
-        this.nodecg.log.info(`FrankerFaceZ featured channels have been updated for ${clients} viewers.`);
-        resolve();
-      }).catch((err): void => {
-        this.nodecg.log.warn('FrankerFaceZ featured channels could not successfully be updated.');
-        reject(err);
-      });
+      if (!this.config.twitch.ffzUseRepeater) {
+        this.sendMsg(
+          `update_follow_buttons ${JSON.stringify([
+            this.twitchAPIData.value.channelName,
+            toSend,
+          ])}`,
+        ).then((msg): void => {
+          const clients = JSON.parse(msg.substr(3)).updated_clients;
+          this.nodecg.log.info(`FrankerFaceZ featured channels have been updated for ${clients} viewers.`);
+          resolve();
+        }).catch((err): void => {
+          this.nodecg.log.warn('FrankerFaceZ featured channels could not successfully be updated.');
+          reject(err);
+        });
+      } else {
+        this.nodecg.sendMessage('updateFFZFollowing', toSend);
+        this.nodecg.log.info('FrankerFaceZ featured channels being sent to repeater code.');
+      }
     });
   }
 

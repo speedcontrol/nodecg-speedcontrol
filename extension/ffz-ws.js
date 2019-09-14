@@ -70,19 +70,16 @@ var FFZWS = /** @class */ (function () {
         this.twitchAPIData = nodecg.Replicant('twitchAPIData');
         if (this.config.twitch.enabled && this.config.twitch.ffzIntegration) {
             nodecg.log.info('FrankerFaceZ integration is enabled.');
-            // Only listen if we're not using the repeater function.
-            if (!this.config.twitch.ffzUseRepeater) {
-                // NodeCG messaging system.
-                this.nodecg.listenFor('ffzUpdateFeaturedChannels', function (data, ack) {
-                    cgListenForHelper(_this.setChannels(data), ack);
-                });
-                // Our messaging system.
-                events.listenFor('ffzUpdateFeaturedChannels', function (data, ack) {
-                    _this.setChannels(data)
-                        .then(function () { ack(null); })
-                        .catch(function (err) { ack(err); });
-                });
-            }
+            // NodeCG messaging system.
+            this.nodecg.listenFor('ffzUpdateFeaturedChannels', function (data, ack) {
+                cgListenForHelper(_this.setChannels(data), ack);
+            });
+            // Our messaging system.
+            events.listenFor('ffzUpdateFeaturedChannels', function (data, ack) {
+                _this.setChannels(data)
+                    .then(function () { ack(null); })
+                    .catch(function (err) { ack(err); });
+            });
             this.twitchAPIData.on('change', function (newVal, oldVal) {
                 if (newVal.state === 'on' && (!oldVal || oldVal.state !== 'on')) {
                     _this.connect();
@@ -267,17 +264,23 @@ var FFZWS = /** @class */ (function () {
             var toSend = names.filter(function (name) { return (!(_this.config.twitch.ffzBlacklist || [])
                 .map(function (x) { return x.toLowerCase(); })
                 .includes(name.toLowerCase())); });
-            _this.sendMsg("update_follow_buttons " + JSON.stringify([
-                _this.twitchAPIData.value.channelName,
-                toSend,
-            ])).then(function (msg) {
-                var clients = JSON.parse(msg.substr(3)).updated_clients;
-                _this.nodecg.log.info("FrankerFaceZ featured channels have been updated for " + clients + " viewers.");
-                resolve();
-            }).catch(function (err) {
-                _this.nodecg.log.warn('FrankerFaceZ featured channels could not successfully be updated.');
-                reject(err);
-            });
+            if (!_this.config.twitch.ffzUseRepeater) {
+                _this.sendMsg("update_follow_buttons " + JSON.stringify([
+                    _this.twitchAPIData.value.channelName,
+                    toSend,
+                ])).then(function (msg) {
+                    var clients = JSON.parse(msg.substr(3)).updated_clients;
+                    _this.nodecg.log.info("FrankerFaceZ featured channels have been updated for " + clients + " viewers.");
+                    resolve();
+                }).catch(function (err) {
+                    _this.nodecg.log.warn('FrankerFaceZ featured channels could not successfully be updated.');
+                    reject(err);
+                });
+            }
+            else {
+                _this.nodecg.sendMessage('updateFFZFollowing', toSend);
+                _this.nodecg.log.info('FrankerFaceZ featured channels being sent to repeater code.');
+            }
         });
     };
     /**
