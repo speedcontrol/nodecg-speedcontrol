@@ -1,0 +1,16 @@
+version: "3"
+
+volumes:
+  assets:
+  db:
+
+services:
+  app:
+    image: nodecg-speedcontrol:latest
+    volumes:
+      - "/home/nodecg/cfg:/home/node/app/cfg:ro"
+      - assets:/home/node/app/assets
+      - db:/home/node/app/db
+    restart: always
+    ports:
+      - 9090:9090/tcp
