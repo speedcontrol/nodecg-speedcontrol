@@ -6,7 +6,7 @@ export interface SendMessageArgsMap {
   srcomTwitchGameSearch: string;
   srcomUserSearch: string;
   twitchRefreshToken: void;
-  ffzUpdateFeaturedChannels: string[];
+  updateFeaturedChannels: string[];
   timerStart: void;
   timerReset: void;
   timerStop: string | undefined;
@@ -18,7 +18,7 @@ export interface SendMessageReturnMap {
   srcomTwitchGameSearch: string;
   srcomUserSearch: UserData;
   twitchRefreshToken: void;
-  ffzUpdateFeaturedChannels: void;
+  updateFeaturedChannels: void;
   timerStart: void;
   timerReset: void;
   timerStop: void;

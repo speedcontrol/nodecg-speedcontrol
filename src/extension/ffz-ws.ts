@@ -30,12 +30,12 @@ export default class FFZWS {
       nodecg.log.info('FrankerFaceZ integration is enabled.');
 
       // NodeCG messaging system.
-      this.nodecg.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
+      this.nodecg.listenFor('updateFeaturedChannels', (data, ack): void => {
         cgListenForHelper(this.setChannels(data), ack);
       });
 
       // Our messaging system.
-      events.listenFor('ffzUpdateFeaturedChannels', (data, ack): void => {
+      events.listenFor('updateFeaturedChannels', (data, ack): void => {
         this.setChannels(data)
           .then((): void => { ack(null); })
           .catch((err): void => { ack(err); });

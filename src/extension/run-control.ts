@@ -128,7 +128,7 @@ export default class RunControl {
           // Construct/send featured channels if enabled.
           if (this.h.bundleConfig().twitch.ffzIntegration) {
             to(events.sendMessage(
-              'ffzUpdateFeaturedChannels',
+              'updateFeaturedChannels',
               getTwitchChannels(runData),
             ));
           }

@@ -188,7 +188,7 @@ export default Vue.extend({
       });
       if (this.config.ffzIntegration) {
         nodecg.sendMessage(
-          'ffzUpdateFeaturedChannels',
+          'updateFeaturedChannels',
           this.users.replace(/\s/g, '').split(','),
         ).then(() => {
           // successful
