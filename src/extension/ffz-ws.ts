@@ -229,7 +229,8 @@ export default class FFZWS {
           reject(err);
         });
       } else { // Send out message for external code to listen to.
-        this.nodecg.sendMessage('updateFFZFollowing', toSend);
+        to(events.sendMessage('repeaterFeaturedChannels', toSend));
+        this.nodecg.sendMessage('repeaterFeaturedChannels', toSend);
         this.nodecg.log.info('FrankerFaceZ featured channels being sent to repeater code.');
       }
     });

@@ -8,7 +8,7 @@ import RunControl from './run-control';
 import SRComAPI from './srcom-api';
 import TimerApp from './timer';
 import TwitchAPI from './twitch-api';
-import { sendMessage } from './util/events';
+import { listenFor, sendMessage } from './util/events';
 
 export = (nodecg: NodeCG): ExtensionReturn => {
   new RunControl(nodecg);
@@ -19,6 +19,7 @@ export = (nodecg: NodeCG): ExtensionReturn => {
   new FFZWS(nodecg);
 
   return {
+    listenFor,
     sendMessage,
   };
 }

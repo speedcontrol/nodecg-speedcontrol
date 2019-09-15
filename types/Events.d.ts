@@ -7,6 +7,7 @@ export interface SendMessageArgsMap {
   srcomUserSearch: string;
   twitchRefreshToken: void;
   updateFeaturedChannels: string[];
+  repeaterFeaturedChannels: string[];
   timerStart: void;
   timerReset: void;
   timerStop: string | undefined;
@@ -19,6 +20,7 @@ export interface SendMessageReturnMap {
   srcomUserSearch: UserData;
   twitchRefreshToken: void;
   updateFeaturedChannels: void;
+  repeaterFeaturedChannels: void;
   timerStart: void;
   timerReset: void;
   timerStop: void;
@@ -34,3 +36,10 @@ export type SendMessage = <
   name: K,
   data?: SendMessageArgsMap[K],
 ) => Promise<SendMessageReturnMap[K]>;
+
+export type ListenFor = <
+  K extends keyof SendMessageArgsMap
+>(
+  name: K,
+  callback: (data: SendMessageArgsMap[K], ack: SendMessageAck) => void,
+) => void;
