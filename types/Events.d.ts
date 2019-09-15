@@ -9,7 +9,7 @@ export interface SendMessageArgsMap {
   updateFeaturedChannels: string[];
   repeaterFeaturedChannels: string[];
   timerStart: void;
-  timerReset: void;
+  timerReset?: boolean;
   timerStop: string | undefined;
 }
 

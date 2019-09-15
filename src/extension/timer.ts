@@ -53,17 +53,17 @@ export default class TimerApp {
     nodecg.listenFor('timerPause', (data, ack): void => {
       cgListenForHelper(this.pauseTimer(), ack);
     });
-    nodecg.listenFor('timerReset', (data, ack): void => {
-      cgListenForHelper(this.resetTimer(), ack);
+    nodecg.listenFor('timerReset', (force, ack): void => {
+      cgListenForHelper(this.resetTimer(force), ack);
     });
-    nodecg.listenFor('timerStop', (data, ack): void => {
-      cgListenForHelper(this.stopTimer(data), ack);
+    nodecg.listenFor('timerStop', (uuid, ack): void => {
+      cgListenForHelper(this.stopTimer(uuid), ack);
     });
-    nodecg.listenFor('timerUndo', (data, ack): void => {
-      cgListenForHelper(this.undoTimer(data), ack);
+    nodecg.listenFor('timerUndo', (uuid, ack): void => {
+      cgListenForHelper(this.undoTimer(uuid), ack);
     });
-    nodecg.listenFor('timerEdit', (data, ack): void => {
-      cgListenForHelper(this.editTimer(data), ack);
+    nodecg.listenFor('timerEdit', (time, ack): void => {
+      cgListenForHelper(this.editTimer(time), ack);
     });
 
     // Our messaging system.
@@ -72,15 +72,13 @@ export default class TimerApp {
         .then((): void => { ack(null); })
         .catch((err): void => { ack(err); });
     });
-    events.listenFor('timerReset', (data, ack): void => {
-      if (!this.changesDisabled.value) {
-        this.resetTimer()
-          .then((): void => { ack(null); })
-          .catch((err): void => { ack(err); });
-      }
+    events.listenFor('timerReset', (force, ack): void => {
+      this.resetTimer(force)
+        .then((): void => { ack(null); })
+        .catch((err): void => { ack(err); });
     });
-    events.listenFor('timerStop', (data, ack): void => {
-      this.stopTimer(data)
+    events.listenFor('timerStop', (uuid, ack): void => {
+      this.stopTimer(uuid)
         .then((): void => { ack(null); })
         .catch((err): void => { ack(err); });
     });
@@ -148,13 +146,13 @@ export default class TimerApp {
   /**
    * Reset the timer.
    */
-  resetTimer(): Promise<void> {
+  resetTimer(force?: boolean): Promise<void> {
     return new Promise((resolve, reject): void => {
       // Error if the timer is disabled.
-      /* if (this.changesDisabled.value) {
+      if (!force && this.changesDisabled.value) {
         reject(new Error('Cannot start/resume timer as changes are disabled.'));
         return;
-      } */
+      }
       // Error if the timer is stopped.
       if (this.timerRep.value.state === 'stopped') {
         reject(new Error('Cannot reset the timer as it is stopped.'));

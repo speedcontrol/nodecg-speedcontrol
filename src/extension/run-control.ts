@@ -134,7 +134,7 @@ export default class RunControl {
           }
         }
         this.activeRun.value = clone(runData);
-        this.nodecg.sendMessage('timerReset');
+        this.nodecg.sendMessage('timerReset', true);
         resolve();
       } else if (!id) {
         reject(new Error('Cannot change run as no run ID was supplied.'));
@@ -251,7 +251,7 @@ export default class RunControl {
         reject(new Error('Cannot change run while timer is running/paused.'));
       } else {
         this.activeRun.value = null;
-        this.nodecg.sendMessage('timerReset');
+        this.nodecg.sendMessage('timerReset', true);
         resolve();
       }
     });
@@ -267,7 +267,7 @@ export default class RunControl {
       } else {
         this.array.value.length = 0;
         this.removeActiveRun();
-        this.nodecg.sendMessage('timerReset');
+        this.nodecg.sendMessage('timerReset', true);
         resolve();
       }
     });
