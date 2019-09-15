@@ -199,11 +199,11 @@ export default class FFZWS {
         reject(new Error('FrankerFaceZ integration is not enabled.'));
         return;
       }
-      /* if (this.config.twitch.channelName) {
+      if (!this.config.twitch.ffzUseRepeater && this.config.twitch.channelName) {
         reject(new Error(`FrankerFaceZ featured channels cannot be set while
         channelName is set in the configuration file.`));
         return;
-      } */
+      }
       this.nodecg.log.info('Attempting to set FrankerFaceZ featured channels.');
 
       // Remove any blacklisted names.
@@ -225,9 +225,10 @@ export default class FFZWS {
           resolve();
         }).catch((err): void => {
           this.nodecg.log.warn('FrankerFaceZ featured channels could not successfully be updated.');
+          this.nodecg.log.debug('FrankerFaceZ featured channels could not successfully be updated:', err);
           reject(err);
         });
-      } else {
+      } else { // Send out message for external code to listen to.
         this.nodecg.sendMessage('updateFFZFollowing', toSend);
         this.nodecg.log.info('FrankerFaceZ featured channels being sent to repeater code.');
       }
