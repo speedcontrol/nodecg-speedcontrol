@@ -4,23 +4,23 @@ import { UserData } from '../../types'; // eslint-disable-line
 import * as events from './util/events';
 
 export default class SRComAPI {
-  /* eslint-disable */
+  /* eslint-disable lines-between-class-members */
   private nodecg: NodeCG;
   private userDataCache: { [k: string]: UserData } = {};
-  /* eslint-enable */
+  /* eslint-enable lines-between-class-members */
 
   constructor(nodecg: NodeCG) {
     this.nodecg = nodecg;
 
     // Our messaging system.
-    events.listenFor('srcomTwitchGameSearch', (data, ack): void => {
-      this.searchForTwitchGame(data)
-        .then((data_): void => { ack(null, data_); })
+    events.listenFor('srcomTwitchGameSearch', (query, ack): void => {
+      this.searchForTwitchGame(query)
+        .then((data): void => { ack(null, data); })
         .catch((err): void => { ack(err); });
     });
-    events.listenFor('srcomUserSearch', (data, ack): void => {
-      this.searchForUserData(data)
-        .then((data_): void => { ack(null, data_); })
+    events.listenFor('srcomUserSearch', (query, ack): void => {
+      this.searchForUserData(query)
+        .then((data): void => { ack(null, data); })
         .catch((err): void => { ack(err); });
     });
   }
@@ -30,33 +30,33 @@ export default class SRComAPI {
    * @param url speedrun.com API endpoint you want to access.
    */
   get(endpoint: string): Promise<NeedleResponse> {
-    return new Promise(async (resolve, reject): Promise<void> => {
-      try {
-        this.nodecg.log.debug(`speedrun.com API request processing on ${endpoint}.`);
-        const resp = await needle(
-          'get',
-          `https://www.speedrun.com/api/v1${endpoint}`,
-          null,
-          {
-            headers: {
-              'User-Agent': 'nodecg-speedcontrol',
-              Accept: 'application/json',
-            },
+    return new Promise((resolve, reject): void => {
+      this.nodecg.log.debug(`[speedrun.com] API request processing on ${endpoint}.`);
+      needle(
+        'get',
+        `https://www.speedrun.com/api/v1${endpoint}`,
+        null,
+        {
+          headers: {
+            'User-Agent': 'nodecg-speedcontrol',
+            Accept: 'application/json',
           },
-        );
+        },
+      ).then((resp) => {
         // @ts-ignore: parser exists but isn't in the typings
         if (resp.parser !== 'json') {
           throw new Error('Response was not JSON.');
+          // We should retry here.
         } else if (resp.statusCode !== 200) {
           throw new Error(JSON.stringify(resp.body));
-          // Do we need to retry here?
+          // Do we need to retry here? Depends on err code.
         }
-        this.nodecg.log.debug(`speedrun.com API request successful on ${endpoint}.`);
+        this.nodecg.log.debug(`[speedrun.com] API request successful on ${endpoint}.`);
         resolve(resp);
-      } catch (err) {
-        this.nodecg.log.debug(`speedrun.com API request error on ${endpoint}:`, err);
+      }).catch((err) => {
+        this.nodecg.log.debug(`[speedrun.com] API request error on ${endpoint}:`, err);
         reject(err);
-      }
+      });
     });
   }
 
@@ -65,22 +65,24 @@ export default class SRComAPI {
    * @param query String you wish to try to find a game with.
    */
   searchForTwitchGame(query: string): Promise<string> {
-    return new Promise(async (resolve, reject): Promise<void> => {
-      try {
-        const resp = await this.get(
-          `/games?name=${encodeURI(query)}&max=1`,
-        );
-        if (resp.statusCode !== 200) {
-          throw new Error(JSON.stringify(resp.body));
-        } else if (!resp.body.data.length) {
-          throw new Error(`No game matches on speedrun.com for "${query}"`);
+    return new Promise((resolve, reject): void => {
+      this.get(
+        `/games?name=${encodeURI(query)}&max=1`,
+      ).then((resp) => {
+        if (!resp.body.data.length) {
+          throw new Error('No game matches.');
         } else if (!resp.body.data[0].names.twitch) {
-          throw new Error(`No Twitch game name found on speedrun.com for "${query}"`);
+          throw new Error('Game was find but has no Twitch game set.');
         }
+        this.nodecg.log.debug(
+          `[speedrun.com] Twitch game name found for "${query}":`,
+          resp.body.data[0].names.twitch,
+        );
         resolve(resp.body.data[0].names.twitch);
-      } catch (err) {
+      }).catch((err) => {
+        this.nodecg.log.debug(`[speedrun.com] Twitch game name lookup failed for "${query}":`, err);
         reject(err);
-      }
+      });
     });
   }
 
@@ -89,25 +91,31 @@ export default class SRComAPI {
    * @param query String you wish to try to find a user with.
    */
   searchForUserData(query: string): Promise<UserData> {
-    return new Promise(async (resolve, reject): Promise<void> => {
+    return new Promise((resolve, reject): void => {
       if (this.userDataCache[query]) {
+        this.nodecg.log.debug(
+          `[speedrun.com] User data found in cache for "${query}":`,
+          JSON.stringify(this.userDataCache[query]),
+        );
         resolve(this.userDataCache[query]);
         return;
       }
-      try {
-        const resp = await this.get(
-          `/users?lookup=${encodeURI(query)}&max=1`,
-        );
-        if (resp.statusCode !== 200) {
-          throw new Error(JSON.stringify(resp.body));
-        } else if (!resp.body.data.length) {
-          throw new Error(`No user matches on speedrun.com for "${query}"`);
+      this.get(
+        `/users?lookup=${encodeURI(query)}&max=1`,
+      ).then((resp) => {
+        if (!resp.body.data.length) {
+          throw new Error(`No user matches for "${query}"`);
         }
-        [this.userDataCache[query]] = resp.body.data; // Simple temporary cache storage.
+        [this.userDataCache[query]] = resp.body.data; // Simple temp cache storage.
+        this.nodecg.log.debug(
+          `[speedrun.com] User data found for "${query}":`,
+          JSON.stringify(resp.body.data[0]),
+        );
         resolve(resp.body.data[0]);
-      } catch (err) {
+      }).catch((err) => {
+        this.nodecg.log.debug(`[speedrun.com] User data lookup failed for "${query}":`, err);
         reject(err);
-      }
+      });
     });
   }
 }
