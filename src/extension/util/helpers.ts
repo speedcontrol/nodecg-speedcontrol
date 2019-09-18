@@ -136,7 +136,8 @@ export default class Helpers {
    * Takes a promise and returns error and result as an array.
    * @param promise Promise you want to process.
    */
-  static async to(promise: Promise<unknown>): Promise<[Error | null, unknown?]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static async to(promise: Promise<any>): Promise<[Error | null, any?]> {
     try {
       const data = await promise;
       return [null, data];
