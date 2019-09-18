@@ -4,7 +4,7 @@ import { Configschema } from '../../../configschema';
 import { RunData, RunDataArray } from '../../../types';
 
 export default class Helpers {
-  private nodecg: NodeCG;
+  nodecg: NodeCG;
 
   constructor(nodecg: NodeCG) {
     this.nodecg = nodecg;
@@ -110,7 +110,7 @@ export default class Helpers {
   }
 
   /**
-   * Simple helper function to handle NodeCG message acknoledgements.
+   * Simple helper function to handle NodeCG message acknowledgements.
    * @param err Error to supply if any.
    * @param ack The acknoledgement function itself.
    * @param data Anything else you want to send alongside.
@@ -136,8 +136,7 @@ export default class Helpers {
    * Takes a promise and returns error and result as an array.
    * @param promise Promise you want to process.
    */
-  // eslint-disable-next-line
-  static async to(promise: Promise<any>): Promise<[Error | null, any?]> {
+  static async to(promise: Promise<unknown>): Promise<[Error | null, unknown?]> {
     try {
       const data = await promise;
       return [null, data];
