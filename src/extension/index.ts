@@ -8,9 +8,11 @@ import RunControl from './run-control';
 import SRComAPI from './srcom-api';
 import TimerApp from './timer';
 import TwitchAPI from './twitch-api';
-import { listenFor, sendMessage } from './util/events';
+import { listenFor, sendMessage, setCtx as evtCtxSet } from './util/events';
 
 export = (nodecg: NodeCG): ExtensionReturn => {
+  evtCtxSet(nodecg);
+
   new RunControl(nodecg);
   new TimerApp(nodecg);
   new HoraroImport(nodecg);
