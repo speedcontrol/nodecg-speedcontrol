@@ -270,19 +270,19 @@ export default class FFZWS {
    * Picks a server to connect to randomly.
    */
   static pickServer(): string {
-    switch (randomInt(0, 7)) {
-      default:
-      case 0:
+    switch (randomInt(0, 20)) {
+      default: case 0:
         return 'wss://catbag.frankerfacez.com/';
-      case 1:
-      case 2:
+      case 1: case 2: case 3:
         return 'wss://andknuckles.frankerfacez.com/';
-      case 3:
-      case 4:
+      case 4: case 5: case 6: case 7:
         return 'wss://tuturu.frankerfacez.com/';
-      case 5:
-      case 6:
+      case 8: case 9: case 10: case 11:
         return 'wss://lilz.frankerfacez.com/';
+      case 12: case 13: case 14: case 15:
+        return 'wss://yoohoo.frankerfacez.com/';
+      case 16: case 17: case 18: case 19:
+        return 'wss://pog.frankerfacez.com/';
     }
   }
 }
