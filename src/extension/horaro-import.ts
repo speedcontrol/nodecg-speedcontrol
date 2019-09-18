@@ -63,7 +63,6 @@ interface ImportOptions {
 
 export default class HoraroImport {
   /* eslint-disable lines-between-class-members */
-  private nodecg: NodeCG;
   private h: Helpers;
   private runDataArray: Replicant<RunDataArray>;
   private config: Configschema;
@@ -74,14 +73,13 @@ export default class HoraroImport {
   /* eslint-enable lines-between-class-members */
 
   constructor(nodecg: NodeCG) {
-    this.nodecg = nodecg;
     this.h = new Helpers(nodecg);
     this.config = this.h.bundleConfig();
     this.runDataArray = nodecg.Replicant('runDataArray');
     this.importStatus = nodecg.Replicant('horaroImportStatus', { persistent: false });
     this.defaultSetupTime = nodecg.Replicant('defaultSetupTime');
 
-    this.nodecg.listenFor('loadSchedule', (opts: {
+    nodecg.listenFor('loadSchedule', (opts: {
       url: string;
       dashUUID: string;
     }, ack): void => {
@@ -92,7 +90,7 @@ export default class HoraroImport {
       });
     });
 
-    this.nodecg.listenFor('importSchedule', (opts: {
+    nodecg.listenFor('importSchedule', (opts: {
       opts: ImportOptions;
       dashUUID: string;
     }, ack): void => {
@@ -100,15 +98,15 @@ export default class HoraroImport {
         if (this.importStatus.value.importing) {
           throw new Error('Cannot import schedule as a schedule is already being imported.');
         }
-        this.nodecg.log.info('Started importing Horaro schedule.');
+        nodecg.log.info('Started importing Horaro schedule.');
         this.importSchedule(opts.opts, opts.dashUUID).then((): void => {
-          this.nodecg.log.info('Successfully imported Horaro schedule.');
+          nodecg.log.info('Successfully imported Horaro schedule.');
           processAck(null, ack);
         }).catch((err): void => {
           throw err;
         });
       } catch (err) {
-        this.nodecg.log.warn('Error importing Horaro schedule:', err);
+        nodecg.log.warn('Error importing Horaro schedule:', err);
         processAck(err, ack);
       }
     });
@@ -282,7 +280,7 @@ export default class HoraroImport {
             );
           }
 
-          this.nodecg.log.debug('Horaro Schedule Import: Successfully imported %s/%s.', index + 1, runItems.length);
+          this.h.nodecg.log.debug('Horaro Schedule Import: Successfully imported %s/%s.', index + 1, runItems.length);
           return runData;
         });
 

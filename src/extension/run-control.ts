@@ -17,7 +17,6 @@ const {
 
 export default class RunControl {
   /* eslint-disable lines-between-class-members */
-  private nodecg: NodeCG;
   private h: Helpers;
   private array: Replicant<RunDataArray>;
   private activeRun: Replicant<RunDataActiveRun>;
@@ -27,46 +26,45 @@ export default class RunControl {
   /* eslint-enable lines-between-class-members */
 
   constructor(nodecg: NodeCG) {
-    this.nodecg = nodecg;
     this.h = new Helpers(nodecg);
-    this.array = this.nodecg.Replicant('runDataArray');
-    this.activeRun = this.nodecg.Replicant('runDataActiveRun');
-    this.activeRunSurrounding = this.nodecg.Replicant('runDataActiveRunSurrounding');
-    this.timer = this.nodecg.Replicant('timer');
-    this.twitchAPIData = this.nodecg.Replicant('twitchAPIData');
+    this.array = nodecg.Replicant('runDataArray');
+    this.activeRun = nodecg.Replicant('runDataActiveRun');
+    this.activeRunSurrounding = nodecg.Replicant('runDataActiveRunSurrounding');
+    this.timer = nodecg.Replicant('timer');
+    this.twitchAPIData = nodecg.Replicant('twitchAPIData');
 
     // NodeCG messaging system.
-    this.nodecg.listenFor('changeActiveRun', (data, ack) => {
+    nodecg.listenFor('changeActiveRun', (data, ack) => {
       this.changeActiveRun(data)
         .then(() => processAck(null, ack))
         .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('removeRun', (data, ack) => {
+    nodecg.listenFor('removeRun', (data, ack) => {
       this.removeRun(data)
         .then(() => processAck(null, ack))
         .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('modifyRun', (data, ack) => {
+    nodecg.listenFor('modifyRun', (data, ack) => {
       this.modifyRun(data.runData, data.prevID)
         .then(() => processAck(null, ack))
         .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('changeToNextRun', (data, ack) => {
+    nodecg.listenFor('changeToNextRun', (data, ack) => {
       this.changeActiveRun(this.activeRunSurrounding.value.next)
         .then(() => processAck(null, ack))
         .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('returnToStart', (data, ack) => {
+    nodecg.listenFor('returnToStart', (data, ack) => {
       this.removeActiveRun()
         .then(() => processAck(null, ack))
         .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('removeAllRuns', (data, ack) => {
+    nodecg.listenFor('removeAllRuns', (data, ack) => {
       this.removeAllRuns()
         .then(() => processAck(null, ack))
         .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('removeAllRuns', (data, ack) => {
+    nodecg.listenFor('removeAllRuns', (data, ack) => {
       this.removeAllRuns()
         .then(() => processAck(null, ack))
         .catch((err) => processAck(err, ack));
@@ -148,7 +146,7 @@ export default class RunControl {
           }
         }
         this.activeRun.value = clone(runData);
-        this.nodecg.sendMessage('timerReset', true);
+        this.h.nodecg.sendMessage('timerReset', true);
         resolve();
       } else if (!id) {
         reject(new Error('Cannot change run as no run ID was supplied.'));
@@ -265,7 +263,7 @@ export default class RunControl {
         reject(new Error('Cannot change run while timer is running/paused.'));
       } else {
         this.activeRun.value = null;
-        this.nodecg.sendMessage('timerReset', true);
+        this.h.nodecg.sendMessage('timerReset', true);
         resolve();
       }
     });
@@ -281,7 +279,7 @@ export default class RunControl {
       } else {
         this.array.value.length = 0;
         this.removeActiveRun();
-        this.nodecg.sendMessage('timerReset', true);
+        this.h.nodecg.sendMessage('timerReset', true);
         resolve();
       }
     });
