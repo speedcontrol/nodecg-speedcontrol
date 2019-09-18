@@ -1,6 +1,6 @@
 import needle, { NeedleResponse } from 'needle';
 import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line
-import { UserData } from '../../types'; // eslint-disable-line
+import { UserData } from '../../types';
 import * as events from './util/events';
 
 export default class SRComAPI {
