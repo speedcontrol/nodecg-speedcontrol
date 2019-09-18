@@ -104,7 +104,7 @@ export default class SRComAPI {
         `/users?lookup=${encodeURI(query)}&max=1`,
       ).then((resp) => {
         if (!resp.body.data.length) {
-          throw new Error(`No user matches for "${query}"`);
+          throw new Error(`No user matches for "${query}".`);
         }
         [this.userDataCache[query]] = resp.body.data; // Simple temp cache storage.
         this.nodecg.log.debug(
