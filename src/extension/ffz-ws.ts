@@ -7,45 +7,45 @@ import { TwitchAPIData } from '../../schemas';
 import * as events from './util/events';
 import Helpers from './util/helpers';
 
-const { randomInt, to, cgListenForHelper } = Helpers;
+const { randomInt, to, processAck } = Helpers;
 
 export default class FFZWS {
-  /* eslint-disable */
-  private nodecg: NodeCG;
+  /* eslint-disable lines-between-class-members */
   private h: Helpers;
   private config: Configschema;
   private twitchAPIData: Replicant<TwitchAPIData>
   private ws: WebSocket | undefined;
   private msgNo = 1;
   private pingTO: NodeJS.Timeout | undefined;
-  /* eslint-enable */
+  /* eslint-enable lines-between-class-members */
 
   constructor(nodecg: NodeCG) {
-    this.nodecg = nodecg;
     this.h = new Helpers(nodecg);
     this.config = this.h.bundleConfig();
     this.twitchAPIData = nodecg.Replicant('twitchAPIData');
 
     if (this.config.twitch.enabled && this.config.twitch.ffzIntegration) {
-      nodecg.log.info('FrankerFaceZ integration is enabled.');
+      nodecg.log.info('[FrankerFaceZ] Integration enabled.');
 
       // NodeCG messaging system.
-      this.nodecg.listenFor('updateFeaturedChannels', (data, ack): void => {
-        cgListenForHelper(this.setChannels(data), ack);
+      nodecg.listenFor('updateFeaturedChannels', (data, ack) => {
+        this.setChannels(data)
+          .then(() => processAck(null, ack))
+          .catch((err) => processAck(err, ack));
       });
 
       // Our messaging system.
-      events.listenFor('updateFeaturedChannels', (data, ack): void => {
+      events.listenFor('updateFeaturedChannels', (data, ack) => {
         this.setChannels(data)
-          .then((): void => { ack(null); })
-          .catch((err): void => { ack(err); });
+          .then(() => ack(null))
+          .catch((err) => ack(err));
       });
 
-      this.twitchAPIData.on('change', (newVal, oldVal): void => {
+      this.twitchAPIData.on('change', (newVal, oldVal) => {
         if (newVal.state === 'on' && (!oldVal || oldVal.state !== 'on')) {
           this.connect();
         } else if (this.ws && oldVal && oldVal.state === 'on' && newVal.state !== 'on') {
-          nodecg.log.info('Connection to FrankerFaceZ closed.');
+          nodecg.log.info('[FrankerFaceZ] Connection closed.');
           this.ws.close();
         }
       });
@@ -59,30 +59,32 @@ export default class FFZWS {
     this.msgNo = 1;
     const url = FFZWS.pickServer();
     this.ws = new WebSocket(url);
-    this.nodecg.log.info('Connecting to FrankerFaceZ (%s).', url);
+    this.h.nodecg.log.info('[FrankerFaceZ] Connecting.');
+    this.h.nodecg.log.debug('[FrankerFaceZ] Using server %s.', url);
 
-    this.ws.once('open', (): void => {
-      this.sendInitMsgs().then((): void => {
-        this.pingTO = setTimeout((): void => this.ping(), 60 * 1000);
-        this.nodecg.log.info('Connection to FrankerFaceZ successful.');
+    this.ws.once('open', () => {
+      this.sendInitMsgs().then(() => {
+        this.pingTO = setTimeout(() => this.ping(), 60 * 1000);
+        this.h.nodecg.log.info('[FrankerFaceZ] Connection successful.');
       });
     });
 
     // Catching any errors with the connection.
     // The "close" event is also fired if it's a disconnect.
-    this.ws.on('error', (err): void => {
-      this.nodecg.log.warn('Error occurred on the FrankerFaceZ connection: %s', err);
+    this.ws.on('error', (err) => {
+      this.h.nodecg.log.warn('[FrankerFaceZ] Connection error occured.');
+      this.h.nodecg.log.debug('[FrankerFaceZ] Connection error occured:', err);
     });
 
-    this.ws.once('close', (): void => {
+    this.ws.once('close', () => {
       clearTimeout(this.pingTO as NodeJS.Timeout);
       if (this.twitchAPIData.value.state === 'on') { // No reconnection if Twitch API is disconnected.
-        this.nodecg.log.warn('Connection to FrankerFaceZ closed, will reconnect in 10 seconds.');
-        setTimeout((): void => this.connect(), 10 * 1000);
+        this.h.nodecg.log.warn('[FrankerFaceZ] Connection closed, will reconnect in 10 seconds.');
+        setTimeout(() => this.connect(), 10 * 1000);
       }
     });
 
-    this.ws.on('message', (data: string): void => {
+    this.ws.on('message', (data: string) => {
       if (data.startsWith('-1')) {
         // If we need to authorize, gets the auth code and does that.
         // Original command will still be executed once authed,
@@ -94,7 +96,7 @@ export default class FFZWS {
         // This is returned when the follower buttons are updated
         // (including through this application).
         if (data.includes('follow_buttons')) {
-          this.nodecg.log.debug('Got follow_buttons from FrankerFaceZ connection.');
+          this.h.nodecg.log.debug('[FrankerFaceZ] Received follow_buttons.');
           const channels: string[] = JSON.parse(data.substr(18))[
             this.twitchAPIData.value.channelName as string
           ];
@@ -120,9 +122,10 @@ export default class FFZWS {
         `sub "channel.${this.twitchAPIData.value.channelName}"`,
         'ready 0',
       ];
-      forEachSeries(messagesToSend, async (msg): Promise<void> => {
+      // eslint-disable-next-line no-async-promise-executor
+      forEachSeries(messagesToSend, async (msg) => {
         await this.sendMsg(msg);
-      }).then(resolve).catch((): void => {});
+      }).then(resolve).catch(() => {});
     });
   }
 
@@ -131,16 +134,17 @@ export default class FFZWS {
    * @param msg Message to be sent.
    */
   sendMsg(msg: string): Promise<string> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       if (!this.ws || this.ws.readyState !== 1) {
-        reject(new Error('FrankerFaceZ WebSocket not connected.'));
-        return;
+        throw new Error('WebSocket not connected.');
       }
+      this.h.nodecg.log.debug('[FrankerFaceZ] Attempting to send message: %s %s', this.msgNo, msg);
       this.ws.send(`${this.msgNo} ${msg}`);
       const thisMsgNo = this.msgNo;
       this.msgNo += 1;
       const msgEvt = (data: string): void => {
         if (this.ws && data.includes(`${thisMsgNo} ok`)) {
+          this.h.nodecg.log.debug('[FrankerFaceZ] Message was successful: %s %s', this.msgNo, msg);
           this.ws.removeListener('message', msgEvt);
           resolve(data.substr(data.indexOf(' ') + 1));
         }
@@ -154,7 +158,7 @@ export default class FFZWS {
    * @param auth Authentication code.
    */
   async sendAuth(auth: string): Promise<void> {
-    this.nodecg.log.info('Attempting to authenticate with FrankerFaceZ.');
+    this.h.nodecg.log.debug('[FrankerFaceZ] Attempting authentication.');
     const opts = {
       options: {
         // debug: true,
@@ -176,7 +180,7 @@ export default class FFZWS {
         attempts += 1;
         const client = new TwitchJS.Client(opts);
         await client.connect(); // eslint-disable-line
-        this.nodecg.log.info('Connected to Twitch chat to authenticate with FrankerFaceZ.');
+        this.h.nodecg.log.debug('[FrankerFaceZ] Connected to Twitch chat to authenticate.');
         await client.say('frankerfacezauthorizer', `AUTH ${auth}`); // eslint-disable-line
         client.disconnect();
       } catch (err) {
@@ -196,20 +200,18 @@ export default class FFZWS {
   setChannels(names: string[]): Promise<void> {
     return new Promise((resolve, reject): void => {
       if (!this.config.twitch.ffzIntegration) {
-        reject(new Error('FrankerFaceZ integration is not enabled.'));
-        return;
+        throw new Error('Integration not enabled.');
       }
       if (!this.config.twitch.ffzUseRepeater && this.config.twitch.channelName) {
-        reject(new Error(`FrankerFaceZ featured channels cannot be set while
-        channelName is set in the configuration file.`));
-        return;
+        throw new Error(`Featured channels cannot be set while
+        channelName is set in the configuration file.`);
       }
-      this.nodecg.log.info('Attempting to set FrankerFaceZ featured channels.');
+      this.h.nodecg.log.info('[FrankerFaceZ] Attempting to set featured channels.');
 
       // Remove any blacklisted names.
-      const toSend = names.filter((name): boolean => (
+      const toSend = names.filter((name) => (
         !(this.config.twitch.ffzBlacklist || [])
-          .map((x): string => x.toLowerCase())
+          .map((x) => x.toLowerCase())
           .includes(name.toLowerCase())
       ));
 
@@ -219,19 +221,19 @@ export default class FFZWS {
             this.twitchAPIData.value.channelName,
             toSend,
           ])}`,
-        ).then((msg): void => {
+        ).then((msg) => {
           const clients = JSON.parse(msg.substr(3)).updated_clients;
-          this.nodecg.log.info(`FrankerFaceZ featured channels have been updated for ${clients} viewers.`);
+          this.h.nodecg.log.info(`[FrankerFaceZ] Featured channels have been updated for ${clients} viewers.`);
           resolve();
-        }).catch((err): void => {
-          this.nodecg.log.warn('FrankerFaceZ featured channels could not successfully be updated.');
-          this.nodecg.log.debug('FrankerFaceZ featured channels could not successfully be updated:', err);
+        }).catch((err) => {
+          this.h.nodecg.log.warn('[FrankerFaceZ] Featured channels could not successfully be updated.');
+          this.h.nodecg.log.debug('[FrankerFaceZ] Featured channels could not successfully be updated:', err);
           reject(err);
         });
       } else { // Send out message for external code to listen to.
         to(events.sendMessage('repeaterFeaturedChannels', toSend));
-        this.nodecg.sendMessage('repeaterFeaturedChannels', toSend);
-        this.nodecg.log.info('FrankerFaceZ featured channels being sent to repeater code.');
+        this.h.nodecg.sendMessage('repeaterFeaturedChannels', toSend);
+        this.h.nodecg.log.info('[FrankerFaceZ] Featured channels being sent to repeater code.');
       }
     });
   }
@@ -243,11 +245,13 @@ export default class FFZWS {
     let pongWaitTO: NodeJS.Timeout;
     if (this.ws) {
       this.ws.ping();
+      this.h.nodecg.log.debug('[FrankerFaceZ] PING sent.');
     }
 
     const pongEvt = (): void => {
+      this.h.nodecg.log.debug('[FrankerFaceZ] PONG received.');
       clearTimeout(pongWaitTO);
-      this.pingTO = setTimeout((): void => this.ping(), 60 * 1000);
+      this.pingTO = setTimeout(() => this.ping(), 60 * 1000);
       if (this.ws) {
         this.ws.removeListener('pong', pongEvt);
       }
@@ -257,8 +261,8 @@ export default class FFZWS {
     }
 
     // Disconnect if a PONG was not received within 10 seconds.
-    pongWaitTO = setTimeout((): void => {
-      this.nodecg.log.warn('FrankerFaceZ PING/PONG failed, terminating connection.');
+    pongWaitTO = setTimeout(() => {
+      this.h.nodecg.log.debug('[FrankerFaceZ] PING/PONG failed, terminating connection.');
       if (this.ws) {
         this.ws.removeListener('pong', pongEvt);
         this.ws.terminate();
