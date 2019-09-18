@@ -16,7 +16,7 @@ const {
 } = Helpers;
 
 export default class RunControl {
-  /* eslint-disable */
+  /* eslint-disable lines-between-class-members */
   private nodecg: NodeCG;
   private h: Helpers;
   private array: Replicant<RunDataArray>;
@@ -24,7 +24,7 @@ export default class RunControl {
   private activeRunSurrounding: Replicant<RunDataActiveRunSurrounding>;
   private timer: Replicant<Timer>;
   private twitchAPIData: Replicant<TwitchAPIData>
-  /* eslint-enable */
+  /* eslint-enable lines-between-class-members */
 
   constructor(nodecg: NodeCG) {
     this.nodecg = nodecg;

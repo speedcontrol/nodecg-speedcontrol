@@ -17,13 +17,13 @@ const LS_TIMER_PHASE = {
 };
 
 export default class TimerApp {
-  /* eslint-disable */
+  /* eslint-disable lines-between-class-members */
   private timerRep: Replicant<Timer>;
   private activeRun: Replicant<RunDataActiveRun>;
   private runFinishTimes: Replicant<RunFinishTimes>
   private changesDisabled: Replicant<TimerChangesDisabled>;
   private timer: livesplitCore.Timer;
-  /* eslint-enable */
+  /* eslint-enable lines-between-class-members */
 
   constructor(nodecg: NodeCG) {
     this.timerRep = nodecg.Replicant('timer');

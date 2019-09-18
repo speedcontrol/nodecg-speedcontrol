@@ -62,7 +62,7 @@ interface ImportOptions {
 }
 
 export default class HoraroImport {
-  /* eslint-disable */
+  /* eslint-disable lines-between-class-members */
   private nodecg: NodeCG;
   private h: Helpers;
   private runDataArray: Replicant<RunDataArray>;
@@ -71,7 +71,7 @@ export default class HoraroImport {
   private importStatus: Replicant<HoraroImportStatus>;
   private defaultSetupTime: Replicant<DefaultSetupTime>;
   private scheduleDataCache: { [k: string]: HoraroSchedule } = {};
-  /* eslint-enable */
+  /* eslint-enable lines-between-class-members */
 
   constructor(nodecg: NodeCG) {
     this.nodecg = nodecg;
