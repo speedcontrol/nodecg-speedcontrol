@@ -81,18 +81,18 @@ export default class TimerApp {
     // Our messaging system.
     events.listenFor('timerStart', (data, ack) => {
       this.startTimer()
-        .then(() => { ack(null); })
-        .catch((err) => { ack(err); });
+        .then(() => ack(null))
+        .catch((err) => ack(err));
     });
     events.listenFor('timerReset', (force, ack) => {
       this.resetTimer(force)
-        .then(() => { ack(null); })
-        .catch((err) => { ack(err); });
+        .then(() => ack(null))
+        .catch((err) => ack(err));
     });
     events.listenFor('timerStop', (uuid, ack) => {
       this.stopTimer(uuid)
-        .then(() => { ack(null); })
-        .catch((err) => { ack(err); });
+        .then(() => ack(null))
+        .catch((err) => ack(err));
     });
 
     setInterval(() => this.tick(), 100);
@@ -318,10 +318,10 @@ export default class TimerApp {
    */
   private setGameTime(ms: number): void {
     if (this.timerRep.value.state === 'stopped') {
-      livesplitCore.TimeSpan.fromSeconds(0).with((t): void => this.timer.setLoadingTimes(t));
+      livesplitCore.TimeSpan.fromSeconds(0).with((t) => this.timer.setLoadingTimes(t));
       this.timer.initializeGameTime();
     }
-    livesplitCore.TimeSpan.fromSeconds(ms / 1000).with((t): void => this.timer.setGameTime(t));
+    livesplitCore.TimeSpan.fromSeconds(ms / 1000).with((t) => this.timer.setGameTime(t));
   }
 
   /**

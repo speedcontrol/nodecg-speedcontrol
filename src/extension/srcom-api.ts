@@ -13,15 +13,15 @@ export default class SRComAPI {
     this.nodecg = nodecg;
 
     // Our messaging system.
-    events.listenFor('srcomTwitchGameSearch', (query, ack): void => {
+    events.listenFor('srcomTwitchGameSearch', (query, ack) => {
       this.searchForTwitchGame(query)
-        .then((data): void => { ack(null, data); })
-        .catch((err): void => { ack(err); });
+        .then((data) => ack(null, data))
+        .catch((err) => ack(err));
     });
-    events.listenFor('srcomUserSearch', (query, ack): void => {
+    events.listenFor('srcomUserSearch', (query, ack) => {
       this.searchForUserData(query)
-        .then((data): void => { ack(null, data); })
-        .catch((err): void => { ack(err); });
+        .then((data) => ack(null, data))
+        .catch((err) => ack(err));
     });
   }
 

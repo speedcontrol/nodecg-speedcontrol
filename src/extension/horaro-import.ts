@@ -82,10 +82,10 @@ export default class HoraroImport {
     nodecg.listenFor('loadSchedule', (opts: {
       url: string;
       dashUUID: string;
-    }, ack): void => {
-      this.loadSchedule(opts.url, opts.dashUUID).then((data): void => {
+    }, ack) => {
+      this.loadSchedule(opts.url, opts.dashUUID).then((data) => {
         processAck(null, ack, data);
-      }).catch((err): void => {
+      }).catch((err) => {
         processAck(err, ack);
       });
     });
@@ -93,16 +93,16 @@ export default class HoraroImport {
     nodecg.listenFor('importSchedule', (opts: {
       opts: ImportOptions;
       dashUUID: string;
-    }, ack): void => {
+    }, ack) => {
       try {
         if (this.importStatus.value.importing) {
           throw new Error('Cannot import schedule as a schedule is already being imported.');
         }
         nodecg.log.info('Started importing Horaro schedule.');
-        this.importSchedule(opts.opts, opts.dashUUID).then((): void => {
+        this.importSchedule(opts.opts, opts.dashUUID).then(() => {
           nodecg.log.info('Successfully imported Horaro schedule.');
           processAck(null, ack);
-        }).catch((err): void => {
+        }).catch((err) => {
           throw err;
         });
       } catch (err) {
@@ -173,7 +173,7 @@ export default class HoraroImport {
 
           // General Run Data
           const generalDataList = ['game', 'gameTwitch', 'system', 'category', 'region', 'release'];
-          generalDataList.forEach((type): void => {
+          generalDataList.forEach((type) => {
             // @ts-ignore: double check the list above and make sure they are on RunData!
             runData[type] = this.parseMarkdown(
               nullToUndefined(
@@ -207,7 +207,7 @@ export default class HoraroImport {
           runData.setupTimeS = runSetupTime / 1000;
 
           // Custom Data
-          Object.keys(opts.columns.custom).forEach((col): void => {
+          Object.keys(opts.columns.custom).forEach((col) => {
             const { str } = this.parseMarkdown(
               nullToUndefined(
                 run.data[
