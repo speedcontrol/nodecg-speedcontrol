@@ -9,7 +9,7 @@ import Helpers from './util/helpers';
 const {
   timeStrToMS,
   msToTimeStr,
-  cgListenForHelper,
+  processAck,
   formPlayerNamesStr,
   getTwitchChannels,
   to,
@@ -36,30 +36,44 @@ export default class RunControl {
     this.twitchAPIData = this.nodecg.Replicant('twitchAPIData');
 
     // NodeCG messaging system.
-    this.nodecg.listenFor('changeActiveRun', (data, ack): void => {
-      cgListenForHelper(this.changeActiveRun(data), ack);
+    this.nodecg.listenFor('changeActiveRun', (data, ack) => {
+      this.changeActiveRun(data)
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('removeRun', (data, ack): void => {
-      cgListenForHelper(this.removeRun(data), ack);
+    this.nodecg.listenFor('removeRun', (data, ack) => {
+      this.removeRun(data)
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('modifyRun', (data, ack): void => {
-      cgListenForHelper(this.modifyRun(data.runData, data.prevID), ack);
+    this.nodecg.listenFor('modifyRun', (data, ack) => {
+      this.modifyRun(data.runData, data.prevID)
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('changeToNextRun', (data, ack): void => {
-      cgListenForHelper(this.changeActiveRun(this.activeRunSurrounding.value.next), ack);
+    this.nodecg.listenFor('changeToNextRun', (data, ack) => {
+      this.changeActiveRun(this.activeRunSurrounding.value.next)
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('returnToStart', (data, ack): void => {
-      cgListenForHelper(this.removeActiveRun(), ack);
+    this.nodecg.listenFor('returnToStart', (data, ack) => {
+      this.removeActiveRun()
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('removeAllRuns', (data, ack): void => {
-      cgListenForHelper(this.removeAllRuns(), ack);
+    this.nodecg.listenFor('removeAllRuns', (data, ack) => {
+      this.removeAllRuns()
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    this.nodecg.listenFor('removeAllRuns', (data, ack): void => {
-      cgListenForHelper(this.removeAllRuns(), ack);
+    this.nodecg.listenFor('removeAllRuns', (data, ack) => {
+      this.removeAllRuns()
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
 
-    this.activeRun.on('change', (): void => this.changeSurroundingRuns());
-    this.array.on('change', (): void => this.changeSurroundingRuns());
+    this.activeRun.on('change', () => this.changeSurroundingRuns());
+    this.array.on('change', () => this.changeSurroundingRuns());
   }
 
   /**

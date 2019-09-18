@@ -6,7 +6,7 @@ import { RunDataActiveRun, Timer } from '../../types';
 import * as events from './util/events';
 import Helpers from './util/helpers';
 
-const { msToTimeStr, timeStrToMS, cgListenForHelper } = Helpers;
+const { msToTimeStr, timeStrToMS, processAck } = Helpers;
 
 // Cross references for LiveSplit's TimerPhases.
 const LS_TIMER_PHASE = {
@@ -47,46 +47,55 @@ export default class TimerApp {
     }
 
     // NodeCG messaging system.
-    nodecg.listenFor('timerStart', (data, ack): void => {
-      cgListenForHelper(this.startTimer(), ack);
+    nodecg.listenFor('timerStart', (data, ack) => {
+      this.startTimer()
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    nodecg.listenFor('timerPause', (data, ack): void => {
-      cgListenForHelper(this.pauseTimer(), ack);
+    nodecg.listenFor('timerPause', (data, ack) => {
+      this.pauseTimer()
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    nodecg.listenFor('timerReset', (force, ack): void => {
-      cgListenForHelper(this.resetTimer(force), ack);
+    nodecg.listenFor('timerReset', (force, ack) => {
+      this.resetTimer(force)
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    nodecg.listenFor('timerStop', (uuid, ack): void => {
-      cgListenForHelper(this.stopTimer(uuid), ack);
+    nodecg.listenFor('timerStop', (uuid, ack) => {
+      this.stopTimer(uuid)
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    nodecg.listenFor('timerUndo', (uuid, ack): void => {
-      cgListenForHelper(this.undoTimer(uuid), ack);
+    nodecg.listenFor('timerUndo', (uuid, ack) => {
+      this.undoTimer(uuid)
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
-    nodecg.listenFor('timerEdit', (time, ack): void => {
-      cgListenForHelper(this.editTimer(time), ack);
+    nodecg.listenFor('timerEdit', (time, ack) => {
+      this.editTimer(time)
+        .then(() => processAck(null, ack))
+        .catch((err) => processAck(err, ack));
     });
 
     // Our messaging system.
-    events.listenFor('timerStart', (data, ack): void => {
+    events.listenFor('timerStart', (data, ack) => {
       this.startTimer()
-        .then((): void => { ack(null); })
-        .catch((err): void => { ack(err); });
+        .then(() => { ack(null); })
+        .catch((err) => { ack(err); });
     });
-    events.listenFor('timerReset', (force, ack): void => {
+    events.listenFor('timerReset', (force, ack) => {
       this.resetTimer(force)
-        .then((): void => { ack(null); })
-        .catch((err): void => { ack(err); });
+        .then(() => { ack(null); })
+        .catch((err) => { ack(err); });
     });
-    events.listenFor('timerStop', (uuid, ack): void => {
+    events.listenFor('timerStop', (uuid, ack) => {
       this.stopTimer(uuid)
-        .then((): void => { ack(null); })
-        .catch((err): void => { ack(err); });
+        .then(() => { ack(null); })
+        .catch((err) => { ack(err); });
     });
 
-    setInterval(
-      (): void => this.tick(),
-      100,
-    );
+    setInterval(() => this.tick(), 100);
   }
 
   /**
