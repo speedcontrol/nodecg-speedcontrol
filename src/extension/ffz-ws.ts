@@ -144,7 +144,7 @@ export default class FFZWS {
       this.msgNo += 1;
       const msgEvt = (data: string): void => {
         if (this.ws && data.includes(`${thisMsgNo} ok`)) {
-          this.h.nodecg.log.debug('[FrankerFaceZ] Message was successful: %s %s', this.msgNo, msg);
+          this.h.nodecg.log.debug('[FrankerFaceZ] Message was successful: %s %s', thisMsgNo, msg);
           this.ws.removeListener('message', msgEvt);
           resolve(data.substr(data.indexOf(' ') + 1));
         }
