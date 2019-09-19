@@ -61,11 +61,14 @@ export default class Helpers {
     const seconds = Math.floor((ms / 1000) % 60);
     const minutes = Math.floor((ms / (1000 * 60)) % 60);
     const hours = Math.floor(ms / (1000 * 60 * 60));
-    return `${Helpers.padTimeNumber(hours)}:${Helpers.padTimeNumber(minutes)}:${Helpers.padTimeNumber(seconds)}`;
+    return `${Helpers.padTimeNumber(hours)
+    }:${Helpers.padTimeNumber(minutes)
+    }:${Helpers.padTimeNumber(seconds)}`;
   }
 
   /**
-   * Takes a variable that may be null and returns undefined if it is. If not, nothing is changed.
+   * Takes a variable that may be null and returns undefined if it is.
+   * If not, nothing is changed.
    * @param varToCheck Variable to check that may be null.
    */
   // eslint-disable-next-line

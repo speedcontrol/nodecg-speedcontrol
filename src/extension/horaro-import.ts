@@ -239,7 +239,8 @@ export default class HoraroImport {
                 return {
                   name: (nameMatch) ? nameMatch[0] : undefined,
                   players: (opts.split === 0)
-                    ? team.replace(/^(.+)(:\s)/, '').split(/\s*,\s*/) : [team.replace(/^(.+)(:\s)/, '')],
+                    ? team.replace(/^(.+)(:\s)/, '').split(/\s*,\s*/)
+                    : [team.replace(/^(.+)(:\s)/, '')],
                 };
               },
             );
@@ -280,7 +281,11 @@ export default class HoraroImport {
             );
           }
 
-          this.h.nodecg.log.debug('Horaro Schedule Import: Successfully imported %s/%s.', index + 1, runItems.length);
+          this.h.nodecg.log.debug(
+            'Horaro Schedule Import: Successfully imported %s/%s.',
+            index + 1,
+            runItems.length,
+          );
           return runData;
         });
 

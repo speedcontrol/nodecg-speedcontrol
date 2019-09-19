@@ -78,7 +78,8 @@ export default class FFZWS {
 
     this.ws.once('close', () => {
       clearTimeout(this.pingTO as NodeJS.Timeout);
-      if (this.twitchAPIData.value.state === 'on') { // No reconnection if Twitch API is disconnected.
+      // No reconnection if Twitch API is disconnected.
+      if (this.twitchAPIData.value.state === 'on') {
         this.h.nodecg.log.warn('[FrankerFaceZ] Connection closed, will reconnect in 10 seconds.');
         setTimeout(() => this.connect(), 10 * 1000);
       }
@@ -223,11 +224,18 @@ export default class FFZWS {
           ])}`,
         ).then((msg) => {
           const clients = JSON.parse(msg.substr(3)).updated_clients;
-          this.h.nodecg.log.info(`[FrankerFaceZ] Featured channels have been updated for ${clients} viewers.`);
+          this.h.nodecg.log.info(
+            `[FrankerFaceZ] Featured channels have been updated for ${clients} viewers.`,
+          );
           resolve();
         }).catch((err) => {
-          this.h.nodecg.log.warn('[FrankerFaceZ] Featured channels could not successfully be updated.');
-          this.h.nodecg.log.debug('[FrankerFaceZ] Featured channels could not successfully be updated:', err);
+          this.h.nodecg.log.warn(
+            '[FrankerFaceZ] Featured channels could not successfully be updated.',
+          );
+          this.h.nodecg.log.debug(
+            '[FrankerFaceZ] Featured channels could not successfully be updated:',
+            err,
+          );
           reject(err);
         });
       } else { // Send out message for external code to listen to.

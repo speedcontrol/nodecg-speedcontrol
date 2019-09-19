@@ -97,7 +97,8 @@ export default class TwitchAPI {
           this.data.value.refreshToken = resp.body.refresh_token;
           this.setUp().then(() => {
             nodecg.log.info('[Twitch] Authentication successful.');
-            res.send('<b>Twitch authentication is now complete, feel free to close this window/tab.</b>');
+            res.send('<b>Twitch authentication is now complete, '
+                    + 'feel free to close this window/tab.</b>');
           }).catch(() => {
             throw new Error();
           });
@@ -202,7 +203,9 @@ export default class TwitchAPI {
   ): Promise<NeedleResponse> {
     return new Promise(async (resolve, reject): Promise<void> => {
       try {
-        this.h.nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request processing on ${endpoint}.`);
+        this.h.nodecg.log.debug(
+          `[Twitch] API ${method.toUpperCase()} request processing on ${endpoint}.`,
+        );
         let retry = false;
         let attempts = 0;
         let resp;
@@ -225,7 +228,8 @@ export default class TwitchAPI {
           );
           if (resp.statusCode === 401 && attempts <= 1) {
             this.h.nodecg.log.debug(
-              `[Twitch] API ${method.toUpperCase()} request resulted in ${resp.statusCode} on ${endpoint}:`,
+              `[Twitch] API ${method.toUpperCase()} request `
+              + `resulted in ${resp.statusCode} on ${endpoint}:`,
               JSON.stringify(resp.body),
             );
             await this.refreshToken(); // eslint-disable-line
@@ -236,10 +240,15 @@ export default class TwitchAPI {
             // Do we need to retry here?
           }
         } while (retry);
-        this.h.nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request successful on ${endpoint}.`);
+        this.h.nodecg.log.debug(
+          `[Twitch] API ${method.toUpperCase()} request successful on ${endpoint}.`,
+        );
         resolve(resp);
       } catch (err) {
-        this.h.nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request error on ${endpoint}:`, err);
+        this.h.nodecg.log.debug(
+          `[Twitch] API ${method.toUpperCase()} request error on ${endpoint}:`,
+          err,
+        );
         reject(err);
       }
     });

@@ -23,5 +23,6 @@ module.exports = {
     '@typescript-eslint/ban-ts-ignore': 'off', // Fix this stuff in the future hopefully.
     'indent': 'off', // Do I need this? (and one below).
     '@typescript-eslint/indent': ['error', 2], // Do I need this? (and one above).
+    'max-len': ["error", { "code": 100 }],
   },
 };
