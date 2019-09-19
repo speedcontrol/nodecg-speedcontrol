@@ -118,10 +118,10 @@ export default class RunControl {
    * @param id The unique ID of the run you wish to change to.
    */
   changeActiveRun(id?: string): Promise<void> {
-    return new Promise(async (resolve, reject): Promise<void> => {
+    return new Promise(async (resolve): Promise<void> => {
       const runData = this.array.value.find((run): boolean => run.id === id);
       if (['running', 'paused'].includes(this.timer.value.state)) {
-        reject(new Error('Cannot change run while timer is running/paused.'));
+        throw new Error('Cannot change run while timer is running/paused.');
       } else if (runData) {
         if (this.twitchAPIData.value.sync) {
           // Constructing Twitch title and game to send off.
@@ -149,9 +149,9 @@ export default class RunControl {
         this.h.nodecg.sendMessage('timerReset', true);
         resolve();
       } else if (!id) {
-        reject(new Error('Cannot change run as no run ID was supplied.'));
+        throw new Error('Cannot change run as no run ID was supplied.');
       } else {
-        reject(new Error(`Cannot change run as a run with ID ${id} was not found.`));
+        throw new Error(`Cannot change run as a run with ID ${id} was not found.`);
       }
     });
   }
@@ -161,15 +161,15 @@ export default class RunControl {
    * @param id The unique ID of the run you wish to delete.
    */
   removeRun(id?: string): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       const runIndex = this.array.value.findIndex((run): boolean => run.id === id);
       if (runIndex >= 0) {
         this.array.value.splice(runIndex, 1);
         resolve();
       } else if (!id) {
-        reject(new Error('Cannot delete run as no run ID was supplied.'));
+        throw new Error('Cannot delete run as no run ID was supplied.');
       } else {
-        reject(new Error(`Cannot delete run as a run with ID ${id} was not found.`));
+        throw new Error(`Cannot delete run as a run with ID ${id} was not found.`);
       }
     });
   }
@@ -180,7 +180,7 @@ export default class RunControl {
    * @param prevID ID of the run that this run will be inserted after if applicable.
    */
   modifyRun(runData: RunData, prevID?: string): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       // Loops through data, removes any keys that are falsey.
       const data = _.pickBy(runData, _.identity) as RunData;
       data.customData = _.pickBy(data.customData, _.identity);
@@ -196,8 +196,7 @@ export default class RunControl {
 
       // Check all teams have players, if not throw an error.
       if (!data.teams.every((team): boolean => !!team.players.length)) {
-        reject(new Error('Cannot accept run data as team(s) are missing player(s).'));
-        return;
+        throw new Error('Cannot accept run data as team(s) are missing player(s).');
       }
 
       // Check all players have names, if not throw an error.
@@ -205,8 +204,7 @@ export default class RunControl {
         team.players.every((player): boolean => !!player.name)
       ));
       if (!allNamesAdded) {
-        reject(new Error('Cannot accept run data as player(s) are missing name(s).'));
-        return;
+        throw new Error('Cannot accept run data as player(s) are missing name(s).');
       }
 
       // Verify and convert estimate.
@@ -216,8 +214,7 @@ export default class RunControl {
           data.estimate = msToTimeStr(ms);
           data.estimateS = ms / 1000;
         } else { // Throw error if format is incorrect.
-          reject(new Error('Cannot accept run data as estimate is in incorrect format.'));
-          return;
+          throw new Error('Cannot accept run data as estimate is in incorrect format.');
         }
       } else {
         delete data.estimate;
@@ -231,8 +228,7 @@ export default class RunControl {
           data.setupTime = msToTimeStr(ms);
           data.setupTimeS = ms / 1000;
         } else { // Throw error if format is incorrect.
-          reject(new Error('Cannot accept run data as setup time is in incorrect format.'));
-          return;
+          throw new Error('Cannot accept run data as setup time is in incorrect format.');
         }
       } else {
         delete data.setupTime;
@@ -258,9 +254,9 @@ export default class RunControl {
    * Removes the active run from the relevant replicant.
    */
   removeActiveRun(): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       if (['running', 'paused'].includes(this.timer.value.state)) {
-        reject(new Error('Cannot change run while timer is running/paused.'));
+        throw new Error('Cannot change run while timer is running/paused.');
       } else {
         this.activeRun.value = null;
         this.h.nodecg.sendMessage('timerReset', true);
@@ -273,9 +269,9 @@ export default class RunControl {
    * Removes all runs in the array and the currently active run.
    */
   removeAllRuns(): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       if (['running', 'paused'].includes(this.timer.value.state)) {
-        reject(new Error('Cannot remove all runs while timer is running/paused.'));
+        throw new Error('Cannot remove all runs while timer is running/paused.');
       } else {
         this.array.value.length = 0;
         this.removeActiveRun();

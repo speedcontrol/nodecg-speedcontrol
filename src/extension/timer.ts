@@ -103,21 +103,18 @@ export default class TimerApp {
    * @param force Force the timer to start, even if it's state is running.
    */
   startTimer(force?: boolean): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       // Error if the timer is disabled.
       if (this.changesDisabled.value) {
-        reject(new Error('Cannot start/resume timer as changes are disabled.'));
-        return;
+        throw new Error('Cannot start/resume timer as changes are disabled.');
       }
       // Error if the timer is finished.
       if (this.timerRep.value.state === 'finished') {
-        reject(new Error('Cannot start/resume timer as it is in the finished state.'));
-        return;
+        throw new Error('Cannot start/resume timer as it is in the finished state.');
       }
       // Error if the timer isn't stopped or paused (and we're not forcing it).
       if (!force && !['stopped', 'paused'].includes(this.timerRep.value.state)) {
-        reject(new Error('Cannot start/resume timer as it is not stopped/pasued.'));
-        return;
+        throw new Error('Cannot start/resume timer as it is not stopped/pasued.');
       }
 
       if (this.timer.currentPhase() === LS_TIMER_PHASE.NotRunning) {
@@ -135,16 +132,14 @@ export default class TimerApp {
    * Pause the timer.
    */
   pauseTimer(): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       // Error if the timer is disabled.
       if (this.changesDisabled.value) {
-        reject(new Error('Cannot start/resume timer as changes are disabled.'));
-        return;
+        throw new Error('Cannot start/resume timer as changes are disabled.');
       }
       // Error if the timer isn't running.
       if (this.timerRep.value.state !== 'running') {
-        reject(new Error('Cannot pause the timer as it is not running.'));
-        return;
+        throw new Error('Cannot pause the timer as it is not running.');
       }
       this.timer.pause();
       this.timerRep.value.state = 'paused';
@@ -156,16 +151,14 @@ export default class TimerApp {
    * Reset the timer.
    */
   resetTimer(force?: boolean): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       // Error if the timer is disabled.
       if (!force && this.changesDisabled.value) {
-        reject(new Error('Cannot start/resume timer as changes are disabled.'));
-        return;
+        throw new Error('Cannot start/resume timer as changes are disabled.');
       }
       // Error if the timer is stopped.
       if (this.timerRep.value.state === 'stopped') {
-        reject(new Error('Cannot reset the timer as it is stopped.'));
-        return;
+        throw new Error('Cannot reset the timer as it is stopped.');
       }
       this.timer.reset(false);
       this.resetTimerRepToDefault();
@@ -178,26 +171,22 @@ export default class TimerApp {
    * @param uuid Team's ID you wish to have finish (if there is an active run).
    */
   stopTimer(uuid?: string): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       // Error if the timer is disabled.
       if (this.changesDisabled.value) {
-        reject(new Error('Cannot start/resume timer as changes are disabled.'));
-        return;
+        throw new Error('Cannot start/resume timer as changes are disabled.');
       }
       // Error if timer is not running.
       if (this.timerRep.value.state !== 'running') {
-        reject(new Error('Cannot stop the timer as it is not running.'));
-        return;
+        throw new Error('Cannot stop the timer as it is not running.');
       }
       // Error if there's an active run but no UUID was sent.
       if (!uuid && this.activeRun.value) {
-        reject(new Error('Cannot stop the timer as a run is active but no team ID was supplied.'));
-        return;
+        throw new Error('Cannot stop the timer as a run is active but no team ID was supplied.');
       }
       // Error if the team has already finished.
       if (uuid && this.timerRep.value.teamFinishTimes[uuid]) {
-        reject(new Error('Cannot stop the timer as the specified team has already finished.'));
-        return;
+        throw new Error('Cannot stop the timer as the specified team has already finished.');
       }
 
       // If we have a UUID and an active run, set that team as finished.
@@ -227,21 +216,18 @@ export default class TimerApp {
    * @param uuid ID of team you wish to undo (if there is an active run).
    */
   undoTimer(uuid?: string): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       // Error if the timer is disabled.
       if (this.changesDisabled.value) {
-        reject(new Error('Cannot start/resume timer as changes are disabled.'));
-        return;
+        throw new Error('Cannot start/resume timer as changes are disabled.');
       }
       // Error if timer is not finished or running.
       if (!['finished', 'running'].includes(this.timerRep.value.state)) {
-        reject(new Error('Cannot undo the timer as it is not finished/running.'));
-        return;
+        throw new Error('Cannot undo the timer as it is not finished/running.');
       }
       // Error if there's an active run but no UUID was sent.
       if (!uuid && this.activeRun.value) {
-        reject(new Error('Cannot undo the timer as a run is active but no team ID was supplied.'));
-        return;
+        throw new Error('Cannot undo the timer as a run is active but no team ID was supplied.');
       }
 
       // If we have a UUID and an active run, remove that team's finish time.
@@ -267,21 +253,18 @@ export default class TimerApp {
    * @param time Time string (HH:MM:SS).
    */
   editTimer(time: string): Promise<void> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve): void => {
       // Error if the timer is disabled.
       if (this.changesDisabled.value) {
-        reject(new Error('Cannot start/resume timer as changes are disabled.'));
-        return;
+        throw new Error('Cannot start/resume timer as changes are disabled.');
       }
       // Error if the timer is not stopped/paused.
       if (!['stopped', 'paused'].includes(this.timerRep.value.state)) {
-        reject(new Error('Cannot edit the timer as it is not stopped/paused.'));
-        return;
+        throw new Error('Cannot edit the timer as it is not stopped/paused.');
       }
       // Error if the string formatting is not correct.
       if (!time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-        reject(new Error('Cannot edit the timer as the supplied string is in the incorrect format.'));
-        return;
+        throw new Error('Cannot edit the timer as the supplied string is in the incorrect format.');
       }
       const ms = timeStrToMS(time);
       this.setTime(ms);
