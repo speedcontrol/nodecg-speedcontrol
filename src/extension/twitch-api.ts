@@ -2,13 +2,12 @@ import express from 'express';
 import needle, { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
 import { TwitchAPIData, TwitchChannelInfo } from '../../schemas';
 import * as events from './util/events';
-import Helpers from './util/helpers';
+import * as h from './util/helpers';
 import { get } from './util/nodecg';
 
-const { processAck, to } = Helpers;
+const { processAck, to } = h;
 const nodecg = get();
 
-const h = new Helpers(nodecg);
 const config = h.bundleConfig();
 const apiData = nodecg.Replicant<TwitchAPIData>('twitchAPIData');
 const channelInfo = nodecg.Replicant<TwitchChannelInfo>('twitchChannelInfo');

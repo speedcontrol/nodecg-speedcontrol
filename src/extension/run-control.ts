@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { RunDataActiveRunSurrounding, TwitchAPIData } from '../../schemas';
 import { RunData, RunDataActiveRun, RunDataArray, RunDataPlayer, RunDataTeam, Timer } from '../../types'; // eslint-disable-line
 import * as events from './util/events';
-import Helpers from './util/helpers';
+import * as h from './util/helpers';
 import { get } from './util/nodecg';
 
 const {
@@ -13,10 +13,9 @@ const {
   formPlayerNamesStr,
   getTwitchChannels,
   to,
-} = Helpers;
+} = h;
 const nodecg = get();
 
-const h = new Helpers(nodecg);
 const array = nodecg.Replicant<RunDataArray>('runDataArray');
 const activeRun = nodecg.Replicant<RunDataActiveRun>('runDataActiveRun');
 const activeRunSurr = nodecg.Replicant<RunDataActiveRunSurrounding>('runDataActiveRunSurrounding');

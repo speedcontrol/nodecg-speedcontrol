@@ -3,10 +3,10 @@ import livesplitCore from 'livesplit-core';
 import { RunFinishTimes, TimerChangesDisabled } from '../../schemas';
 import { RunDataActiveRun, Timer } from '../../types';
 import * as events from './util/events';
-import Helpers from './util/helpers';
+import * as h from './util/helpers';
 import { get } from './util/nodecg';
 
-const { msToTimeStr, timeStrToMS, processAck } = Helpers;
+const { msToTimeStr, timeStrToMS, processAck } = h;
 const nodecg = get();
 
 const timerRep = nodecg.Replicant<Timer>('timer');

@@ -9,7 +9,7 @@ import uuid from 'uuid/v4';
 import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
 import { RunData, RunDataArray, RunDataPlayer, RunDataTeam, UserData } from '../../types'; // eslint-disable-line
 import * as events from './util/events';
-import Helpers from './util/helpers';
+import * as h from './util/helpers';
 import { get } from './util/nodecg';
 
 const {
@@ -18,7 +18,7 @@ const {
   nullToNegOne,
   sleep,
   processAck,
-} = Helpers;
+} = h;
 const nodecg = get();
 
 interface ParsedMarkdown {
@@ -61,7 +61,6 @@ interface ImportOptions {
   split: 0 | 1;
 }
 
-const h = new Helpers(nodecg);
 const runDataArray = nodecg.Replicant<RunDataArray>('runDataArray');
 const config = h.bundleConfig();
 const md = new MarkdownIt();

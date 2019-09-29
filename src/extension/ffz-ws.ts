@@ -3,13 +3,12 @@ import TwitchJS from 'twitch-js';
 import WebSocket from 'ws';
 import { TwitchAPIData } from '../../schemas';
 import * as events from './util/events';
-import Helpers from './util/helpers';
+import * as h from './util/helpers';
 import { get } from './util/nodecg';
 
-const { randomInt, to, processAck } = Helpers;
+const { randomInt, to, processAck } = h;
 const nodecg = get();
 
-const h = new Helpers(nodecg);
 const config = h.bundleConfig();
 const twitchAPIData = nodecg.Replicant<TwitchAPIData>('twitchAPIData');
 let ws: WebSocket;
