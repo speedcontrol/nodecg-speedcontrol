@@ -43,7 +43,7 @@
     "baseUrl": ".",                           /* Base directory to resolve non-absolute module names. */
     "paths": {
       "*": [
-        "node_modules/*",
+        "node_modules/*"
       ],
       "nodecg/*": [
         "../../*"
@@ -70,6 +70,7 @@
   "include": [
     "src/dashboard/**/*.ts",
     "src/dashboard/**/*.vue",
+    "src/dashboard/**/*.html",
     "../../types/browser.d.ts"
   ]
 }
