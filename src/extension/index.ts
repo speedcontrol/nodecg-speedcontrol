@@ -1,24 +1,19 @@
-/* eslint-disable no-new */
+/* eslint-disable global-require */
 
 import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line
 import { ExtensionReturn } from '../../types';
-import FFZWS from './ffz-ws';
-import HoraroImport from './horaro-import';
-import RunControl from './run-control';
-import SRComAPI from './srcom-api';
-import TimerApp from './timer';
-import TwitchAPI from './twitch-api';
-import { listenFor, sendMessage, setCtx as evtCtxSet } from './util/events';
+import { listenFor, sendMessage } from './util/events';
+import { set } from './util/nodecg';
 
 export = (nodecg: NodeCG): ExtensionReturn => {
-  evtCtxSet(nodecg);
+  set(nodecg);
 
-  new RunControl(nodecg);
-  new TimerApp(nodecg);
-  new HoraroImport(nodecg);
-  new TwitchAPI(nodecg);
-  new SRComAPI(nodecg);
-  new FFZWS(nodecg);
+  require('./run-control');
+  require('./timer');
+  require('./horaro-import');
+  require('./twitch-api');
+  require('./srcom-api');
+  require('./ffz-ws');
 
   return {
     listenFor,

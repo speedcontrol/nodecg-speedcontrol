@@ -1,19 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { EventEmitter } from 'events';
-import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line
 import { SendMessageAck, SendMessageArgsMap, SendMessageReturnMap } from '../../../types';
+import { get } from './nodecg';
 
 const emitter = new EventEmitter();
-let nodecg: NodeCG;
-
-/**
- * Sets NodeCG context from index.ts file.
- * @param ctx NodeCG context.
- */
-export function setCtx(ctx: NodeCG): void {
-  nodecg = ctx;
-}
+const nodecg = get();
 
 /**
  * Sends a message that can be listened to by the "listenFor" function.
