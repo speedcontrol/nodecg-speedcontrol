@@ -26,7 +26,7 @@
           End of Marathon
         </span>
         <span v-else>
-          No Runs Imported
+          No Runs Added
         </span>
       </v-btn>
     </div>
