@@ -257,7 +257,7 @@ if (timerRep.value.state === 'running') {
   const previousTime = timerRep.value.milliseconds;
   const timeOffset = previousTime + missedTime;
   setTime(timeOffset);
-  nodecg.log.info('Timer recovered %s seconds of lost time.', (missedTime / 1000).toFixed(2));
+  nodecg.log.info('[Timer] Recovered %s seconds of lost time.', (missedTime / 1000).toFixed(2));
   startTimer(true);
 }
 

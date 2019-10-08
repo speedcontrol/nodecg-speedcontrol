@@ -353,7 +353,7 @@ function importSchedule(opts: ImportOptions, dashUUID: string): Promise<RunDataA
         }
 
         nodecg.log.debug(
-          'Horaro Schedule Import: Successfully imported %s/%s.',
+          '[Horaro] Successfully imported %s/%s.',
           index + 1,
           runItems.length,
         );
@@ -389,15 +389,15 @@ nodecg.listenFor('importSchedule', (opts: {
     if (importStatus.value.importing) {
       throw new Error('Cannot import schedule as a schedule is already being imported.');
     }
-    nodecg.log.info('Started importing Horaro schedule.');
+    nodecg.log.info('[Horaro] Started importing schedule.');
     importSchedule(opts.opts, opts.dashUUID).then(() => {
-      nodecg.log.info('Successfully imported Horaro schedule.');
+      nodecg.log.info('[Horaro] Successfully imported schedule.');
       processAck(null, ack);
     }).catch((err) => {
       throw err;
     });
   } catch (err) {
-    nodecg.log.warn('Error importing Horaro schedule:', err);
+    nodecg.log.warn('[Horaro] Error importing schedule:', err);
     processAck(err, ack);
   }
 });
