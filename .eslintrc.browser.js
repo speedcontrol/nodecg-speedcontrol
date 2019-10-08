@@ -5,7 +5,7 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     project: 'tsconfig.browser.json',
     sourceType: 'module',
-    extraFileExtensions: ['.vue', '.html'],
+    extraFileExtensions: ['.vue'],
   },
   env: {
     es6: true,
