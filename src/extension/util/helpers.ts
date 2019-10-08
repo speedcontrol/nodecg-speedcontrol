@@ -96,7 +96,7 @@ export function sleep(ms: number): Promise<void> {
  */
 export function findRunIndexFromId(id?: string): number {
   // @ts-ignore: readReplicant not in NodeCGServer typings
-  const arr: RunDataArray = this.nodecg.readReplicant('runDataArray');
+  const arr: RunDataArray = nodecg.readReplicant('runDataArray');
   return arr.findIndex((run): boolean => run.id === id);
 }
 
