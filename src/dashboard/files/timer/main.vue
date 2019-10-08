@@ -32,13 +32,20 @@
       </div>
     </div>
     <div
-      v-if="disableChanges"
+      v-if="disableChanges || tempEnable"
       id="DisableOverride"
     >
       <v-btn
-        @click="disableChanges = false"
+        v-if="disableChanges"
+        @click="disableChanges = false; tempEnable = true"
       >
         Enable Changes
+      </v-btn>
+      <v-btn
+        v-if="tempEnable"
+        @click="disableChanges = true;"
+      >
+        Disable Changes
       </v-btn>
       <div>Only use this button if needed.</div>
     </div>
@@ -70,10 +77,18 @@ export default Vue.extend({
     UndoButton,
     Team,
   },
+  data() {
+    return {
+      tempEnable: false,
+    };
+  },
   computed: {
+    activeRun() {
+      return store.state.runDataActiveRun;
+    },
     teams() {
-      return (store.state.runDataActiveRun)
-        ? store.state.runDataActiveRun.teams : [];
+      return (this.activeRun)
+        ? this.activeRun.teams : [];
     },
     disableChanges: {
       get() {
@@ -82,6 +97,16 @@ export default Vue.extend({
       set(value: boolean) {
         store.commit('updateTimerDisabledToggle', { value });
       },
+    },
+  },
+  watch: {
+    disableChanges(val) {
+      if (val) {
+        this.tempEnable = false;
+      }
+    },
+    activeRun() {
+      this.tempEnable = false;
     },
   },
 });
