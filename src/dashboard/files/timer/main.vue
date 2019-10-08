@@ -31,6 +31,17 @@
         ></team>
       </div>
     </div>
+    <div
+      v-if="disableChanges"
+      id="DisableOverride"
+    >
+      <v-btn
+        @click="disableChanges = false"
+      >
+        Enable Changes
+      </v-btn>
+      <div>Only use this button if needed.</div>
+    </div>
     <!-- Hidden toggle for testing -->
     <!--<v-switch
       v-model="disableChanges"
@@ -85,15 +96,12 @@ export default Vue.extend({
   #Controls {
     padding-top: 10px;
   }
-
   #Controls > * {
     flex: 1;
   }
-
   #Controls > *:not(:first-child) {
     margin-left: 5px;
   }
-
   #Controls >>> .v-btn {
     min-width: 0;
     width: 100%;
@@ -101,5 +109,16 @@ export default Vue.extend({
 
   #Teams {
     padding-top: 10px;
+  }
+
+  #DisableOverride {
+    padding-top: 10px;
+  }
+  #DisableOverride > .v-btn {
+    width: 100%;
+  }
+  #DisableOverride > div {
+    margin-top: 5px;
+    font-style: italic;
   }
 </style>
