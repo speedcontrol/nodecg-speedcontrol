@@ -29,6 +29,13 @@
           No Runs Added
         </span>
       </v-btn>
+      <v-alert
+        v-if="disableChange"
+        dense
+        type="info"
+      >
+        Cannot change run while timer is {{ timerState }}.
+      </v-alert>
     </div>
     <run-list></run-list>
   </v-app>
@@ -57,8 +64,11 @@ export default Vue.extend({
     nextRun(): RunData | undefined {
       return this.runDataArray.find((run) => run.id === this.runDataActiveRunSurrounding.next);
     },
+    timerState() {
+      return store.state.timer.state;
+    },
     disableChange() {
-      return ['running', 'paused'].includes(store.state.timer.state);
+      return ['running', 'paused'].includes(this.timerState);
     },
   },
   methods: {
