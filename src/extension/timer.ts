@@ -142,8 +142,9 @@ function stopTimer(uuid?: string): Promise<void> {
       throw new Error('Cannot stop the timer as it is not running.');
     }
     // Error if there's an active run but no UUID was sent.
-    if (!uuid && activeRun.value) {
-      throw new Error('Cannot stop the timer as a run is active but no team ID was supplied.');
+    if (!uuid && activeRun.value && activeRun.value.teams.length) {
+      throw new Error('Cannot stop the timer as a run is active that has teams'
+      + ' but no team ID was supplied.');
     }
     // Error if the team has already finished.
     if (uuid && timerRep.value.teamFinishTimes[uuid]) {
