@@ -1,5 +1,8 @@
 <template>
-  <v-tooltip right>
+  <v-tooltip
+    right
+    :disabled="disabled"
+  >
     <template v-slot:activator="{ on }">
       <span v-on="on">
         <v-btn
