@@ -65,12 +65,13 @@ function changeSurroundingRuns(): void {
  * Change the active run to the one specified if it exists.
  * @param id The unique ID of the run you wish to change to.
  */
-function changeActiveRun(id?: string): Promise<void> {
+function changeActiveRun(id?: string): Promise<boolean> {
   return new Promise(async (resolve): Promise<void> => {
     const runData = array.value.find((run): boolean => run.id === id);
     if (['running', 'paused'].includes(timer.value.state)) {
       throw new Error('Cannot change run while timer is running/paused.');
     } else if (runData) {
+      let noTwitchGame = false;
       if (twitchAPIData.value.sync) {
         // Constructing Twitch title and game to send off.
         const status = h.bundleConfig().twitch.streamTitle
@@ -82,6 +83,7 @@ function changeActiveRun(id?: string): Promise<void> {
           ? await to(events.sendMessage('srcomTwitchGameSearch', runData.game))
           : [null, game];
         [, game] = await to(events.sendMessage('twitchGameSearch', game));
+        noTwitchGame = !game;
         game = game || h.bundleConfig().twitch.streamDefaultGame;
         to(events.sendMessage('twitchUpdateChannelInfo', { status, game }));
 
@@ -95,7 +97,7 @@ function changeActiveRun(id?: string): Promise<void> {
       }
       activeRun.value = clone(runData);
       nodecg.sendMessage('timerReset', true);
-      resolve();
+      resolve(noTwitchGame);
     } else if (!id) {
       throw new Error('Cannot change run as no run ID was supplied.');
     } else {
@@ -232,7 +234,7 @@ function removeAllRuns(): Promise<void> {
 // NodeCG messaging system.
 nodecg.listenFor('changeActiveRun', (data, ack) => {
   changeActiveRun(data)
-    .then(() => processAck(null, ack))
+    .then((noTwitchGame) => processAck(null, ack, noTwitchGame))
     .catch((err) => processAck(err, ack));
 });
 nodecg.listenFor('removeRun', (data, ack) => {
@@ -247,7 +249,7 @@ nodecg.listenFor('modifyRun', (data, ack) => {
 });
 nodecg.listenFor('changeToNextRun', (data, ack) => {
   changeActiveRun(activeRunSurr.value.next)
-    .then(() => processAck(null, ack))
+    .then((noTwitchGame) => processAck(null, ack, noTwitchGame))
     .catch((err) => processAck(err, ack));
 });
 nodecg.listenFor('returnToStart', (data, ack) => {

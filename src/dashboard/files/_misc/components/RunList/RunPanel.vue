@@ -134,8 +134,13 @@ export default Vue.extend({
       ).name;
     },
     playRun() {
-      nodecg.sendMessage('changeActiveRun', this.runData.id).then(() => {
-        // run change successful
+      nodecg.sendMessage('changeActiveRun', this.runData.id).then((noTwitchGame) => {
+        if (noTwitchGame) {
+          const alertDialog = nodecg.getDialog('alert-dialog') as any;
+          alertDialog.querySelector('iframe').contentWindow.open({
+            name: 'NoTwitchGame',
+          });
+        }
       }).catch(() => {
         // run change unsuccessful
       });

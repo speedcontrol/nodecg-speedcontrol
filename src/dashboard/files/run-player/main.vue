@@ -90,8 +90,13 @@ export default Vue.extend({
     },
     playNextRun() {
       if (this.nextRun) {
-        nodecg.sendMessage('changeToNextRun').then(() => {
-          // run change successful
+        nodecg.sendMessage('changeToNextRun').then((noTwitchGame) => {
+          if (noTwitchGame) {
+            const alertDialog = nodecg.getDialog('alert-dialog') as any;
+            alertDialog.querySelector('iframe').contentWindow.open({
+              name: 'NoTwitchGame',
+            });
+          }
         }).catch(() => {
           // run change unsuccessful
         });

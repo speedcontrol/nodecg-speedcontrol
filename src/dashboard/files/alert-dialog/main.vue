@@ -16,6 +16,7 @@ import ReturnToStartConfirm from './components/ReturnToStartConfirm.vue';
 import RemoveAllRunsConfirm from './components/RemoveAllRunsConfirm.vue';
 import RemoveRunConfirm from './components/RemoveRunConfirm.vue';
 import TwitchLogoutConfirm from './components/TwitchLogoutConfirm.vue';
+import NoTwitchGame from './components/NoTwitchGame.vue';
 import { nodecg } from '../_misc/nodecg';
 
 export default Vue.extend({
@@ -62,6 +63,8 @@ export default Vue.extend({
               return RemoveRunConfirm;
             case 'TwitchLogoutConfirm':
               return TwitchLogoutConfirm;
+            case 'NoTwitchGame':
+              return NoTwitchGame;
             default:
               return undefined;
           }
