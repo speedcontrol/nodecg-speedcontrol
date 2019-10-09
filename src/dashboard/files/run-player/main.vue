@@ -6,7 +6,7 @@
         :disabled="!activeRun || disableChange"
         @click="returnToStartConfirm"
       >
-        Return To Start
+        Return to Start
       </v-btn>
     </div>
     <div class="NextRun">
@@ -18,12 +18,12 @@
         <span
           v-if="nextRun"
         >
-          <v-icon>mdi-play</v-icon>{{ (nextRun) ? nextRun.game : '' }}
+          <v-icon left>mdi-play</v-icon>{{ nextRunGameName }}
         </span>
         <span
           v-else-if="runDataArray.length"
         >
-          End of Marathon
+          No Runs Left
         </span>
         <span v-else>
           No Runs Added
@@ -63,6 +63,12 @@ export default Vue.extend({
     },
     nextRun(): RunData | undefined {
       return this.runDataArray.find((run) => run.id === this.runDataActiveRunSurrounding.next);
+    },
+    nextRunGameName() {
+      if (this.nextRun && this.nextRun.game) {
+        return `${this.nextRun.game.slice(0, 35)}${(this.nextRun.game.length > 35) ? '...' : ''}`;
+      }
+      return '(The Run with No Name)';
     },
     timerState() {
       return store.state.timer.state;

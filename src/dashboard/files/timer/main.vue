@@ -37,12 +37,14 @@
     >
       <v-btn
         v-if="disableChanges"
+        block
         @click="disableChanges = false; tempEnable = true"
       >
         Enable Changes
       </v-btn>
       <v-btn
         v-if="tempEnable"
+        block
         @click="disableChanges = true;"
       >
         Disable Changes
@@ -138,9 +140,6 @@ export default Vue.extend({
 
   #DisableOverride {
     padding-top: 10px;
-  }
-  #DisableOverride > .v-btn {
-    width: 100%;
   }
   #DisableOverride > div {
     margin-top: 5px;

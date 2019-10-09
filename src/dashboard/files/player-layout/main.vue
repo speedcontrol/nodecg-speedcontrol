@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    This order is only temporary, it does not modify the permenant copy.
+    <em>This order is only temporary, it does not modify the permenant copy.</em>
     <div v-if="!teams.length">
       <br>No Teams/Run Available
     </div>
