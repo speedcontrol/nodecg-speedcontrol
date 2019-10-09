@@ -78,12 +78,14 @@ function changeActiveRun(id?: string): Promise<boolean> {
           .replace(new RegExp('{{game}}', 'g'), runData.game || '')
           .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
           .replace(new RegExp('{{category}}', 'g'), runData.category || '');
-        let game = runData.gameTwitch;
-        if (!game) {
+        let game = runData.gameTwitch || runData.game;
+        if (!runData.gameTwitch && runData.game) {
           const [, srcomGame] = await to(events.sendMessage('srcomTwitchGameSearch', runData.game));
           game = srcomGame || game;
         }
-        [, game] = await to(events.sendMessage('twitchGameSearch', game));
+        if (game) {
+          [, game] = await to(events.sendMessage('twitchGameSearch', game));
+        }
         noTwitchGame = !game;
         to(events.sendMessage('twitchUpdateChannelInfo', {
           status,
