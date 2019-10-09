@@ -79,13 +79,16 @@ function changeActiveRun(id?: string): Promise<boolean> {
           .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
           .replace(new RegExp('{{category}}', 'g'), runData.category || '');
         let game = runData.gameTwitch;
-        [, game] = (!game)
-          ? await to(events.sendMessage('srcomTwitchGameSearch', runData.game))
-          : [null, game];
+        if (!game) {
+          const [, srcomGame] = await to(events.sendMessage('srcomTwitchGameSearch', runData.game));
+          game = srcomGame || game;
+        }
         [, game] = await to(events.sendMessage('twitchGameSearch', game));
         noTwitchGame = !game;
-        game = game || h.bundleConfig().twitch.streamDefaultGame;
-        to(events.sendMessage('twitchUpdateChannelInfo', { status, game }));
+        to(events.sendMessage('twitchUpdateChannelInfo', {
+          status,
+          game: game || h.bundleConfig().twitch.streamDefaultGame,
+        }));
 
         // Construct/send featured channels if enabled.
         if (h.bundleConfig().twitch.ffzIntegration) {
@@ -95,6 +98,7 @@ function changeActiveRun(id?: string): Promise<boolean> {
           ));
         }
       }
+
       activeRun.value = clone(runData);
       nodecg.sendMessage('timerReset', true);
       resolve(noTwitchGame);
