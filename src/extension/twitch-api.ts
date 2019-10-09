@@ -270,7 +270,9 @@ function searchForGame(query: string): Promise<string> {
       } else if (!resp.body.games || !resp.body.games.length) {
         throw new Error(`No game matches for "${query}".`);
       }
-      resolve(resp.body.games[0].name);
+      const results = resp.body.games as { name: string }[];
+      const exact = results.find((game) => game.name.toLowerCase() === query.toLowerCase());
+      resolve((exact) ? exact.name : results[0].name);
     } catch (err) {
       reject(err);
     }
