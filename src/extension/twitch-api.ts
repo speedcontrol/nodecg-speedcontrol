@@ -200,7 +200,7 @@ function updateChannelInfo(status: string, game: string): Promise<void> {
         `/channels/${apiData.value.channelID}`,
         {
           channel: {
-            status,
+            status: status.slice(0, 140),
             game,
           },
         },
