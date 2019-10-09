@@ -87,7 +87,7 @@
         Update
       </v-btn>
       <v-btn
-        v-if="channelInfo.broadcaster_type === 'partner'"
+        v-if="['affiliate', 'partner'].includes(channelInfo.broadcaster_type)"
         block
         @click="startCommercial"
       >
