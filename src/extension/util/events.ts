@@ -2,10 +2,9 @@
 
 import { EventEmitter } from 'events';
 import { SendMessageAck, SendMessageArgsMap, SendMessageReturnMap } from '../../../types';
-import { get } from './nodecg';
+import { get as nodecg } from './nodecg';
 
 const emitter = new EventEmitter();
-const nodecg = get();
 
 /**
  * Sends a message that can be listened to by the "listenFor" function.
@@ -17,7 +16,7 @@ export function sendMessage<K extends keyof SendMessageArgsMap>(
   data?: SendMessageArgsMap[K],
 ): Promise<SendMessageReturnMap[K]> {
   return new Promise((resolve, reject): void => {
-    nodecg.log.debug(`[events] sendMessage triggered, "${name}":`, JSON.stringify(data));
+    nodecg().log.debug(`[events] sendMessage triggered, "${name}":`, JSON.stringify(data));
     emitter.emit(name, data, (err: Error | null, data_?: any) => {
       if (!err) {
         resolve(data_);
