@@ -131,7 +131,7 @@ function resetTimer(force?: boolean): Promise<void> {
  * Stop/finish the timer.
  * @param uuid Team's ID you wish to have finish (if there is an active run).
  */
-function stopTimer(uuid?: string): Promise<void> {
+function stopTimer(uuid?: string, forfeit?: boolean): Promise<void> {
   return new Promise((resolve): void => {
     // Error if the timer is disabled.
     if (changesDisabled.value) {
@@ -155,7 +155,12 @@ function stopTimer(uuid?: string): Promise<void> {
     if (uuid && activeRun.value) {
       const timerRepCopy = clone(timerRep.value);
       delete timerRepCopy.teamFinishTimes;
-      timerRep.value.teamFinishTimes[uuid] = timerRepCopy;
+      delete timerRepCopy.state;
+
+      timerRep.value.teamFinishTimes[uuid] = {
+        ...timerRepCopy,
+        ...{ state: (forfeit) ? 'forfeit' : 'completed' },
+      };
     }
 
     // Stop the timer if all the teams have finished (or no teams exist).
@@ -278,8 +283,8 @@ nodecg.listenFor('timerReset', (force, ack) => {
     .then(() => processAck(null, ack))
     .catch((err) => processAck(err, ack));
 });
-nodecg.listenFor('timerStop', (uuid, ack) => {
-  stopTimer(uuid)
+nodecg.listenFor('timerStop', (data, ack) => {
+  stopTimer(data.uuid, data.forfeit)
     .then(() => processAck(null, ack))
     .catch((err) => processAck(err, ack));
 });
@@ -305,8 +310,8 @@ events.listenFor('timerReset', (force, ack) => {
     .then(() => ack(null))
     .catch((err) => ack(err));
 });
-events.listenFor('timerStop', (uuid, ack) => {
-  stopTimer(uuid)
+events.listenFor('timerStop', (data, ack) => {
+  stopTimer(data.uuid, data.forfeit)
     .then(() => ack(null))
     .catch((err) => ack(err));
 });

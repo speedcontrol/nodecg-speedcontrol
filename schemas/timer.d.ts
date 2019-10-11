@@ -13,7 +13,7 @@ export interface Timer {
   teamFinishTimes: {
     [k: string]: {
       time: string;
-      state: "stopped" | "running" | "paused" | "finished";
+      state: "forfeit" | "completed";
       milliseconds: number;
       timestamp: number;
     };

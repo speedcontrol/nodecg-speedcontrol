@@ -112,7 +112,7 @@
         "name": "timer",
         "title": "Timer",
         "file": "timer.html",
-        "width": 2
+        "width": 3
       },
       {
         "name": "twitch-control",

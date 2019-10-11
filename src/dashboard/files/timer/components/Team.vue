@@ -3,6 +3,10 @@
     <stop-button
       :info="info"
     ></stop-button>
+    <stop-button
+      :info="info"
+      forfeit
+    ></stop-button>
     <undo-button
       :info="info"
     ></undo-button>
@@ -22,8 +26,11 @@
           >,</span>
         </span>
       </span>
-      <span v-if="finishTime">
+      <span v-if="finishTime && state === 'completed'">
         [{{ finishTime }}]
+      </span>
+      <span v-else-if="finishTime && state === 'forfeit'">
+        [Forfeit]
       </span>
     </div>
   </div>
@@ -57,6 +64,12 @@ export default Vue.extend({
     finishTime(): string | undefined {
       if (store.state.timer.teamFinishTimes[this.info.id]) {
         return store.state.timer.teamFinishTimes[this.info.id].time;
+      }
+      return undefined;
+    },
+    state(): string | undefined {
+      if (store.state.timer.teamFinishTimes[this.info.id]) {
+        return store.state.timer.teamFinishTimes[this.info.id].state;
       }
       return undefined;
     },

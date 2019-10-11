@@ -42,10 +42,8 @@
           "state": {
             "type": "string",
             "enum": [
-              "stopped",
-              "running",
-              "paused",
-              "finished"
+              "forfeit",
+              "completed"
             ]
           },
           "milliseconds": {

@@ -10,11 +10,13 @@
             :disabled="isDisabled"
             @click="button"
           >
-            <v-icon>mdi-check</v-icon>
+            <v-icon v-if="forfeit">mdi-close</v-icon>
+            <v-icon v-else>mdi-check</v-icon>
           </v-btn>
         </span>
       </template>
-      <span>Stop</span>
+      <span v-if="forfeit">Forfeit</span>
+      <span v-else>Stop</span>
     </v-tooltip>
   </div>
 </template>
@@ -35,6 +37,10 @@ export default Vue.extend({
         };
       },
     } as PropOptions<{ id: string | undefined }>,
+    forfeit: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     isDisabled(): boolean {
@@ -45,7 +51,10 @@ export default Vue.extend({
   },
   methods: {
     button() {
-      nodecg.sendMessage('timerStop', this.info.id).then(() => {
+      nodecg.sendMessage('timerStop', {
+        uuid: this.info.id,
+        forfeit: this.forfeit,
+      }).then(() => {
         // successful
       }).catch(() => {
         // error

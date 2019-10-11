@@ -13,6 +13,11 @@
           v-if="teams.length <= 1"
           :info="teams[0]"
         ></stop-button>
+        <stop-button
+          v-if="teams.length <= 1"
+          :info="teams[0]"
+          forfeit
+        ></stop-button>
         <undo-button
           v-if="teams.length <= 1"
           :info="teams[0]"
