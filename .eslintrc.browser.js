@@ -39,12 +39,13 @@ module.exports = {
       },
     }],
     'vue/no-parsing-error': 'off', // Due to some issue in typescript-eslint(?), off for now.
+    'max-len': ["error", { "code": 100 }],
+    'vue/valid-v-on': 'off', // I legit think this is broken.
+    'vue/valid-v-if': 'off', // I legit think this is broken.
+    'vue/valid-v-bind': 'off', // I legit think this is broken.
+    'vue/valid-v-model': 'off', // I legit think this is broken.
     '@typescript-eslint/explicit-function-return-type': 'off', // We *shall* fix this!
     '@typescript-eslint/no-explicit-any': 'off', // We *shall* fix this!
     'no-async-promise-executor': 'off', // We *shall* fix this!
-    'vue/valid-v-on': 'off', // We *shall* fix this!
-    'vue/valid-v-if': 'off', // We *shall* fix this!
-    'vue/valid-v-bind': 'off', // We *shall* fix this!
-    'vue/valid-v-model': 'off', // We *shall* fix this!
   }
 };
