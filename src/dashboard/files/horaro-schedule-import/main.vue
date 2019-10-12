@@ -126,7 +126,6 @@ export default Vue.extend({
           predict: [
             'system',
             'platform',
-            'column',
           ],
         },
         {
