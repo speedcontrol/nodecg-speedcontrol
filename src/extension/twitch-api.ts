@@ -23,12 +23,12 @@ apiData.value.featuredChannels.length = 0; // Empty on every start.
 function logout(): Promise<void> {
   return new Promise((resolve): void => {
     if (apiData.value.state === 'off') {
-      throw new Error('Integration not ready.');
+      throw new Error('Integration not ready');
     }
     apiData.value = { state: 'off', sync: false, featuredChannels: [] };
     channelInfo.value = {};
     global.clearTimeout(channelInfoTO);
-    nodecg.log.info('[Twitch] Integration successfully logged out.');
+    nodecg.log.info('[Twitch] Integration successfully logged out');
     resolve();
   });
 }
@@ -75,7 +75,7 @@ function request(
   return new Promise(async (resolve, reject): Promise<void> => {
     try {
       nodecg.log.debug(
-        `[Twitch] API ${method.toUpperCase()} request processing on ${endpoint}.`,
+        `[Twitch] API ${method.toUpperCase()} request processing on ${endpoint}`,
       );
       let retry = false;
       let attempts = 0;
@@ -112,7 +112,7 @@ function request(
         }
       } while (retry);
       nodecg.log.debug(
-        `[Twitch] API ${method.toUpperCase()} request successful on ${endpoint}.`,
+        `[Twitch] API ${method.toUpperCase()} request successful on ${endpoint}`,
       );
       resolve(resp);
     } catch (err) {
@@ -131,7 +131,7 @@ function request(
 function refreshToken(): Promise<void> {
   return new Promise(async (resolve, reject): Promise<void> => {
     try {
-      nodecg.log.info('[Twitch] Attempting to refresh access token.');
+      nodecg.log.info('[Twitch] Attempting to refresh access token');
       const resp = await needle(
         'post',
         'https://id.twitch.tv/oauth2/token',
@@ -146,12 +146,12 @@ function refreshToken(): Promise<void> {
         throw new Error(JSON.stringify(resp.body));
         // Do we need to retry here?
       }
-      nodecg.log.info('[Twitch] Successfully refreshed access token.');
+      nodecg.log.info('[Twitch] Successfully refreshed access token');
       apiData.value.accessToken = resp.body.access_token;
       apiData.value.refreshToken = resp.body.refresh_token;
       resolve();
     } catch (err) {
-      nodecg.log.warn('[Twitch] Error refreshing access token, you need to relogin.');
+      nodecg.log.warn('[Twitch] Error refreshing access token, you need to relogin');
       await to(logout());
       reject(err);
     }
@@ -174,7 +174,7 @@ async function refreshChannelInfo(): Promise<void> {
     );
   } catch (err) {
     // Try again after 10 seconds.
-    nodecg.log.warn('[Twitch] Error getting channel information.');
+    nodecg.log.warn('[Twitch] Error getting channel information');
     nodecg.log.debug('[Twitch] Error getting channel information:', err.message);
     channelInfoTO = global.setTimeout(
       (): Promise<void> => refreshChannelInfo(),
@@ -191,10 +191,10 @@ async function refreshChannelInfo(): Promise<void> {
 function updateChannelInfo(status: string, game: string): Promise<void> {
   return new Promise(async (resolve, reject): Promise<void> => {
     if (apiData.value.state !== 'on') {
-      throw new Error('Integration not ready.');
+      throw new Error('Integration not ready');
     }
     try {
-      nodecg.log.info('[Twitch] Attempting to update channel information.');
+      nodecg.log.info('[Twitch] Attempting to update channel information');
       const resp = await request(
         'put',
         `/channels/${apiData.value.channelID}`,
@@ -208,11 +208,11 @@ function updateChannelInfo(status: string, game: string): Promise<void> {
       if (resp.statusCode !== 200) {
         throw new Error(JSON.stringify(resp.body));
       }
-      nodecg.log.info('[Twitch] Successfully updated channel information.');
+      nodecg.log.info('[Twitch] Successfully updated channel information');
       channelInfo.value = resp.body;
       resolve();
     } catch (err) {
-      nodecg.log.warn('[Twitch] Error updating channel information.');
+      nodecg.log.warn('[Twitch] Error updating channel information');
       nodecg.log.debug('[Twitch] Error updating channel information:', err.message);
       reject(err);
     }
@@ -225,10 +225,10 @@ function updateChannelInfo(status: string, game: string): Promise<void> {
 function startCommercial(): Promise<{ duration: number }> {
   return new Promise(async (resolve, reject): Promise<void> => {
     if (apiData.value.state !== 'on') {
-      throw new Error('Integration not ready.');
+      throw new Error('Integration not ready');
     }
     try {
-      nodecg.log.info('[Twitch] Requested a commercial to be started.');
+      nodecg.log.info('[Twitch] Requested a commercial to be started');
       const resp = await request(
         'post',
         `/channels/${apiData.value.channelID}/commercial`,
@@ -239,12 +239,12 @@ function startCommercial(): Promise<{ duration: number }> {
       if (resp.statusCode !== 200) {
         throw new Error(JSON.stringify(resp.body));
       }
-      nodecg.log.info('[Twitch] Commercial started successfully.');
+      nodecg.log.info('[Twitch] Commercial started successfully');
       nodecg.sendMessage('twitchCommercialStarted', { duration: 180 });
       nodecg.sendMessage('twitchAdStarted', { duration: 180 }); // Legacy
       resolve({ duration: 180 });
     } catch (err) {
-      nodecg.log.warn('[Twitch] Error starting commercial.');
+      nodecg.log.warn('[Twitch] Error starting commercial');
       nodecg.log.debug('[Twitch] Error starting commercial:', err.message);
       reject(err);
     }
@@ -258,7 +258,7 @@ function startCommercial(): Promise<{ duration: number }> {
 function searchForGame(query: string): Promise<string> {
   return new Promise(async (resolve, reject): Promise<void> => {
     if (apiData.value.state !== 'on') {
-      throw new Error('Integration not ready.');
+      throw new Error('Integration not ready');
     }
     try {
       const resp = await request(
@@ -268,7 +268,7 @@ function searchForGame(query: string): Promise<string> {
       if (resp.statusCode !== 200) {
         throw new Error(JSON.stringify(resp.body));
       } else if (!resp.body.games || !resp.body.games.length) {
-        throw new Error(`No game matches for "${query}".`);
+        throw new Error(`No game matches for "${query}"`);
       }
       const results = resp.body.games as { name: string }[];
       const exact = results.find((game) => game.name.toLowerCase() === query.toLowerCase());
@@ -296,7 +296,7 @@ function setUp(): Promise<void> {
       } else {
         const resp = await request('get', `/users?login=${config.twitch.channelName}`);
         if (!resp.body.users.length) {
-          throw new Error('channelName specified in the configuration not found.');
+          throw new Error('channelName specified in the configuration not found');
         }
         apiData.value.channelID = resp.body.users[0]._id; // eslint-disable-line
         apiData.value.channelName = resp.body.users[0].name;
@@ -313,7 +313,7 @@ function setUp(): Promise<void> {
 }
 
 if (config.twitch.enabled) {
-  nodecg.log.info('[Twitch] Integration enabled.');
+  nodecg.log.info('[Twitch] Integration enabled');
 
   // NodeCG messaging system.
   nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
@@ -358,9 +358,9 @@ if (config.twitch.enabled) {
   if (apiData.value.accessToken) {
     apiData.value.state = 'authenticating';
     setUp().then(() => {
-      nodecg.log.info('[Twitch] integration ready.');
+      nodecg.log.info('[Twitch] Integration ready');
     }).catch(() => {
-      nodecg.log.warn('[Twitch] Issue activating integration.');
+      nodecg.log.warn('[Twitch] Issue activating integration');
       to(logout());
     });
   }
@@ -382,14 +382,14 @@ if (config.twitch.enabled) {
       apiData.value.accessToken = resp.body.access_token;
       apiData.value.refreshToken = resp.body.refresh_token;
       setUp().then(() => {
-        nodecg.log.info('[Twitch] Authentication successful.');
+        nodecg.log.info('[Twitch] Authentication successful');
         res.send('<b>Twitch authentication is now complete, '
                 + 'feel free to close this window/tab.</b>');
       }).catch(() => {
         throw new Error();
       });
     }).catch(() => {
-      nodecg.log.warn('[Twitch] Issue with authentication.');
+      nodecg.log.warn('[Twitch] Issue with authentication');
       to(logout());
       res.send('<b>Error while processing the Twitch authentication, please try again.</b>');
     });

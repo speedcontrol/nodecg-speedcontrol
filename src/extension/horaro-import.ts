@@ -199,7 +199,7 @@ function loadSchedule(url: string, dashUUID: string): Promise<HoraroSchedule> {
       }
       const resp = await needle('get', encodeURI(jsonURL));
       if (resp.statusCode !== 200) {
-        throw new Error('Cannot load schedule as HTTP status code was not 200.');
+        throw new Error('Cannot load schedule as HTTP status code was not 200');
       }
       scheduleDataCache[dashUUID] = resp.body;
       resolve(resp.body);
@@ -387,11 +387,11 @@ nodecg.listenFor('importSchedule', (opts: {
 }, ack) => {
   try {
     if (importStatus.value.importing) {
-      throw new Error('Cannot import schedule as a schedule is already being imported.');
+      throw new Error('Cannot import schedule as a schedule is already being imported');
     }
-    nodecg.log.info('[Horaro] Started importing schedule.');
+    nodecg.log.info('[Horaro] Started importing schedule');
     importSchedule(opts.opts, opts.dashUUID).then(() => {
-      nodecg.log.info('[Horaro] Successfully imported schedule.');
+      nodecg.log.info('[Horaro] Successfully imported schedule');
       processAck(null, ack);
     }).catch((err) => {
       throw err;

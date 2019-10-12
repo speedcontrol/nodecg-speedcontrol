@@ -13,7 +13,7 @@ const userDataCache: { [k: string]: UserData } = {};
  */
 function get(endpoint: string): Promise<NeedleResponse> {
   return new Promise((resolve, reject): void => {
-    nodecg.log.debug(`[speedrun.com] API request processing on ${endpoint}.`);
+    nodecg.log.debug(`[speedrun.com] API request processing on ${endpoint}`);
     needle(
       'get',
       `https://www.speedrun.com/api/v1${endpoint}`,
@@ -27,13 +27,13 @@ function get(endpoint: string): Promise<NeedleResponse> {
     ).then((resp) => {
       // @ts-ignore: parser exists but isn't in the typings
       if (resp.parser !== 'json') {
-        throw new Error('Response was not JSON.');
+        throw new Error('Response was not JSON');
         // We should retry here.
       } else if (resp.statusCode !== 200) {
         throw new Error(JSON.stringify(resp.body));
         // Do we need to retry here? Depends on err code.
       }
-      nodecg.log.debug(`[speedrun.com] API request successful on ${endpoint}.`);
+      nodecg.log.debug(`[speedrun.com] API request successful on ${endpoint}`);
       resolve(resp);
     }).catch((err) => {
       nodecg.log.debug(`[speedrun.com] API request error on ${endpoint}:`, err);
@@ -52,9 +52,9 @@ function searchForTwitchGame(query: string): Promise<string> {
       `/games?name=${encodeURI(query)}&max=1`,
     ).then((resp) => {
       if (!resp.body.data.length) {
-        throw new Error('No game matches.');
+        throw new Error('No game matches');
       } else if (!resp.body.data[0].names.twitch) {
-        throw new Error('Game was find but has no Twitch game set.');
+        throw new Error('Game was find but has no Twitch game set');
       }
       nodecg.log.debug(
         `[speedrun.com] Twitch game name found for "${query}":`,
@@ -86,7 +86,7 @@ function searchForUserData(query: string): Promise<UserData> {
       `/users?lookup=${encodeURI(query)}&max=1`,
     ).then((resp) => {
       if (!resp.body.data.length) {
-        throw new Error(`No user matches for "${query}".`);
+        throw new Error(`No user matches for "${query}"`);
       }
       [userDataCache[query]] = resp.body.data; // Simple temp cache storage.
       nodecg.log.debug(

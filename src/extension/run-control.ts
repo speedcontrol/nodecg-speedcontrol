@@ -69,7 +69,7 @@ function changeActiveRun(id?: string): Promise<boolean> {
   return new Promise(async (resolve): Promise<void> => {
     const runData = array.value.find((run): boolean => run.id === id);
     if (['running', 'paused'].includes(timer.value.state)) {
-      throw new Error('Cannot change run while timer is running/paused.');
+      throw new Error('Cannot change run while timer is running/paused');
     } else if (runData) {
       let noTwitchGame = false;
       if (twitchAPIData.value.sync) {
@@ -105,9 +105,9 @@ function changeActiveRun(id?: string): Promise<boolean> {
       nodecg.sendMessage('timerReset', true);
       resolve(noTwitchGame);
     } else if (!id) {
-      throw new Error('Cannot change run as no run ID was supplied.');
+      throw new Error('Cannot change run as no run ID was supplied');
     } else {
-      throw new Error(`Cannot change run as a run with ID ${id} was not found.`);
+      throw new Error(`Cannot change run as a run with ID ${id} was not found`);
     }
   });
 }
@@ -123,9 +123,9 @@ function removeRun(id?: string): Promise<void> {
       array.value.splice(runIndex, 1);
       resolve();
     } else if (!id) {
-      throw new Error('Cannot delete run as no run ID was supplied.');
+      throw new Error('Cannot delete run as no run ID was supplied');
     } else {
-      throw new Error(`Cannot delete run as a run with ID ${id} was not found.`);
+      throw new Error(`Cannot delete run as a run with ID ${id} was not found`);
     }
   });
 }
@@ -152,7 +152,7 @@ function modifyRun(runData: RunData, prevID?: string): Promise<void> {
 
     // Check all teams have players, if not throw an error.
     if (!data.teams.every((team): boolean => !!team.players.length)) {
-      throw new Error('Cannot accept run data as team(s) are missing player(s).');
+      throw new Error('Cannot accept run data as team(s) are missing player(s)');
     }
 
     // Check all players have names, if not throw an error.
@@ -160,7 +160,7 @@ function modifyRun(runData: RunData, prevID?: string): Promise<void> {
       team.players.every((player): boolean => !!player.name)
     ));
     if (!allNamesAdded) {
-      throw new Error('Cannot accept run data as player(s) are missing name(s).');
+      throw new Error('Cannot accept run data as player(s) are missing name(s)');
     }
 
     // Verify and convert estimate.
@@ -170,7 +170,7 @@ function modifyRun(runData: RunData, prevID?: string): Promise<void> {
         data.estimate = msToTimeStr(ms);
         data.estimateS = ms / 1000;
       } else { // Throw error if format is incorrect.
-        throw new Error('Cannot accept run data as estimate is in incorrect format.');
+        throw new Error('Cannot accept run data as estimate is in incorrect format');
       }
     } else {
       delete data.estimate;
@@ -184,7 +184,7 @@ function modifyRun(runData: RunData, prevID?: string): Promise<void> {
         data.setupTime = msToTimeStr(ms);
         data.setupTimeS = ms / 1000;
       } else { // Throw error if format is incorrect.
-        throw new Error('Cannot accept run data as setup time is in incorrect format.');
+        throw new Error('Cannot accept run data as setup time is in incorrect format');
       }
     } else {
       delete data.setupTime;
@@ -212,7 +212,7 @@ function modifyRun(runData: RunData, prevID?: string): Promise<void> {
 function removeActiveRun(): Promise<void> {
   return new Promise((resolve): void => {
     if (['running', 'paused'].includes(timer.value.state)) {
-      throw new Error('Cannot change run while timer is running/paused.');
+      throw new Error('Cannot change run while timer is running/paused');
     } else {
       activeRun.value = null;
       nodecg.sendMessage('timerReset', true);
@@ -227,7 +227,7 @@ function removeActiveRun(): Promise<void> {
 function removeAllRuns(): Promise<void> {
   return new Promise((resolve): void => {
     if (['running', 'paused'].includes(timer.value.state)) {
-      throw new Error('Cannot remove all runs while timer is running/paused.');
+      throw new Error('Cannot remove all runs while timer is running/paused');
     } else {
       array.value.length = 0;
       removeActiveRun();
