@@ -1,5 +1,3 @@
-import { RunDataTeam } from './RunDataTeam';
-
 export interface RunData {
   game?: string;
   gameTwitch?: string;
@@ -20,3 +18,23 @@ export interface RunData {
   id: string;
   hash?: string;
 }
+
+export interface RunDataTeam {
+  name?: string;
+  id: string;
+  players: RunDataPlayer[];
+}
+
+export interface RunDataPlayer {
+  name: string;
+  id: string;
+  teamID: string;
+  country?: string;
+  social: {
+    twitch?: string;
+  };
+}
+
+export type RunDataArray = RunData[];
+
+export type RunDataActiveRun = RunData | null;
