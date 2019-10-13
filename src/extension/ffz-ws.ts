@@ -267,15 +267,15 @@ if (config.twitch.enabled && config.twitch.ffzIntegration) {
   // NodeCG messaging system.
   nodecg.listenFor('updateFeaturedChannels', (data, ack) => {
     setChannels(data)
-      .then(() => processAck(null, ack))
-      .catch((err) => processAck(err, ack));
+      .then(() => processAck(ack, null))
+      .catch((err) => processAck(ack, err));
   });
 
   // Our messaging system.
   events.listenFor('updateFeaturedChannels', (data, ack) => {
     setChannels(data)
-      .then(() => processAck(null, ack))
-      .catch((err) => processAck(err, ack));
+      .then(() => processAck(ack, null))
+      .catch((err) => processAck(ack, err));
   });
 
   twitchAPIData.on('change', (newVal, oldVal) => {

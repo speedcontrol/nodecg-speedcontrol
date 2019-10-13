@@ -240,38 +240,38 @@ function removeAllRuns(): Promise<void> {
 // NodeCG messaging system.
 nodecg.listenFor('changeActiveRun', (data, ack) => {
   changeActiveRun(data)
-    .then((noTwitchGame) => processAck(null, ack, noTwitchGame))
-    .catch((err) => processAck(err, ack));
+    .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('removeRun', (data, ack) => {
   removeRun(data)
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('modifyRun', (data, ack) => {
   modifyRun(data.runData, data.prevID)
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('changeToNextRun', (data, ack) => {
   changeActiveRun(activeRunSurr.value.next)
-    .then((noTwitchGame) => processAck(null, ack, noTwitchGame))
-    .catch((err) => processAck(err, ack));
+    .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('returnToStart', (data, ack) => {
   removeActiveRun()
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('removeAllRuns', (data, ack) => {
   removeAllRuns()
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('removeAllRuns', (data, ack) => {
   removeAllRuns()
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 
 activeRun.on('change', () => changeSurroundingRuns());

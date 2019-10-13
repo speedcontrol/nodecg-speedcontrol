@@ -109,13 +109,13 @@ export function bundleConfig(): Configschema {
 
 /**
  * Simple helper function to handle NodeCG/our message acknowledgements.
- * @param err Error to supply if any.
  * @param ack The acknoledgement function itself.
+ * @param err Error to supply if any.
  * @param data Anything else you want to send alongside.
  */
 export function processAck(
+  ack: ListenForCb | SendMessageAck | undefined,
   err: Error | null,
-  ack?: ListenForCb | SendMessageAck,
   data?: unknown,
 ): void {
   if (ack && !ack.handled) {

@@ -375,9 +375,9 @@ nodecg.listenFor('loadSchedule', (opts: {
   dashUUID: string;
 }, ack) => {
   loadSchedule(opts.url, opts.dashUUID).then((data) => {
-    processAck(null, ack, data);
+    processAck(ack, null, data);
   }).catch((err) => {
-    processAck(err, ack);
+    processAck(ack, err);
   });
 });
 
@@ -392,12 +392,12 @@ nodecg.listenFor('importSchedule', (opts: {
     nodecg.log.info('[Horaro] Started importing schedule');
     importSchedule(opts.opts, opts.dashUUID).then(() => {
       nodecg.log.info('[Horaro] Successfully imported schedule');
-      processAck(null, ack);
+      processAck(ack, null);
     }).catch((err) => {
       throw err;
     });
   } catch (err) {
     nodecg.log.warn('[Horaro] Error importing schedule:', err);
-    processAck(err, ack);
+    processAck(ack, err);
   }
 });

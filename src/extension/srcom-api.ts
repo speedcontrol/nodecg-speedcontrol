@@ -105,11 +105,11 @@ function searchForUserData(query: string): Promise<UserData> {
 // Our messaging system.
 events.listenFor('srcomTwitchGameSearch', (query, ack) => {
   searchForTwitchGame(query)
-    .then((data) => processAck(null, ack, data))
-    .catch((err) => processAck(err, ack));
+    .then((data) => processAck(ack, null, data))
+    .catch((err) => processAck(ack, err));
 });
 events.listenFor('srcomUserSearch', (query, ack) => {
   searchForUserData(query)
-    .then((data) => processAck(null, ack, data))
-    .catch((err) => processAck(err, ack));
+    .then((data) => processAck(ack, null, data))
+    .catch((err) => processAck(ack, err));
 });

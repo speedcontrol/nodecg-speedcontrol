@@ -270,50 +270,50 @@ if (timerRep.value.state === 'running') {
 // NodeCG messaging system.
 nodecg.listenFor('timerStart', (data, ack) => {
   startTimer()
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('timerPause', (data, ack) => {
   pauseTimer()
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('timerReset', (force, ack) => {
   resetTimer(force)
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('timerStop', (data, ack) => {
   stopTimer(data.uuid, data.forfeit)
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('timerUndo', (uuid, ack) => {
   undoTimer(uuid)
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('timerEdit', (time, ack) => {
   editTimer(time)
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 
 // Our messaging system.
 events.listenFor('timerStart', (data, ack) => {
   startTimer()
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 events.listenFor('timerReset', (force, ack) => {
   resetTimer(force)
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 events.listenFor('timerStop', (data, ack) => {
   stopTimer(data.uuid, data.forfeit)
-    .then(() => processAck(null, ack))
-    .catch((err) => processAck(err, ack));
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
 });
 
 setInterval(() => tick(), 100);

@@ -318,40 +318,40 @@ if (config.twitch.enabled) {
   // NodeCG messaging system.
   nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     updateChannelInfo(data.status, data.game)
-      .then(() => processAck(null, ack))
-      .catch((err) => processAck(err, ack));
+      .then(() => processAck(ack, null))
+      .catch((err) => processAck(ack, err));
   });
   nodecg.listenFor('twitchStartCommercial', (data, ack) => {
     startCommercial()
-      .then(() => processAck(null, ack))
-      .catch((err) => processAck(err, ack));
+      .then(() => processAck(ack, null))
+      .catch((err) => processAck(ack, err));
   });
   nodecg.listenFor('playTwitchAd', (data, ack) => { // Legacy
     startCommercial()
-      .then(() => processAck(null, ack))
-      .catch((err) => processAck(err, ack));
+      .then(() => processAck(ack, null))
+      .catch((err) => processAck(ack, err));
   });
   nodecg.listenFor('twitchLogout', (data, ack) => {
     logout()
-      .then(() => processAck(null, ack))
-      .catch((err) => processAck(err, ack));
+      .then(() => processAck(ack, null))
+      .catch((err) => processAck(ack, err));
   });
 
   // Our messaging system.
   events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     updateChannelInfo(data.status, data.game)
-      .then(() => processAck(null, ack))
-      .catch((err) => processAck(err, ack));
+      .then(() => processAck(ack, null))
+      .catch((err) => processAck(ack, err));
   });
   events.listenFor('twitchGameSearch', (data, ack) => {
     searchForGame(data)
-      .then((data_) => processAck(null, ack, data_))
-      .catch((err) => processAck(err, ack));
+      .then((data_) => processAck(ack, null, data_))
+      .catch((err) => processAck(ack, err));
   });
   events.listenFor('twitchRefreshToken', (data, ack) => {
     refreshToken()
-      .then(() => processAck(null, ack))
-      .catch((err) => processAck(err, ack));
+      .then(() => processAck(ack, null))
+      .catch((err) => processAck(ack, err));
   });
 
   // If we already have an access token stored, verify it.
