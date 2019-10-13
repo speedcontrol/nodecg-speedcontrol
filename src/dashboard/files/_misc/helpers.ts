@@ -27,6 +27,8 @@ export default class Helpers {
     const seconds = Math.floor((ms / 1000) % 60);
     const minutes = Math.floor((ms / (1000 * 60)) % 60);
     const hours = Math.floor(ms / (1000 * 60 * 60));
-    return `${Helpers.padTimeNumber(hours)}:${Helpers.padTimeNumber(minutes)}:${Helpers.padTimeNumber(seconds)}`;
+    return `${Helpers.padTimeNumber(hours)
+    }:${Helpers.padTimeNumber(minutes)
+    }:${Helpers.padTimeNumber(seconds)}`;
   }
 }
