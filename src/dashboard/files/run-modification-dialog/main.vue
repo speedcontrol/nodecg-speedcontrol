@@ -201,7 +201,7 @@ export default Vue.extend({
       });
     },
     close(confirm: boolean) {
-      this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line
+      this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle, max-len
       this.dialog.close();
     },
     confirm() {

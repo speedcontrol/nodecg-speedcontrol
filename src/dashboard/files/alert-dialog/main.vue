@@ -80,7 +80,7 @@ export default Vue.extend({
       if (this.callbackFunc) {
         this.callbackFunc(confirm);
       }
-      this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line
+      this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle, max-len
       this.dialog.close();
       this.currentComponent = undefined;
       this.alertData = {};

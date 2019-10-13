@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
 
-import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line
+import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line import/no-unresolved
 import { ExtensionReturn } from '../../types';
 import { listenFor, sendMessage } from './util/events';
 import { set } from './util/nodecg';

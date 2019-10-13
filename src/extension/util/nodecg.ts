@@ -1,4 +1,4 @@
-import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line
+import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line import/no-unresolved
 
 let nodecg: NodeCG;
 

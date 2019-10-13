@@ -1,7 +1,7 @@
 import clone from 'clone';
 import _ from 'lodash';
 import { RunDataActiveRunSurrounding, TwitchAPIData } from '../../schemas';
-import { RunData, RunDataActiveRun, RunDataArray, RunDataPlayer, RunDataTeam, Timer } from '../../types'; // eslint-disable-line
+import { RunData, RunDataActiveRun, RunDataArray, RunDataPlayer, RunDataTeam, Timer } from '../../types'; // eslint-disable-line object-curly-newline, max-len
 import * as events from './util/events';
 import * as h from './util/helpers';
 import { get } from './util/nodecg';

@@ -65,13 +65,13 @@ async function sendAuth(auth: string): Promise<void> {
       retry = false;
       attempts += 1;
       const client = new TwitchJS.Client(opts);
-      await client.connect(); // eslint-disable-line
+      await client.connect(); // eslint-disable-line no-await-in-loop
       nodecg.log.debug('[FrankerFaceZ] Connected to Twitch chat to authenticate');
-      await client.say('frankerfacezauthorizer', `AUTH ${auth}`); // eslint-disable-line
+      await client.say('frankerfacezauthorizer', `AUTH ${auth}`); // eslint-disable-line no-await-in-loop, max-len
       client.disconnect();
     } catch (err) {
       if (err.includes('authentication failed') && attempts <= 1) {
-        await to(events.sendMessage('twitchRefreshToken')); // eslint-disable-line
+        await to(events.sendMessage('twitchRefreshToken')); // eslint-disable-line no-await-in-loop
         opts.identity.password = twitchAPIData.value.accessToken; // Update auth in opts.
         retry = true;
       }

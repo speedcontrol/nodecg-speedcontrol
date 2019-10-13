@@ -1,4 +1,4 @@
-import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
+import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line import/no-unresolved, max-len
 import { Configschema } from '../../../configschema';
 import { RunData, RunDataArray, SendMessageAck } from '../../../types';
 import { get } from './nodecg';
@@ -12,7 +12,7 @@ const nodecg = get();
 export function formPlayerNamesStr(runData: RunData): string {
   return runData.teams.map((team): string => (
     team.players.map((player): string => player.name).join(', ')
-  )).join(' vs. ') || 'No Player(s)';
+  )).join(' vs. ') || 'N/A';
 }
 
 /**
@@ -66,7 +66,7 @@ export function msToTimeStr(ms: number): string {
  * If not, nothing is changed.
  * @param varToCheck Variable to check that may be null.
  */
-// eslint-disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function nullToUndefined(varToCheck: any): any {
   return (varToCheck === null) ? undefined : varToCheck;
 }

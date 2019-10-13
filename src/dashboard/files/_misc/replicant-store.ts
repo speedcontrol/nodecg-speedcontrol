@@ -1,8 +1,8 @@
 import clone from 'clone';
-import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line
+import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line import/no-unresolved
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { DefaultSetupTime, HoraroImportStatus, RunDataActiveRunSurrounding, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../../schemas'; // eslint-disable-line
+import { DefaultSetupTime, HoraroImportStatus, RunDataActiveRunSurrounding, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../../schemas'; // eslint-disable-line import/no-unresolved, max-len, object-curly-newline
 import { RunDataActiveRun, RunDataArray, Timer } from '../../../../types';
 
 Vue.use(Vuex);
@@ -51,14 +51,18 @@ export const store = new Vuex.Store({
       }
     },
     updateTwitchSyncToggle(state, { value }) {
-      const rep = replicants.find((repObj) => repObj.name === 'twitchAPIData') as ReplicantBrowser<TwitchAPIData>;
+      const rep = replicants.find(
+        (repObj) => repObj.name === 'twitchAPIData',
+      ) as ReplicantBrowser<TwitchAPIData>;
       if (rep.value) {
         Vue.set(state.twitchAPIData, 'sync', value);
         rep.value.sync = value;
       }
     },
     updateTimerDisabledToggle(state, { value }) {
-      const rep = replicants.find((repObj) => repObj.name === 'timerChangesDisabled') as ReplicantBrowser<TimerChangesDisabled>;
+      const rep = replicants.find(
+        (repObj) => repObj.name === 'timerChangesDisabled',
+      ) as ReplicantBrowser<TimerChangesDisabled>;
       if (typeof rep.value === 'boolean') {
         Vue.set(state, 'timerChangesDisabled', value);
         rep.value = value;

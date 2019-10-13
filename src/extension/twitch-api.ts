@@ -66,6 +66,39 @@ function validateToken(): Promise<{
 }
 
 /**
+ * Refreshes the Twitch API access token, called whenever that is needed.
+ */
+function refreshToken(): Promise<void> {
+  return new Promise(async (resolve, reject): Promise<void> => {
+    try {
+      nodecg.log.info('[Twitch] Attempting to refresh access token');
+      const resp = await needle(
+        'post',
+        'https://id.twitch.tv/oauth2/token',
+        { /* eslint-disable @typescript-eslint/camelcase */
+          grant_type: 'refresh_token',
+          refresh_token: encodeURI(apiData.value.refreshToken as string),
+          client_id: config.twitch.clientID,
+          client_secret: config.twitch.clientSecret,
+        }, /* eslint-enable */
+      );
+      if (resp.statusCode !== 200) {
+        throw new Error(JSON.stringify(resp.body));
+        // Do we need to retry here?
+      }
+      nodecg.log.info('[Twitch] Successfully refreshed access token');
+      apiData.value.accessToken = resp.body.access_token;
+      apiData.value.refreshToken = resp.body.refresh_token;
+      resolve();
+    } catch (err) {
+      nodecg.log.warn('[Twitch] Error refreshing access token, you need to relogin');
+      await to(logout());
+      reject(err);
+    }
+  });
+}
+
+/**
  * Make a request to Twitch API v5.
  * @param url Twitch API v5 endpoint you want to access.
  */
@@ -83,7 +116,7 @@ function request(
       do {
         retry = false;
         attempts += 1;
-        // eslint-disable-next-line
+        // eslint-disable-next-line no-await-in-loop
         resp = await needle(
           method,
           `https://api.twitch.tv/kraken${endpoint}`,
@@ -103,7 +136,7 @@ function request(
             + `resulted in ${resp.statusCode} on ${endpoint}:`,
             JSON.stringify(resp.body),
           );
-          await refreshToken(); // eslint-disable-line
+          await refreshToken(); // eslint-disable-line no-await-in-loop
           retry = true;
           // Can a 401 mean something else?
         } else if (resp.statusCode !== 200) {
@@ -120,39 +153,6 @@ function request(
         `[Twitch] API ${method.toUpperCase()} request error on ${endpoint}:`,
         err,
       );
-      reject(err);
-    }
-  });
-}
-
-/**
- * Refreshes the Twitch API access token, called whenever that is needed.
- */
-function refreshToken(): Promise<void> {
-  return new Promise(async (resolve, reject): Promise<void> => {
-    try {
-      nodecg.log.info('[Twitch] Attempting to refresh access token');
-      const resp = await needle(
-        'post',
-        'https://id.twitch.tv/oauth2/token',
-        { /* eslint-disable */
-          grant_type: 'refresh_token',
-          refresh_token: encodeURI(apiData.value.refreshToken as string),
-          client_id: config.twitch.clientID,
-          client_secret: config.twitch.clientSecret,
-        }, /* eslint-enable */
-      );
-      if (resp.statusCode !== 200) {
-        throw new Error(JSON.stringify(resp.body));
-        // Do we need to retry here?
-      }
-      nodecg.log.info('[Twitch] Successfully refreshed access token');
-      apiData.value.accessToken = resp.body.access_token;
-      apiData.value.refreshToken = resp.body.refresh_token;
-      resolve();
-    } catch (err) {
-      nodecg.log.warn('[Twitch] Error refreshing access token, you need to relogin');
-      await to(logout());
       reject(err);
     }
   });
@@ -298,7 +298,7 @@ function setUp(): Promise<void> {
         if (!resp.body.users.length) {
           throw new Error('channelName specified in the configuration not found');
         }
-        apiData.value.channelID = resp.body.users[0]._id; // eslint-disable-line
+        apiData.value.channelID = resp.body.users[0]._id; // eslint-disable-line no-underscore-dangle, max-len
         apiData.value.channelName = resp.body.users[0].name;
       }
 
@@ -377,7 +377,7 @@ if (config.twitch.enabled) {
         code: req.query.code,
         grant_type: 'authorization_code',
         redirect_uri: config.twitch.redirectURI,
-      }, /* eslint-enable @typescript-eslint/camelcase */
+      }, /* eslint-enable */
     ).then((resp) => {
       apiData.value.accessToken = resp.body.access_token;
       apiData.value.refreshToken = resp.body.refresh_token;

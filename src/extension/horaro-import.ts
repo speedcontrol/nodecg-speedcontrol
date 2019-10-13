@@ -7,7 +7,7 @@ import parseDuration from 'parse-duration';
 import removeMd from 'remove-markdown';
 import uuid from 'uuid/v4';
 import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
-import { RunData, RunDataArray, RunDataPlayer, RunDataTeam, UserData } from '../../types'; // eslint-disable-line
+import { RunData, RunDataArray, RunDataPlayer, RunDataTeam, UserData } from '../../types'; // eslint-disable-line object-curly-newline, max-len
 import * as events from './util/events';
 import * as h from './util/helpers';
 import { get } from './util/nodecg';
