@@ -26,8 +26,15 @@ export interface SendMessageReturnMap {
   timerStop: void;
 }
 
-export interface SendMessageAck {
+export type SendMessageAck = HandledSendMessageAck | UnhandledSendMessageAck;
+
+interface HandledSendMessageAck {
+  handled: true;
+}
+
+interface UnhandledSendMessageAck {
   (error: Error | null, data?: any): void;
+  handled: false;
 }
 
 export type SendMessage = <

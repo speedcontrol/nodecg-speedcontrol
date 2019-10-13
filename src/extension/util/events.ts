@@ -7,6 +7,28 @@ import { get as nodecg } from './nodecg';
 const emitter = new EventEmitter();
 
 /**
+ * Wraps the acknowledgement function from sendMessage to
+ * check if it has been handled or not.
+ * @param ack Acknowledgement function from sendMessage.
+ */
+function wrapAck(ack: Function): Function {
+  let handled = false;
+  const func = (...args: any[]): void => {
+    if (handled) {
+      throw new Error('Already handled');
+    }
+    handled = true;
+    ack(...args);
+  };
+  Object.defineProperty(func, 'handled', {
+    get() {
+      return handled;
+    },
+  });
+  return func;
+}
+
+/**
  * Sends a message that can be listened to by the "listenFor" function.
  * @param name Message name.
  * @param data Data you want to send alongside the message, if any.
@@ -16,14 +38,14 @@ export function sendMessage<K extends keyof SendMessageArgsMap>(
   data?: SendMessageArgsMap[K],
 ): Promise<SendMessageReturnMap[K]> {
   return new Promise((resolve, reject): void => {
-    nodecg().log.debug(`[events] sendMessage triggered, "${name}":`, JSON.stringify(data));
-    emitter.emit(name, data, (err: Error | null, data_?: any) => {
-      if (!err) {
-        resolve(data_);
-      } else {
+    nodecg().log.debug(`[events] sendMessage triggered for "${name}":`, JSON.stringify(data));
+    emitter.emit(name, data, wrapAck((err: Error | null, data_?: any) => {
+      if (err) {
         reject(err);
+      } else {
+        resolve(data_);
       }
-    });
+    }));
   });
 }
 
@@ -36,6 +58,7 @@ export function listenFor<K extends keyof SendMessageArgsMap>(
   name: K,
   callback: (data: SendMessageArgsMap[K], ack: SendMessageAck) => void,
 ): void {
+  nodecg().log.debug(`[events] listenFor added for "${name}"`);
   emitter.on(name, (
     data: SendMessageArgsMap[K], ack: SendMessageAck,
   ) => {

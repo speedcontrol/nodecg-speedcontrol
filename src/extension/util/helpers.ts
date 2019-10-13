@@ -1,6 +1,6 @@
 import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line
 import { Configschema } from '../../../configschema';
-import { RunData, RunDataArray } from '../../../types';
+import { RunData, RunDataArray, SendMessageAck } from '../../../types';
 import { get } from './nodecg';
 
 const nodecg = get();
@@ -108,12 +108,16 @@ export function bundleConfig(): Configschema {
 }
 
 /**
- * Simple helper function to handle NodeCG message acknowledgements.
+ * Simple helper function to handle NodeCG/our message acknowledgements.
  * @param err Error to supply if any.
  * @param ack The acknoledgement function itself.
  * @param data Anything else you want to send alongside.
  */
-export function processAck(err: Error | boolean | null, ack?: ListenForCb, data?: unknown): void {
+export function processAck(
+  err: Error | null,
+  ack?: ListenForCb | SendMessageAck,
+  data?: unknown,
+): void {
   if (ack && !ack.handled) {
     ack(err, data);
   }

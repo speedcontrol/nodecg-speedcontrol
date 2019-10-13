@@ -1,6 +1,7 @@
 import needle, { NeedleResponse } from 'needle';
 import { UserData } from '../../types';
 import * as events from './util/events';
+import { processAck } from './util/helpers';
 import { get as getCtx } from './util/nodecg';
 
 const nodecg = getCtx();
@@ -104,11 +105,11 @@ function searchForUserData(query: string): Promise<UserData> {
 // Our messaging system.
 events.listenFor('srcomTwitchGameSearch', (query, ack) => {
   searchForTwitchGame(query)
-    .then((data) => ack(null, data))
-    .catch((err) => ack(err));
+    .then((data) => processAck(null, ack, data))
+    .catch((err) => processAck(err, ack));
 });
 events.listenFor('srcomUserSearch', (query, ack) => {
   searchForUserData(query)
-    .then((data) => ack(null, data))
-    .catch((err) => ack(err));
+    .then((data) => processAck(null, ack, data))
+    .catch((err) => processAck(err, ack));
 });

@@ -340,18 +340,18 @@ if (config.twitch.enabled) {
   // Our messaging system.
   events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     updateChannelInfo(data.status, data.game)
-      .then(() => ack(null))
-      .catch((err) => ack(err));
+      .then(() => processAck(null, ack))
+      .catch((err) => processAck(err, ack));
   });
   events.listenFor('twitchGameSearch', (data, ack) => {
     searchForGame(data)
-      .then((data_) => ack(null, data_))
-      .catch((err) => ack(err));
+      .then((data_) => processAck(null, ack, data_))
+      .catch((err) => processAck(err, ack));
   });
   events.listenFor('twitchRefreshToken', (data, ack) => {
     refreshToken()
-      .then(() => ack(null))
-      .catch((err) => ack(err));
+      .then(() => processAck(null, ack))
+      .catch((err) => processAck(err, ack));
   });
 
   // If we already have an access token stored, verify it.

@@ -302,18 +302,18 @@ nodecg.listenFor('timerEdit', (time, ack) => {
 // Our messaging system.
 events.listenFor('timerStart', (data, ack) => {
   startTimer()
-    .then(() => ack(null))
-    .catch((err) => ack(err));
+    .then(() => processAck(null, ack))
+    .catch((err) => processAck(err, ack));
 });
 events.listenFor('timerReset', (force, ack) => {
   resetTimer(force)
-    .then(() => ack(null))
-    .catch((err) => ack(err));
+    .then(() => processAck(null, ack))
+    .catch((err) => processAck(err, ack));
 });
 events.listenFor('timerStop', (data, ack) => {
   stopTimer(data.uuid, data.forfeit)
-    .then(() => ack(null))
-    .catch((err) => ack(err));
+    .then(() => processAck(null, ack))
+    .catch((err) => processAck(err, ack));
 });
 
 setInterval(() => tick(), 100);

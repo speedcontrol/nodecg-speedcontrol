@@ -274,8 +274,8 @@ if (config.twitch.enabled && config.twitch.ffzIntegration) {
   // Our messaging system.
   events.listenFor('updateFeaturedChannels', (data, ack) => {
     setChannels(data)
-      .then(() => ack(null))
-      .catch((err) => ack(err));
+      .then(() => processAck(null, ack))
+      .catch((err) => processAck(err, ack));
   });
 
   twitchAPIData.on('change', (newVal, oldVal) => {
