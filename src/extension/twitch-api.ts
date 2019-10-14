@@ -209,6 +209,7 @@ async function startCommercial(): Promise<{ duration: number }> {
     nodecg.log.info('[Twitch] Commercial started successfully');
     nodecg.sendMessage('twitchCommercialStarted', { duration: 180 });
     nodecg.sendMessage('twitchAdStarted', { duration: 180 }); // Legacy
+    to(events.sendMessage('twitchCommercialStarted', { duration: 180 }));
     return { duration: 180 };
   } catch (err) {
     nodecg.log.warn('[Twitch] Error starting commercial');

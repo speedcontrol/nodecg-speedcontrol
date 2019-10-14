@@ -11,6 +11,7 @@ export interface SendMessageArgsMap {
   timerStart: void;
   timerReset?: boolean;
   timerStop: { id?: string; forfeit?: boolean; };
+  twitchCommercialStarted: { duration: number; }
 }
 
 export interface SendMessageReturnMap {
@@ -24,6 +25,7 @@ export interface SendMessageReturnMap {
   timerStart: void;
   timerReset: void;
   timerStop: void;
+  twitchCommercialStarted: void;
 }
 
 export type SendMessageAck = HandledSendMessageAck | UnhandledSendMessageAck;
