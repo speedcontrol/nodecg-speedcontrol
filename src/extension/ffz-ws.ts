@@ -3,13 +3,11 @@ import TwitchJS from 'twitch-js';
 import WebSocket from 'ws';
 import { TwitchAPIData } from '../../schemas';
 import * as events from './util/events';
-import * as h from './util/helpers';
+import { bundleConfig, processAck, randomInt, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 
-const { randomInt, to, processAck } = h;
 const nodecg = get();
-
-const config = h.bundleConfig();
+const config = bundleConfig();
 const twitchAPIData = nodecg.Replicant<TwitchAPIData>('twitchAPIData');
 let ws: WebSocket;
 let msgNo = 1;
@@ -24,13 +22,13 @@ function sendMsg(msg: string): Promise<string> {
     if (!ws || ws.readyState !== 1) {
       throw new Error('WebSocket not connected');
     }
-    nodecg.log.debug('[FrankerFaceZ] Attempting to send message: %s %s', msgNo, msg);
+    nodecg.log.debug(`[FrankerFaceZ] Attempting to send message: ${msgNo} ${msg}`);
     ws.send(`${msgNo} ${msg}`);
     const thisMsgNo = msgNo;
     msgNo += 1;
     const msgEvt = (data: string): void => {
       if (ws && data.includes(`${thisMsgNo} ok`)) {
-        nodecg.log.debug('[FrankerFaceZ] Message was successful: %s %s', thisMsgNo, msg);
+        nodecg.log.debug(`[FrankerFaceZ] Message was successful: ${thisMsgNo} ${msg}`);
         ws.removeListener('message', msgEvt);
         resolve(data.substr(data.indexOf(' ') + 1));
       }
@@ -60,75 +58,68 @@ async function sendAuth(auth: string): Promise<void> {
 
   let retry = false;
   let attempts = 0;
+  /* eslint-disable no-await-in-loop */
   do {
     try {
       retry = false;
       attempts += 1;
       const client = new TwitchJS.Client(opts);
-      await client.connect(); // eslint-disable-line no-await-in-loop
+      await client.connect();
       nodecg.log.debug('[FrankerFaceZ] Connected to Twitch chat to authenticate');
-      await client.say('frankerfacezauthorizer', `AUTH ${auth}`); // eslint-disable-line no-await-in-loop, max-len
+      await client.say('frankerfacezauthorizer', `AUTH ${auth}`);
       client.disconnect();
     } catch (err) {
       if (err.includes('authentication failed') && attempts <= 1) {
-        await to(events.sendMessage('twitchRefreshToken')); // eslint-disable-line no-await-in-loop
+        await to(events.sendMessage('twitchRefreshToken'));
         opts.identity.password = twitchAPIData.value.accessToken; // Update auth in opts.
         retry = true;
       }
     }
   } while (retry);
+  /* eslint-enable */
 }
 
 /**
  * Set the featured channels.
  * @param names Array of usernames on Twitch.
  */
-function setChannels(names: string[]): Promise<void> {
-  return new Promise((resolve, reject): void => {
-    if (!config.twitch.ffzIntegration) {
-      throw new Error('Integration not enabled');
-    }
-    if (!config.twitch.ffzUseRepeater && config.twitch.channelName) {
-      throw new Error(`Featured channels cannot be set while
-      channelName is set in the configuration file`);
-    }
-    nodecg.log.info('[FrankerFaceZ] Attempting to set featured channels');
+async function setChannels(names: string[]): Promise<void> {
+  if (!config.twitch.ffzIntegration) {
+    throw new Error('Integration not enabled');
+  }
+  if (!config.twitch.ffzUseRepeater && config.twitch.channelName) {
+    throw new Error(`Featured channels cannot be set while
+    channelName is set in the configuration file`);
+  }
+  nodecg.log.info('[FrankerFaceZ] Attempting to set featured channels');
 
-    // Remove any blacklisted names.
-    const toSend = names.filter((name) => (
-      !(config.twitch.ffzBlacklist || [])
-        .map((x) => x.toLowerCase())
-        .includes(name.toLowerCase())
-    ));
+  // Remove any blacklisted names.
+  const toSend = names.filter((name) => (
+    !(config.twitch.ffzBlacklist || [])
+      .map((x) => x.toLowerCase())
+      .includes(name.toLowerCase())
+  ));
 
-    if (!config.twitch.ffzUseRepeater) {
-      sendMsg(
+  if (!config.twitch.ffzUseRepeater) {
+    try {
+      const msg = await sendMsg(
         `update_follow_buttons ${JSON.stringify([
           twitchAPIData.value.channelName,
           toSend,
         ])}`,
-      ).then((msg) => {
-        const clients = JSON.parse(msg.substr(3)).updated_clients;
-        nodecg.log.info(
-          `[FrankerFaceZ] Featured channels have been updated for ${clients} viewers.`,
-        );
-        resolve();
-      }).catch((err) => {
-        nodecg.log.warn(
-          '[FrankerFaceZ] Featured channels could not successfully be updated.',
-        );
-        nodecg.log.debug(
-          '[FrankerFaceZ] Featured channels could not successfully be updated:',
-          err,
-        );
-        reject(err);
-      });
-    } else { // Send out message for external code to listen to.
-      to(events.sendMessage('repeaterFeaturedChannels', toSend));
-      nodecg.sendMessage('repeaterFeaturedChannels', toSend);
-      nodecg.log.info('[FrankerFaceZ] Featured channels being sent to repeater code');
+      );
+      const clients = JSON.parse(msg.substr(3)).updated_clients;
+      nodecg.log.info(`[FrankerFaceZ] Featured channels have been updated for ${clients} viewers.`);
+    } catch (err) {
+      nodecg.log.warn('[FrankerFaceZ] Featured channels could not successfully be updated.');
+      nodecg.log.debug('[FrankerFaceZ] Featured channels could not successfully be updated:', err);
+      throw err;
     }
-  });
+  } else { // Send out message for external code to listen to.
+    to(events.sendMessage('repeaterFeaturedChannels', toSend));
+    nodecg.sendMessage('repeaterFeaturedChannels', toSend);
+    nodecg.log.info('[FrankerFaceZ] Featured channels being sent to repeater code');
+  }
 }
 
 /**
@@ -144,7 +135,7 @@ function ping(): void {
   const pongEvt = (): void => {
     nodecg.log.debug('[FrankerFaceZ] PONG received');
     clearTimeout(pongWaitTO);
-    pingTO = setTimeout(() => ping(), 60 * 1000);
+    pingTO = setTimeout(ping, 60 * 1000);
     if (ws) {
       ws.removeListener('pong', pongEvt);
     }
@@ -186,19 +177,16 @@ function pickServer(): string {
 /**
  * Sends the correct initial messages on WebSocket connect.
  */
-function sendInitMsgs(): Promise<void> {
-  return new Promise((resolve): void => {
-    const messagesToSend = [
-      'hello ["nodecg-speedcontrol",false]',
-      `setuser "${twitchAPIData.value.channelName}"`,
-      `sub "room.${twitchAPIData.value.channelName}"`,
-      `sub "channel.${twitchAPIData.value.channelName}"`,
-      'ready 0',
-    ];
-    // eslint-disable-next-line no-async-promise-executor
-    forEachSeries(messagesToSend, async (msg) => {
-      await sendMsg(msg);
-    }).then(resolve).catch(() => {});
+async function sendInitMsgs(): Promise<void> {
+  const messagesToSend = [
+    'hello ["nodecg-speedcontrol",false]',
+    `setuser "${twitchAPIData.value.channelName}"`,
+    `sub "room.${twitchAPIData.value.channelName}"`,
+    `sub "channel.${twitchAPIData.value.channelName}"`,
+    'ready 0',
+  ];
+  await forEachSeries(messagesToSend, async (msg) => {
+    await sendMsg(msg);
   });
 }
 
@@ -210,11 +198,11 @@ function connect(): void {
   const url = pickServer();
   ws = new WebSocket(url);
   nodecg.log.info('[FrankerFaceZ] Connecting');
-  nodecg.log.debug('[FrankerFaceZ] Using server %s', url);
+  nodecg.log.debug(`[FrankerFaceZ] Using server ${url}`);
 
   ws.once('open', () => {
     sendInitMsgs().then(() => {
-      pingTO = setTimeout(() => ping(), 60 * 1000);
+      pingTO = setTimeout(ping, 60 * 1000);
       nodecg.log.info('[FrankerFaceZ] Connection successful');
     });
   });
@@ -231,7 +219,7 @@ function connect(): void {
     // No reconnection if Twitch API is disconnected.
     if (twitchAPIData.value.state === 'on') {
       nodecg.log.warn('[FrankerFaceZ] Connection closed, will reconnect in 10 seconds');
-      setTimeout(() => connect(), 10 * 1000);
+      setTimeout(connect, 10 * 1000);
     }
   });
 
@@ -265,15 +253,15 @@ if (config.twitch.enabled && config.twitch.ffzIntegration) {
   nodecg.log.info('[FrankerFaceZ] Integration enabled');
 
   // NodeCG messaging system.
-  nodecg.listenFor('updateFeaturedChannels', (data, ack) => {
-    setChannels(data)
+  nodecg.listenFor('updateFeaturedChannels', (names, ack) => {
+    setChannels(names)
       .then(() => processAck(ack, null))
       .catch((err) => processAck(ack, err));
   });
 
   // Our messaging system.
-  events.listenFor('updateFeaturedChannels', (data, ack) => {
-    setChannels(data)
+  events.listenFor('updateFeaturedChannels', (names, ack) => {
+    setChannels(names)
       .then(() => processAck(ack, null))
       .catch((err) => processAck(ack, err));
   });

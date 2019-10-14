@@ -52,7 +52,7 @@ export default Vue.extend({
   methods: {
     button() {
       nodecg.sendMessage('timerStop', {
-        uuid: this.info.id,
+        id: this.info.id,
         forfeit: this.forfeit,
       }).then(() => {
         // successful

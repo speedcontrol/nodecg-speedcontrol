@@ -10,7 +10,7 @@ export interface SendMessageArgsMap {
   repeaterFeaturedChannels: string[];
   timerStart: void;
   timerReset?: boolean;
-  timerStop: { uuid?: string; forfeit?: boolean; };
+  timerStop: { id?: string; forfeit?: boolean; };
 }
 
 export interface SendMessageReturnMap {
