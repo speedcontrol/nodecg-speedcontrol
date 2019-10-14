@@ -43,7 +43,7 @@ function resetTimerRepToDefault(): void {
 function setTime(ms: number): void {
   timerRep.value.time = msToTimeStr(ms);
   timerRep.value.milliseconds = ms;
-  nodecg.log.debug(`[Timer] Set to ${msToTimeStr(ms)}/${ms}`);
+  // nodecg.log.debug(`[Timer] Set to ${msToTimeStr(ms)}/${ms}`);
 }
 
 /**

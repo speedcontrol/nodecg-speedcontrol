@@ -198,7 +198,7 @@ async function modifyRun(runData: RunData, prevID?: string): Promise<void> {
       array.value.splice(prevIndex + 1 || array.value.length, 0, clone(data));
     }
   } catch (err) {
-    nodecg.log.debug('[Run Control] Could not successfully edit run:', err);
+    nodecg.log.debug('[Run Control] Could not successfully edit run:', err.message);
     throw err;
   }
 }
