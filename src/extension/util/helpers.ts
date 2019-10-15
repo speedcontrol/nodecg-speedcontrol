@@ -62,25 +62,6 @@ export function msToTimeStr(ms: number): string {
 }
 
 /**
- * Takes a variable that may be null and returns undefined if it is.
- * If not, nothing is changed.
- * @param varToCheck Variable to check that may be null.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function nullToUndefined(varToCheck: any): any {
-  return (varToCheck === null) ? undefined : varToCheck;
-}
-
-/**
- * Takes a variable that should be a number but may be null and
- * returns -1 if it is. If not, nothing is changed.
- * @param varToCheck Number or null that should be a number.
- */
-export function nullToNegOne(varToCheck: number | null): number {
-  return (varToCheck === null) ? -1 : varToCheck;
-}
-
-/**
  * Allow a script to wait for an amount of milliseconds.
  * @param ms Milliseconds to sleep for.
  */
@@ -95,8 +76,9 @@ export function sleep(ms: number): Promise<void> {
  * @param id Unique ID of the run you want to attempt to find in the run data array.
  */
 export function findRunIndexFromId(id?: string): number {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore: readReplicant not in NodeCGServer typings
-  const arr: RunDataArray = nodecg.readReplicant('runDataArray');
+  const arr = nodecg.readReplicant('runDataArray') as RunDataArray;
   return arr.findIndex((run): boolean => run.id === id);
 }
 

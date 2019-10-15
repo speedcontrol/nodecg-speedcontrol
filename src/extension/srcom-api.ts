@@ -25,6 +25,7 @@ async function get(endpoint: string): Promise<NeedleResponse> {
         },
       },
     );
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore: parser exists but isn't in the typings
     if (resp.parser !== 'json') {
       throw new Error('Response was not JSON');
