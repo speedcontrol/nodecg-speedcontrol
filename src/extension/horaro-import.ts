@@ -8,8 +8,9 @@ import removeMd from 'remove-markdown';
 import uuid from 'uuid/v4';
 import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
 import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataPlayer, RunDataTeam, UserData } from '../../types'; // eslint-disable-line object-curly-newline, max-len
-import * as events from './util/events';
-import { bundleConfig, msToTimeStr, processAck } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { searchForTwitchGame, searchForUserData } from './srcom-api';
+import { verifyTwitchDir } from './twitch-api';
+import { bundleConfig, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 
 const nodecg = get();
@@ -55,7 +56,7 @@ function parseMarkdown(str?: string | null): ParsedMarkdown {
 async function querySRcomUserData(str?: string): Promise<UserData | undefined> {
   if (str && !config.schedule.disableSpeedrunComLookup) {
     try {
-      const data = await events.sendMessage('srcomUserSearch', str);
+      const data = await searchForUserData(str);
       return data;
     } catch (err) {
       return undefined;
@@ -202,11 +203,26 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
 
       // General Run Data
       runData.game = parseMarkdown(run.data[opts.columns.game]).str;
-      runData.gameTwitch = parseMarkdown(run.data[opts.columns.gameTwitch]).str;
       runData.system = parseMarkdown(run.data[opts.columns.system]).str;
       runData.category = parseMarkdown(run.data[opts.columns.category]).str;
       runData.region = parseMarkdown(run.data[opts.columns.region]).str;
       runData.release = parseMarkdown(run.data[opts.columns.release]).str;
+
+      // Attempts to find the correct Twitch game directory.
+      const game = parseMarkdown(run.data[opts.columns.game]);
+      let gameTwitch = parseMarkdown(run.data[opts.columns.gameTwitch]).str;
+      if (!gameTwitch && game.url && game.url.includes('speedrun.com')) {
+        let gameAbbr = game.url.split('/')[game.url.split('/').length - 1];
+        gameAbbr = (gameAbbr && gameAbbr.includes('#'))
+          ? gameAbbr.split('#')[0] : gameAbbr;
+        [, gameTwitch] = await to(searchForTwitchGame(gameAbbr, true));
+      } else if (!gameTwitch && game.str) {
+        gameTwitch = game.str;
+      }
+      if (gameTwitch) { // Verify game directory supplied exists on Twitch.
+        [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
+      }
+      runData.gameTwitch = gameTwitch;
 
       // Scheduled Date/Time
       runData.scheduledS = run.scheduled_t;

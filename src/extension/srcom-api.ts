@@ -46,9 +46,10 @@ async function get(endpoint: string): Promise<NeedleResponse> {
  * Returns the Twitch game name if set on speedrun.com.
  * @param query String you wish to try to find a game with.
  */
-async function searchForTwitchGame(query: string): Promise<string> {
+export async function searchForTwitchGame(query: string, abbr = false): Promise<string> {
   try {
-    const resp = await get(`/games?name=${encodeURI(query)}&max=1`);
+    const endpoint = (abbr) ? 'abbreviation' : 'name';
+    const resp = await get(`/games?${endpoint}=${encodeURI(query)}&max=1`);
     if (!resp.body.data.length) {
       throw new Error('No game matches');
     } else if (!resp.body.data[0].names.twitch) {
@@ -69,7 +70,7 @@ async function searchForTwitchGame(query: string): Promise<string> {
  * Returns the user's data if available on speedrun.com.
  * @param query String you wish to try to find a user with.
  */
-async function searchForUserData(query: string): Promise<UserData> {
+export async function searchForUserData(query: string): Promise<UserData> {
   if (userDataCache[query]) {
     nodecg.log.debug(
       `[speedrun.com] User data found in cache for "${query}":`,
@@ -97,9 +98,9 @@ async function searchForUserData(query: string): Promise<UserData> {
 }
 
 // Our messaging system.
-events.listenFor('srcomTwitchGameSearch', (query, ack) => {
-  searchForTwitchGame(query)
-    .then((data) => processAck(ack, null, data))
+events.listenFor('srcomTwitchGameSearch', (data, ack) => {
+  searchForTwitchGame(data.query, data.abbr)
+    .then((data_) => processAck(ack, null, data_))
     .catch((err) => processAck(ack, err));
 });
 events.listenFor('srcomUserSearch', (query, ack) => {

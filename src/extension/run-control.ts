@@ -2,6 +2,8 @@ import clone from 'clone';
 import _ from 'lodash';
 import { RunDataActiveRunSurrounding, TwitchAPIData } from '../../schemas';
 import { RunData, RunDataActiveRun, RunDataArray, RunDataPlayer, RunDataTeam, Timer } from '../../types'; // eslint-disable-line object-curly-newline, max-len
+import { searchForTwitchGame } from './srcom-api';
+import { updateChannelInfo, verifyTwitchDir } from './twitch-api';
 import * as events from './util/events';
 import { bundleConfig, findRunIndexFromId, formPlayerNamesStr, getTwitchChannels, msToTimeStr, processAck, timeStrToMS, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
@@ -71,19 +73,22 @@ async function changeActiveRun(id?: string): Promise<boolean> {
         .replace(new RegExp('{{game}}', 'g'), runData.game || '')
         .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
         .replace(new RegExp('{{category}}', 'g'), runData.category || '');
-      let game = runData.gameTwitch || runData.game;
+
+      // Attempts to find the correct Twitch game directory.
+      let gameTwitch;
       if (!runData.gameTwitch && runData.game) {
-        const [, srcomGame] = await to(events.sendMessage('srcomTwitchGameSearch', runData.game));
-        game = srcomGame || game;
+        const [, srcomGameTwitch] = await to(searchForTwitchGame(runData.game));
+        gameTwitch = srcomGameTwitch || runData.game;
       }
-      if (game) {
-        [, game] = await to(events.sendMessage('twitchGameSearch', game));
+      if (gameTwitch) { // Verify game directory supplied exists on Twitch.
+        [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
       }
-      noTwitchGame = !game;
-      to(events.sendMessage('twitchUpdateChannelInfo', {
+      noTwitchGame = !gameTwitch;
+
+      to(updateChannelInfo(
         status,
-        game: game || bundleConfig().twitch.streamDefaultGame,
-      }));
+        gameTwitch || bundleConfig().twitch.streamDefaultGame,
+      ));
 
       // Construct/send featured channels if enabled.
       if (bundleConfig().twitch.ffzIntegration) {

@@ -3,7 +3,7 @@ import { UserData } from './Speedruncom';
 export interface SendMessageArgsMap {
   twitchUpdateChannelInfo: { status: string; game: string };
   twitchGameSearch: string;
-  srcomTwitchGameSearch: string;
+  srcomTwitchGameSearch: { query: string; abbr?: boolean };
   srcomUserSearch: string;
   twitchRefreshToken: void;
   updateFeaturedChannels: string[];

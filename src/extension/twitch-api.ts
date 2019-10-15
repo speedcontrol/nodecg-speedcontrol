@@ -159,7 +159,7 @@ async function refreshChannelInfo(): Promise<void> {
  * @param status Title to set.
  * @param game Game to set.
  */
-async function updateChannelInfo(status: string, game: string): Promise<void> {
+export async function updateChannelInfo(status: string, game: string): Promise<void> {
   if (apiData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
@@ -235,6 +235,16 @@ async function searchForGame(query: string): Promise<string> {
   const results = resp.body.games as { name: string }[];
   const exact = results.find((game) => game.name.toLowerCase() === query.toLowerCase());
   return (exact) ? exact.name : results[0].name;
+}
+
+/**
+ * Verify a Twitch directory exists and get the correct name if so.
+ * Will return undefined if it cannot.
+ * @param query String to use to find/verify the directory.
+ */
+export async function verifyTwitchDir(query: string): Promise<string | undefined> {
+  const [, game] = await to(searchForGame(query));
+  return game;
 }
 
 /**
