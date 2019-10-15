@@ -133,9 +133,9 @@ function resetImportStatus(): void {
 /**
  * Load schedule data in from Horaro, store in a temporary cache and return it.
  * @param url URL of Horaro schedule.
- * @param dashUUID UUID of dashboard element, generated on panel load and passed here.
+ * @param dashID UUID of dashboard element, generated on panel load and passed here.
  */
-async function loadSchedule(url: string, dashUUID: string): Promise<HoraroSchedule> {
+async function loadSchedule(url: string, dashID: string): Promise<HoraroSchedule> {
   let jsonURL = `${url}.json`;
   if (url.match((/\?key=/))) { // If schedule URL has a key in it, extract it correctly.
     const urlMatch = (url.match(/(.*?)(?=(\?key=))/) as RegExpMatchArray)[0];
@@ -146,7 +146,7 @@ async function loadSchedule(url: string, dashUUID: string): Promise<HoraroSchedu
   if (resp.statusCode !== 200) {
     throw new Error(`HTTP status code was ${resp.statusCode}`);
   }
-  scheduleDataCache[dashUUID] = resp.body;
+  scheduleDataCache[dashID] = resp.body;
   nodecg.log.debug('[Horaro Import] Schedule successfully loaded');
   return resp.body;
 }
@@ -154,12 +154,12 @@ async function loadSchedule(url: string, dashUUID: string): Promise<HoraroSchedu
 /**
  * Imports schedule data loaded in above function.
  * @param opts Options on how the schedule data should be parsed, including column numbers.
- * @param dashUUID UUID of dashboard element, generated on panel load and passed here.
+ * @param dashID UUID of dashboard element, generated on panel load and passed here.
  */
-async function importSchedule(optsO: ImportOptions, dashUUID: string): Promise<void> {
+async function importSchedule(optsO: ImportOptions, dashID: string): Promise<void> {
   try {
     importStatus.value.importing = true;
-    const data = scheduleDataCache[dashUUID];
+    const data = scheduleDataCache[dashID];
     const runItems = data.schedule.items;
     const setupTime = data.schedule.setup_t;
     defaultSetupTime.value = setupTime;
@@ -305,7 +305,7 @@ async function importSchedule(optsO: ImportOptions, dashUUID: string): Promise<v
 }
 
 nodecg.listenFor('loadSchedule', (data, ack) => {
-  loadSchedule(data.url, data.dashUUID)
+  loadSchedule(data.url, data.dashID)
     .then((data_) => processAck(ack, null, data_))
     .catch((err) => processAck(ack, err));
 });
@@ -316,7 +316,7 @@ nodecg.listenFor('importSchedule', (data, ack) => {
     processAck(ack, new Error('Already importing schedule'));
   }
   nodecg.log.info('[Horaro Import] Started importing schedule');
-  importSchedule(data.opts, data.dashUUID)
+  importSchedule(data.opts, data.dashID)
     .then(() => {
       nodecg.log.info('[Horaro Import] Successfully imported schedule');
       processAck(ack, null);

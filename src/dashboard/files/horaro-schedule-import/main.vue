@@ -94,7 +94,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      dashUUID: uuid(), // Temp ID for this page load.
+      dashID: uuid(), // Temp ID for this page load.
       url: nodecg.bundleConfig.schedule.defaultURL,
       loaded: false,
       columns: [] as string[],
@@ -191,7 +191,7 @@ export default Vue.extend({
     loadSchedule() {
       nodecg.sendMessage('loadSchedule', {
         url: this.url,
-        dashUUID: this.dashUUID,
+        dashID: this.dashID,
       }).then((data) => {
         this.loaded = true;
         this.columns = data.schedule.columns;
@@ -247,7 +247,7 @@ export default Vue.extend({
       if (confirm) {
         nodecg.sendMessage('importSchedule', {
           opts: store.state.opts,
-          dashUUID: this.dashUUID,
+          dashID: this.dashID,
         }).then(() => {
           this.loaded = false;
         }).catch(() => {
