@@ -29,7 +29,7 @@
           v-model="runDataArray"
           style="width: 100%"
           handle=".Handle"
-          :disabled="searchTerm || !editor"
+          :disabled="searchTerm || hasNoTwitch || !editor"
         >
           <transition-group name="list">
             <run-panel
@@ -39,7 +39,7 @@
               :run-data="run"
               :editor="editor"
               :disable-change="disableChange"
-              :move-disabled="!!searchTerm || !editor"
+              :move-disabled="!!searchTerm || hasNoTwitch || !editor"
             ></run-panel>
           </transition-group>
         </draggable>
