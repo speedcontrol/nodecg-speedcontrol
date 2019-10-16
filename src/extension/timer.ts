@@ -67,46 +67,56 @@ function setGameTime(ms: number): void {
  * @param force Force the timer to start, even if it's state is running.
  */
 async function startTimer(force?: boolean): Promise<void> {
-  // Error if the timer is disabled.
-  if (changesDisabled.value) {
-    throw new Error('Timer changes are disabled');
-  }
-  // Error if the timer is finished.
-  if (timerRep.value.state === 'finished') {
-    throw new Error('Timer is in the finished state');
-  }
-  // Error if the timer isn't stopped or paused (and we're not forcing it).
-  if (!force && !['stopped', 'paused'].includes(timerRep.value.state)) {
-    throw new Error('Timer is not stopped/paused');
-  }
+  try {
+    // Error if the timer is disabled.
+    if (changesDisabled.value) {
+      throw new Error('Timer changes are disabled');
+    }
+    // Error if the timer is finished.
+    if (timerRep.value.state === 'finished') {
+      throw new Error('Timer is in the finished state');
+    }
+    // Error if the timer isn't stopped or paused (and we're not forcing it).
+    if (!force && !['stopped', 'paused'].includes(timerRep.value.state)) {
+      throw new Error('Timer is not stopped/paused');
+    }
 
-  if (timer.currentPhase() === LS_TIMER_PHASE.NotRunning) {
-    timer.start();
-    nodecg.log.debug('[Timer] Started');
-  } else {
-    timer.resume();
-    nodecg.log.debug('[Timer] Resumed');
+    if (timer.currentPhase() === LS_TIMER_PHASE.NotRunning) {
+      timer.start();
+      nodecg.log.debug('[Timer] Started');
+    } else {
+      timer.resume();
+      nodecg.log.debug('[Timer] Resumed');
+    }
+    setGameTime(timerRep.value.milliseconds);
+    timerRep.value.state = 'running';
+  } catch (err) {
+    nodecg.log.debug('[Timer] Cannot start/resume timer:', err);
+    throw err;
   }
-  setGameTime(timerRep.value.milliseconds);
-  timerRep.value.state = 'running';
 }
 
 /**
  * Pause the timer.
  */
 async function pauseTimer(): Promise<void> {
-  // Error if the timer is disabled.
-  if (changesDisabled.value) {
-    throw new Error('Timer changes are disabled');
-  }
-  // Error if the timer isn't running.
-  if (timerRep.value.state !== 'running') {
-    throw new Error('Timer is not running');
-  }
+  try {
+    // Error if the timer is disabled.
+    if (changesDisabled.value) {
+      throw new Error('Timer changes are disabled');
+    }
+    // Error if the timer isn't running.
+    if (timerRep.value.state !== 'running') {
+      throw new Error('Timer is not running');
+    }
 
-  timer.pause();
-  timerRep.value.state = 'paused';
-  nodecg.log.debug('[Timer] Paused');
+    timer.pause();
+    timerRep.value.state = 'paused';
+    nodecg.log.debug('[Timer] Paused');
+  } catch (err) {
+    nodecg.log.debug('[Timer] Cannot pause timer:', err);
+    throw err;
+  }
 }
 
 /**
@@ -114,18 +124,23 @@ async function pauseTimer(): Promise<void> {
  * @param force Forces a reset even if changes are disabled.
  */
 export async function resetTimer(force?: boolean): Promise<void> {
-  // Error if the timer is disabled.
-  if (!force && changesDisabled.value) {
-    throw new Error('Timer changes are disabled');
-  }
-  // Error if the timer is stopped.
-  if (timerRep.value.state === 'stopped') {
-    throw new Error('Timer is stopped');
-  }
+  try {
+    // Error if the timer is disabled.
+    if (!force && changesDisabled.value) {
+      throw new Error('Timer changes are disabled');
+    }
+    // Error if the timer is stopped.
+    if (timerRep.value.state === 'stopped') {
+      throw new Error('Timer is stopped');
+    }
 
-  timer.reset(false);
-  resetTimerRepToDefault();
-  nodecg.log.debug('[Timer] Reset');
+    timer.reset(false);
+    resetTimerRepToDefault();
+    nodecg.log.debug('[Timer] Reset');
+  } catch (err) {
+    nodecg.log.debug('[Timer] Cannot reset timer:', err);
+    throw err;
+  }
 }
 
 /**
@@ -134,49 +149,54 @@ export async function resetTimer(force?: boolean): Promise<void> {
  * @param forfeit Specify this if the team has forfeit.
  */
 async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
-  // Error if the timer is disabled.
-  if (changesDisabled.value) {
-    throw new Error('Timer changes are disabled');
-  }
-  // Error if timer is not running.
-  if (timerRep.value.state !== 'running') {
-    throw new Error('Timer is not running');
-  }
-  // Error if there's an active run but no UUID was sent.
-  if (!id && activeRun.value && activeRun.value.teams.length) {
-    throw new Error('A run is active that has teams but no team ID was supplied');
-  }
-  // Error if the team has already finished.
-  if (id && timerRep.value.teamFinishTimes[id]) {
-    throw new Error('The specified team has already finished');
-  }
-
-  // If we have a UUID and an active run, set that team as finished.
-  if (id && activeRun.value) {
-    const timerRepCopy = clone(timerRep.value);
-    delete timerRepCopy.teamFinishTimes;
-    delete timerRepCopy.state;
-
-    timerRep.value.teamFinishTimes[id] = {
-      ...timerRepCopy,
-      ...{ state: (forfeit) ? 'forfeit' : 'completed' },
-    };
-
-    nodecg.log.debug(
-      `[Timer] Team ${id} finished at ${timerRepCopy.time}${(forfeit) ? ' (forfeit)' : ''}`,
-    );
-  }
-
-  // Stop the timer if all the teams have finished (or no teams exist).
-  const teamsCount = (activeRun.value) ? activeRun.value.teams.length : 0;
-  const teamsFinished = Object.keys(timerRep.value.teamFinishTimes).length;
-  if (teamsFinished >= teamsCount) {
-    timer.split();
-    timerRep.value.state = 'finished';
-    if (activeRun.value) {
-      runFinishTimes.value[activeRun.value.id] = clone(timerRep.value);
+  try {
+    // Error if the timer is disabled.
+    if (changesDisabled.value) {
+      throw new Error('Timer changes are disabled');
     }
-    nodecg.log.debug('[Timer] Finished');
+    // Error if timer is not running.
+    if (timerRep.value.state !== 'running') {
+      throw new Error('Timer is not running');
+    }
+    // Error if there's an active run but no UUID was sent.
+    if (!id && activeRun.value && activeRun.value.teams.length) {
+      throw new Error('A run is active that has teams but no team ID was supplied');
+    }
+    // Error if the team has already finished.
+    if (id && timerRep.value.teamFinishTimes[id]) {
+      throw new Error('The specified team has already finished');
+    }
+
+    // If we have a UUID and an active run, set that team as finished.
+    if (id && activeRun.value) {
+      const timerRepCopy = clone(timerRep.value);
+      delete timerRepCopy.teamFinishTimes;
+      delete timerRepCopy.state;
+
+      timerRep.value.teamFinishTimes[id] = {
+        ...timerRepCopy,
+        ...{ state: (forfeit) ? 'forfeit' : 'completed' },
+      };
+
+      nodecg.log.debug(
+        `[Timer] Team ${id} finished at ${timerRepCopy.time}${(forfeit) ? ' (forfeit)' : ''}`,
+      );
+    }
+
+    // Stop the timer if all the teams have finished (or no teams exist).
+    const teamsCount = (activeRun.value) ? activeRun.value.teams.length : 0;
+    const teamsFinished = Object.keys(timerRep.value.teamFinishTimes).length;
+    if (teamsFinished >= teamsCount) {
+      timer.split();
+      timerRep.value.state = 'finished';
+      if (activeRun.value) {
+        runFinishTimes.value[activeRun.value.id] = clone(timerRep.value);
+      }
+      nodecg.log.debug('[Timer] Finished');
+    }
+  } catch (err) {
+    nodecg.log.debug('[Timer] Cannot stop timer:', err);
+    throw err;
   }
 }
 
@@ -185,33 +205,38 @@ async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
  * @param id ID of team you wish to undo (if there is an active run).
  */
 async function undoTimer(id?: string): Promise<void> {
-  // Error if the timer is disabled.
-  if (changesDisabled.value) {
-    throw new Error('Timer changes are disabled');
-  }
-  // Error if timer is not finished or running.
-  if (!['finished', 'running'].includes(timerRep.value.state)) {
-    throw new Error('Timer is not finished/running');
-  }
-  // Error if there's an active run but no UUID was sent.
-  if (!id && activeRun.value) {
-    throw new Error('A run is active but no team ID was supplied');
-  }
-
-  // If we have a UUID and an active run, remove that team's finish time.
-  if (id && activeRun.value) {
-    delete timerRep.value.teamFinishTimes[id];
-    nodecg.log.debug(`[Timer] Team ${id} finish time undone`);
-  }
-
-  // Undo the split if needed.
-  if (timerRep.value.state === 'finished') {
-    timer.undoSplit();
-    timerRep.value.state = 'running';
-    if (activeRun.value && runFinishTimes.value[activeRun.value.id]) {
-      delete runFinishTimes.value[activeRun.value.id];
+  try {
+    // Error if the timer is disabled.
+    if (changesDisabled.value) {
+      throw new Error('Timer changes are disabled');
     }
-    nodecg.log.debug('[Timer] Undone');
+    // Error if timer is not finished or running.
+    if (!['finished', 'running'].includes(timerRep.value.state)) {
+      throw new Error('Timer is not finished/running');
+    }
+    // Error if there's an active run but no UUID was sent.
+    if (!id && activeRun.value) {
+      throw new Error('A run is active but no team ID was supplied');
+    }
+
+    // If we have a UUID and an active run, remove that team's finish time.
+    if (id && activeRun.value) {
+      delete timerRep.value.teamFinishTimes[id];
+      nodecg.log.debug(`[Timer] Team ${id} finish time undone`);
+    }
+
+    // Undo the split if needed.
+    if (timerRep.value.state === 'finished') {
+      timer.undoSplit();
+      timerRep.value.state = 'running';
+      if (activeRun.value && runFinishTimes.value[activeRun.value.id]) {
+        delete runFinishTimes.value[activeRun.value.id];
+      }
+      nodecg.log.debug('[Timer] Undone');
+    }
+  } catch (err) {
+    nodecg.log.debug('[Timer] Cannot undo timer:', err);
+    throw err;
   }
 }
 
@@ -220,22 +245,27 @@ async function undoTimer(id?: string): Promise<void> {
  * @param time Time string (HH:MM:SS).
  */
 async function editTimer(time: string): Promise<void> {
-  // Error if the timer is disabled.
-  if (changesDisabled.value) {
-    throw new Error('Timer changes are disabled');
-  }
-  // Error if the timer is not stopped/paused.
-  if (!['stopped', 'paused'].includes(timerRep.value.state)) {
-    throw new Error('Timer is not stopped/paused');
-  }
-  // Error if the string formatting is not correct.
-  if (!time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-    throw new Error('The supplied string is in the incorrect format');
-  }
+  try {
+    // Error if the timer is disabled.
+    if (changesDisabled.value) {
+      throw new Error('Timer changes are disabled');
+    }
+    // Error if the timer is not stopped/paused.
+    if (!['stopped', 'paused'].includes(timerRep.value.state)) {
+      throw new Error('Timer is not stopped/paused');
+    }
+    // Error if the string formatting is not correct.
+    if (!time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+      throw new Error('The supplied string is in the incorrect format');
+    }
 
-  const ms = timeStrToMS(time);
-  setTime(ms);
-  nodecg.log.debug(`[Timer] Edited to ${time}/${ms}`);
+    const ms = timeStrToMS(time);
+    setTime(ms);
+    nodecg.log.debug(`[Timer] Edited to ${time}/${ms}`);
+  } catch (err) {
+    nodecg.log.debug('[Timer] Cannot edit timer:', err);
+    throw err;
+  }
 }
 
 /**
@@ -262,7 +292,7 @@ if (timerRep.value.state === 'running') {
   const previousTime = timerRep.value.milliseconds;
   const timeOffset = previousTime + missedTime;
   setTime(timeOffset);
-  nodecg.log.info(`[Timer] Recovered ${(missedTime / 1000).toFixed(2)} seconds of lost time.`);
+  nodecg.log.info(`[Timer] Recovered ${(missedTime / 1000).toFixed(2)} seconds of lost time`);
   startTimer(true);
 }
 

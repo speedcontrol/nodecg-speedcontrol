@@ -95,10 +95,10 @@ export function bundleConfig(): Configschema {
  * @param err Error to supply if any.
  * @param data Anything else you want to send alongside.
  */
-export function processAck(
+export function processAck<T>(
   ack: ListenForCb | SendMessageAck | undefined,
   err: Error | null,
-  data?: unknown,
+  data?: T,
 ): void {
   if (ack && !ack.handled) {
     ack(err, data);
@@ -109,8 +109,7 @@ export function processAck(
  * Takes a promise and returns error and result as an array.
  * @param promise Promise you want to process.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function to(promise: Promise<any>): Promise<[Error | null, any?]> {
+export async function to<T>(promise: Promise<T>): Promise<[Error | null, T?]> {
   try {
     const data = await promise;
     return [null, data];

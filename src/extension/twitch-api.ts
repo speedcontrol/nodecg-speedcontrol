@@ -79,6 +79,7 @@ export async function refreshToken(): Promise<void> {
     apiData.value.refreshToken = resp.body.refresh_token;
   } catch (err) {
     nodecg.log.warn('[Twitch] Error refreshing access token, you need to relogin');
+    nodecg.log.debug('[Twitch] Error refreshing access token:', err);
     await to(logout());
     throw err;
   }
@@ -149,7 +150,7 @@ async function refreshChannelInfo(): Promise<void> {
   } catch (err) {
     // Try again after 10 seconds.
     nodecg.log.warn('[Twitch] Error getting channel information');
-    nodecg.log.debug('[Twitch] Error getting channel information:', err.message);
+    nodecg.log.debug('[Twitch] Error getting channel information:', err);
     channelInfoTO = setTimeout(refreshChannelInfo, 10 * 1000);
   }
 }
@@ -182,7 +183,7 @@ export async function updateChannelInfo(status: string, game: string): Promise<v
     channelInfo.value = resp.body;
   } catch (err) {
     nodecg.log.warn('[Twitch] Error updating channel information');
-    nodecg.log.debug('[Twitch] Error updating channel information:', err.message);
+    nodecg.log.debug('[Twitch] Error updating channel information:', err);
     throw err;
   }
 }
@@ -213,7 +214,7 @@ async function startCommercial(): Promise<{ duration: number }> {
     return { duration: 180 };
   } catch (err) {
     nodecg.log.warn('[Twitch] Error starting commercial');
-    nodecg.log.debug('[Twitch] Error starting commercial:', err.message);
+    nodecg.log.debug('[Twitch] Error starting commercial:', err);
     throw err;
   }
 }
@@ -256,6 +257,9 @@ async function setUp(): Promise<void> {
     if (err) {
       await refreshToken();
       [err, resp] = await to(validateToken());
+    }
+    if (!resp) {
+      throw new Error('');
     }
     apiData.value.channelID = resp.user_id;
     apiData.value.channelName = resp.login;
@@ -302,8 +306,8 @@ if (config.twitch.enabled) {
     apiData.value.state = 'authenticating';
     setUp().then(() => {
       nodecg.log.info('[Twitch] Integration ready');
-    }).catch(() => {
-      nodecg.log.warn('[Twitch] Issue activating integration');
+    }).catch((err) => {
+      nodecg.log.warn('[Twitch] Issue activating integration: ', err);
       to(logout());
     });
   }

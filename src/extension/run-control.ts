@@ -63,51 +63,55 @@ function changeSurroundingRuns(): void {
  * @param id The unique ID of the run you wish to change to.
  */
 async function changeActiveRun(id?: string): Promise<boolean> {
-  const runData = array.value.find((run): boolean => run.id === id);
-  if (['running', 'paused'].includes(timer.value.state)) {
-    throw new Error('Timer is running/paused');
-  }
-  if (runData) {
-    let noTwitchGame = false;
-    if (twitchAPIData.value.sync) {
-      // Constructing Twitch title and game to send off.
-      const status = bundleConfig().twitch.streamTitle
-        .replace(new RegExp('{{game}}', 'g'), runData.game || '')
-        .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
-        .replace(new RegExp('{{category}}', 'g'), runData.category || '');
-
-      // Attempts to find the correct Twitch game directory.
-      let { gameTwitch } = runData;
-      if (!gameTwitch && runData.game) {
-        const [, srcomGameTwitch] = await to(searchForTwitchGame(runData.game));
-        gameTwitch = srcomGameTwitch || runData.game;
-      }
-      if (gameTwitch) { // Verify game directory supplied exists on Twitch.
-        [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
-      }
-      noTwitchGame = !gameTwitch;
-
-      to(updateChannelInfo(
-        status,
-        gameTwitch || bundleConfig().twitch.streamDefaultGame,
-      ));
-
-      // Construct/send featured channels if enabled.
-      if (bundleConfig().twitch.ffzIntegration) {
-        to(setChannels(getTwitchChannels(runData)));
-      }
+  try {
+    if (['running', 'paused'].includes(timer.value.state)) {
+      throw new Error('Timer is running/paused');
     }
+    if (!id) {
+      throw new Error('No run ID was supplied');
+    }
+    const runData = array.value.find((run): boolean => run.id === id);
+    if (!runData) {
+      throw new Error(`Run with ID ${id} was not found`);
+    } else {
+      let noTwitchGame = false;
+      if (twitchAPIData.value.sync) {
+        // Constructing Twitch title and game to send off.
+        const status = bundleConfig().twitch.streamTitle
+          .replace(new RegExp('{{game}}', 'g'), runData.game || '')
+          .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
+          .replace(new RegExp('{{category}}', 'g'), runData.category || '');
 
-    activeRun.value = clone(runData);
-    to(resetTimer(true));
-    nodecg.log.debug(`[Run Control] Active run changed to ${id}`);
-    return noTwitchGame;
-  }
-  nodecg.log.debug('[Run Control] Could not successfully change active run');
-  if (!id) {
-    throw new Error('No run ID was supplied');
-  } else {
-    throw new Error(`Run with ID ${id} was not found`);
+        // Attempts to find the correct Twitch game directory.
+        let { gameTwitch } = runData;
+        if (!gameTwitch && runData.game) {
+          const [, srcomGameTwitch] = await to(searchForTwitchGame(runData.game));
+          gameTwitch = srcomGameTwitch || runData.game;
+        }
+        if (gameTwitch) { // Verify game directory supplied exists on Twitch.
+          [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
+        }
+        noTwitchGame = !gameTwitch;
+
+        to(updateChannelInfo(
+          status,
+          gameTwitch || bundleConfig().twitch.streamDefaultGame,
+        ));
+
+        // Construct/send featured channels if enabled.
+        if (bundleConfig().twitch.ffzIntegration) {
+          to(setChannels(getTwitchChannels(runData)));
+        }
+      }
+
+      activeRun.value = clone(runData);
+      to(resetTimer(true));
+      nodecg.log.debug(`[Run Control] Active run changed to ${id}`);
+      return noTwitchGame;
+    }
+  } catch (err) {
+    nodecg.log.debug('[Run Control] Could not successfully change active run:', err);
+    throw err;
   }
 }
 
@@ -116,17 +120,21 @@ async function changeActiveRun(id?: string): Promise<boolean> {
  * @param id The unique ID of the run you wish to delete.
  */
 async function removeRun(id?: string): Promise<void> {
-  const runIndex = array.value.findIndex((run): boolean => run.id === id);
-  if (runIndex >= 0) {
-    array.value.splice(runIndex, 1);
-    nodecg.log.debug(`[Run Control] Successfully removed run ${id}`);
-    return;
-  }
-  nodecg.log.debug(`[Run Control] Could not successfully remove run ${id}`);
-  if (!id) {
-    throw new Error('No run ID was supplied');
-  } else {
-    throw new Error(`Run with ID ${id} was not found`);
+  try {
+    if (!id) {
+      throw new Error('No run ID was supplied');
+    }
+    const runIndex = array.value.findIndex((run): boolean => run.id === id);
+    if (runIndex < 0) {
+      throw new Error(`Run with ID ${id} was not found`);
+    } else {
+      array.value.splice(runIndex, 1);
+      nodecg.log.debug(`[Run Control] Successfully removed run ${id}`);
+      return;
+    }
+  } catch (err) {
+    nodecg.log.debug('[Run Control] Could not successfully remove run:', err);
+    throw err;
   }
 }
 
@@ -202,7 +210,7 @@ async function modifyRun(runData: RunData, prevID?: string): Promise<void> {
       array.value.splice(prevIndex + 1 || array.value.length, 0, clone(data));
     }
   } catch (err) {
-    nodecg.log.debug('[Run Control] Could not successfully edit run:', err.message);
+    nodecg.log.debug('[Run Control] Could not successfully modify run:', err);
     throw err;
   }
 }
@@ -211,13 +219,15 @@ async function modifyRun(runData: RunData, prevID?: string): Promise<void> {
  * Removes the active run from the relevant replicant.
  */
 async function removeActiveRun(): Promise<void> {
-  if (['running', 'paused'].includes(timer.value.state)) {
-    nodecg.log.debug('[Run Control] Could not successfully remove active run');
-    throw new Error('Timer is running/paused');
-  } else {
+  try {
+    if (['running', 'paused'].includes(timer.value.state)) {
+      throw new Error('Timer is running/paused');
+    }
     activeRun.value = null;
     to(resetTimer(true));
     nodecg.log.debug('[Run Control] Successfully removed active run');
+  } catch (err) {
+    nodecg.log.debug('[Run Control] Could not successfully remove active run:', err);
   }
 }
 
@@ -225,14 +235,17 @@ async function removeActiveRun(): Promise<void> {
  * Removes all runs in the array and the currently active run.
  */
 async function removeAllRuns(): Promise<void> {
-  if (['running', 'paused'].includes(timer.value.state)) {
-    nodecg.log.debug('[Run Control] Could not successfully remove all runs');
-    throw new Error('Timer is running/paused');
-  } else {
+  try {
+    if (['running', 'paused'].includes(timer.value.state)) {
+      throw new Error('Timer is running/paused');
+    }
     array.value.length = 0;
     removeActiveRun();
     to(resetTimer(true));
     nodecg.log.debug('[Run Control] Successfully removed all runs');
+  } catch (err) {
+    nodecg.log.debug('[Run Control] Could not successfully remove all runs:', err);
+    throw err;
   }
 }
 

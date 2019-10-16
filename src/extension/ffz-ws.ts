@@ -112,9 +112,9 @@ export async function setChannels(names: string[]): Promise<void> {
         ])}`,
       );
       const clients = JSON.parse(msg.substr(3)).updated_clients;
-      nodecg.log.info(`[FrankerFaceZ] Featured channels have been updated for ${clients} viewers.`);
+      nodecg.log.info(`[FrankerFaceZ] Featured channels have been updated for ${clients} viewers`);
     } catch (err) {
-      nodecg.log.warn('[FrankerFaceZ] Featured channels could not successfully be updated.');
+      nodecg.log.warn('[FrankerFaceZ] Featured channels could not successfully be updated');
       nodecg.log.debug('[FrankerFaceZ] Featured channels could not successfully be updated:', err);
       throw err;
     }

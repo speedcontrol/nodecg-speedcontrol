@@ -1,5 +1,3 @@
-/* eslint @typescript-eslint/no-explicit-any: off */
-
 import { EventEmitter } from 'events';
 import { SendMessageAck, SendMessageArgsMap, SendMessageReturnMap } from '../../../types';
 import { get as nodecg } from './nodecg';
@@ -13,7 +11,7 @@ const emitter = new EventEmitter();
  */
 function wrapAck(ack: Function): Function {
   let handled = false;
-  const func = (...args: any[]): void => {
+  const func = (...args: unknown[]): void => {
     if (handled) {
       throw new Error('Already handled');
     }
@@ -39,7 +37,7 @@ export function sendMessage<K extends keyof SendMessageArgsMap>(
 ): Promise<SendMessageReturnMap[K]> {
   return new Promise((resolve, reject): void => {
     nodecg().log.debug(`[Events] sendMessage triggered for "${name}":`, JSON.stringify(data));
-    emitter.emit(name, data, wrapAck((err: Error | null, data_?: any) => {
+    emitter.emit(name, data, wrapAck((err: Error | null, data_?: SendMessageReturnMap[K]) => {
       if (err) {
         reject(err);
       } else {

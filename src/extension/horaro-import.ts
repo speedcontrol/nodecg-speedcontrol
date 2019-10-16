@@ -137,19 +137,24 @@ function resetImportStatus(): void {
  * @param dashID UUID of dashboard element, generated on panel load and passed here.
  */
 async function loadSchedule(url: string, dashID: string): Promise<HoraroSchedule> {
-  let jsonURL = `${url}.json`;
-  if (url.match((/\?key=/))) { // If schedule URL has a key in it, extract it correctly.
-    const urlMatch = (url.match(/(.*?)(?=(\?key=))/) as RegExpMatchArray)[0];
-    const keyMatch = (url.match(/(?<=(\?key=))(.*?)$/) as RegExpMatchArray)[0];
-    jsonURL = `${urlMatch}.json?key=${keyMatch}`;
+  try {
+    let jsonURL = `${url}.json`;
+    if (url.match((/\?key=/))) { // If schedule URL has a key in it, extract it correctly.
+      const urlMatch = (url.match(/(.*?)(?=(\?key=))/) as RegExpMatchArray)[0];
+      const keyMatch = (url.match(/(?<=(\?key=))(.*?)$/) as RegExpMatchArray)[0];
+      jsonURL = `${urlMatch}.json?key=${keyMatch}`;
+    }
+    const resp = await needle('get', encodeURI(jsonURL));
+    if (resp.statusCode !== 200) {
+      throw new Error(`HTTP status code was ${resp.statusCode}`);
+    }
+    scheduleDataCache[dashID] = resp.body;
+    nodecg.log.debug('[Horaro Import] Schedule successfully loaded');
+    return resp.body;
+  } catch (err) {
+    nodecg.log.debug('[Horaro Import] Schedule could not be loaded:', err);
+    throw err;
   }
-  const resp = await needle('get', encodeURI(jsonURL));
-  if (resp.statusCode !== 200) {
-    throw new Error(`HTTP status code was ${resp.statusCode}`);
-  }
-  scheduleDataCache[dashID] = resp.body;
-  nodecg.log.debug('[Horaro Import] Schedule successfully loaded');
-  return resp.body;
 }
 
 /**
@@ -340,18 +345,18 @@ nodecg.listenFor('loadSchedule', (data, ack) => {
 });
 
 nodecg.listenFor('importSchedule', (data, ack) => {
-  if (importStatus.value.importing) {
-    nodecg.log.warn('[Horaro Import] Error importing schedule: Already importing schedule');
-    processAck(ack, new Error('Already importing schedule'));
+  try {
+    if (importStatus.value.importing) {
+      throw new Error('Already importing schedule');
+    }
+    nodecg.log.info('[Horaro Import] Started importing schedule');
+    importSchedule(data.opts, data.dashID)
+      .then(() => {
+        nodecg.log.info('[Horaro Import] Successfully imported schedule');
+        processAck(ack, null);
+      });
+  } catch (err) {
+    nodecg.log.warn('[Horaro Import] Error importing schedule:', err);
+    processAck(ack, err);
   }
-  nodecg.log.info('[Horaro Import] Started importing schedule');
-  importSchedule(data.opts, data.dashID)
-    .then(() => {
-      nodecg.log.info('[Horaro Import] Successfully imported schedule');
-      processAck(ack, null);
-    })
-    .catch((err) => {
-      nodecg.log.warn('[Horaro Import] Error importing schedule:', err);
-      processAck(ack, err);
-    });
 });
