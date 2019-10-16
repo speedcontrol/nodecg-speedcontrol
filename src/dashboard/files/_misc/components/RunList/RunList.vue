@@ -10,6 +10,14 @@
         ${filteredRunDataArray.length} run${filteredRunDataArray.length === 1 ? '' : 's'} found.
       `"
     ></v-text-field>
+    <div v-if="editor">
+      <v-checkbox
+        v-model="hasNoTwitch"
+        class="ma-1 pa-0"
+        hide-details
+        label="Run has no Twitch game directory listed"
+      ></v-checkbox>
+    </div>
     <div
       ref="runList"
       class="RunList"
@@ -61,6 +69,7 @@ export default Vue.extend({
   data() {
     return {
       searchTerm: null,
+      hasNoTwitch: false,
     };
   },
   computed: {
@@ -77,12 +86,10 @@ export default Vue.extend({
     filteredRunDataArray() {
       return store.state.runDataArray.filter((run) => {
         const str = (this.searchTerm) ? this.searchTerm.toLowerCase() : '';
-        if (!str) {
-          return true;
-        }
-        return (run.game && run.game.toLowerCase().includes(str))
-        || !!run.teams.find((team) => (team.name && team.name.toLowerCase().includes(str))
-        || !!team.players.find((player) => player.name.toLowerCase().includes(str)));
+        const searchMatch = !str || (str && ((run.game && run.game.toLowerCase().includes(str))
+          || !!run.teams.find((team) => (team.name && team.name.toLowerCase().includes(str))
+          || !!team.players.find((player) => player.name.toLowerCase().includes(str)))));
+        return searchMatch && ((this.hasNoTwitch && !run.gameTwitch) || (!this.hasNoTwitch));
       });
     },
     activeRun() {
