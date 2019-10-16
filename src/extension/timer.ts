@@ -174,7 +174,7 @@ async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
     timer.split();
     timerRep.value.state = 'finished';
     if (activeRun.value) {
-      runFinishTimes.value[activeRun.value.id] = timerRep.value.time;
+      runFinishTimes.value[activeRun.value.id] = clone(timerRep.value);
     }
     nodecg.log.debug('[Timer] Finished');
   }

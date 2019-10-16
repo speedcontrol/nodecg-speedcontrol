@@ -17,7 +17,12 @@ try {
       const fileName = file.replace(/.json$/, '');
       console.log(fileName);
       filesProcessed.push(fileName);
-      compileFromFile(`./schemas/${fileName}.json`).then(ts => fs.writeFileSync(`./schemas/${fileName}.d.ts`, ts));
+      compileFromFile(
+        `./schemas/${fileName}.json`,
+        {
+          cwd: './schemas',
+        },
+      ).then(ts => fs.writeFileSync(`./schemas/${fileName}.d.ts`, ts));
     }
   });
 
