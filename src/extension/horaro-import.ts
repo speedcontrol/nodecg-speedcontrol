@@ -219,14 +219,17 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       const game = parseMarkdown(run.data[opts.columns.game]);
       let gameTwitch = parseMarkdown(run.data[opts.columns.gameTwitch]).str;
       let srcomGameTwitch;
-      if (!gameTwitch && game.url && game.url.includes('speedrun.com')) {
-        let gameAbbr = game.url.split('/')[game.url.split('/').length - 1];
-        gameAbbr = (gameAbbr && gameAbbr.includes('#'))
-          ? gameAbbr.split('#')[0] : gameAbbr;
-        [, srcomGameTwitch] = await to(searchForTwitchGame(gameAbbr, true));
-      }
-      if (!gameTwitch && !srcomGameTwitch && game.str) {
-        [, srcomGameTwitch] = await to(searchForTwitchGame(game.str));
+      if (!config.schedule.disableSpeedrunComLookup && !gameTwitch) {
+        if (game.url && game.url.includes('speedrun.com')) {
+          const gameAbbr = game.url
+            .split('speedrun.com/')[game.url.split('speedrun.com/').length - 1]
+            .split('/')[0]
+            .split('#')[0];
+          [, srcomGameTwitch] = await to(searchForTwitchGame(gameAbbr, true));
+        }
+        if (!srcomGameTwitch && game.str) {
+          [, srcomGameTwitch] = await to(searchForTwitchGame(game.str));
+        }
       }
       gameTwitch = gameTwitch || srcomGameTwitch || game.str;
       if (gameTwitch) { // Verify game directory supplied exists on Twitch.
