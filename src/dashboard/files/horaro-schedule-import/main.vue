@@ -319,6 +319,9 @@ export default Vue.extend({
     },
     clearOpts() {
       store.commit('clearOpts');
+      (nodecg.bundleConfig.schedule.customData || []).forEach((col) => {
+        store.commit('addCustomColumn', { name: col.key });
+      });
       this.predictColumns();
       this.restored = true;
       setTimeout(() => { this.restored = false; }, 1000);
