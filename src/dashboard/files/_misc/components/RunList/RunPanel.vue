@@ -38,6 +38,10 @@
         <span class="Bold">Released:</span>
         <span>{{ runData.release }}</span>
       </div>
+      <div v-if="runFinishTime">
+        <span class="Bold">Final Time:</span>
+        <span>{{ runFinishTime.time }}</span>
+      </div>
       <div
         v-for="(val, key) in runData.customData"
         :key="key"
@@ -125,6 +129,9 @@ export default Vue.extend({
     },
     activeRun() {
       return store.state.runDataActiveRun;
+    },
+    runFinishTime() {
+      return store.state.runFinishTimes[this.runData.id];
     },
   },
   methods: {

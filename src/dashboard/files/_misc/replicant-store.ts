@@ -2,7 +2,7 @@ import clone from 'clone';
 import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line import/no-unresolved
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { DefaultSetupTime, HoraroImportStatus, RunDataActiveRunSurrounding, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../../schemas'; // eslint-disable-line import/no-unresolved, max-len, object-curly-newline
+import { DefaultSetupTime, HoraroImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../../schemas'; // eslint-disable-line import/no-unresolved, max-len, object-curly-newline
 import { RunDataActiveRun, RunDataArray, Timer } from '../../../../types';
 
 Vue.use(Vuex);
@@ -11,6 +11,7 @@ const replicantNames = [
   'runDataArray',
   'runDataActiveRun',
   'runDataActiveRunSurrounding',
+  'runFinishTimes',
   'horaroImportStatus',
   'defaultSetupTime',
   'timer',
@@ -25,6 +26,7 @@ export const store = new Vuex.Store({
     runDataArray: [] as RunDataArray,
     runDataActiveRun: null as RunDataActiveRun,
     runDataActiveRunSurrounding: {} as RunDataActiveRunSurrounding,
+    runFinishTimes: {} as RunFinishTimes,
     horaroImportStatus: {} as HoraroImportStatus,
     defaultSetupTime: 0 as DefaultSetupTime,
     timer: {} as Timer,
