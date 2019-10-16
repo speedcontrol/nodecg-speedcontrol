@@ -1,3 +1,5 @@
+/* eslint import/prefer-default-export: off */
+
 import clone from 'clone';
 import livesplitCore from 'livesplit-core';
 import { RunFinishTimes, TimerChangesDisabled } from '../../schemas';
@@ -109,8 +111,9 @@ async function pauseTimer(): Promise<void> {
 
 /**
  * Reset the timer.
+ * @param force Forces a reset even if changes are disabled.
  */
-async function resetTimer(force?: boolean): Promise<void> {
+export async function resetTimer(force?: boolean): Promise<void> {
   // Error if the timer is disabled.
   if (!force && changesDisabled.value) {
     throw new Error('Timer changes are disabled');

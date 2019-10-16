@@ -1,7 +1,5 @@
 import needle, { NeedleResponse } from 'needle';
 import { UserData } from '../../types';
-import * as events from './util/events';
-import { processAck } from './util/helpers';
 import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
@@ -96,15 +94,3 @@ export async function searchForUserData(query: string): Promise<UserData> {
     throw err;
   }
 }
-
-// Our messaging system.
-events.listenFor('srcomTwitchGameSearch', (data, ack) => {
-  searchForTwitchGame(data.query, data.abbr)
-    .then((data_) => processAck(ack, null, data_))
-    .catch((err) => processAck(ack, err));
-});
-events.listenFor('srcomUserSearch', (query, ack) => {
-  searchForUserData(query)
-    .then((data) => processAck(ack, null, data))
-    .catch((err) => processAck(ack, err));
-});

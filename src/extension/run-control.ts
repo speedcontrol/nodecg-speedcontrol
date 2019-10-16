@@ -2,9 +2,10 @@ import clone from 'clone';
 import _ from 'lodash';
 import { RunDataActiveRunSurrounding, TwitchAPIData } from '../../schemas';
 import { RunData, RunDataActiveRun, RunDataArray, RunDataPlayer, RunDataTeam, Timer } from '../../types'; // eslint-disable-line object-curly-newline, max-len
+import { setChannels } from './ffz-ws';
 import { searchForTwitchGame } from './srcom-api';
+import { resetTimer } from './timer';
 import { updateChannelInfo, verifyTwitchDir } from './twitch-api';
-import * as events from './util/events';
 import { bundleConfig, findRunIndexFromId, formPlayerNamesStr, getTwitchChannels, msToTimeStr, processAck, timeStrToMS, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 
@@ -92,15 +93,12 @@ async function changeActiveRun(id?: string): Promise<boolean> {
 
       // Construct/send featured channels if enabled.
       if (bundleConfig().twitch.ffzIntegration) {
-        to(events.sendMessage(
-          'updateFeaturedChannels',
-          getTwitchChannels(runData),
-        ));
+        to(setChannels(getTwitchChannels(runData)));
       }
     }
 
     activeRun.value = clone(runData);
-    to(events.sendMessage('timerReset', true));
+    to(resetTimer(true));
     nodecg.log.debug(`[Run Control] Active run changed to ${id}`);
     return noTwitchGame;
   }
@@ -217,7 +215,7 @@ async function removeActiveRun(): Promise<void> {
     throw new Error('Timer is running/paused');
   } else {
     activeRun.value = null;
-    to(events.sendMessage('timerReset', true));
+    to(resetTimer(true));
     nodecg.log.debug('[Run Control] Successfully removed active run');
   }
 }
@@ -232,7 +230,7 @@ async function removeAllRuns(): Promise<void> {
   } else {
     array.value.length = 0;
     removeActiveRun();
-    to(events.sendMessage('timerReset', true));
+    to(resetTimer(true));
     nodecg.log.debug('[Run Control] Successfully removed all runs');
   }
 }

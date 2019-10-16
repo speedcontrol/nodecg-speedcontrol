@@ -1,12 +1,5 @@
-import { UserData } from './Speedruncom';
 
 export interface SendMessageArgsMap {
-  twitchUpdateChannelInfo: { status: string; game: string };
-  twitchGameSearch: string;
-  srcomTwitchGameSearch: { query: string; abbr?: boolean };
-  srcomUserSearch: string;
-  twitchRefreshToken: void;
-  updateFeaturedChannels: string[];
   repeaterFeaturedChannels: string[];
   timerStart: void;
   timerReset?: boolean;
@@ -15,12 +8,6 @@ export interface SendMessageArgsMap {
 }
 
 export interface SendMessageReturnMap {
-  twitchUpdateChannelInfo: void;
-  twitchGameSearch: string;
-  srcomTwitchGameSearch: string;
-  srcomUserSearch: UserData;
-  twitchRefreshToken: void;
-  updateFeaturedChannels: void;
   repeaterFeaturedChannels: void;
   timerStart: void;
   timerReset: void;

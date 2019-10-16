@@ -57,7 +57,7 @@ async function validateToken(): Promise<{
 /**
  * Refreshes the Twitch API access token, called whenever that is needed.
  */
-async function refreshToken(): Promise<void> {
+export async function refreshToken(): Promise<void> {
   try {
     nodecg.log.info('[Twitch] Attempting to refresh access token');
     const resp = await needle(
@@ -293,23 +293,6 @@ if (config.twitch.enabled) {
   });
   nodecg.listenFor('twitchLogout', (data, ack) => {
     logout()
-      .then(() => processAck(ack, null))
-      .catch((err) => processAck(ack, err));
-  });
-
-  // Our messaging system.
-  events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
-    updateChannelInfo(data.status, data.game)
-      .then(() => processAck(ack, null))
-      .catch((err) => processAck(ack, err));
-  });
-  events.listenFor('twitchGameSearch', (query, ack) => {
-    searchForGame(query)
-      .then((data_) => processAck(ack, null, data_))
-      .catch((err) => processAck(ack, err));
-  });
-  events.listenFor('twitchRefreshToken', (data, ack) => {
-    refreshToken()
       .then(() => processAck(ack, null))
       .catch((err) => processAck(ack, err));
   });

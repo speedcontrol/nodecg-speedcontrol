@@ -1,7 +1,10 @@
+/* eslint import/prefer-default-export: off */
+
 import { forEachSeries } from 'p-iteration';
 import TwitchJS from 'twitch-js';
 import WebSocket from 'ws';
 import { TwitchAPIData } from '../../schemas';
+import { refreshToken } from './twitch-api';
 import * as events from './util/events';
 import { bundleConfig, processAck, randomInt, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
@@ -70,7 +73,7 @@ async function sendAuth(auth: string): Promise<void> {
       client.disconnect();
     } catch (err) {
       if (err.includes('authentication failed') && attempts <= 1) {
-        await to(events.sendMessage('twitchRefreshToken'));
+        await to(refreshToken());
         opts.identity.password = twitchAPIData.value.accessToken; // Update auth in opts.
         retry = true;
       }
@@ -83,7 +86,7 @@ async function sendAuth(auth: string): Promise<void> {
  * Set the featured channels.
  * @param names Array of usernames on Twitch.
  */
-async function setChannels(names: string[]): Promise<void> {
+export async function setChannels(names: string[]): Promise<void> {
   if (!config.twitch.ffzIntegration) {
     throw new Error('Integration not enabled');
   }
@@ -254,13 +257,6 @@ if (config.twitch.enabled && config.twitch.ffzIntegration) {
 
   // NodeCG messaging system.
   nodecg.listenFor('updateFeaturedChannels', (names, ack) => {
-    setChannels(names)
-      .then(() => processAck(ack, null))
-      .catch((err) => processAck(ack, err));
-  });
-
-  // Our messaging system.
-  events.listenFor('updateFeaturedChannels', (names, ack) => {
     setChannels(names)
       .then(() => processAck(ack, null))
       .catch((err) => processAck(ack, err));

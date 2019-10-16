@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint @typescript-eslint/no-explicit-any: off */
 
 import { EventEmitter } from 'events';
 import { SendMessageAck, SendMessageArgsMap, SendMessageReturnMap } from '../../../types';

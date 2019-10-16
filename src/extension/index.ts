@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint global-require: off */
 
 import { NodeCG } from 'nodecg/types/server'; // eslint-disable-line import/no-unresolved
 import { ExtensionReturn } from '../../types';
