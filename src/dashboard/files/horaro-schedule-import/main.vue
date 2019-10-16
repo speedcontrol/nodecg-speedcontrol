@@ -33,10 +33,11 @@
         class="Dropdown"
       ></dropdown>
       <div id="SplitPlayersTxt">
+        Split Players:
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <span v-on="on">
-              Split Players:
+              <v-icon>mdi-help-circle-outline</v-icon>
             </span>
           </template>
           <span>This option dictates how the players in your relevant schedule column are split;
@@ -60,23 +61,75 @@
     <div v-else-if="importStatus.importing">
       Import currently in progress...
     </div>
-    <!-- Import Button, if importing -->
-    <v-btn
-      v-if="importStatus.importing"
-      id="ImportBtn"
-      :disabled="true"
+    <div
+      :style="{ 'margin-top': '10px' }"
     >
-      Importing {{ importStatus.item }}/{{ importStatus.total }}
-    </v-btn>
-    <!-- Import Button, if not importing -->
-    <v-btn
-      v-else
-      id="ImportBtn"
-      :disabled="!loaded"
-      @click="importConfirm"
-    >
-      Import
-    </v-btn>
+      <!-- Import Button, if importing -->
+      <v-btn
+        v-if="importStatus.importing"
+        :disabled="true"
+        block
+      >
+        Importing {{ importStatus.item }}/{{ importStatus.total }}
+      </v-btn>
+      <!-- Import Button, if not importing and no data loaded -->
+      <v-btn
+        v-else-if="!importStatus.importing && !loaded"
+        block
+        :disabled="!loaded"
+        @click="importConfirm"
+      >
+        Import
+      </v-btn>
+      <!-- Import Button, if not importing but data loaded -->
+      <div
+        v-else
+        class="d-flex justify-center"
+      >
+        <v-btn
+          :style="{ flex: 1 }"
+          @click="importConfirm"
+        >
+          Import
+        </v-btn>
+        <v-tooltip
+          left
+          :disabled="saved"
+        >
+          <template v-slot:activator="{ on }">
+            <span v-on="on">
+              <v-btn
+                :loading="saved"
+                :disabled="saved"
+                :style="{ 'min-width': 0, padding: '0 10px', 'margin-left': '5px' }"
+                @click="saveOpts"
+              >
+                <v-icon>mdi-content-save-outline</v-icon>
+              </v-btn>
+            </span>
+          </template>
+          <span>Save Configuration</span>
+        </v-tooltip>
+        <v-tooltip
+          left
+          :disabled="restored"
+        >
+          <template v-slot:activator="{ on }">
+            <span v-on="on">
+              <v-btn
+                :loading="restored"
+                :disabled="restored"
+                :style="{ 'min-width': 0, padding: '0 10px', 'margin-left': '5px' }"
+                @click="clearOpts"
+              >
+                <v-icon>mdi-undo</v-icon>
+              </v-btn>
+            </span>
+          </template>
+          <span>Restore Default Configuration</span>
+        </v-tooltip>
+      </div>
+    </div>
   </v-app>
 </template>
 
@@ -97,6 +150,8 @@ export default Vue.extend({
       dashID: uuid(), // Temp ID for this page load.
       url: nodecg.bundleConfig.schedule.defaultURL,
       loaded: false,
+      saved: false,
+      restored: false,
       columns: [] as string[],
       runDataOptions: [
         {
@@ -195,7 +250,11 @@ export default Vue.extend({
       }).then((data) => {
         this.loaded = true;
         this.columns = data.schedule.columns;
-        this.predictColumns();
+        if (repStore.state.horaroImportSavedOpts) {
+          store.commit('loadOpts');
+        } else {
+          this.predictColumns();
+        }
       }).catch(() => {
         this.loaded = false;
       });
@@ -227,13 +286,11 @@ export default Vue.extend({
         const index = this.columns.findIndex(
           (col) => option.predict.some((pred) => !!col.toLowerCase().includes(pred)),
         );
-        if (index >= 0) {
-          store.commit('updateColumn', {
-            name: option.key,
-            value: index,
-            custom: option.custom,
-          });
-        }
+        store.commit('updateColumn', {
+          name: option.key,
+          value: (index >= 0) ? index : null,
+          custom: option.custom,
+        });
       });
     },
     importConfirm() {
@@ -255,6 +312,17 @@ export default Vue.extend({
         });
       }
     },
+    saveOpts() {
+      store.commit('saveOpts');
+      this.saved = true;
+      setTimeout(() => { this.saved = false; }, 1000);
+    },
+    clearOpts() {
+      store.commit('clearOpts');
+      this.predictColumns();
+      this.restored = true;
+      setTimeout(() => { this.restored = false; }, 1000);
+    },
   },
 });
 </script>
@@ -262,10 +330,6 @@ export default Vue.extend({
 <style>
   #LoadScheduleBtn {
     margin: 5px 0 10px 0;
-  }
-
-  #ImportBtn {
-    margin-top: 10px;
   }
 
   #SplitPlayersTxt {

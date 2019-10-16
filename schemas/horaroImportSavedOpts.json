@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "definitions": {
+    "columnSetting": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "game": {
+              "$ref": "#/definitions/columnSetting"
+            },
+            "gameTwitch": {
+              "$ref": "#/definitions/columnSetting"
+            },
+            "category": {
+              "$ref": "#/definitions/columnSetting"
+            },
+            "system": {
+              "$ref": "#/definitions/columnSetting"
+            },
+            "region": {
+              "$ref": "#/definitions/columnSetting"
+            },
+            "release": {
+              "$ref": "#/definitions/columnSetting"
+            },
+            "player": {
+              "$ref": "#/definitions/columnSetting"
+            },
+            "custom": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/columnSetting"
+              }
+            }
+          }
+        },
+        "split": {
+          "type": "number",
+          "enum": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "type": "null"
+    }
+  ]
+}

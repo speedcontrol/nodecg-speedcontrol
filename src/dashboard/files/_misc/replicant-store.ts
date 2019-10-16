@@ -2,7 +2,7 @@ import clone from 'clone';
 import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line import/no-unresolved
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { DefaultSetupTime, HoraroImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../../schemas'; // eslint-disable-line import/no-unresolved, max-len, object-curly-newline
+import { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../../schemas'; // eslint-disable-line import/no-unresolved, max-len, object-curly-newline
 import { RunDataActiveRun, RunDataArray, Timer } from '../../../../types';
 
 Vue.use(Vuex);
@@ -13,6 +13,7 @@ const replicantNames = [
   'runDataActiveRunSurrounding',
   'runFinishTimes',
   'horaroImportStatus',
+  'horaroImportSavedOpts',
   'defaultSetupTime',
   'timer',
   'timerChangesDisabled',
@@ -28,6 +29,7 @@ export const store = new Vuex.Store({
     runDataActiveRunSurrounding: {} as RunDataActiveRunSurrounding,
     runFinishTimes: {} as RunFinishTimes,
     horaroImportStatus: {} as HoraroImportStatus,
+    horaroImportSavedOpts: null as HoraroImportSavedOpts,
     defaultSetupTime: 0 as DefaultSetupTime,
     timer: {} as Timer,
     timerChangesDisabled: false as TimerChangesDisabled,
@@ -69,6 +71,13 @@ export const store = new Vuex.Store({
         Vue.set(state, 'timerChangesDisabled', value);
         rep.value = value;
       }
+    },
+    saveHoraroImportOpts(state, { value }) {
+      const rep = replicants.find(
+        (repObj) => repObj.name === 'horaroImportSavedOpts',
+      ) as ReplicantBrowser<HoraroImportSavedOpts>;
+      Vue.set(state, 'horaroImportSavedOpts', value);
+      rep.value = value;
     },
   },
 });

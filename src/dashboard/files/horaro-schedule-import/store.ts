@@ -1,5 +1,7 @@
+import clone from 'clone';
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { store as repStore } from '../_misc/replicant-store';
 
 Vue.use(Vuex);
 
@@ -32,6 +34,20 @@ export default new Vuex.Store({
     },
     updateSplit(state, { value }) {
       Vue.set(state.opts, 'split', value);
+    },
+    saveOpts(state) {
+      repStore.commit('saveHoraroImportOpts', {
+        value: clone(state.opts),
+      });
+    },
+    loadOpts(state) {
+      Vue.set(state, 'opts', clone(repStore.state.horaroImportSavedOpts));
+    },
+    clearOpts(state) {
+      repStore.commit('saveHoraroImportOpts', {
+        value: undefined,
+      });
+      Vue.set(state.opts, 'split', 0);
     },
   },
 });
