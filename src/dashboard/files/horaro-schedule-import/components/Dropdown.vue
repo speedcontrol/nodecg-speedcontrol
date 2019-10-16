@@ -45,17 +45,20 @@ export default Vue.extend({
       },
     },
   },
-  data() {
-    return {
-      dropdownOpts: [
+  computed: {
+    dropdownOpts() {
+      return [
         {
           value: -1,
           text: 'N/A',
         },
-      ],
-    };
-  },
-  computed: {
+      ].concat(
+        this.columns.map((value, index) => ({
+          value: index,
+          text: value,
+        })),
+      );
+    },
     selected: {
       // Vetur doesn't think "this" exists in here?
       get(): number {
@@ -73,14 +76,6 @@ export default Vue.extend({
         });
       },
     },
-  },
-  created() {
-    this.dropdownOpts = this.dropdownOpts.concat(
-      this.columns.map((value, index) => ({
-        value: index,
-        text: value,
-      })),
-    );
   },
 });
 </script>
