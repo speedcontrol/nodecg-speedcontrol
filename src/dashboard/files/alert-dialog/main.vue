@@ -41,6 +41,11 @@ export default Vue.extend({
     // Small hack to make the NodeCG dialog look a little better for us, not perfect yet.
     const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;
     elem.style.marginBottom = '12px';
+
+    // Allow alerts to be arbitrarily triggered.
+    nodecg.listenFor('triggerAlert', (name) => {
+      this.open({ name });
+    });
   },
   methods: {
     open(opts: {

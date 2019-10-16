@@ -2,17 +2,23 @@
 export interface SendMessageArgsMap {
   repeaterFeaturedChannels: string[];
   timerStart: void;
+  timerPause: void;
   timerReset?: boolean;
   timerStop: { id?: string; forfeit?: boolean; };
+  timerUndo?: string;
   twitchCommercialStarted: { duration: number; }
+  changeToNextRun: void;
 }
 
 export interface SendMessageReturnMap {
   repeaterFeaturedChannels: void;
   timerStart: void;
+  timerPause: void;
   timerReset: void;
   timerStop: void;
+  timerUndo: void;
   twitchCommercialStarted: void;
+  changeToNextRun: void;
 }
 
 export type SendMessageAck = HandledSendMessageAck | UnhandledSendMessageAck;

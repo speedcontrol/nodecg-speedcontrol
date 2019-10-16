@@ -304,6 +304,11 @@ events.listenFor('timerStart', (data, ack) => {
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
+events.listenFor('timerPause', (data, ack) => {
+  pauseTimer()
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
 events.listenFor('timerReset', (force, ack) => {
   resetTimer(force)
     .then(() => processAck(ack, null))
@@ -311,6 +316,11 @@ events.listenFor('timerReset', (force, ack) => {
 });
 events.listenFor('timerStop', (data, ack) => {
   stopTimer(data.id, data.forfeit)
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
+events.listenFor('timerUndo', (id, ack) => {
+  undoTimer(id)
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });

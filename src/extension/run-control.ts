@@ -6,6 +6,7 @@ import { setChannels } from './ffz-ws';
 import { searchForTwitchGame } from './srcom-api';
 import { resetTimer } from './timer';
 import { updateChannelInfo, verifyTwitchDir } from './twitch-api';
+import * as events from './util/events';
 import { bundleConfig, findRunIndexFromId, formPlayerNamesStr, getTwitchChannels, msToTimeStr, processAck, timeStrToMS, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 
@@ -269,6 +270,18 @@ nodecg.listenFor('removeAllRuns', (data, ack) => {
 nodecg.listenFor('removeAllRuns', (data, ack) => {
   removeAllRuns()
     .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
+
+// Our messaging system.
+events.listenFor('changeToNextRun', (data, ack) => {
+  changeActiveRun(activeRunSurr.value.next)
+    .then((noTwitchGame) => {
+      processAck(ack, null, noTwitchGame);
+      if (noTwitchGame) {
+        nodecg.sendMessage('triggerAlert', 'NoTwitchGame');
+      }
+    })
     .catch((err) => processAck(ack, err));
 });
 
