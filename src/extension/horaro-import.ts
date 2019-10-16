@@ -185,6 +185,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
     });
 
     // Filtering out any games on the ignore list before processing them all.
+    const hashesSeen: string[] = [];
     const newRunDataArray = await mapSeries(runItems.filter((run) => (
       !checkGameAgainstIgnoreList(run.data[opts.columns.game])
     )), async (run, index, arr): Promise<RunData> => {
@@ -192,8 +193,14 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       importStatus.value.total = arr.length;
 
       // If a run with the same hash exists already, assume it's the same and use the same UUID.
+      // Will only work for the first instance of a hash, this is usually only an issue if the
+      // same "run" happens twice in a schedule (for example a Setup block).
       const hash = generateRunHash(run.data);
-      const matchingOldRun = runDataArray.value.find((oldRun) => oldRun.hash === hash);
+      let matchingOldRun;
+      if (!hashesSeen.includes(hash)) {
+        matchingOldRun = runDataArray.value.find((oldRun) => oldRun.hash === hash);
+        hashesSeen.push(hash);
+      }
       const runData: RunData = {
         teams: [],
         customData: {},
