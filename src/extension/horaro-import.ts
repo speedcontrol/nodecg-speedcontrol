@@ -211,14 +211,17 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       // Attempts to find the correct Twitch game directory.
       const game = parseMarkdown(run.data[opts.columns.game]);
       let gameTwitch = parseMarkdown(run.data[opts.columns.gameTwitch]).str;
+      let srcomGameTwitch;
       if (!gameTwitch && game.url && game.url.includes('speedrun.com')) {
         let gameAbbr = game.url.split('/')[game.url.split('/').length - 1];
         gameAbbr = (gameAbbr && gameAbbr.includes('#'))
           ? gameAbbr.split('#')[0] : gameAbbr;
-        [, gameTwitch] = await to(searchForTwitchGame(gameAbbr, true));
-      } else if (!gameTwitch && game.str) {
-        gameTwitch = game.str;
+        [, srcomGameTwitch] = await to(searchForTwitchGame(gameAbbr, true));
       }
+      if (!gameTwitch && !srcomGameTwitch && game.str) {
+        [, srcomGameTwitch] = await to(searchForTwitchGame(game.str));
+      }
+      gameTwitch = gameTwitch || srcomGameTwitch || game.str;
       if (gameTwitch) { // Verify game directory supplied exists on Twitch.
         [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
       }

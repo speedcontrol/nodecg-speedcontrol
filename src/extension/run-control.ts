@@ -76,8 +76,8 @@ async function changeActiveRun(id?: string): Promise<boolean> {
         .replace(new RegExp('{{category}}', 'g'), runData.category || '');
 
       // Attempts to find the correct Twitch game directory.
-      let gameTwitch;
-      if (!runData.gameTwitch && runData.game) {
+      let { gameTwitch } = runData;
+      if (!gameTwitch && runData.game) {
         const [, srcomGameTwitch] = await to(searchForTwitchGame(runData.game));
         gameTwitch = srcomGameTwitch || runData.game;
       }
