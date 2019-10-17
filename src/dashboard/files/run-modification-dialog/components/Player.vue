@@ -18,6 +18,7 @@
       left-border
     ></text-input>
     <modify-button
+      :style="{ 'margin-left': '5px' }"
       icon="mdi-account-minus"
       tooltip="Remove Player"
       @click="removePlayer"

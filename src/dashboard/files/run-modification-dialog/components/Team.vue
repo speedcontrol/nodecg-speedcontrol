@@ -12,11 +12,13 @@
         label="Team Name"
       ></text-input>
       <modify-button
+        :style="{ 'margin-left': '5px' }"
         icon="mdi-account-multiple-minus"
         tooltip="Remove Team"
         @click="removeTeam"
       ></modify-button>
       <modify-button
+        :style="{ 'margin-left': '5px' }"
         icon="mdi-account-plus"
         tooltip="Add New Player"
         @click="addNewPlayer"

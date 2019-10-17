@@ -1,18 +1,20 @@
 <template>
-  <v-tooltip top>
-    <template v-slot:activator="{ on }">
-      <span v-on="on">
-        <v-btn
-          icon
-          outlined
-          @click="$emit('click')"
-        >
-          <v-icon>{{ icon }}</v-icon>
-        </v-btn>
-      </span>
-    </template>
-    <span>{{ tooltip }}</span>
-  </v-tooltip>
+  <div>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <span v-on="on">
+          <v-btn
+            icon
+            outlined
+            @click="$emit('click')"
+          >
+            <v-icon>{{ icon }}</v-icon>
+          </v-btn>
+        </span>
+      </template>
+      <span>{{ tooltip }}</span>
+    </v-tooltip>
+  </div>
 </template>
 
 <script lang="ts">
