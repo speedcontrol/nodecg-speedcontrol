@@ -90,10 +90,6 @@ export async function setChannels(names: string[]): Promise<void> {
   if (!config.twitch.ffzIntegration) {
     throw new Error('Integration not enabled');
   }
-  if (!config.twitch.ffzUseRepeater && config.twitch.channelName) {
-    throw new Error(`Featured channels cannot be set while
-    channelName is set in the configuration file`);
-  }
   nodecg.log.info('[FrankerFaceZ] Attempting to set featured channels');
 
   // Remove any blacklisted names.
@@ -105,6 +101,10 @@ export async function setChannels(names: string[]): Promise<void> {
 
   if (!config.twitch.ffzUseRepeater) {
     try {
+      if (config.twitch.channelName) {
+        throw new Error(`Featured channels cannot be set while
+        channelName is set in the configuration file`);
+      }
       const msg = await sendMsg(
         `update_follow_buttons ${JSON.stringify([
           twitchAPIData.value.channelName,

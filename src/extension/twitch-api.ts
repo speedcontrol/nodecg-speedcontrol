@@ -259,7 +259,7 @@ async function setUp(): Promise<void> {
       [err, resp] = await to(validateToken());
     }
     if (!resp) {
-      throw new Error('');
+      throw new Error('No response while validating token');
     }
     apiData.value.channelID = resp.user_id;
     apiData.value.channelName = resp.login;
