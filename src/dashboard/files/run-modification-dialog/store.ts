@@ -52,6 +52,9 @@ export default new Vuex.Store({
       Vue.set(state, 'prevID', state.runData.id);
       Vue.set(state.runData, 'id', uuid());
     },
+    setPreviousRunID(state, { value }) {
+      Vue.set(state, 'prevID', value);
+    },
     resetRunData(state) {
       Vue.set(state, 'runData', clone(defaultRunData));
       if (repStore.state.defaultSetupTime) { // Fill in default setup time if available.

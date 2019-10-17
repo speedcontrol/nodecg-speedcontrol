@@ -170,7 +170,7 @@ export default Vue.extend({
     elem.style.marginBottom = '12px';
   },
   methods: {
-    open(opts: { mode: Mode; runData?: RunData }) {
+    open(opts: { mode: Mode; runData?: RunData; prevID?: string }) {
       // Waits for dialog to actually open before changing storage.
       this.dialog.open();
       document.addEventListener('dialog-opened', () => {
@@ -181,7 +181,8 @@ export default Vue.extend({
           if (opts.mode === 'Duplicate') {
             store.commit('setAsDuplicate');
           }
-        } else {
+        } else if (opts.mode === 'New') {
+          store.commit('setPreviousRunID', { value: opts.prevID });
           store.commit('resetRunData');
           store.commit('addNewTeam');
         }

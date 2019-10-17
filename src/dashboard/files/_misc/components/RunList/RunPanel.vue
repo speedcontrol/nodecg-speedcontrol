@@ -66,12 +66,11 @@
             tooltip="Duplicate Run"
             @click="duplicateRun"
           ></modify-button>
-          <!-- TO BE IMPLEMENTED -->
-          <!--<modify-button
+          <modify-button
             icon="mdi-file-plus-outline"
             tooltip="Add New Run After"
             @click="addNewRunAfter"
-          ></modify-button>-->
+          ></modify-button>
           <modify-button
             icon="mdi-square-edit-outline"
             tooltip="Edit Run"
@@ -157,6 +156,13 @@ export default Vue.extend({
       runInfoDialog.querySelector('iframe').contentWindow.open({
         mode: 'Duplicate',
         runData: this.runData,
+      });
+    },
+    addNewRunAfter() {
+      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any;
+      runInfoDialog.querySelector('iframe').contentWindow.open({
+        mode: 'New',
+        prevID: this.runData.id,
       });
     },
     editRun() {
