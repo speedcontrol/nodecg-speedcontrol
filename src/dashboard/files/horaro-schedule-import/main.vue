@@ -102,7 +102,7 @@
         ></config-button>
         <config-button
           icon="mdi-undo"
-          tooltip="Restore Default Configuration"
+          tooltip="Clear Custom Configuration"
           :disabled="restored"
           @click="clearOpts"
         ></config-button>
