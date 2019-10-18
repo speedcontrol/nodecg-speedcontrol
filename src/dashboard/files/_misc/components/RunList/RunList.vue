@@ -97,14 +97,18 @@ export default Vue.extend({
     },
   },
   watch: {
-    activeRun: {
-      handler(val): void {
-        if (!this.editor) {
-          this.scroll(val);
-        }
-      },
-      immediate: true,
+    activeRun(val): void {
+      if (!this.editor) {
+        this.scroll(val);
+      }
     },
+  },
+  mounted() {
+    // Cannot be done with "immediate: true" on watcher
+    // due to element not being mounted at that point.
+    if (!this.editor) {
+      this.scroll(this.activeRun);
+    }
   },
   methods: {
     scroll(val): void {

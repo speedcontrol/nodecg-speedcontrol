@@ -9,7 +9,7 @@
         <start-button></start-button>
         <reset-button></reset-button>
         <!-- Will not show if more than 1 team -->
-        <div v-if="teams.length <= 1">
+        <template v-if="teams.length <= 1">
           <stop-button
             :info="teams[0]"
           ></stop-button>
@@ -20,7 +20,7 @@
           <undo-button
             :info="teams[0]"
           ></undo-button>
-        </div>
+        </template>
       </div>
       <!-- Will only show if more than 1 team -->
       <div

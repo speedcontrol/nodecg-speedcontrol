@@ -98,11 +98,13 @@
           icon="mdi-content-save-outline"
           tooltip="Save Configuration"
           :disabled="saved"
+          @click="saveOpts"
         ></config-button>
         <config-button
           icon="mdi-undo"
           tooltip="Restore Default Configuration"
           :disabled="restored"
+          @click="clearOpts"
         ></config-button>
       </div>
     </div>
