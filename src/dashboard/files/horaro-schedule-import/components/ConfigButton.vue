@@ -1,20 +1,17 @@
 <template>
   <v-tooltip
-    right
+    left
     :disabled="disabled"
   >
     <template v-slot:activator="{ on }">
       <v-btn
-        icon
-        outlined
-        small
+        :loading="disabled"
         :disabled="disabled"
+        :style="{ 'min-width': 0, padding: '0 10px', 'margin-left': '5px' }"
         @click="$emit('click')"
         v-on="on"
       >
-        <v-icon small>
-          {{ icon }}
-        </v-icon>
+        <v-icon>{{ icon }}</v-icon>
       </v-btn>
     </template>
     <span>{{ tooltip }}</span>
@@ -25,7 +22,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'ModifyButton',
+  name: 'ConfigButton',
   props: {
     icon: {
       type: String,

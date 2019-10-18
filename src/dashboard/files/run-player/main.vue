@@ -9,20 +9,16 @@
         Return to Start
       </v-btn>
     </div>
-    <div class="NextRun">
+    <div>
       <v-btn
         block
         :disabled="disableChange || !nextRun"
         @click="playNextRun"
       >
-        <span
-          v-if="nextRun"
-        >
+        <span v-if="nextRun">
           <v-icon left>mdi-play</v-icon>{{ nextRunGameName }}
         </span>
-        <span
-          v-else-if="runDataArray.length"
-        >
+        <span v-else-if="runDataArray.length">
           No Runs Left
         </span>
         <span v-else>
@@ -45,47 +41,48 @@
 import Vue from 'vue';
 import RunList from '../_misc/components/RunList/RunList.vue';
 import { store } from '../_misc/replicant-store';
-import { RunData } from '../../../../types';
+import { RunData, RunDataArray, RunDataActiveRun } from '../../../../types';
+import { RunDataActiveRunSurrounding } from '../../../../schemas';
 
 export default Vue.extend({
   components: {
     RunList,
   },
   computed: {
-    runDataArray() {
+    runDataArray(): RunDataArray {
       return store.state.runDataArray;
     },
-    activeRun() {
+    activeRun(): RunDataActiveRun {
       return store.state.runDataActiveRun;
     },
-    runDataActiveRunSurrounding() {
+    runDataActiveRunSurrounding(): RunDataActiveRunSurrounding {
       return store.state.runDataActiveRunSurrounding;
     },
     nextRun(): RunData | undefined {
       return this.runDataArray.find((run) => run.id === this.runDataActiveRunSurrounding.next);
     },
-    nextRunGameName() {
+    nextRunGameName(): string {
       if (this.nextRun && this.nextRun.game) {
         return `${this.nextRun.game.slice(0, 35)}${(this.nextRun.game.length > 35) ? '...' : ''}`;
       }
-      return '(The Run with No Name)';
+      return '(The Run With No Name)';
     },
-    timerState() {
+    timerState(): string {
       return store.state.timer.state;
     },
-    disableChange() {
+    disableChange(): boolean {
       return ['running', 'paused'].includes(this.timerState);
     },
   },
   methods: {
-    returnToStartConfirm() {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any;
+    returnToStartConfirm(): void {
+      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
       alertDialog.querySelector('iframe').contentWindow.open({
         name: 'ReturnToStartConfirm',
         func: this.returnToStart,
       });
     },
-    returnToStart(confirm: boolean) {
+    returnToStart(confirm: boolean): void {
       if (confirm) {
         nodecg.sendMessage('returnToStart').then(() => {
           // run removal successful
@@ -94,11 +91,11 @@ export default Vue.extend({
         });
       }
     },
-    playNextRun() {
+    playNextRun(): void {
       if (this.nextRun) {
         nodecg.sendMessage('changeToNextRun').then((noTwitchGame) => {
           if (noTwitchGame) {
-            const alertDialog = nodecg.getDialog('alert-dialog') as any;
+            const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
             alertDialog.querySelector('iframe').contentWindow.open({
               name: 'NoTwitchGame',
             });
@@ -111,13 +108,6 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style>
-  button > span {
-    overflow: hidden;
-    flex: unset !important;
-  }
-</style>
 
 <style scoped>
   .v-btn {

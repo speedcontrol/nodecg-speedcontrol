@@ -21,10 +21,9 @@
     <div
       ref="runList"
       class="RunList"
+      :style="{ height: '400px', 'overflow-y': 'scroll' }"
     >
-      <v-expansion-panels
-        accordion
-      >
+      <v-expansion-panels accordion>
         <draggable
           v-model="runDataArray"
           style="width: 100%"
@@ -53,7 +52,7 @@ import Vue from 'vue';
 import Draggable from 'vuedraggable';
 import RunPanel from './RunPanel.vue';
 import { store } from '../../replicant-store';
-import { RunData } from '../../../../../../types';
+import { RunData, RunDataArray, RunDataActiveRun } from '../../../../../../types';
 
 export default Vue.extend({
   components: {
@@ -74,16 +73,14 @@ export default Vue.extend({
   },
   computed: {
     runDataArray: {
-      get() {
+      get(): RunDataArray {
         return store.state.runDataArray;
       },
-      set(value: RunData[]) {
-        store.commit('updateRunOrder', {
-          value,
-        });
+      set(value: RunData[]): void {
+        store.commit('updateRunOrder', { value });
       },
     },
-    filteredRunDataArray() {
+    filteredRunDataArray(): RunData[] {
       return store.state.runDataArray.filter((run) => {
         const str = (this.searchTerm) ? this.searchTerm.toLowerCase() : '';
         const searchMatch = !str || (str && ((run.game && run.game.toLowerCase().includes(str))
@@ -92,27 +89,25 @@ export default Vue.extend({
         return searchMatch && ((this.hasNoTwitch && !run.gameTwitch) || (!this.hasNoTwitch));
       });
     },
-    activeRun() {
+    activeRun(): RunDataActiveRun {
       return store.state.runDataActiveRun;
     },
-    disableChange() {
+    disableChange(): boolean {
       return ['running', 'paused'].includes(store.state.timer.state);
     },
   },
   watch: {
-    activeRun(val) {
-      if (!this.editor) {
-        this.scroll(val);
-      }
+    activeRun: {
+      handler(val): void {
+        if (!this.editor) {
+          this.scroll(val);
+        }
+      },
+      immediate: true,
     },
   },
-  mounted() {
-    if (!this.editor) {
-      this.scroll(this.activeRun);
-    }
-  },
   methods: {
-    scroll(val) {
+    scroll(val): void {
       if (val) {
         const { top } = this.$refs.runList.getBoundingClientRect();
         this.$vuetify.goTo(`#run-${val.id}`, { offset: top + 20, container: '.RunList' });
@@ -125,11 +120,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  .RunList {
-    height: 400px;
-    overflow-y: scroll;
-  }
-
   .list-move {
     transition: transform 0.2s;
   }

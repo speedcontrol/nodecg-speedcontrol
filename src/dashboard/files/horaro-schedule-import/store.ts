@@ -24,28 +24,28 @@ export default new Vuex.Store({
     opts: clone(defaultOpts),
   },
   mutations: {
-    updateColumn(state, { name, value, custom }) {
+    updateColumn(state, { name, value, custom }): void {
       if (custom) {
         Vue.set(state.opts.columns.custom, name, value);
       } else {
         Vue.set(state.opts.columns, name, value);
       }
     },
-    addCustomColumn(state, { name }) {
+    addCustomColumn(state, { name }): void {
       Vue.set(state.opts.columns.custom, name, null);
     },
-    updateSplit(state, { value }) {
+    updateSplit(state, { value }): void {
       Vue.set(state.opts, 'split', value);
     },
-    saveOpts(state) {
+    saveOpts(state): void {
       repStore.commit('saveHoraroImportOpts', {
         value: clone(state.opts),
       });
     },
-    loadOpts(state) {
+    loadOpts(state): void {
       Vue.set(state, 'opts', clone(repStore.state.horaroImportSavedOpts));
     },
-    clearOpts(state) {
+    clearOpts(state): void {
       repStore.commit('saveHoraroImportOpts', {
         value: undefined,
       });

@@ -10,7 +10,7 @@
     ></v-text-field>
     <!-- "Load Schedule Data" Button -->
     <v-btn
-      id="LoadScheduleBtn"
+      :style="{ margin: '5px 0 10px 0' }"
       :disabled="importStatus.importing"
       @click="loadSchedule"
     >
@@ -32,13 +32,17 @@
         :columns="columns"
         class="Dropdown"
       ></dropdown>
-      <div id="SplitPlayersTxt">
+      <div :style="{ 'margin-top': '10px' }">
         Split Players:
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <span v-on="on">
-              <v-icon>mdi-help-circle-outline</v-icon>
-            </span>
+            <v-icon
+              small
+              :style="{ 'padding-bottom': '2px' }"
+              v-on="on"
+            >
+              mdi-help-circle-outline
+            </v-icon>
           </template>
           <span>This option dictates how the players in your relevant schedule column are split;
             check the README for more information.</span>
@@ -61,9 +65,7 @@
     <div v-else-if="importStatus.importing">
       Import currently in progress...
     </div>
-    <div
-      :style="{ 'margin-top': '10px' }"
-    >
+    <div :style="{ 'margin-top': '10px' }">
       <!-- Import Button, if importing -->
       <v-btn
         v-if="importStatus.importing"
@@ -92,42 +94,16 @@
         >
           Import
         </v-btn>
-        <v-tooltip
-          left
+        <config-button
+          icon="mdi-content-save-outline"
+          tooltip="Save Configuration"
           :disabled="saved"
-        >
-          <template v-slot:activator="{ on }">
-            <span v-on="on">
-              <v-btn
-                :loading="saved"
-                :disabled="saved"
-                :style="{ 'min-width': 0, padding: '0 10px', 'margin-left': '5px' }"
-                @click="saveOpts"
-              >
-                <v-icon>mdi-content-save-outline</v-icon>
-              </v-btn>
-            </span>
-          </template>
-          <span>Save Configuration</span>
-        </v-tooltip>
-        <v-tooltip
-          left
+        ></config-button>
+        <config-button
+          icon="mdi-undo"
+          tooltip="Restore Default Configuration"
           :disabled="restored"
-        >
-          <template v-slot:activator="{ on }">
-            <span v-on="on">
-              <v-btn
-                :loading="restored"
-                :disabled="restored"
-                :style="{ 'min-width': 0, padding: '0 10px', 'margin-left': '5px' }"
-                @click="clearOpts"
-              >
-                <v-icon>mdi-undo</v-icon>
-              </v-btn>
-            </span>
-          </template>
-          <span>Restore Default Configuration</span>
-        </v-tooltip>
+        ></config-button>
       </div>
     </div>
   </v-app>
@@ -139,11 +115,15 @@ import uuid from 'uuid/v4';
 import { nodecg } from '../_misc/nodecg';
 import { store as repStore } from '../_misc/replicant-store';
 import store from './store';
+import RunDataOptions from './RunDataOptions';
 import Dropdown from './components/Dropdown.vue';
+import ConfigButton from './components/ConfigButton.vue';
+import { HoraroImportStatus } from '../../../../schemas';
 
 export default Vue.extend({
   components: {
     Dropdown,
+    ConfigButton,
   },
   data() {
     return {
@@ -153,64 +133,7 @@ export default Vue.extend({
       saved: false,
       restored: false,
       columns: [] as string[],
-      runDataOptions: [
-        {
-          name: 'Game',
-          key: 'game',
-          predict: [
-            'game',
-          ],
-        },
-        {
-          name: 'Game (Twitch)',
-          key: 'gameTwitch',
-          predict: [
-            // none yet
-          ],
-        },
-        {
-          name: 'Category',
-          key: 'category',
-          predict: [
-            'category',
-          ],
-        },
-        {
-          name: 'System',
-          key: 'system',
-          predict: [
-            'system',
-            'platform',
-          ],
-        },
-        {
-          name: 'Region',
-          key: 'region',
-          predict: [
-            'region',
-          ],
-        },
-        {
-          name: 'Released',
-          key: 'release',
-          predict: [
-            'release',
-          ],
-        },
-        {
-          name: 'Player(s)',
-          key: 'player',
-          predict: [
-            'player',
-            'runner',
-          ],
-        },
-      ] as {
-        name: string;
-        key: string;
-        predict: string[];
-        custom?: boolean;
-      }[],
+      runDataOptions: RunDataOptions,
       splitOptionsOpts: [
         {
           value: 0,
@@ -224,26 +147,26 @@ export default Vue.extend({
     };
   },
   computed: {
-    importStatus() {
+    importStatus(): HoraroImportStatus {
       return repStore.state.horaroImportStatus;
     },
     splitOption: {
-      get() {
+      get(): number {
         return store.state.opts.split;
       },
-      set(value: number) {
-        store.commit('updateSplit', {
-          value,
-        });
+      set(value: number): void {
+        store.commit('updateSplit', { value });
       },
+    },
+    customData(): { name: string; key: string }[] {
+      return nodecg.bundleConfig.schedule.customData || [];
     },
   },
   created() {
-    // Add dropdowns for custom data on page load.
-    this.addCustomDataDropdowns();
+    this.addCustomDataDropdowns(); // Add dropdowns for custom data on page load.
   },
   methods: {
-    loadSchedule() {
+    loadSchedule(): void {
       nodecg.sendMessage('loadSchedule', {
         url: this.url,
         dashID: this.dashID,
@@ -259,13 +182,9 @@ export default Vue.extend({
         this.loaded = false;
       });
     },
-    addCustomDataDropdowns() {
-      const customData: {
-        name: string;
-        key: string;
-      }[] = nodecg.bundleConfig.schedule.customData || [];
+    addCustomDataDropdowns(): void {
       this.runDataOptions = this.runDataOptions.concat(
-        customData.map((col) => {
+        this.customData.map((col) => {
           store.commit('addCustomColumn', { name: col.key });
           return {
             name: col.name,
@@ -278,7 +197,7 @@ export default Vue.extend({
         }),
       );
     },
-    predictColumns() {
+    predictColumns(): void {
       this.runDataOptions.forEach((option) => {
         if (!option.predict.length) {
           return; // Ignore if no way to predict.
@@ -293,14 +212,14 @@ export default Vue.extend({
         });
       });
     },
-    importConfirm() {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any;
+    importConfirm(): void {
+      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
       alertDialog.querySelector('iframe').contentWindow.open({
         name: 'HoraroImportConfirm',
         func: this.import,
       });
     },
-    import(confirm: boolean) {
+    import(confirm: boolean): void {
       if (confirm) {
         nodecg.sendMessage('importSchedule', {
           opts: store.state.opts,
@@ -312,14 +231,14 @@ export default Vue.extend({
         });
       }
     },
-    saveOpts() {
+    saveOpts(): void {
       store.commit('saveOpts');
       this.saved = true;
       setTimeout(() => { this.saved = false; }, 1000);
     },
-    clearOpts() {
+    clearOpts(): void {
       store.commit('clearOpts');
-      (nodecg.bundleConfig.schedule.customData || []).forEach((col) => {
+      this.customData.forEach((col) => {
         store.commit('addCustomColumn', { name: col.key });
       });
       this.predictColumns();
@@ -331,14 +250,6 @@ export default Vue.extend({
 </script>
 
 <style>
-  #LoadScheduleBtn {
-    margin: 5px 0 10px 0;
-  }
-
-  #SplitPlayersTxt {
-    margin-top: 10px;
-  }
-
   /* Tweaks to dropdowns to make them smaller. */
   .Dropdown .v-input__slot {
     min-height: 0 !important;

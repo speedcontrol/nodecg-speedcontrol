@@ -10,7 +10,7 @@
         :href="url"
         target="_blank"
       ><img src="./twitch-login.png"></a>
-      <br><em>Click the image above to connect to Twitch to auto-sync data.</em>
+      <br><em>Click the image above to login to Twitch to auto-sync data.</em>
     </div>
     <!-- Enabled, authenticating server-side. -->
     <div v-else-if="apiData.state === 'authenticating'">
@@ -21,25 +21,22 @@
       <div id="LogoutContainer">
         <v-tooltip left>
           <template v-slot:activator="{ on }">
-            <span v-on="on">
-              <v-btn
-                id="Logout"
-                small
-                @click="logoutConfirm"
-              >
-                <v-icon small>
-                  mdi-logout
-                </v-icon>
-                <span>({{ apiData.channelName }})</span>
-              </v-btn>
-            </span>
+            <v-btn
+              id="Logout"
+              small
+              @click="logoutConfirm"
+              v-on="on"
+            >
+              <v-icon small>
+                mdi-logout
+              </v-icon>
+              <span>({{ apiData.channelName }})</span>
+            </v-btn>
           </template>
           <span>Logout</span>
         </v-tooltip>
       </div>
-      <div
-        id="AutoSyncContainer"
-      >
+      <div id="AutoSyncContainer">
         <v-switch
           v-model="sync"
           inset
@@ -103,6 +100,7 @@ import _ from 'lodash';
 import { nodecg } from '../_misc/nodecg';
 import { Configschema } from '../../../../configschema';
 import { store } from '../_misc/replicant-store';
+import { TwitchAPIData, TwitchChannelInfo } from '../../../../schemas';
 
 export default Vue.extend({
   data() {
@@ -114,42 +112,41 @@ export default Vue.extend({
     };
   },
   computed: {
-    config() {
+    config(): Configschema['twitch'] {
       return nodecg.bundleConfig.twitch;
     },
-    apiData() {
+    apiData(): TwitchAPIData {
       return store.state.twitchAPIData;
     },
-    channelInfo() {
+    channelInfo(): TwitchChannelInfo {
       return store.state.twitchChannelInfo;
     },
     sync: {
-      get() {
+      get(): boolean {
         return store.state.twitchAPIData.sync;
       },
-      set(value: boolean) {
+      set(value: boolean): void {
         store.commit('updateTwitchSyncToggle', { value });
       },
     },
-    url() {
-      const config = this.config as Configschema['twitch'];
-      return `https://id.twitch.tv/oauth2/authorize
-?client_id=${config.clientID}
-&redirect_uri=${config.redirectURI}
-&response_type=code
-&scope=channel_editor+user_read+chat:read+chat:edit+channel_commercial
-&force_verify=true`;
+    url(): string {
+      return 'https://id.twitch.tv/oauth2/authorize'
+      + `?client_id=${this.config.clientID}`
+      + `&redirect_uri=${this.config.redirectURI}`
+      + '&response_type=code'
+      + '&scope=channel_editor+user_read+chat:read+chat:edit+channel_commercial'
+      + '&force_verify=true';
     },
   },
   watch: {
     apiData: {
-      handler() {
+      handler(): void {
         this.updateInputs();
       },
       immediate: true,
     },
     channelInfo: {
-      handler() {
+      handler(): void {
         this.updateInputs();
       },
       immediate: true,
@@ -159,7 +156,7 @@ export default Vue.extend({
     this.blurInput = _.debounce(this.blurInput, 20 * 1000);
   },
   methods: {
-    inputActivity(evt: Event) {
+    inputActivity(evt: Event): void {
       if (['input', 'focus'].includes(evt.type)) {
         this.focus = true;
         this.blurInput(evt);
@@ -167,17 +164,17 @@ export default Vue.extend({
         this.focus = false;
       }
     },
-    blurInput(evt: Event) {
+    blurInput(evt: Event): void {
       (evt.target as HTMLTextAreaElement).blur();
     },
-    updateInputs() {
+    updateInputs(): void {
       if (!this.focus) {
         this.title = this.channelInfo.status;
         this.game = this.channelInfo.game;
         this.users = this.apiData.featuredChannels.join(', ');
       }
     },
-    updateChannelInfo() {
+    updateChannelInfo(): void {
       nodecg.sendMessage('twitchUpdateChannelInfo', {
         status: this.title,
         game: this.game,
@@ -197,21 +194,21 @@ export default Vue.extend({
         });
       }
     },
-    startCommercial() {
+    startCommercial(): void {
       nodecg.sendMessage('twitchStartCommercial').then(() => {
         // successful
       }).catch(() => {
         // unsuccessful
       });
     },
-    logoutConfirm() {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any;
+    logoutConfirm(): void {
+      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
       alertDialog.querySelector('iframe').contentWindow.open({
         name: 'TwitchLogoutConfirm',
         func: this.logout,
       });
     },
-    logout(confirm: boolean) {
+    logout(confirm: boolean): void {
       if (confirm) {
         nodecg.sendMessage('twitchLogout').then(() => {
           // successful

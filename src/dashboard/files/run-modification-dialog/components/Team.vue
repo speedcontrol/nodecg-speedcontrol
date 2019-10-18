@@ -1,9 +1,10 @@
 <template>
-  <div class="Team">
+  <div :style="{ 'margin-top': '20px' }">
     <div class="d-flex align-center">
       <v-icon
         large
         class="TeamHandle"
+        :style="{ cursor: 'move' }"
       >
         mdi-drag
       </v-icon>
@@ -58,32 +59,18 @@ export default Vue.extend({
   props: {
     teamData: {
       type: Object,
-      default() {
+      default(): object {
         return {};
       },
     },
   },
   methods: {
-    addNewPlayer() {
+    addNewPlayer(): void {
       store.commit('addNewPlayer', { teamID: this.teamData.id });
     },
-    removeTeam() {
+    removeTeam(): void {
       store.commit('removeTeam', { teamID: this.teamData.id });
     },
   },
 });
 </script>
-
-<style scoped>
-  .Team {
-    margin-top: 20px;
-  }
-
-  .v-tooltip {
-    margin-left: 10px;
-  }
-
-  .TeamHandle {
-    cursor: move;
-  }
-</style>

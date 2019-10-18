@@ -27,12 +27,12 @@ import { store } from '../../_misc/replicant-store';
 export default Vue.extend({
   name: 'ResetButton',
   computed: {
-    state() {
+    state(): boolean {
       return store.state.timer.state;
     },
   },
   methods: {
-    button() {
+    button(): void {
       nodecg.sendMessage('timerReset').then(() => {
         // successful
       }).catch(() => {

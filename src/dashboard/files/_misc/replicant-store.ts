@@ -1,8 +1,8 @@
 import clone from 'clone';
 import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line import/no-unresolved
 import Vue from 'vue';
-import Vuex from 'vuex';
-import { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../../schemas'; // eslint-disable-line import/no-unresolved, max-len, object-curly-newline
+import Vuex, { Store } from 'vuex';
+import { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../../schemas'; // eslint-disable-line max-len, object-curly-newline
 import { RunDataActiveRun, RunDataArray, Timer } from '../../../../types';
 
 Vue.use(Vuex);
@@ -37,24 +37,24 @@ export const store = new Vuex.Store({
     twitchChannelInfo: {} as TwitchChannelInfo,
   },
   mutations: {
-    updateReplicant(state, { name, value }) {
+    updateReplicant(state, { name, value }): void {
       Vue.set(state, name, value);
     },
-    updateActiveRunTeamOrder(state, { value }) {
+    updateActiveRunTeamOrder(state, { value }): void {
       const rep = replicants.find((repObj) => repObj.name === 'runDataActiveRun');
       if (state.runDataActiveRun && rep && rep.value) {
         Vue.set(state.runDataActiveRun, 'teams', value);
         rep.value = state.runDataActiveRun;
       }
     },
-    updateRunOrder(state, { value }) {
+    updateRunOrder(state, { value }): void {
       const rep = replicants.find((repObj) => repObj.name === 'runDataArray');
       if (state.runDataArray && rep && rep.value) {
         Vue.set(state, 'runDataArray', value);
         rep.value = state.runDataArray;
       }
     },
-    updateTwitchSyncToggle(state, { value }) {
+    updateTwitchSyncToggle(state, { value }): void {
       const rep = replicants.find(
         (repObj) => repObj.name === 'twitchAPIData',
       ) as ReplicantBrowser<TwitchAPIData>;
@@ -63,7 +63,7 @@ export const store = new Vuex.Store({
         rep.value.sync = value;
       }
     },
-    updateTimerDisabledToggle(state, { value }) {
+    updateTimerDisabledToggle(state, { value }): void {
       const rep = replicants.find(
         (repObj) => repObj.name === 'timerChangesDisabled',
       ) as ReplicantBrowser<TimerChangesDisabled>;
@@ -72,7 +72,7 @@ export const store = new Vuex.Store({
         rep.value = value;
       }
     },
-    saveHoraroImportOpts(state, { value }) {
+    saveHoraroImportOpts(state, { value }): void {
       const rep = replicants.find(
         (repObj) => repObj.name === 'horaroImportSavedOpts',
       ) as ReplicantBrowser<HoraroImportSavedOpts>;
@@ -95,6 +95,18 @@ replicantNames.forEach((name) => {
   replicants.push(replicant);
 });
 
-export async function create() {
+export async function create(): Promise<Store<{
+  runDataArray: RunDataArray;
+  runDataActiveRun: RunDataActiveRun;
+  runDataActiveRunSurrounding: RunDataActiveRunSurrounding;
+  runFinishTimes: RunFinishTimes;
+  horaroImportStatus: HoraroImportStatus;
+  horaroImportSavedOpts: HoraroImportSavedOpts;
+  defaultSetupTime: DefaultSetupTime;
+  timer: Timer;
+  timerChangesDisabled: TimerChangesDisabled;
+  twitchAPIData: TwitchAPIData;
+  twitchChannelInfo: TwitchChannelInfo;
+}>> {
   return NodeCG.waitForReplicants(...replicants).then(() => store);
 }

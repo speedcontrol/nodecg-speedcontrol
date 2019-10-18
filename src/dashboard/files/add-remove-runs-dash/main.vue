@@ -23,23 +23,23 @@ import { store } from '../_misc/replicant-store';
 
 export default Vue.extend({
   computed: {
-    removeAllDisabled() {
+    removeAllDisabled(): boolean {
       return ['running', 'paused'].includes(store.state.timer.state);
     },
   },
   methods: {
-    openAddDialog() {
-      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any;
+    openAddDialog(): void {
+      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
       runInfoDialog.querySelector('iframe').contentWindow.open({ mode: 'New' });
     },
-    removeAllRunsConfirm() {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any;
+    removeAllRunsConfirm(): void {
+      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
       alertDialog.querySelector('iframe').contentWindow.open({
         name: 'RemoveAllRunsConfirm',
         func: this.removeAllRuns,
       });
     },
-    removeAllRuns(confirm: boolean) {
+    removeAllRuns(confirm: boolean): void {
       if (confirm) {
         nodecg.sendMessage('removeAllRuns').then(() => {
           // successful

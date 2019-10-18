@@ -3,10 +3,8 @@ import uuid from 'uuid/v4';
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { RunData, RunDataPlayer, RunDataTeam } from '../../../../types';
-import Helpers from '../_misc/helpers';
+import { msToTimeStr } from '../_misc/helpers';
 import { store as repStore } from '../_misc/replicant-store';
-
-const { msToTimeStr } = Helpers;
 
 Vue.use(Vuex);
 
@@ -42,20 +40,20 @@ export default new Vuex.Store({
     prevID: undefined as string | undefined,
   },
   mutations: {
-    updateRunData(state, { value }) {
+    updateRunData(state, { value }): void {
       Vue.set(state, 'runData', clone(value));
     },
-    updateMode(state, { value }) {
+    updateMode(state, { value }): void {
       Vue.set(state, 'mode', value);
     },
-    setAsDuplicate(state) {
+    setAsDuplicate(state): void {
       Vue.set(state, 'prevID', state.runData.id);
       Vue.set(state.runData, 'id', uuid());
     },
-    setPreviousRunID(state, { value }) {
+    setPreviousRunID(state, { value }): void {
       Vue.set(state, 'prevID', value);
     },
-    resetRunData(state) {
+    resetRunData(state): void {
       Vue.set(state, 'runData', clone(defaultRunData));
       if (repStore.state.defaultSetupTime) { // Fill in default setup time if available.
         Vue.set(state.runData, 'setupTimeS', repStore.state.defaultSetupTime);
@@ -65,7 +63,7 @@ export default new Vuex.Store({
       }
       Vue.set(state.runData, 'id', uuid());
     },
-    addNewTeam(state) {
+    addNewTeam(state): void {
       const teamData = clone(defaultTeam);
       teamData.id = uuid();
 
@@ -77,7 +75,7 @@ export default new Vuex.Store({
 
       state.runData.teams.push(teamData);
     },
-    addNewPlayer(state, { teamID }) {
+    addNewPlayer(state, { teamID }): void {
       const teamIndex = state.runData.teams.findIndex((team) => teamID === team.id);
       if (teamIndex >= 0) {
         const data = clone(defaultPlayer);
@@ -86,13 +84,13 @@ export default new Vuex.Store({
         state.runData.teams[teamIndex].players.push(data);
       }
     },
-    removeTeam(state, { teamID }) {
+    removeTeam(state, { teamID }): void {
       const teamIndex = state.runData.teams.findIndex((team) => teamID === team.id);
       if (teamIndex >= 0) {
         state.runData.teams.splice(teamIndex, 1);
       }
     },
-    removePlayer(state, { teamID, id }) {
+    removePlayer(state, { teamID, id }): void {
       const teamIndex = state.runData.teams.findIndex((team) => teamID === team.id);
       const playerIndex = (teamIndex >= 0)
         ? state.runData.teams[teamIndex].players.findIndex((player) => id === player.id) : -1;
@@ -102,19 +100,12 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    saveRunData({ state }) {
-      return new Promise(async (resolve, reject) => {
-        try {
-          await nodecg.sendMessage('modifyRun', {
-            runData: state.runData,
-            prevID: state.prevID,
-          });
-          Vue.set(state, 'prevID', undefined);
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
+    async saveRunData({ state }): Promise<void> {
+      await nodecg.sendMessage('modifyRun', {
+        runData: state.runData,
+        prevID: state.prevID,
       });
+      Vue.set(state, 'prevID', undefined);
     },
   },
 });

@@ -34,12 +34,12 @@ import { store } from '../../_misc/replicant-store';
 export default Vue.extend({
   name: 'StartButton',
   computed: {
-    state() {
+    state(): string {
       return store.state.timer.state;
     },
   },
   methods: {
-    button() {
+    button(): void {
       if (this.state === 'stopped' || this.state === 'paused') {
         nodecg.sendMessage('timerStart').then(() => {
           // successful

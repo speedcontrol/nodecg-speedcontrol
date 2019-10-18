@@ -37,10 +37,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    serverTime() {
+    serverTime(): string {
       return store.state.timer.time;
     },
-    bgColour() {
+    bgColour(): string {
       switch (store.state.timer.state) {
         case 'stopped':
         case 'paused':
@@ -52,20 +52,20 @@ export default Vue.extend({
           return '#388E3C';
       }
     },
-    disableEditing() {
+    disableEditing(): boolean {
       return ['running', 'finished'].includes(store.state.timer.state);
     },
   },
   watch: {
     serverTime: {
-      handler(val) {
+      handler(val): void {
         this.time = val;
       },
       immediate: true,
     },
   },
   methods: {
-    finishEdit(event) {
+    finishEdit(event): void {
       if (this.time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
         nodecg.sendMessage('timerEdit', this.time).then(() => {
           // successful
@@ -75,7 +75,7 @@ export default Vue.extend({
         event.target.blur();
       }
     },
-    abandonEdit() {
+    abandonEdit(): void {
       this.time = this.serverTime;
     },
   },

@@ -15,7 +15,7 @@
     >
       {{ err.message }}
     </v-alert>
-    <div class="GeneralInputs">
+    <div>
       <!-- Normal Inputs -->
       <div class="d-flex">
         <text-input
@@ -87,7 +87,7 @@
     </div>
     <div
       class="DialogButtons d-flex"
-      style="margin-top: 20px"
+      :style="{ 'margin-top': '20px' }"
     >
       <modify-button
         class="mr-auto"
@@ -96,7 +96,7 @@
         @click="addNewTeam"
       ></modify-button>
       <v-btn
-        style="margin-right: 10px"
+        :style="{ 'margin-right': '10px' }"
         @click="attemptSave"
       >
         OK
@@ -116,7 +116,7 @@ import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
 import ModifyButton from './components/ModifyButton.vue';
 import { nodecg } from '../_misc/nodecg';
-import { RunData } from '../../../../types';
+import { RunData, RunDataActiveRun } from '../../../../types';
 
 enum Mode {
   New = 'New',
@@ -134,43 +134,43 @@ export default Vue.extend({
   },
   data() {
     return {
-      dialog: undefined as any,
+      dialog: undefined as unknown,
       err: undefined as Error | undefined,
     };
   },
   computed: {
     runData: {
-      get() {
+      get(): RunDataActiveRun {
         return store.state.runData;
       },
-      set(value: RunData) {
+      set(value: RunData): void {
         store.commit('updateRunData', { value });
       },
     },
     mode: {
-      get() {
+      get(): string {
         return store.state.mode;
       },
-      set(value: Mode) {
+      set(value: Mode): void {
         store.commit('updateMode', { value });
       },
     },
-    customData() {
+    customData(): array {
       return nodecg.bundleConfig.schedule.customData || [];
     },
   },
   mounted() {
-    this.dialog = nodecg.getDialog('run-modification-dialog') as any;
+    this.dialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
 
     // Attaching this function to the window for easy access from dashboard panels.
-    (window as any).open = (opts: { mode: Mode; runData?: RunData }) => this.open(opts);
+    (window as unknown).open = (opts: { mode: Mode; runData?: RunData }): void => this.open(opts);
 
     // Small hack to make the NodeCG dialog look a little better for us, not perfect yet.
     const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;
     elem.style.marginBottom = '12px';
   },
   methods: {
-    open(opts: { mode: Mode; runData?: RunData; prevID?: string }) {
+    open(opts: { mode: Mode; runData?: RunData; prevID?: string }): void {
       // Waits for dialog to actually open before changing storage.
       this.dialog.open();
       document.addEventListener('dialog-opened', () => {
@@ -190,10 +190,10 @@ export default Vue.extend({
       document.addEventListener('dialog-confirmed', this.confirm, { once: true });
       document.addEventListener('dialog-dismissed', this.dismiss, { once: true });
     },
-    addNewTeam() {
+    addNewTeam(): void {
       store.commit('addNewTeam');
     },
-    attemptSave() {
+    attemptSave(): void {
       this.err = undefined;
       store.dispatch('saveRunData').then(() => {
         this.close(true);
@@ -201,14 +201,14 @@ export default Vue.extend({
         this.err = err;
       });
     },
-    close(confirm: boolean) {
+    close(confirm: boolean): void {
       this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle, max-len
       this.dialog.close();
     },
-    confirm() {
+    confirm(): void {
       document.removeEventListener('dialog-dismissed', this.dismiss);
     },
-    dismiss() {
+    dismiss(): void {
       document.removeEventListener('dialog-confirmed', this.confirm);
     },
   },

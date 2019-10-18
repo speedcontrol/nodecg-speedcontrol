@@ -41,13 +41,13 @@ export default Vue.extend({
   props: {
     playerData: {
       type: Object,
-      default() {
+      default(): object {
         return {};
       },
     },
   },
   methods: {
-    removePlayer() {
+    removePlayer(): void {
       store.commit('removePlayer', {
         teamID: this.playerData.teamID,
         id: this.playerData.id,
@@ -56,13 +56,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style scoped>
-  .PlayerHandle {
-    cursor: move;
-  }
-
-  .v-tooltip {
-    margin-left: 10px;
-  }
-</style>

@@ -32,7 +32,6 @@ module.exports = {
       devDependencies: true, // Some places have dev deps imported where eslint complains.
       packageDir: ['.', '../..'], // Check for deps in NodeCG folder as well.
     }],
-    'no-new': ['off'], // Mainly so we can do "new Vue" in the main.ts files, maybe needs excluding there?
     'vue/html-self-closing': ['error', {
       html: {
         component: 'never', // Transpiler(?) has issues with self closing components.
@@ -44,8 +43,5 @@ module.exports = {
     'vue/valid-v-if': 'off', // I legit think this is broken.
     'vue/valid-v-bind': 'off', // I legit think this is broken.
     'vue/valid-v-model': 'off', // I legit think this is broken.
-    '@typescript-eslint/explicit-function-return-type': 'off', // We *shall* fix this!
-    '@typescript-eslint/no-explicit-any': 'off', // We *shall* fix this!
-    'no-async-promise-executor': 'off', // We *shall* fix this!
   }
 };

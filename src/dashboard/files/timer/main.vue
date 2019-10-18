@@ -9,24 +9,23 @@
         <start-button></start-button>
         <reset-button></reset-button>
         <!-- Will not show if more than 1 team -->
-        <stop-button
-          v-if="teams.length <= 1"
-          :info="teams[0]"
-        ></stop-button>
-        <stop-button
-          v-if="teams.length <= 1"
-          :info="teams[0]"
-          forfeit
-        ></stop-button>
-        <undo-button
-          v-if="teams.length <= 1"
-          :info="teams[0]"
-        ></undo-button>
+        <div v-if="teams.length <= 1">
+          <stop-button
+            :info="teams[0]"
+          ></stop-button>
+          <stop-button
+            :info="teams[0]"
+            forfeit
+          ></stop-button>
+          <undo-button
+            :info="teams[0]"
+          ></undo-button>
+        </div>
       </div>
       <!-- Will only show if more than 1 team -->
       <div
         v-if="teams.length > 1"
-        id="Teams"
+        :style="{ 'padding-top': '10px' }"
       >
         <team
           v-for="(team, index) in teams"
@@ -38,7 +37,7 @@
     </div>
     <div
       v-if="disableChanges || tempEnable"
-      id="DisableOverride"
+      :style="{ 'padding-top': '10px' }"
     >
       <v-btn
         v-if="disableChanges"
@@ -50,11 +49,13 @@
       <v-btn
         v-if="tempEnable"
         block
-        @click="disableChanges = true;"
+        @click="disableChanges = true"
       >
         Disable Changes
       </v-btn>
-      <div>Only use this button if needed.</div>
+      <div :style="{ 'margin-top': '5px' }">
+        <em>Only use this button if needed.</em>
+      </div>
     </div>
     <!-- Hidden toggle for testing -->
     <!--<v-switch
@@ -74,6 +75,7 @@ import StopButton from './components/StopButton.vue';
 import UndoButton from './components/UndoButton.vue';
 import Team from './components/Team.vue';
 import { store } from '../_misc/replicant-store';
+import { RunDataActiveRun } from '../../../../types';
 
 export default Vue.extend({
   components: {
@@ -90,29 +92,29 @@ export default Vue.extend({
     };
   },
   computed: {
-    activeRun() {
+    activeRun(): RunDataActiveRun {
       return store.state.runDataActiveRun;
     },
-    teams() {
+    teams(): array {
       return (this.activeRun)
         ? this.activeRun.teams : [];
     },
     disableChanges: {
-      get() {
+      get(): boolean {
         return store.state.timerChangesDisabled;
       },
-      set(value: boolean) {
+      set(value: boolean): void {
         store.commit('updateTimerDisabledToggle', { value });
       },
     },
   },
   watch: {
-    disableChanges(val) {
+    disableChanges(val): void {
       if (val) {
         this.tempEnable = false;
       }
     },
-    activeRun() {
+    activeRun(): void {
       this.tempEnable = false;
     },
   },
@@ -137,17 +139,5 @@ export default Vue.extend({
   #Controls >>> .v-btn {
     min-width: 0;
     width: 100%;
-  }
-
-  #Teams {
-    padding-top: 10px;
-  }
-
-  #DisableOverride {
-    padding-top: 10px;
-  }
-  #DisableOverride > div {
-    margin-top: 5px;
-    font-style: italic;
   }
 </style>

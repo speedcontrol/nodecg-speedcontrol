@@ -49,7 +49,7 @@ export default Vue.extend({
     },
   },
   methods: {
-    button() {
+    button(): void {
       nodecg.sendMessage('timerUndo', this.info.id).then(() => {
         // successful
       }).catch(() => {

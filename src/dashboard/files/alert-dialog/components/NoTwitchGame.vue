@@ -5,10 +5,8 @@
       it has been set to default. Change this manually if possible.
     </div>
     <br>
-    <div class="DialogButtons">
-      <v-btn
-        @click="dismiss"
-      >
+    <div :style="{ float: 'right' }">
+      <v-btn @click="$emit('dismiss')">
         OK
       </v-btn>
     </div>
@@ -18,20 +16,5 @@
 <script lang="ts">
 import Vue from 'vue';
 
-export default Vue.extend({
-  methods: {
-    confirm() {
-      this.$emit('confirm');
-    },
-    dismiss() {
-      this.$emit('dismiss');
-    },
-  },
-});
+export default Vue.extend({});
 </script>
-
-<style scoped>
-  .DialogButtons {
-    float: right;
-  }
-</style>

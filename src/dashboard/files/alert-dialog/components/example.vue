@@ -1,18 +1,12 @@
 <template>
   <div>
-    <div>
-      Example Text
-    </div>
+    <div>Example Text</div>
     <br>
-    <div class="DialogButtons">
-      <v-btn
-        @click="confirm"
-      >
+    <div :style="{ float: 'right' }">
+      <v-btn @click="confirm">
         OK
       </v-btn>
-      <v-btn
-        @click="dismiss"
-      >
+      <v-btn @click="dismiss">
         Cancel
       </v-btn>
     </div>
@@ -24,7 +18,7 @@ import Vue from 'vue';
 
 export default Vue.extend({
   methods: {
-    confirm() {
+    confirm(): void {
       // do stuff
       const screwedUp = false;
       if (screwedUp) {
@@ -32,16 +26,10 @@ export default Vue.extend({
       }
       this.$emit('confirm');
     },
-    dismiss() {
+    dismiss(): void {
       // do other stuff
       this.$emit('dismiss');
     },
   },
 });
 </script>
-
-<style scoped>
-  .DialogButtons {
-    float: right;
-  }
-</style>

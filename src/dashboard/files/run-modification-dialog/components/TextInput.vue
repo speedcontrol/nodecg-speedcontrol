@@ -16,7 +16,7 @@ export default Vue.extend({
   name: 'TextInput',
   props: {
     value: {
-      type: [String],
+      type: String,
       default: '',
     },
     label: {

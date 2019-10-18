@@ -12,7 +12,7 @@
         <v-card
           v-for="(team) in teams"
           :key="team.id"
-          class="Team"
+          :style="{ 'text-align': 'center', padding: '5px', 'margin-top': '10px' }"
         >
           <span v-if="team.name">{{ team.name }}</span>
           <span
@@ -40,13 +40,11 @@ export default Vue.extend({
   },
   computed: {
     teams: {
-      get() {
+      get(): RunDataTeam[] {
         return (store.state.runDataActiveRun) ? store.state.runDataActiveRun.teams : [];
       },
-      set(value: RunDataTeam[]) {
-        store.commit('updateActiveRunTeamOrder', {
-          value,
-        });
+      set(value: RunDataTeam[]): void {
+        store.commit('updateActiveRunTeamOrder', { value });
       },
     },
   },
@@ -65,11 +63,5 @@ export default Vue.extend({
   }
   .list-leave-active {
     position: absolute;
-  }
-
-  .Team {
-    text-align: center;
-    padding: 5px;
-    margin-top: 10px;
   }
 </style>

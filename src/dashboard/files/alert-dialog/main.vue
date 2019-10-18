@@ -22,23 +22,23 @@ import { nodecg } from '../_misc/nodecg';
 export default Vue.extend({
   data() {
     return {
-      dialog: undefined as any,
+      dialog: undefined as unknown,
       currentComponent: undefined as VueConstructor | undefined,
-      alertData: {} as { [k: string ]: any },
+      alertData: {} as { [k: string ]: unknown },
       callbackFunc: undefined as Function | undefined,
     };
   },
   mounted() {
-    this.dialog = nodecg.getDialog('alert-dialog') as any;
+    this.dialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
 
     // Attaching this function to the window for easy access from dashboard panels.
-    (window as any).open = (opts: {
+    (window as unknown).open = (opts: {
       name: string;
-      data?: { [k: string ]: any };
+      data?: { [k: string ]: unknown };
       func?: Function;
-    }) => this.open(opts);
+    }): void => this.open(opts);
 
-    // Small hack to make the NodeCG dialog look a little better for us, not perfect yet.
+    // Small hack to make the NodeCG dialog look a little better for us.
     const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;
     elem.style.marginBottom = '12px';
 
@@ -50,13 +50,13 @@ export default Vue.extend({
   methods: {
     open(opts: {
       name: string;
-      data?: { [k: string ]: any };
+      data?: { [k: string ]: unknown };
       func?: Function;
-    }) {
+    }): void {
       // Waits for dialog to actually open before doing stuff.
       this.dialog.open();
       document.addEventListener('dialog-opened', () => {
-        this.currentComponent = ((name) => {
+        this.currentComponent = ((name): VueConstructor | undefined => {
           switch (name) {
             case 'HoraroImportConfirm':
               return HoraroImportConfirm;
@@ -80,7 +80,7 @@ export default Vue.extend({
       document.addEventListener('dialog-confirmed', this.confirm, { once: true });
       document.addEventListener('dialog-dismissed', this.dismiss, { once: true });
     },
-    close(confirm: boolean) {
+    close(confirm: boolean): void {
       // Trigger callback function passed earlier if set.
       if (this.callbackFunc) {
         this.callbackFunc(confirm);
@@ -91,11 +91,11 @@ export default Vue.extend({
       this.alertData = {};
       this.callbackFunc = undefined;
     },
-    confirm() {
+    confirm(): void {
       // do confirm stuff here
       document.removeEventListener('dialog-dismissed', this.dismiss);
     },
-    dismiss() {
+    dismiss(): void {
       // do dismiss stuff here
       document.removeEventListener('dialog-confirmed', this.confirm);
     },

@@ -9,9 +9,7 @@
         <span v-if="alertData.runData.game">
           {{ alertData.runData.game }}
         </span>
-        <span
-          v-if="alertData.runData.game && alertData.runData.category"
-        >
+        <span v-if="alertData.runData.game && alertData.runData.category">
           -
         </span>
         <span v-if="alertData.runData.category">
@@ -20,15 +18,11 @@
       </div>
     </div>
     <br>
-    <div class="DialogButtons">
-      <v-btn
-        @click="confirm"
-      >
+    <div :style="{ float: 'right' }">
+      <v-btn @click="$emit('confirm')">
         OK
       </v-btn>
-      <v-btn
-        @click="dismiss"
-      >
+      <v-btn @click="$emit('dismiss')">
         Cancel
       </v-btn>
     </div>
@@ -42,24 +36,10 @@ export default Vue.extend({
   props: {
     alertData: {
       type: Object,
-      default() {
+      default(): object {
         return {};
       },
     },
   },
-  methods: {
-    confirm() {
-      this.$emit('confirm');
-    },
-    dismiss() {
-      this.$emit('dismiss');
-    },
-  },
 });
 </script>
-
-<style scoped>
-  .DialogButtons {
-    float: right;
-  }
-</style>

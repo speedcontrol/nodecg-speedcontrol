@@ -51,7 +51,7 @@ export default Vue.extend({
   props: {
     info: {
       type: Object,
-      default() {
+      default(): object {
         return {};
       },
     },

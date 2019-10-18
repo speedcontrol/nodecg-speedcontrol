@@ -30,7 +30,7 @@ export default Vue.extend({
   props: {
     option: {
       type: Object,
-      default() {
+      default(): object {
         return {
           name: 'Game',
           key: 'game',
@@ -40,13 +40,13 @@ export default Vue.extend({
     },
     columns: {
       type: Array,
-      default() {
+      default(): array {
         return [];
       },
     },
   },
   computed: {
-    dropdownOpts() {
+    dropdownOpts(): array {
       return [
         {
           value: -1,
@@ -60,19 +60,17 @@ export default Vue.extend({
       );
     },
     selected: {
-      // Vetur doesn't think "this" exists in here?
       get(): number {
-        // key must exist in the columns object!
-        if ((this as any).option.custom) {
-          return (store.state.opts.columns.custom as any)[(this as any).option.key];
+        if (this.option.custom) {
+          return store.state.opts.columns.custom[this.option.key];
         }
-        return (store.state.opts.columns as any)[(this as any).option.key];
+        return store.state.opts.columns[this.option.key];
       },
-      set(value: number) {
+      set(value: number): void {
         store.commit('updateColumn', {
-          name: (this as any).option.key,
+          name: this.option.key,
           value,
-          custom: (this as any).option.custom,
+          custom: this.option.custom,
         });
       },
     },
