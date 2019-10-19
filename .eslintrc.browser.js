@@ -37,11 +37,12 @@ module.exports = {
         component: 'never', // Transpiler(?) has issues with self closing components.
       },
     }],
-    'vue/no-parsing-error': 'off', // Due to some issue in typescript-eslint(?), off for now.
     'max-len': ["error", { "code": 100 }],
-    'vue/valid-v-on': 'off', // I legit think this is broken.
-    'vue/valid-v-if': 'off', // I legit think this is broken.
-    'vue/valid-v-bind': 'off', // I legit think this is broken.
-    'vue/valid-v-model': 'off', // I legit think this is broken.
+    // I legit think the 5 things below are broken, might be a typescript-eslint issue.
+    'vue/no-parsing-error': 'off',
+    'vue/valid-v-on': 'off',
+    'vue/valid-v-if': 'off',
+    'vue/valid-v-bind': 'off',
+    'vue/valid-v-model': 'off',
   }
 };
