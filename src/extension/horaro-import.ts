@@ -193,7 +193,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
     const hashesSeen: string[] = [];
     const newRunDataArray = await mapSeries(runItems.filter((run) => (
       !checkGameAgainstIgnoreList(run.data[opts.columns.game])
-    )), async (run, index, arr): Promise<RunData> => {
+    )), async (run, index, arr) => {
       importStatus.value.item = index + 1;
       importStatus.value.total = arr.length;
 
@@ -279,7 +279,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
         ];
         const teamsRaw = await mapSeries(
           playerList.split(teamSplittingRegex[opts.split]),
-          (team): { name?: string; players: string[] } => {
+          (team) => {
             const nameMatch = team.match(/^(.+)(?=:\s)/);
             return {
               name: (nameMatch) ? nameMatch[0] : undefined,
@@ -293,7 +293,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
         // Mapping team information from above into needed format.
         runData.teams = await mapSeries(
           teamsRaw,
-          async (rawTeam): Promise<RunDataTeam> => {
+          async (rawTeam) => {
             const team: RunDataTeam = {
               id: uuid(),
               name: parseMarkdown(rawTeam.name).str,
@@ -303,7 +303,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
             // Mapping player information into needed format.
             team.players = await mapSeries(
               rawTeam.players,
-              async (rawPlayer): Promise<RunDataPlayer> => {
+              async (rawPlayer) => {
                 const { str, url } = parseMarkdown(rawPlayer);
                 const { country, twitchURL } = await parseSRcomUserData(str, url);
                 const usedURL = url || twitchURL; // Always favour URL from Horaro.

@@ -123,9 +123,9 @@ export default Vue.extend({
   },
   computed: {
     playerStr(): string {
-      return this.runData.teams.map((team): string => (
+      return this.runData.teams.map((team) => (
         `${team.name ? `${team.name}:` : ''}
-        ${team.players.map((player): string => player.name).join(', ')}`
+        ${team.players.map((player) => player.name).join(', ')}`
       )).join(' vs. ');
     },
     activeRun(): RunDataActiveRun {

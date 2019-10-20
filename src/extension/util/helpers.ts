@@ -10,8 +10,8 @@ const nodecg = get();
  * @param runData Run Data object.
  */
 export function formPlayerNamesStr(runData: RunData): string {
-  return runData.teams.map((team): string => (
-    team.players.map((player): string => player.name).join(', ')
+  return runData.teams.map((team) => (
+    team.players.map((player) => player.name).join(', ')
   )).join(' vs. ') || 'N/A';
 }
 
@@ -20,10 +20,10 @@ export function formPlayerNamesStr(runData: RunData): string {
  * @param runData Run Data object.
  */
 export function getTwitchChannels(runData: RunData): string[] {
-  const channels = runData.teams.map((team): string[] => (
+  const channels = runData.teams.map((team) => (
     team.players
-      .filter((player): boolean => !!player.social.twitch)
-      .map((player): string => player.social.twitch as string)
+      .filter((player) => !!player.social.twitch)
+      .map((player) => player.social.twitch as string)
   ));
   return ([] as string[]).concat(...channels);
 }
@@ -66,7 +66,7 @@ export function msToTimeStr(ms: number): string {
  * @param ms Milliseconds to sleep for.
  */
 export function sleep(ms: number): Promise<void> {
-  return new Promise((resolve): void => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
@@ -79,7 +79,7 @@ export function findRunIndexFromId(id?: string): number {
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore: readReplicant not in NodeCGServer typings
   const arr = nodecg.readReplicant('runDataArray') as RunDataArray;
-  return arr.findIndex((run): boolean => run.id === id);
+  return arr.findIndex((run) => run.id === id);
 }
 
 /**

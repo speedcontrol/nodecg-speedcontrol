@@ -21,7 +21,7 @@ let pingTO: NodeJS.Timeout;
  * @param msg Message to be sent.
  */
 function sendMsg(msg: string): Promise<string> {
-  return new Promise((resolve): void => {
+  return new Promise((resolve) => {
     if (!ws || ws.readyState !== 1) {
       throw new Error('WebSocket not connected');
     }

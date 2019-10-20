@@ -56,7 +56,7 @@ export default Vue.extend({
       // Waits for dialog to actually open before doing stuff.
       this.dialog.open();
       document.addEventListener('dialog-opened', () => {
-        this.currentComponent = ((name): VueConstructor | undefined => {
+        this.currentComponent = ((name) => {
           switch (name) {
             case 'HoraroImportConfirm':
               return HoraroImportConfirm;

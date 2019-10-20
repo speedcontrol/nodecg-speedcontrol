@@ -35,7 +35,7 @@ export function sendMessage<K extends keyof SendMessageArgsMap>(
   name: K,
   data?: SendMessageArgsMap[K],
 ): Promise<SendMessageReturnMap[K]> {
-  return new Promise((resolve, reject): void => {
+  return new Promise((resolve, reject) => {
     nodecg().log.debug(`[Events] sendMessage triggered for "${name}":`, JSON.stringify(data));
     emitter.emit(name, data, wrapAck((err: Error | null, data_?: SendMessageReturnMap[K]) => {
       if (err) {

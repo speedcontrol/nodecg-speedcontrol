@@ -70,7 +70,7 @@ async function changeActiveRun(id?: string): Promise<boolean> {
     if (!id) {
       throw new Error('No run ID was supplied');
     }
-    const runData = array.value.find((run): boolean => run.id === id);
+    const runData = array.value.find((run) => run.id === id);
     if (!runData) {
       throw new Error(`Run with ID ${id} was not found`);
     } else {
@@ -124,7 +124,7 @@ async function removeRun(id?: string): Promise<void> {
     if (!id) {
       throw new Error('No run ID was supplied');
     }
-    const runIndex = array.value.findIndex((run): boolean => run.id === id);
+    const runIndex = array.value.findIndex((run) => run.id === id);
     if (runIndex < 0) {
       throw new Error(`Run with ID ${id} was not found`);
     } else {
@@ -159,13 +159,13 @@ async function modifyRun(runData: RunData, prevID?: string): Promise<void> {
     });
 
     // Check all teams have players, if not throw an error.
-    if (!data.teams.every((team): boolean => !!team.players.length)) {
+    if (!data.teams.every((team) => !!team.players.length)) {
       throw new Error('Team(s) are missing player(s)');
     }
 
     // Check all players have names, if not throw an error.
-    const allNamesAdded = data.teams.every((team): boolean => (
-      team.players.every((player): boolean => !!player.name)
+    const allNamesAdded = data.teams.every((team) => (
+      team.players.every((player) => !!player.name)
     ));
     if (!allNamesAdded) {
       throw new Error('Player(s) are missing name(s)');
