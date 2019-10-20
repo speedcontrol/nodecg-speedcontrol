@@ -27,7 +27,7 @@ import { store } from '../../_misc/replicant-store';
 export default Vue.extend({
   name: 'ResetButton',
   computed: {
-    state(): boolean {
+    state(): 'stopped' | 'running' | 'paused' | 'finished' {
       return store.state.timer.state;
     },
   },

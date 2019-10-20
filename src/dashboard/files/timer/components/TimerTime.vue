@@ -65,14 +65,14 @@ export default Vue.extend({
     },
   },
   methods: {
-    finishEdit(event): void {
+    finishEdit(event: Event): void {
       if (this.time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
         nodecg.sendMessage('timerEdit', this.time).then(() => {
           // successful
         }).catch(() => {
           // error
         });
-        event.target.blur();
+        (event.target as HTMLTextAreaElement).blur();
       }
     },
     abandonEdit(): void {

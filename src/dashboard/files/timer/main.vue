@@ -95,7 +95,7 @@ export default Vue.extend({
     activeRun(): RunDataActiveRun {
       return store.state.runDataActiveRun;
     },
-    teams(): array {
+    teams(): any[] {
       return (this.activeRun)
         ? this.activeRun.teams : [];
     },
