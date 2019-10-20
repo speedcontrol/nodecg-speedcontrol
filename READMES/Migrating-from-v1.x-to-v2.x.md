@@ -25,14 +25,14 @@ We formally refer to the object structure that we store information about runs i
 
 ### <a name="message-rep-changes"></a> Changes to messages/replicants sent out by this bundle
 
-Replicants:
+#### Replicants:
 - `timer`: how the `teamFinishTimes` key works has been tweaked very slightly; it is still a copy of the `timer` replicant at the time (minus the `teamFinishTimes` value), but the `state` key is tweaked and the value can now either be `"forfeit"` or `"completed"` depending on if the team forfeit or not.
-- `runFinishTimes`: was previously undocumented, but is an object keyed by the run's ID if the timer was successfully finished once; the value used to be a string of the final time but has now been changed to a copy of the `timer` replicant object.
+- `runFinishTimes`: was previously undocumented, but is an object keyed by the run's ID if the timer was successfully finished at least once; the value used to be a string of the final time but has now been changed to a copy of the `timer` replicant object of the most recent fully completed time for that run.
 
-Messages Sent:
+#### Messages Sent:
 - The `twitchAdStarted` message has formally been renamed to `twitchCommercialStarted`, although the original will still work for now but may be removed in the future.
 
-Messages Received:
+#### Messages Received:
 - The `playTwitchAd` message has formally been renamed to `twitchStartCommercial`, although the original will still work for now but may be removed in the future.
 - Timer:
   - We added some messages you could send that *were* supported but not documented in a dev version of v1.x, which have now been removed and replaced (see below)
@@ -49,5 +49,4 @@ Messages Received:
     - `finishTime` (no arguments) has been changed to `timerStop` (`{ id: string, forfeit: boolean }`).
     - `timerUndo` (`id`: string) has been added.
 
-There may be some other undocumented replicants/messages that were changed in the development of v2.x, but we did not think these were worth documenting here. Please study the source code if needed, and submit an issue if there is something missing you feel you need.
-Also, as a general note, if a message/replicant is not mentioned in the [API documentation (TBD)](API.md), assume it could change at any point.
+There may be some other undocumented replicants/messages that were changed in the development of v2.x, but we did not think these were worth documenting here. Please study the source code if needed, and submit an issue if there is something missing you feel you need. Also, as a general note, if a message/replicant is not mentioned in the [API documentation (TBD)](API.md), assume it could change at any point.
