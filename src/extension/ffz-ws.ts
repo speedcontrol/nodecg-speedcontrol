@@ -102,8 +102,8 @@ export async function setChannels(names: string[]): Promise<void> {
   if (!config.twitch.ffzUseRepeater) {
     try {
       if (config.twitch.channelName) {
-        throw new Error(`Featured channels cannot be set while
-        channelName is set in the configuration file`);
+        throw new Error('Featured channels cannot be set while '
+        + 'channelName is set in the configuration file');
       }
       const msg = await sendMsg(
         `update_follow_buttons ${JSON.stringify([
