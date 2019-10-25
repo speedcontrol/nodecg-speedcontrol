@@ -1,9 +1,14 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-// const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const path = require('path');
 
+const isProd = process.env.NODE_ENV === 'production';
+
+// Need to try and make this programatically.
 const entry = {
   'add-remove-runs-dash': './files/add-remove-runs-dash/main.ts',
   'alert-dialog': './files/alert-dialog/main.ts',
@@ -17,15 +22,17 @@ const entry = {
 };
 
 module.exports = {
-  context: path.resolve(__dirname, "src/dashboard"),
-  mode: 'production',
+  context: path.resolve(__dirname, 'src/dashboard'),
+  mode: isProd ? 'production' : 'development',
   target: 'web',
+  devtool: isProd ? undefined : 'cheap-source-map',
   entry,
   output: {
-    path: path.resolve(__dirname, "dashboard"),
+    path: path.resolve(__dirname, 'dashboard'),
+    filename: 'js/[name].js',
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.js', '.ts', '.tsx', '.json'],
   },
   module: {
     rules: [
@@ -39,13 +46,35 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: (resourcePath, context) => {
-                return '../'
-              },
+              hmr: !isProd,
+              publicPath: '../',
             },
           },
           // 'vue-style-loader',
           'css-loader',
+        ],
+      },
+      {
+        test: /\.s(c|a)ss$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: !isProd,
+              publicPath: '../',
+            },
+          },
+          // 'vue-style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('sass'),
+              sassOptions: {
+                fiber: require('fibers'),
+              },
+            },
+          },
         ],
       },
       {
@@ -56,24 +85,26 @@ module.exports = {
         },
       },
       {
-        test: /\.png?$/,
+        test: /\.(png|svg)?$/,
         loader: 'file-loader',
         options: {
           name: 'img/[name].[ext]',
         },
       },
       {
-        test: /\.ts?$/,
+        test: /\.tsx?$/,
         loader: 'ts-loader',
         options: {
-          // transpileOnly: false,
-          transpileOnly: true,
+          transpileOnly: true, // ForkTsCheckerWebpackPlugin will do type checking
           appendTsSuffixTo: [/\.vue$/],
         },
       },
     ],
   },
   plugins: [
+    new HardSourceWebpackPlugin(),
+    new VueLoaderPlugin(),
+    new VuetifyLoaderPlugin(),
     ...Object.keys(entry).map(
       (entryName) =>
         new HtmlWebpackPlugin({
@@ -83,7 +114,6 @@ module.exports = {
           template: './template.html',
         }),
     ),
-    new VueLoaderPlugin(),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
     }),
@@ -91,7 +121,7 @@ module.exports = {
       vue: true,
     }), */
   ],
-  /* optimization: {
+  optimization: {
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
@@ -102,5 +132,5 @@ module.exports = {
         default: false,
       },
     },
-  }, */
+  },
 };

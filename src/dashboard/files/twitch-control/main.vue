@@ -96,7 +96,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import _ from 'lodash';
+import { debounce } from 'lodash';
 import { nodecg } from '../_misc/nodecg';
 import { Configschema } from '../../../../configschema';
 import { store } from '../_misc/replicant-store';
@@ -153,7 +153,7 @@ export default Vue.extend({
     },
   },
   created() {
-    this.blurInput = _.debounce(this.blurInput, 20 * 1000);
+    this.blurInput = debounce(this.blurInput, 20 * 1000);
   },
   methods: {
     inputActivity(evt: Event): void {
