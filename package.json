@@ -67,7 +67,7 @@
     "eslint-plugin-vue": "^5.2.3",
     "fibers": "^4.0.2",
     "file-loader": "^4.2.0",
-    "fork-ts-checker-webpack-plugin": "^1.6.0",
+    "fork-ts-checker-webpack-plugin": "~1.6.0",
     "globby": "^10.0.1",
     "hard-source-webpack-plugin": "^0.13.1",
     "html-webpack-plugin": "^4.0.0-beta.8",
