@@ -4,6 +4,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const LiveReloadPlugin = require('webpack-livereload-plugin');
 const globby = require('globby');
 const path = require('path');
 
@@ -16,11 +17,55 @@ const entry = globby
     return prev;
   }, {});
 
+const miniCSSOpts = {
+  loader: MiniCssExtractPlugin.loader,
+  options: {
+    hmr: !isProd,
+    publicPath: '../',
+  },
+};
+
+let plugins = [];
+if (!isProd) {
+  plugins.push(
+    new LiveReloadPlugin({
+      port: 0,
+      appendScriptTag: true,
+    })
+  );
+}
+plugins = plugins.concat(
+  [
+    new HardSourceWebpackPlugin(),
+    new VueLoaderPlugin(),
+    new VuetifyLoaderPlugin(),
+    ...Object.keys(entry).map(
+      (entryName) =>
+        new HtmlWebpackPlugin({
+          filename: `${entryName}.html`,
+          chunks: [entryName],
+          title: entryName,
+          template: './template.html',
+        }),
+    ),
+    new ForkTsCheckerWebpackPlugin({
+      vue: true,
+    }),
+  ]
+);
+if (isProd) {
+  plugins.push(
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].css',
+    })
+  );
+}
+
 module.exports = {
   context: path.resolve(__dirname, 'src/dashboard'),
   mode: isProd ? 'production' : 'development',
   target: 'web',
-  devtool: isProd ? undefined : 'cheap-source-map',
+  // devtool: isProd ? undefined : 'cheap-source-map',
   entry,
   output: {
     path: path.resolve(__dirname, 'dashboard'),
@@ -38,28 +83,14 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: !isProd,
-              publicPath: '../',
-            },
-          },
-          // 'vue-style-loader',
+          (isProd) ? miniCSSOpts : 'vue-style-loader',
           'css-loader',
         ],
       },
       {
         test: /\.s(c|a)ss$/,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: !isProd,
-              publicPath: '../',
-            },
-          },
-          // 'vue-style-loader',
+          (isProd) ? miniCSSOpts : 'vue-style-loader',
           'css-loader',
           {
             loader: 'sass-loader',
@@ -96,27 +127,8 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new HardSourceWebpackPlugin(),
-    new VueLoaderPlugin(),
-    new VuetifyLoaderPlugin(),
-    ...Object.keys(entry).map(
-      (entryName) =>
-        new HtmlWebpackPlugin({
-          filename: `${entryName}.html`,
-          chunks: [entryName],
-          title: entryName,
-          template: './template.html',
-        }),
-    ),
-    new MiniCssExtractPlugin({
-      filename: 'css/[name].css',
-    }),
-    /* new ForkTsCheckerWebpackPlugin({
-      vue: true,
-    }), */
-  ],
-  optimization: {
+  plugins,
+  optimization: (isProd) ? {
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
@@ -127,5 +139,5 @@ module.exports = {
         default: false,
       },
     },
-  },
+  } : undefined,
 };

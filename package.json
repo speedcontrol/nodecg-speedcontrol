@@ -23,14 +23,14 @@
     "autofix:browser": "npx eslint --fix --ext .ts,.vue src/dashboard",
     "autofix:extension": "npx eslint --fix --ext .ts src/extension",
     "build": "npx run-s build:*",
-    "build:browser": "npx cross-env NODE_ENV=production npx webpack --config webpack.config.prod.js",
+    "build:browser": "npx cross-env NODE_ENV=production npx webpack",
     "build:extension": "npx tsc -b tsconfig.extension.json",
+    "clean": "npx trash dashboard && npx trash extension",
     "start": "node ../..",
     "typeschemas": "node script/typeschemas.js",
     "watch": "npx run-p watch:*",
-    "watch:extension": "npx tsc -b tsconfig.extension.json -w",
-    "watch:browser": "npx webpack --config webpack.config.dev.js -w",
-    "clean": "npx trash dashboard && npx trash extension"
+    "watch:browser": "npx webpack -w",
+    "watch:extension": "npx tsc -b tsconfig.extension.json -w"
   },
   "dependencies": {
     "clone": "^2.1.2",
