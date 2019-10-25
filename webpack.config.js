@@ -4,22 +4,17 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const globby = require('globby');
 const path = require('path');
 
 const isProd = process.env.NODE_ENV === 'production';
 
-// Need to try and make this programatically.
-const entry = {
-  'add-remove-runs-dash': './files/add-remove-runs-dash/main.ts',
-  'alert-dialog': './files/alert-dialog/main.ts',
-  'horaro-schedule-import': './files/horaro-schedule-import/main.ts',
-  'player-layout': './files/player-layout/main.ts',
-  'run-editor-dash': './files/run-editor-dash/main.ts',
-  'run-modification-dialog': './files/run-modification-dialog/main.ts',
-  'run-player': './files/run-player/main.ts',
-  timer: './files/timer/main.ts',
-  'twitch-control': './files/twitch-control/main.ts',
-};
+const entry = globby
+  .sync('*/main.ts', {cwd: 'src/dashboard'})
+  .reduce((prev, curr) => {
+    prev[path.basename(path.dirname(curr))] = `./${curr}`;
+    return prev;
+  }, {});
 
 module.exports = {
   context: path.resolve(__dirname, 'src/dashboard'),

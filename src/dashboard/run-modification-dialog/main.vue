@@ -116,7 +116,7 @@ import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
 import ModifyButton from './components/ModifyButton.vue';
 import { nodecg } from '../_misc/nodecg';
-import { RunData, RunDataActiveRun } from '../../../../types';
+import { RunData, RunDataActiveRun } from '../../../types';
 
 enum Mode {
   New = 'New',

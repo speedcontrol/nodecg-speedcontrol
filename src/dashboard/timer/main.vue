@@ -75,7 +75,7 @@ import StopButton from './components/StopButton.vue';
 import UndoButton from './components/UndoButton.vue';
 import Team from './components/Team.vue';
 import { store } from '../_misc/replicant-store';
-import { RunDataActiveRun, RunDataTeam } from '../../../../types';
+import { RunDataActiveRun, RunDataTeam } from '../../../types';
 
 export default Vue.extend({
   components: {

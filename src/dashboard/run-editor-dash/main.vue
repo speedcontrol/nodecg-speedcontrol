@@ -16,7 +16,7 @@ import Vue from 'vue';
 import { store } from '../_misc/replicant-store';
 import { nodecg } from '../_misc/nodecg';
 import RunList from '../_misc/components/RunList/RunList.vue';
-import { RunDataActiveRun } from '../../../../types';
+import { RunDataActiveRun } from '../../../types';
 
 export default Vue.extend({
   components: {

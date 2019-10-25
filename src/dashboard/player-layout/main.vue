@@ -32,7 +32,7 @@
 import Vue from 'vue';
 import Draggable from 'vuedraggable';
 import { store } from '../_misc/replicant-store';
-import { RunDataTeam } from '../../../../types';
+import { RunDataTeam } from '../../../types';
 
 export default Vue.extend({
   components: {

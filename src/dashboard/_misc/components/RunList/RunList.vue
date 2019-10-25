@@ -52,7 +52,7 @@ import Vue from 'vue';
 import Draggable from 'vuedraggable';
 import RunPanel from './RunPanel.vue';
 import { store } from '../../replicant-store';
-import { RunData, RunDataArray, RunDataActiveRun } from '../../../../../../types';
+import { RunData, RunDataArray, RunDataActiveRun } from '../../../../../types';
 
 export default Vue.extend({
   components: {

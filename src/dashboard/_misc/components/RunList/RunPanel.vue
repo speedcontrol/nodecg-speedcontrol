@@ -92,9 +92,9 @@
 import Vue from 'vue';
 import { nodecg } from '../../nodecg';
 import { store } from '../../replicant-store';
-import { Configschema } from '../../../../../../configschema';
+import { Configschema } from '../../../../../configschema';
 import ModifyButton from './ModifyButton.vue';
-import { Timer, RunDataActiveRun } from '../../../../../../types';
+import { Timer, RunDataActiveRun } from '../../../../../types';
 
 export default Vue.extend({
   name: 'RunPanel',

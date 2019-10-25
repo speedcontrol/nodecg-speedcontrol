@@ -2,7 +2,7 @@ import clone from 'clone';
 import uuid from 'uuid/v4';
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { RunData, RunDataPlayer, RunDataTeam } from '../../../../types';
+import { RunData, RunDataPlayer, RunDataTeam } from '../../../types';
 import { msToTimeStr } from '../_misc/helpers';
 import { store as repStore } from '../_misc/replicant-store';
 

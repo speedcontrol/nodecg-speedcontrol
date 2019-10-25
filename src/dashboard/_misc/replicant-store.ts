@@ -2,8 +2,8 @@ import clone from 'clone';
 import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line import/no-unresolved
 import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
-import { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../../schemas'; // eslint-disable-line max-len, object-curly-newline
-import { RunDataActiveRun, RunDataArray, Timer } from '../../../../types';
+import { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../schemas'; // eslint-disable-line max-len, object-curly-newline
+import { RunDataActiveRun, RunDataArray, Timer } from '../../../types';
 
 Vue.use(Vuex);
 

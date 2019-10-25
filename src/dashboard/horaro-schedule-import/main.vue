@@ -120,7 +120,7 @@ import store from './store';
 import RunDataOptions from './RunDataOptions';
 import Dropdown from './components/Dropdown.vue';
 import ConfigButton from './components/ConfigButton.vue';
-import { HoraroImportStatus } from '../../../../schemas';
+import { HoraroImportStatus } from '../../../schemas';
 
 export default Vue.extend({
   components: {

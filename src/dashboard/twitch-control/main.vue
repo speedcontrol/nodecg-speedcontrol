@@ -98,9 +98,9 @@
 import Vue from 'vue';
 import { debounce } from 'lodash';
 import { nodecg } from '../_misc/nodecg';
-import { Configschema } from '../../../../configschema';
+import { Configschema } from '../../../configschema';
 import { store } from '../_misc/replicant-store';
-import { TwitchAPIData, TwitchChannelInfo } from '../../../../schemas';
+import { TwitchAPIData, TwitchChannelInfo } from '../../../schemas';
 
 export default Vue.extend({
   data() {

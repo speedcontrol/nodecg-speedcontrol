@@ -41,8 +41,8 @@
 import Vue from 'vue';
 import RunList from '../_misc/components/RunList/RunList.vue';
 import { store } from '../_misc/replicant-store';
-import { RunData, RunDataArray, RunDataActiveRun } from '../../../../types';
-import { RunDataActiveRunSurrounding } from '../../../../schemas';
+import { RunData, RunDataArray, RunDataActiveRun } from '../../../types';
+import { RunDataActiveRunSurrounding } from '../../../schemas';
 
 export default Vue.extend({
   components: {
