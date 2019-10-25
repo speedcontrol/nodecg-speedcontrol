@@ -184,9 +184,9 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       },
       split: optsO.split,
     };
-    Object.keys(opts.columns.custom).forEach((key) => {
-      const val = optsO.columns.custom[key];
-      opts.columns.custom[key] = (val === null) ? -1 : val;
+    Object.keys(optsO.columns.custom).forEach((col) => {
+      const val = optsO.columns.custom[col];
+      opts.columns.custom[col] = (val === null) ? -1 : val;
     });
 
     // Filtering out any games on the ignore list before processing them all.
