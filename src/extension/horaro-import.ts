@@ -7,7 +7,7 @@ import parseDuration from 'parse-duration';
 import removeMd from 'remove-markdown';
 import uuid from 'uuid/v4';
 import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
-import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataPlayer, RunDataTeam, UserData } from '../../types'; // eslint-disable-line object-curly-newline, max-len
+import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataTeam, UserData } from '../../types'; // eslint-disable-line object-curly-newline, max-len
 import { searchForTwitchGame, searchForUserData } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
 import { bundleConfig, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len

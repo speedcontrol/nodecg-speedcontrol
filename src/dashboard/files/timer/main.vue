@@ -75,7 +75,7 @@ import StopButton from './components/StopButton.vue';
 import UndoButton from './components/UndoButton.vue';
 import Team from './components/Team.vue';
 import { store } from '../_misc/replicant-store';
-import { RunDataActiveRun } from '../../../../types';
+import { RunDataActiveRun, RunDataTeam } from '../../../../types';
 
 export default Vue.extend({
   components: {
@@ -95,7 +95,7 @@ export default Vue.extend({
     activeRun(): RunDataActiveRun {
       return store.state.runDataActiveRun;
     },
-    teams(): any[] {
+    teams(): RunDataTeam[] {
       return (this.activeRun)
         ? this.activeRun.teams : [];
     },

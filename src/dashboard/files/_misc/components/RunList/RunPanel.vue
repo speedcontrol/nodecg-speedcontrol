@@ -94,7 +94,7 @@ import { nodecg } from '../../nodecg';
 import { store } from '../../replicant-store';
 import { Configschema } from '../../../../../../configschema';
 import ModifyButton from './ModifyButton.vue';
-import { RunDataActiveRun, TeamFinishTime } from '../../../../../../types';
+import { Timer, RunDataActiveRun } from '../../../../../../types';
 
 export default Vue.extend({
   name: 'RunPanel',
@@ -131,7 +131,7 @@ export default Vue.extend({
     activeRun(): RunDataActiveRun {
       return store.state.runDataActiveRun;
     },
-    runFinishTime(): TeamFinishTime {
+    runFinishTime(): Timer {
       return store.state.runFinishTimes[this.runData.id];
     },
   },
