@@ -10,7 +10,7 @@
         ${filteredRunDataArray.length} run${filteredRunDataArray.length === 1 ? '' : 's'} found.
       `"
     ></v-text-field>
-    <div v-if="editor">
+    <div v-if="editor && twitchAPIData.state === 'on'">
       <v-checkbox
         v-model="hasNoTwitch"
         class="ma-1 pa-0"
@@ -53,6 +53,7 @@ import Draggable from 'vuedraggable';
 import RunPanel from './RunPanel.vue';
 import { store } from '../../replicant-store';
 import { RunData, RunDataArray, RunDataActiveRun } from '../../../../../types';
+import { TwitchAPIData } from '../../../../../schemas';
 
 export default Vue.extend({
   components: {
@@ -94,6 +95,9 @@ export default Vue.extend({
     },
     disableChange(): boolean {
       return ['running', 'paused'].includes(store.state.timer.state);
+    },
+    twitchAPIData(): TwitchAPIData {
+      return store.state.twitchAPIData;
     },
   },
   watch: {
