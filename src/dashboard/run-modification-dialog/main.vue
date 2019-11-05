@@ -61,7 +61,7 @@
         ></text-input>
       </div>
       <!-- Custom Data Inputs -->
-      <div class="d-flex">
+      <div>
         <text-input
           v-for="data in customData"
           :key="data.key"
