@@ -263,7 +263,15 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
 
       // Custom Data
       Object.keys(opts.columns.custom).forEach((col) => {
-        const { str } = parseMarkdown(run.data[opts.columns.custom[col]]);
+        if (!config.schedule.customData) {
+          return;
+        }
+        const colSetting = config.schedule.customData.find((setting) => setting.key === col);
+        if (!colSetting) {
+          return;
+        }
+        const colData = run.data[opts.columns.custom[col]];
+        const str = (!colSetting.ignoreMarkdown) ? parseMarkdown(colData).str : colData;
         if (str) {
           runData.customData[col] = str;
         }

@@ -98,6 +98,9 @@
               },
               "key": {
                 "type": "string"
+              },
+              "ignoreMarkdown": {
+                "type": "boolean"
               }
             },
             "required": [

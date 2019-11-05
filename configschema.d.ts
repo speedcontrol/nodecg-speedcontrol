@@ -25,6 +25,7 @@ export interface Configschema {
     customData?: {
       name: string;
       key: string;
+      ignoreMarkdown?: boolean;
     }[];
   };
 }
