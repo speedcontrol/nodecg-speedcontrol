@@ -178,8 +178,13 @@ export default Vue.extend({
       nodecg.sendMessage('twitchUpdateChannelInfo', {
         status: this.title,
         game: this.game,
-      }).then(() => {
-        // successful
+      }).then((noTwitchGame) => {
+        if (noTwitchGame) {
+          const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+          alertDialog.querySelector('iframe').contentWindow.open({
+            name: 'NoTwitchGame',
+          });
+        }
       }).catch(() => {
         // unsuccessful
       });

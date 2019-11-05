@@ -156,23 +156,53 @@ async function refreshChannelInfo(): Promise<void> {
 }
 
 /**
+ * Returns the correct name of a game in the Twitch directory based on a search.
+ * @param query String you wish to try to find a game with.
+ */
+async function searchForGame(query: string): Promise<string> {
+  if (apiData.value.state !== 'on') {
+    throw new Error('Integration not ready');
+  }
+  const resp = await request('get', `/search/games?query=${encodeURI(query)}`);
+  if (resp.statusCode !== 200) {
+    throw new Error(JSON.stringify(resp.body));
+  } else if (!resp.body.games || !resp.body.games.length) {
+    throw new Error(`No game matches for "${query}"`);
+  }
+  const results = resp.body.games as { name: string }[];
+  const exact = results.find((game) => game.name.toLowerCase() === query.toLowerCase());
+  return (exact) ? exact.name : results[0].name;
+}
+
+/**
+ * Verify a Twitch directory exists and get the correct name if so.
+ * Will return undefined if it cannot.
+ * @param query String to use to find/verify the directory.
+ */
+export async function verifyTwitchDir(query: string): Promise<string | undefined> {
+  const [, game] = await to(searchForGame(query));
+  return game;
+}
+
+/**
  * Attempts to update the title/game on the set channel.
  * @param status Title to set.
  * @param game Game to set.
  */
-export async function updateChannelInfo(status: string, game: string): Promise<void> {
+export async function updateChannelInfo(status: string, game: string): Promise<boolean> {
   if (apiData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
   try {
     nodecg.log.info('[Twitch] Attempting to update channel information');
+    const [, dir] = await to(verifyTwitchDir(game));
     const resp = await request(
       'put',
       `/channels/${apiData.value.channelID}`,
       {
         channel: {
           status: status.slice(0, 140),
-          game,
+          game: dir || bundleConfig().twitch.streamDefaultGame,
         },
       },
     );
@@ -181,6 +211,7 @@ export async function updateChannelInfo(status: string, game: string): Promise<v
     }
     nodecg.log.info('[Twitch] Successfully updated channel information');
     channelInfo.value = resp.body;
+    return !dir;
   } catch (err) {
     nodecg.log.warn('[Twitch] Error updating channel information');
     nodecg.log.debug('[Twitch] Error updating channel information:', err);
@@ -220,35 +251,6 @@ async function startCommercial(): Promise<{ duration: number }> {
 }
 
 /**
- * Returns the correct name of a game in the Twitch directory based on a search.
- * @param query String you wish to try to find a game with.
- */
-async function searchForGame(query: string): Promise<string> {
-  if (apiData.value.state !== 'on') {
-    throw new Error('Integration not ready');
-  }
-  const resp = await request('get', `/search/games?query=${encodeURI(query)}`);
-  if (resp.statusCode !== 200) {
-    throw new Error(JSON.stringify(resp.body));
-  } else if (!resp.body.games || !resp.body.games.length) {
-    throw new Error(`No game matches for "${query}"`);
-  }
-  const results = resp.body.games as { name: string }[];
-  const exact = results.find((game) => game.name.toLowerCase() === query.toLowerCase());
-  return (exact) ? exact.name : results[0].name;
-}
-
-/**
- * Verify a Twitch directory exists and get the correct name if so.
- * Will return undefined if it cannot.
- * @param query String to use to find/verify the directory.
- */
-export async function verifyTwitchDir(query: string): Promise<string | undefined> {
-  const [, game] = await to(searchForGame(query));
-  return game;
-}
-
-/**
  * Setup done on both server boot (if token available) and initial auth flow.
  */
 async function setUp(): Promise<void> {
@@ -282,7 +284,7 @@ if (config.twitch.enabled) {
   // NodeCG messaging system.
   nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     updateChannelInfo(data.status, data.game)
-      .then(() => processAck(ack, null))
+      .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
       .catch((err) => processAck(ack, err));
   });
   nodecg.listenFor('twitchStartCommercial', (data, ack) => {

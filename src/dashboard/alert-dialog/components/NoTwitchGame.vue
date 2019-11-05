@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      The Twitch game directory could not be set for this run,
+      The Twitch game directory could not be set correctly,
       it has been set to default. Change this manually if possible.
     </div>
     <br>
