@@ -25,7 +25,7 @@
     "build": "npx run-s build:*",
     "build:browser": "npx cross-env NODE_ENV=production npx webpack",
     "build:extension": "npx tsc -b tsconfig.extension.json",
-    "clean": "npx trash dashboard && npx trash extension",
+    "clean": "npx trash node_modules/.cache && npx trash dashboard && npx trash extension",
     "start": "node ../..",
     "typeschemas": "node script/typeschemas.js",
     "watch": "npx run-p watch:*",
