@@ -48,9 +48,9 @@ plugins = plugins.concat(
           template: './template.html',
         }),
     ),
-    new ForkTsCheckerWebpackPlugin({
+    /* new ForkTsCheckerWebpackPlugin({
       vue: true,
-    }),
+    }), */
   ]
 );
 if (isProd) {
