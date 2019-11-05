@@ -59,6 +59,44 @@ function changeSurroundingRuns(): void {
 }
 
 /**
+ * Used to update the Twitch information, used by functions in this file.
+ * @param runData Run Data object.
+ */
+async function updateTwitchInformation(runData: RunData): Promise<boolean> {
+  if (!twitchAPIData.value.sync) {
+    return false;
+  }
+
+  // Constructing Twitch title and game to send off.
+  const status = bundleConfig().twitch.streamTitle
+    .replace(new RegExp('{{game}}', 'g'), runData.game || '')
+    .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
+    .replace(new RegExp('{{category}}', 'g'), runData.category || '');
+
+  // Attempts to find the correct Twitch game directory.
+  let { gameTwitch } = runData;
+  if (!gameTwitch && runData.game) {
+    const [, srcomGameTwitch] = await to(searchForTwitchGame(runData.game));
+    gameTwitch = srcomGameTwitch || runData.game;
+  }
+  if (gameTwitch) { // Verify game directory supplied exists on Twitch.
+    [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
+  }
+
+  to(updateChannelInfo(
+    status,
+    gameTwitch || bundleConfig().twitch.streamDefaultGame,
+  ));
+
+  // Construct/send featured channels if enabled.
+  if (bundleConfig().twitch.ffzIntegration) {
+    to(setChannels(getTwitchChannels(runData)));
+  }
+
+  return !gameTwitch;
+}
+
+/**
  * Change the active run to the one specified if it exists.
  * @param id The unique ID of the run you wish to change to.
  */
@@ -74,36 +112,7 @@ async function changeActiveRun(id?: string): Promise<boolean> {
     if (!runData) {
       throw new Error(`Run with ID ${id} was not found`);
     } else {
-      let noTwitchGame = false;
-      if (twitchAPIData.value.sync) {
-        // Constructing Twitch title and game to send off.
-        const status = bundleConfig().twitch.streamTitle
-          .replace(new RegExp('{{game}}', 'g'), runData.game || '')
-          .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
-          .replace(new RegExp('{{category}}', 'g'), runData.category || '');
-
-        // Attempts to find the correct Twitch game directory.
-        let { gameTwitch } = runData;
-        if (!gameTwitch && runData.game) {
-          const [, srcomGameTwitch] = await to(searchForTwitchGame(runData.game));
-          gameTwitch = srcomGameTwitch || runData.game;
-        }
-        if (gameTwitch) { // Verify game directory supplied exists on Twitch.
-          [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
-        }
-        noTwitchGame = !gameTwitch;
-
-        to(updateChannelInfo(
-          status,
-          gameTwitch || bundleConfig().twitch.streamDefaultGame,
-        ));
-
-        // Construct/send featured channels if enabled.
-        if (bundleConfig().twitch.ffzIntegration) {
-          to(setChannels(getTwitchChannels(runData)));
-        }
-      }
-
+      const noTwitchGame = await updateTwitchInformation(runData);
       activeRun.value = clone(runData);
       to(resetTimer(true));
       nodecg.log.debug(`[Run Control] Active run changed to ${id}`);
@@ -142,8 +151,9 @@ async function removeRun(id?: string): Promise<void> {
  * Either edits a run (if we currently have it) or adds it.
  * @param runData Run Data object.
  * @param prevID ID of the run that this run will be inserted after if applicable.
+ * @param twitch Whether to update the Twitch information as well.
  */
-async function modifyRun(runData: RunData, prevID?: string): Promise<void> {
+async function modifyRun(runData: RunData, prevID?: string, twitch = false): Promise<boolean> {
   try {
     // Loops through data, removes any keys that are falsey.
     const data = _.pickBy(runData, _.identity) as RunData;
@@ -209,6 +219,9 @@ async function modifyRun(runData: RunData, prevID?: string): Promise<void> {
       const prevIndex = findRunIndexFromId(prevID);
       array.value.splice(prevIndex + 1 || array.value.length, 0, clone(data));
     }
+
+    const noTwitchGame = (twitch) ? await updateTwitchInformation(runData) : false;
+    return noTwitchGame;
   } catch (err) {
     nodecg.log.debug('[Run Control] Could not successfully modify run:', err);
     throw err;
@@ -261,8 +274,8 @@ nodecg.listenFor('removeRun', (id, ack) => {
     .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('modifyRun', (data, ack) => {
-  modifyRun(data.runData, data.prevID)
-    .then(() => processAck(ack, null))
+  modifyRun(data.runData, data.prevID, data.updateTwitch)
+    .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
     .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('changeToNextRun', (data, ack) => {

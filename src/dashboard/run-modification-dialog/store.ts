@@ -38,13 +38,18 @@ export default new Vuex.Store({
     runData: clone(defaultRunData),
     mode: 'New' as Mode,
     prevID: undefined as string | undefined,
+    updateTwitch: false,
   },
   mutations: {
     updateRunData(state, { value }): void {
       Vue.set(state, 'runData', clone(value));
+      Vue.set(state, 'updateTwitch', false);1
     },
     updateMode(state, { value }): void {
       Vue.set(state, 'mode', value);
+    },
+    updateTwitch(state, { value }): void {
+      Vue.set(state, 'updateTwitch', value);
     },
     setAsDuplicate(state): void {
       Vue.set(state, 'prevID', state.runData.id);
@@ -62,6 +67,7 @@ export default new Vuex.Store({
         ));
       }
       Vue.set(state.runData, 'id', uuid());
+      Vue.set(state, 'updateTwitch', false);
     },
     addNewTeam(state): void {
       const teamData = clone(defaultTeam);
@@ -100,12 +106,15 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async saveRunData({ state }): Promise<void> {
-      await nodecg.sendMessage('modifyRun', {
+    async saveRunData({ state }): Promise<boolean> {
+      const noTwitchGame = await nodecg.sendMessage('modifyRun', {
         runData: state.runData,
         prevID: state.prevID,
+        updateTwitch: state.updateTwitch,
       });
       Vue.set(state, 'prevID', undefined);
+      Vue.set(state, 'updateTwitch', false);
+      return noTwitchGame;
     },
   },
 });

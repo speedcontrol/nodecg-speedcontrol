@@ -86,7 +86,7 @@
       </draggable>
     </div>
     <div
-      class="DialogButtons d-flex"
+      class="d-flex"
       :style="{ 'margin-top': '20px' }"
     >
       <modify-button
@@ -95,13 +95,23 @@
         tooltip="Add New Team"
         @click="addNewTeam"
       ></modify-button>
+      <v-checkbox
+        v-if="mode === 'EditActive' && twitchAPIData.state === 'on'"
+        v-model="updateTwitch"
+        class="ma-0 pa-0 align-center justify-center"
+        hide-details
+        label="Update Twitch information"
+      ></v-checkbox>
       <v-btn
-        :style="{ 'margin-right': '10px' }"
+        :style="{ 'margin-left': '10px' }"
         @click="attemptSave"
       >
         OK
       </v-btn>
-      <v-btn @click="close(false)">
+      <v-btn
+        :style="{ 'margin-left': '10px' }"
+        @click="close(false)"
+      >
         Cancel
       </v-btn>
     </div>
@@ -112,11 +122,13 @@
 import Vue from 'vue';
 import Draggable from 'vuedraggable';
 import store from './store';
+import { store as repStore } from '../_misc/replicant-store';
 import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
 import ModifyButton from './components/ModifyButton.vue';
 import { nodecg } from '../_misc/nodecg';
 import { RunData, RunDataActiveRun } from '../../../types';
+import { TwitchAPIData } from '../../../schemas';
 
 enum Mode {
   New = 'New',
@@ -155,8 +167,19 @@ export default Vue.extend({
         store.commit('updateMode', { value });
       },
     },
+    updateTwitch: {
+      get(): boolean {
+        return store.state.updateTwitch;
+      },
+      set(value: boolean): void {
+        store.commit('updateTwitch', { value });
+      },
+    },
     customData(): array {
       return nodecg.bundleConfig.schedule.customData || [];
+    },
+    twitchAPIData(): TwitchAPIData {
+      return repStore.state.twitchAPIData;
     },
   },
   mounted() {
@@ -195,8 +218,14 @@ export default Vue.extend({
     },
     attemptSave(): void {
       this.err = undefined;
-      store.dispatch('saveRunData').then(() => {
+      store.dispatch('saveRunData').then((noTwitchGame) => {
         this.close(true);
+        if (noTwitchGame) {
+          const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+          alertDialog.querySelector('iframe').contentWindow.open({
+            name: 'NoTwitchGame',
+          });
+        }
       }).catch((err) => {
         this.err = err;
       });
