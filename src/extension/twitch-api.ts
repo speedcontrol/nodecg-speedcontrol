@@ -40,7 +40,7 @@ async function validateToken(): Promise<{
   const resp = await needle(
     'get',
     'https://id.twitch.tv/oauth2/validate',
-    {},
+    null,
     {
       headers: {
         Authorization: `OAuth ${apiData.value.accessToken}`,
