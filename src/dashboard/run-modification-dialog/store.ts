@@ -43,7 +43,7 @@ export default new Vuex.Store({
   mutations: {
     updateRunData(state, { value }): void {
       Vue.set(state, 'runData', clone(value));
-      Vue.set(state, 'updateTwitch', false);1
+      Vue.set(state, 'updateTwitch', false);
     },
     updateMode(state, { value }): void {
       Vue.set(state, 'mode', value);
