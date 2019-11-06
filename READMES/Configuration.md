@@ -8,38 +8,37 @@ If you haven't, I would recommend installing [nodecg-cli](https://github.com/nod
 
 As normal with NodeCG, you will need to restart your instance of the NodeCG server when you change the config for them to be applied.
 
-If you're an experienced user you can also check out the [configschema.json here](../configschema.json).
-As an additional note: if you see a configuration option avaiable in the schema that isn't documented here, assume it my change at any time.
+If you're an experienced user you can also check out the [configschema.json here](../configschema.json). As an additional note: if you see a configuration option avaiable in the schema that isn't documented here, assume it my change at any time.
 
 Below is an example configuration file contents with everything that is available (*do **not** copy this and put it in directly without any modifications; it won't work, sorry*):
 
 ```
 {
-	"twitch": {
-		"enable": true,
-		"clientID": "CLIENT_ID",
-		"clientSecret": "CLIENT_SECRET",
-		"redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
-		"channelName": "OTHER_CHANNEL"
-		"streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
-		"streamDefaultGame": "Games + Demos",
-		"ffzIntegration": false,
-		"ffzUseRepeater": false
-	},
-	"schedule": {
-		"defaultURL": "https://horaro.org/event/schedule",
-		"ignoreGamesWhileImporting": [
-			"Setup"
-		],
-		"disableSpeedrunComLookup": false,
-		"customData": [
-			{
-				"name": "Game (Short)",
-				"key": "gameShort",
-				"ignoreMarkdown": false
-			}
-		]
-	}
+  "twitch": {
+    "enable": true,
+    "clientID": "CLIENT_ID",
+    "clientSecret": "CLIENT_SECRET",
+    "redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
+    "channelName": "OTHER_CHANNEL"
+    "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
+    "streamDefaultGame": "Games + Demos",
+    "ffzIntegration": false,
+    "ffzUseRepeater": false
+  },
+  "schedule": {
+    "defaultURL": "https://horaro.org/event/schedule",
+    "ignoreGamesWhileImporting": [
+      "Setup"
+    ],
+    "disableSpeedrunComLookup": false,
+    "customData": [
+      {
+        "name": "Game (Short)",
+        "key": "gameShort",
+        "ignoreMarkdown": false
+      }
+    ]
+  }
 }
 ```
 
@@ -50,15 +49,15 @@ Below is an example configuration file contents with everything that is availabl
 
 ```
 "twitch": {
-	"enable": true,
-	"clientID": "CLIENT_ID",
-	"clientSecret": "CLIENT_SECRET",
-	"redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
-	"channelName": "OTHER_CHANNEL"
-	"streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
-	"streamDefaultGame": "Games + Demos",
-	"ffzIntegration": false,
-	"ffzUseRepeater": false
+  "enable": true,
+  "clientID": "CLIENT_ID",
+  "clientSecret": "CLIENT_SECRET",
+  "redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
+  "channelName": "OTHER_CHANNEL"
+  "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
+  "streamDefaultGame": "Games + Demos",
+  "ffzIntegration": false,
+  "ffzUseRepeater": false
 }
 ```
 
@@ -82,18 +81,18 @@ If you decide to use the 2nd option above, there is also another boolean, `ffzUs
 
 ```
 "schedule": {
-	"defaultURL": "https://horaro.org/event/schedule",
-	"ignoreGamesWhileImporting": [
-		"Setup"
-	],
-	"disableSpeedrunComLookup": false,
-	"customData": [
-		{
-			"name": "Game (Short)",
-			"key": "gameShort",
-			"ignoreMarkdown": false
-		}
-	]
+  "defaultURL": "https://horaro.org/event/schedule",
+  "ignoreGamesWhileImporting": [
+    "Setup"
+  ],
+  "disableSpeedrunComLookup": false,
+  "customData": [
+    {
+      "name": "Game (Short)",
+      "key": "gameShort",
+      "ignoreMarkdown": false
+    }
+  ]
 }
 ```
 
@@ -101,6 +100,6 @@ If you decide to use the 2nd option above, there is also another boolean, `ffzUs
 - `ignoreGamesWhileImporting` is an array of strings of games on your schedule that will be ignored on import; for example you may have setup blocks you don't want importing. This does partial matches ("Setup Block" will be matched by "Setup").
  - `disableSpeedrunComLookup` is a boolean (defaults to false) that can be enabled, which will skip the speedrun.com look-ups during schedule import; by default the import will try to find the player's Twitch username and country from speedrun.com, but if you do not need this you can disable it to speed up the import.
 - `customData` (*for advanced users*) is an array of objects; this is for adding custom data to the run data on import. Once set here, you will be able to select an appropriate column on import for where this data is stored in your schedule. All of this is stored within an objected called `customData` within the run's data object.
-	- `name` is the formatted name that will appear in the Speedcontrol UI.
-	- `key` is the key that will be used in the `customData` in the run data.
-	- `ignoreMarkdown` is a boolean (defaults to false) which if true, will tell the Horaro import to not attempt to strip any markdown in the column's data for that run.
+  - `name` is the formatted name that will appear in the Speedcontrol UI.
+  - `key` is the key that will be used in the `customData` in the run data.
+  - `ignoreMarkdown` is a boolean (defaults to false) which if true, will tell the Horaro import to not attempt to strip any markdown in the column's data for that run.
