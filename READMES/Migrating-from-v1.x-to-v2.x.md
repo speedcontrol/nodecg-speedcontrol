@@ -39,7 +39,7 @@ We formally refer to the object structure that we store information about runs i
     - `startTimer`
     - `stopTimer` (`id`: number)
     - `resetTimer`
-  - We had some messages that you could send that weren't officially supported that are now supported and have changed names, *check the [API documentation (TBD)](API.md) for more information*
+  - We had some messages that you could send that weren't officially supported that are now supported and have changed names, *check the [API documentation](API.md) for more information*
     - `startTime` (`force: boolean`) has been changed to `timerStart` (no arguments).
     - `pauseTime` has been changed to `timerPause`.
     - `resetTime` has been changed to `timerReset` (`force: boolean`).
@@ -49,4 +49,4 @@ We formally refer to the object structure that we store information about runs i
     - `finishTime` (no arguments) has been changed to `timerStop` (`{ id: string, forfeit: boolean }`).
     - `timerUndo` (`id: string`) has been added.
 
-There may be some other undocumented replicants/messages that were changed in the development of v2.x, but we did not think these were worth documenting here. Please study the source code if needed, and submit an issue if there is something missing you feel you need. Also, as a general note, if a message/replicant is not mentioned in the [API documentation (TBD)](API.md), assume it could change at any point.
+There may be some other undocumented replicants/messages that were changed in the development of v2.x, but we did not think these were worth documenting here. Please study the source code if needed, and submit an issue if there is something missing you feel you need. Also, as a general note, if a message/replicant is not mentioned in the [API documentation](API.md), assume it could change at any point.
