@@ -41,6 +41,7 @@
     },
     "teams": {
       "type": "array",
+      "default": [],
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -53,6 +54,7 @@
           },
           "players": {
             "type": "array",
+            "default": [],
             "items": {
               "type": "object",
               "additionalProperties": false,
