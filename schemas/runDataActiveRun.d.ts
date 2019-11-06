@@ -36,4 +36,4 @@ export type RunDataActiveRun = {
   };
   id: string;
   hash?: string;
-} | null;
+};

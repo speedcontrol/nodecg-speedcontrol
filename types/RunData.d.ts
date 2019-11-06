@@ -37,4 +37,4 @@ export interface RunDataPlayer {
 
 export type RunDataArray = RunData[];
 
-export type RunDataActiveRun = RunData | null;
+export type RunDataActiveRun = RunData | undefined;

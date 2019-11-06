@@ -236,7 +236,7 @@ async function removeActiveRun(): Promise<void> {
     if (['running', 'paused'].includes(timer.value.state)) {
       throw new Error('Timer is running/paused');
     }
-    activeRun.value = null;
+    activeRun.value = undefined;
     to(resetTimer(true));
     nodecg.log.debug('[Run Control] Successfully removed active run');
   } catch (err) {

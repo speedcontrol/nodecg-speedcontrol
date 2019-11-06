@@ -25,7 +25,7 @@ const replicants: ReplicantBrowser<unknown>[] = [];
 export const store = new Vuex.Store({
   state: {
     runDataArray: [] as RunDataArray,
-    runDataActiveRun: null as RunDataActiveRun,
+    runDataActiveRun: undefined as RunDataActiveRun,
     runDataActiveRunSurrounding: {} as RunDataActiveRunSurrounding,
     runFinishTimes: {} as RunFinishTimes,
     horaroImportStatus: {} as HoraroImportStatus,
