@@ -47,7 +47,7 @@ async function get(endpoint: string): Promise<NeedleResponse> {
 export async function searchForTwitchGame(query: string, abbr = false): Promise<string> {
   try {
     const endpoint = (abbr) ? 'abbreviation' : 'name';
-    const resp = await get(`/games?${endpoint}=${encodeURI(query)}&max=1`);
+    const resp = await get(`/games?${endpoint}=${encodeURIComponent(query)}&max=1`);
     if (!resp.body.data.length) {
       throw new Error('No game matches');
     } else if (!resp.body.data[0].names.twitch) {
@@ -78,7 +78,7 @@ export async function searchForUserData(query: string): Promise<UserData> {
   }
   try {
     const resp = await get(
-      `/users?lookup=${encodeURI(query)}&max=1`,
+      `/users?lookup=${encodeURIComponent(query)}&max=1`,
     );
     if (!resp.body.data.length) {
       throw new Error(`No user matches for "${query}"`);

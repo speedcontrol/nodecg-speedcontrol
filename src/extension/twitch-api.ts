@@ -163,7 +163,7 @@ async function searchForGame(query: string): Promise<string> {
   if (apiData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
-  const resp = await request('get', `/search/games?query=${encodeURI(query)}`);
+  const resp = await request('get', `/search/games?query=${encodeURIComponent(query)}`);
   if (resp.statusCode !== 200) {
     throw new Error(JSON.stringify(resp.body));
   } else if (!resp.body.games || !resp.body.games.length) {
