@@ -6,7 +6,7 @@ If you have this bundle listed as a dependency in your bundle (`nodecg.bundleDep
 
 - [Bumped required NodeCG version.](#nodecg-version)
 - [Minor changes to the run data objects.](#run-data-changes)
-- [Changes to messages/replicants sent out by this bundle.](#message-rep-changes)
+- [Changes to messages sent out or listened for/replicants in this bundle.](#message-rep-changes)
 
 
 ### <a name="nodecg-version"></a> Bumped required NodeCG version
@@ -23,7 +23,7 @@ We formally refer to the object structure that we store information about runs i
 - Instead of run data that isn't defined being either an empty string or `-1` (if usually a number), it has now been changed to being fully `undefined`. Normal falsy checks treat an empty string and `undefined` the same, but if you used the values for `estimateS`, `setupTimeS` or `scheduledS` for anything, you may need to tweak that code.
 
 
-### <a name="message-rep-changes"></a> Changes to messages/replicants sent out by this bundle
+### <a name="message-rep-changes"></a> Changes to messages sent out or listened for/replicants in this bundle
 
 #### Replicants:
 - `timer`: how the `teamFinishTimes` key works has been tweaked very slightly; it is still a copy of the `timer` replicant at the time (minus the `teamFinishTimes` value), but the `state` key is tweaked and the value can now either be `"forfeit"` or `"completed"` depending on if the team forfeit or not.
@@ -40,13 +40,13 @@ We formally refer to the object structure that we store information about runs i
     - `stopTimer` (`id`: number)
     - `resetTimer`
   - We had some messages that you could send that weren't officially supported that are now supported and have changed names, *check the [API documentation (TBD)](API.md) for more information*
-    - `startTime` (`force`: boolean) has been changed to `timerStart` (no arguments).
+    - `startTime` (`force: boolean`) has been changed to `timerStart` (no arguments).
     - `pauseTime` has been changed to `timerPause`.
-    - `resetTime` has been changed to `timerReset` (`force`: boolean).
-    - `setTime` (`time`: string) has been changed to `timerEdit` (`time`: string).
-    - `teamFinishTime` (`id`: number) has been removed (see `timerStop` below).
-    - `teamFinishTimeUndo` (`id`: number) has been removed (see `timerUndo` below).
+    - `resetTime` has been changed to `timerReset` (`force: boolean`).
+    - `setTime` (`time: string`) has been changed to `timerEdit` (`time: string`).
+    - `teamFinishTime` (`id: number`) has been removed (see `timerStop` below).
+    - `teamFinishTimeUndo` (`id: number`) has been removed (see `timerUndo` below).
     - `finishTime` (no arguments) has been changed to `timerStop` (`{ id: string, forfeit: boolean }`).
-    - `timerUndo` (`id`: string) has been added.
+    - `timerUndo` (`id: string`) has been added.
 
 There may be some other undocumented replicants/messages that were changed in the development of v2.x, but we did not think these were worth documenting here. Please study the source code if needed, and submit an issue if there is something missing you feel you need. Also, as a general note, if a message/replicant is not mentioned in the [API documentation (TBD)](API.md), assume it could change at any point.
