@@ -54,7 +54,7 @@ The schedule will begin importing. If you have the speedrun.com lookup enabled (
 
 ![Schedule Importing](READMES/img/schedule-import-3.png)
 
-To start "playing" runs, go back to the *Main Workspace* and find the *Run Player* panel, and click on the big *▶️ [GAME]* button at the top.
+To start "playing" runs, go back to the *Main Workspace* and find the *Run Player* panel, and click on the big "▶ [GAME]" button at the top.
 
 ![Run Player Play Button](READMES/img/run-player-playbtn.png)
 
