@@ -117,8 +117,7 @@ export default Vue.extend({
   methods: {
     scroll(val): void {
       if (val) {
-        const { top } = this.$refs.runList.getBoundingClientRect();
-        this.$vuetify.goTo(`#run-${val.id}`, { offset: top + 20, container: '.RunList' });
+        this.$vuetify.goTo(`#run-${val.id}`, { offset: 25, container: '.RunList' });
       } else {
         this.$vuetify.goTo(0, { container: '.RunList' });
       }
