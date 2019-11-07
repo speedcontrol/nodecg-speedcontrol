@@ -54,11 +54,11 @@ The schedule will begin importing. If you have the speedrun.com lookup enabled (
 
 ![Schedule Importing](READMES/img/schedule-import-3.png)
 
-To start "playing" runs, go back to the *Main Workspace* and find the *Run Player* panel, and click on the big *Play <game>* button at the top.
+To start "playing" runs, go back to the *Main Workspace* and find the *Run Player* panel, and click on the big *▶️ [GAME]* button at the top.
 
 ![Run Player Play Button](READMES/img/run-player-playbtn.png)
 
-Next to the above panel should be the *Run Timer* panel. This should be very self explanitory; use the play button to start the timer, use the tick button to stop it or use the cross button if the player has to forfeit the run. You can also reset it if needed, pause it, undo a stop if done accidentally and also click inside the timer box, type and press enter to edit the time if needed for any reason.
+Next to the above panel should be the *Run Timer* panel. This should be very self explanitory; use the play button to start the timer, use the tick button to stop it or use the cross button if the player has to forfeit the run. You can also reset it if needed, pause it, undo a stop if done accidentally and also click inside the timer box, type and press enter to edit the time if needed for any reason. The timer changes slightly for races, but is easy to figure out as each team gains their own set of stop/forfeit/undo buttons.
 
 ![Run Timer Stopped](READMES/img/run-timer-stopped.png)
 
