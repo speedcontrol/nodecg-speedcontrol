@@ -161,7 +161,7 @@ runDataActiveRunSurrounding.on('change', (newVal, oldVal) => {
 }
 ```
 
-A reference for the previous/current/next run's IDs, if available. These are recalculated by this bundle if changes are detected in the `runDataArray` or `runDataActiveRun` replicants. Any of these values can be `undefined`, although `current` will always be set if `runDataActiveRun` is set.
+A reference for the previous/current/next run's IDs, if available. These are recalculated by this bundle if changes are detected in the `runDataArray` or `runDataActiveRun` replicants. Any of these values can be `undefined`, although `current` will always be set if the `runDataActiveRun` replicant is set.
 
 #### `timer`
 
@@ -268,7 +268,7 @@ nodecg.listenFor('twitchCommercialStarted', 'nodecg-speedcontrol', (data) => {
 **Supplied data example:**
 ```javascript
 {
-  duration: 300
+  duration: 180
 }
 ```
 
@@ -299,11 +299,11 @@ nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol')
 **Supplied data example:**
 ```javascript
 {
-  duration: 300
+  duration: 180
 }
 ```
 
-Used to tell the Twitch API to run a commercial if applicable to your channel and you have the Twitch API integration enabled. The supplied data is an object that contains `duration` which is a number on how long the ads will run for in seconds, an error will be returned if any issues occur. Currently the commercials will all be 300 seconds; there is no way to specify this yet.
+Used to tell the Twitch API to run a commercial if applicable to your channel and you have the Twitch API integration enabled. The supplied data is an object that contains `duration` which is a number on how long the ads will run for in seconds, an error will be returned if any issues occur. Currently the commercials will all be 180 seconds (3 minutes); there is no way to specify this yet.
 
 #### `timerStart`
 
