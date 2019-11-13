@@ -224,13 +224,17 @@ nodecg.listenFor('twitchCommercialStarted', 'nodecg-speedcontrol', (data) => {
 }
 ```
 
-Emitted when a Twitch commercial is successfully started via this bundle. The supplied data is an object that contains `duration` which is an integer on how long the ads will run for in seconds.
+Emitted when a Twitch commercial is successfully started via this bundle. The supplied data is an object that contains `duration` which is a number on how long the ads will run for in seconds.
 
 
 ## Messages Received (*sendMessage/sendMessageToBundle*)
 ([NodeCG documentation reference](https://nodecg.com/NodeCG.html#sendMessageToBundle))
 
 #### `twitchStartCommercial`
+**Example code (extension/no acknowledgement):**
+```javascript
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol');
+```
 **Example code (callback):**
 ```javascript
 nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', (error, data) => {
@@ -250,7 +254,7 @@ nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol')
 }
 ```
 
-Used to tell the Twitch API to run a commercial if applicable to your channel and you have the Twitch API integration enabled. The supplied data is an object that contains `duration` which is an integer on how long the ads will run for in seconds, an error will be returned if any issues occur. Currently the commercials will all be 300 seconds; there is no way to specify this yet.
+Used to tell the Twitch API to run a commercial if applicable to your channel and you have the Twitch API integration enabled. The supplied data is an object that contains `duration` which is a number on how long the ads will run for in seconds, an error will be returned if any issues occur. Currently the commercials will all be 300 seconds; there is no way to specify this yet.
 
 #### `timerStart`
 example stuff and desc here
