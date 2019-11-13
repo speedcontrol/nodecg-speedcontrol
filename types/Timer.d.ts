@@ -14,3 +14,7 @@ export interface TeamFinishTime {
   milliseconds: number;
   timestamp: number;
 }
+
+export interface RunFinishTimes {
+  [id: string]: Timer
+}
