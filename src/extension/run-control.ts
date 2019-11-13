@@ -293,11 +293,6 @@ nodecg.listenFor('removeAllRuns', (data, ack) => {
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
-nodecg.listenFor('removeAllRuns', (data, ack) => {
-  removeAllRuns()
-    .then(() => processAck(ack, null))
-    .catch((err) => processAck(ack, err));
-});
 
 // Our messaging system.
 events.listenFor('changeToNextRun', (data, ack) => {
