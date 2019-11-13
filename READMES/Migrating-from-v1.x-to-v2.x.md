@@ -37,7 +37,7 @@ We formally refer to the object structure that we store information about runs i
 - Timer:
   - We added some messages you could send that *were* supported but not documented in a dev version of v1.x, which have now been removed and replaced (see below)
     - `startTimer`
-    - `stopTimer` (`id`: number)
+    - `stopTimer` (`id: number`)
     - `resetTimer`
   - We had some messages that you could send that weren't officially supported that are now supported and have changed names, *check the [API documentation](API.md) for more information*
     - `startTime` (`force: boolean`) has been changed to `timerStart` (no arguments).
