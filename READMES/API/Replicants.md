@@ -22,7 +22,7 @@ runDataArray.on('change', (newVal, oldVal) => {
   console.log(oldVal);
 });
 ```
-### Supplied data example
+### Example data
 ```javascript
 [
   {
@@ -47,7 +47,7 @@ runDataActiveRun.on('change', (newVal, oldVal) => {
   console.log(oldVal);
 });
 ```
-### Supplied data example
+### Example data
 ```javascript
 {
   // for example contents, see "`runData` Object Structure"
@@ -70,7 +70,7 @@ runDataActiveRunSurrounding.on('change', (newVal, oldVal) => {
   console.log(oldVal);
 });
 ```
-### Supplied data example
+### Example data
 ```javascript
 {
   previous: 'd057cac4-bbe8-4d2a-8a8d-8aa4c59c2d48',
@@ -94,7 +94,7 @@ timer.on('change', (newVal, oldVal) => {
   console.log(oldVal);
 });
 ```
-### Supplied data example
+### Example data
 During a race while the timer is still running but team with ID `278de963-c1f4-4008-9d96-cb6106ab2598` has successfully finished:
 ```javascript
 {
@@ -151,7 +151,7 @@ runFinishTimes.on('change', (newVal, oldVal) => {
   console.log(oldVal);
 });
 ```
-### Supplied data example
+### Example data
 ```javascript
 {
   'f926048c-3527-4d2f-96f6-680b81bf06e6': {
@@ -178,7 +178,7 @@ timerChangesDisabled.on('change', (newVal, oldVal) => {
 timerChangesDisabled.value = true; // Disable timer changes
 timerChangesDisabled.value = false; // Enable timer changes
 ```
-### Supplied data example
+### Example data
 ```
 false
 ```
