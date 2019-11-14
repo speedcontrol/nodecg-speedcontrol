@@ -12,7 +12,7 @@
 
 ## runDataArray
 
-*Types available in [./types/RunData.d.ts](../types/RunData.d.ts)*
+*Types available in [./types/RunData.d.ts](../../types/RunData.d.ts)*
 
 ### Data
 - *[`array`[`object`]]* An array of `runData` objects (relevant link: [`runData` Object Structure](./RunData.md)).
@@ -37,7 +37,7 @@ All of the runs that have been imported/added. This is the same thing that is us
 
 ## runDataActiveRun
 
-*Types available in [./types/RunData.d.ts](../types/RunData.d.ts)*
+*Types available in [./types/RunData.d.ts](../../types/RunData.d.ts)*
 
 ### Data
 - *[`object` or `undefined`]* Either a `runData` object or `undefined` if no active run is set (relevant link: [`runData` Object Structure](./RunData.md)).
@@ -88,7 +88,7 @@ A reference for the previous/current/next run's IDs, if available. These are rec
 
 ## timer
 
-*Types available in [./types/Timer.d.ts](../types/Timer.d.ts)*
+*Types available in [./types/Timer.d.ts](../../types/Timer.d.ts)*
 
 ### Data
 - *[`object`]*
@@ -145,7 +145,7 @@ The default object state:
 
 ## runFinishTimes
 
-*Types available in [./types/Timer.d.ts](../types/Timer.d.ts)*
+*Types available in [./types/Timer.d.ts](../../types/Timer.d.ts)*
 
 ### Data
 - *[`object`]* Keyed by run ID, with `timer` object clones.
@@ -171,7 +171,7 @@ A keyed object; the keys are run IDs, the values are copies of the `timer` objec
 
 ## timerChangesDisabled
 
-*Types available in [./schemas/timerChangesDisabled.d.ts](../schemas/timerChangesDisabled.d.ts)*
+*Types available in [./schemas/timerChangesDisabled.d.ts](../../schemas/timerChangesDisabled.d.ts)*
 
 ### Data
 `timerChangesDisabled` *[`boolean`]* If the timer can be changed, either programatically or by a user.

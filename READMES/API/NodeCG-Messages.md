@@ -147,7 +147,7 @@ Will fully reset the timer. This will only work if the timer is not `"stopped"`,
 
 ### Parameters
 - *[`object`]*
-  - `id` *[`string`]* Team ID to stop timer of.
+  - `id` *[`string` or `undefined`]* Team ID to stop timer of; must be defined if run is active and has teams.
   - `forfeit` *[`boolean`]* (default: `false`) If true, the finish time will be recorded as `"forfeit"` instead of `"completed"`.
 ### *No data returned*
 ### Example code (extension/no acknowledgement)
@@ -182,7 +182,7 @@ Will stop the timer for the specified team ID. This must be supplied if there is
 ## timerUndo
 
 ### Parameters
-- `id` *[`string`]* Team ID to undo timer of.
+- `id` *[`string` or `undefined`]* Team ID to undo timer of; must be defined if run is active and has teams.
 ### *No data returned*
 ### Example code (extension/no acknowledgement)
 ```javascript
@@ -266,17 +266,17 @@ Will move to the next run if possible; this is the same as pressing the "next ga
 - `noTwitchGame` *[`boolean`]* If the Twitch integration is enabled, auto-sync is turned on and the Twitch directory could not be set automatically, this will return `true`.
 ### Example code (extension/no acknowledgement)
 ```javascript
-nodecg.sendMessageToBundle('changeActiveRun', 'nodecg-speedcontrol');
+nodecg.sendMessageToBundle('changeActiveRun', 'nodecg-speedcontrol', '889e22d3-d1ef-40b8-8b2a-1d7eabf84755');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('changeActiveRun', 'nodecg-speedcontrol', (err, noTwitchGame) => {
+nodecg.sendMessageToBundle('changeActiveRun', 'nodecg-speedcontrol', '889e22d3-d1ef-40b8-8b2a-1d7eabf84755', (err, noTwitchGame) => {
   ...
 });
 ```
 ### Example code (promise)
 ```javascript
-nodecg.sendMessageToBundle('changeActiveRun', 'nodecg-speedcontrol')
+nodecg.sendMessageToBundle('changeActiveRun', 'nodecg-speedcontrol', '889e22d3-d1ef-40b8-8b2a-1d7eabf84755')
   .then((noTwitchGame) => { ... })
   .catch((err) => { ... });
 ```
@@ -293,8 +293,8 @@ Will change to the run with the ID supplied if possible; this is the same as pre
 ### Parameters
 - *[`object`]*
   - `runData` *[`object`]* A `runData` object (relevant link: [`runData` Object Structure](./RunData.md)).
-  - `prevID` *[`string`]* If supplied and run is new, run will be added after the run with this ID.
-  - `updateTwitch` *[`boolean`]* If Twitch integration is enabled and this is `true`, we will attempt to update the Twitch information with this run data.
+  - `prevID` *[`string` or `undefined`]* If supplied and run is new, run will be added after the run with this ID.
+  - `updateTwitch` *[`boolean`]* (default: `false`) If Twitch integration is enabled and this is `true`, we will attempt to update the Twitch information with this run data.
 ### Data
 - `noTwitchGame` *[`boolean`]* If the Twitch integration is enabled, `updateTwitch` was set to `true` and the Twitch directory could not be set automatically, this will return `true`.
 ### Example code (extension/no acknowledgement)
@@ -442,23 +442,32 @@ Used to tell the Twitch API to run a commercial if applicable to your channel an
 
 ### Parameters
 - *[`object`]*
-  - `status` *[`string`]* What the title should be set to.
-  - `game` *[`string`]* Directory on Twitch to set channel to.
+  - `status` *[`string` or `undefined`]* What the title should be set to; if not supplied, will not be changed.
+  - `game` *[`string` or `undefined`]* Directory on Twitch to set channel to; if not supplied, will be set to the default (configurable in the bundle configuration).
 ### Data
 - `noTwitchGame` *[`boolean`]* If the supplied `game` is not a valid directory on Twitch, this will return `true`.
 ### Example code (extension/no acknowledgement)
 ```javascript
-nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol');
+nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol', {
+  status: 'Good Games Marathon Continues',
+  game: 'Miami Vice',
+});
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol', (err, noTwitchGame) => {
+nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol', {
+  status: 'Good Games Marathon Continues',
+  game: 'Miami Vice',
+}, (err, noTwitchGame) => {
   ...
 });
 ```
 ### Example code (promise)
 ```javascript
-nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol')
+nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol', {
+  status: 'Good Games Marathon Continues',
+  game: 'Miami Vice',
+})
   .then((noTwitchGame) => { ... })
   .catch((err) => { ... });
 ```
@@ -477,19 +486,28 @@ Used to update the Twitch status (title) and/or game (directory), if the integra
 ### *No data returned*
 ### Example code (extension/no acknowledgement)
 ```javascript
-nodecg.sendMessageToBundle('updateFeaturedChannels', 'nodecg-speedcontrol');
+nodecg.sendMessageToBundle('updateFeaturedChannels', 'nodecg-speedcontrol', [
+  'zoton2',
+  'ontwoplanks'
+]);
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('updateFeaturedChannels', 'nodecg-speedcontrol', (err) => {
+nodecg.sendMessageToBundle('updateFeaturedChannels', 'nodecg-speedcontrol', [
+  'zoton2',
+  'ontwoplanks'
+], (err) => {
   ...
 });
 ```
 ### Example code (promise)
 ```javascript
-nodecg.sendMessageToBundle('updateFeaturedChannels', 'nodecg-speedcontrol')
+nodecg.sendMessageToBundle('updateFeaturedChannels', 'nodecg-speedcontrol',[
+  'zoton2',
+  'ontwoplanks'
+])
   .then(() => { ... })
   .catch((err) => { ... });
 ```
 
-Used to update the featured channels, if the integration is enabled. This is the same as changing it via the *Twitch Control* panel.
+Used to update the featured channels, if the integration is enabled. This is the same as changing it via the *Twitch Control* panel. If you wish to not list any, supply an empty array.
