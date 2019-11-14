@@ -189,19 +189,19 @@ export async function verifyTwitchDir(query: string): Promise<string | undefined
  * @param status Title to set.
  * @param game Game to set.
  */
-export async function updateChannelInfo(status: string, game: string): Promise<boolean> {
+export async function updateChannelInfo(status?: string, game?: string): Promise<boolean> {
   if (apiData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
   try {
     nodecg.log.info('[Twitch] Attempting to update channel information');
-    const [, dir] = await to(verifyTwitchDir(game));
+    const [, dir] = (game) ? await to(verifyTwitchDir(game)) : [null, undefined];
     const resp = await request(
       'put',
       `/channels/${apiData.value.channelID}`,
       {
         channel: {
-          status: status.slice(0, 140),
+          status: (status) ? status.slice(0, 140) : undefined,
           game: dir || bundleConfig().twitch.streamDefaultGame,
         },
       },
