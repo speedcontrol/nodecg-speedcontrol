@@ -1,7 +1,5 @@
 # API Documentation: NodeCG Messaging System
 
-*[Link to NodeCG documentation for reference.](https://nodecg.com/NodeCG.html#Replicant)*
-
 - [Messages Sent (*listenFor*)](#messages-sent-listenfor)
   - [twitchCommercialStarted](#twitchCommercialStarted)
 - [Messages Received (*sendMessage/sendMessageToBundle*)](#messages-sent-listenfor)
