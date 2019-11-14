@@ -60,7 +60,7 @@ Currently active run as set by the *Run Player* panel (or similar).
 
 ## runDataActiveRunSurrounding
 
-*Types available in [./schemas/runDataActiveRunSurrounding.d.ts](../schemas/runDataActiveRunSurrounding.d.ts)*
+*Types available in [./schemas/runDataActiveRunSurrounding.d.ts](../../schemas/runDataActiveRunSurrounding.d.ts)*
 
 ### Data
 - *[`object`]*

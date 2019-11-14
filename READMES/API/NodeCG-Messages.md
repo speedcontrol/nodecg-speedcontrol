@@ -302,7 +302,7 @@ Will change to the run with the ID supplied if possible; this is the same as pre
 nodecg.sendMessageToBundle('modifyRun', 'nodecg-speedcontrol', {
   runData: { /* runData object */ },
   prevID: '889e22d3-d1ef-40b8-8b2a-1d7eabf84755',
-  updateTwitch: false,
+  updateTwitch: false
 });
 ```
 ### Example code (callback)
@@ -310,7 +310,7 @@ nodecg.sendMessageToBundle('modifyRun', 'nodecg-speedcontrol', {
 nodecg.sendMessageToBundle('modifyRun', 'nodecg-speedcontrol', {
   runData: { /* runData object */ },
   prevID: '889e22d3-d1ef-40b8-8b2a-1d7eabf84755',
-  updateTwitch: false,
+  updateTwitch: false
 }, (err, noTwitchGame) => {
   ...
 });
@@ -320,7 +320,7 @@ nodecg.sendMessageToBundle('modifyRun', 'nodecg-speedcontrol', {
 nodecg.sendMessageToBundle('modifyRun', 'nodecg-speedcontrol', {
   runData: { /* runData object */ },
   prevID: '889e22d3-d1ef-40b8-8b2a-1d7eabf84755',
-  updateTwitch: false,
+  updateTwitch: false
 })
   .then((noTwitchGame) => { ... })
   .catch((err) => { ... });
@@ -450,14 +450,14 @@ Used to tell the Twitch API to run a commercial if applicable to your channel an
 ```javascript
 nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol', {
   status: 'Good Games Marathon Continues',
-  game: 'Miami Vice',
+  game: 'Miami Vice'
 });
 ```
 ### Example code (callback)
 ```javascript
 nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol', {
   status: 'Good Games Marathon Continues',
-  game: 'Miami Vice',
+  game: 'Miami Vice'
 }, (err, noTwitchGame) => {
   ...
 });
@@ -466,7 +466,7 @@ nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol', {
 ```javascript
 nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol', {
   status: 'Good Games Marathon Continues',
-  game: 'Miami Vice',
+  game: 'Miami Vice'
 })
   .then((noTwitchGame) => { ... })
   .catch((err) => { ... });
