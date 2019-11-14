@@ -73,7 +73,7 @@ Various places in this bundle store information in the format we refer to as the
 - `setupTimeS` *Number* Same as above but in seconds.
 - `scheduled` *[`string`]* Timestamp for when the run is scheduled, with the timezone; only applicable for runs imported from Horaro.
 - `scheduledS` *[`number`]* Same as above but as a unix timestamp.
-- `teams` *[`array`]* Teams that are doing this run. Length can be 0 (no teams/players), 1 (single player run or co-op) or 2 or more (race and/or co-op race); this will always be an array even if no teams are contained within it.
+- `teams` *[`array`[`object`]]* Teams that are doing this run. Length can be 0 (no teams/players), 1 (single player run or co-op) or 2 or more (race and/or co-op race); this will always be an array even if no teams are contained within it.
 - `customData` *[`object`]* Contains keyed strings, with the key(s) from your configuration for custom data; this will always be an object even if no data is contained within it.
 - `id` *[`string`]* Unique ID; will always be set.
 
@@ -84,7 +84,7 @@ The `teams` array will contain (if anything) "`team` objects".
 
 - `name` *[`string`]* Custom name of the team, if one has been set.
 - `id` *[`string`]* Unique ID.
-- `players` *[`array`]* Players in this team. Length could be 0 (but probably never), 1 (single player run or race, if there are more teams) or 2 or more (co-op and/or co-op race, if there are more teams).
+- `players` *[`array`[`object`]]* Players in this team. Length could be 0 (but probably never), 1 (single player run or race, if there are more teams) or 2 or more (co-op and/or co-op race, if there are more teams).
 
 
 ### `players` Array: `player` Object

@@ -14,12 +14,13 @@
 
 *Types available in [./types/RunData.d.ts](../types/RunData.d.ts)*
 
+### Data
+- *[`array`[`object`]]* An array of `runData` objects (relevant link: [`runData` Object Structure](./RunData.md)).
 ### Example code
 ```javascript
 const runDataArray = nodecg.Replicant('runDataArray', 'nodecg-speedcontrol');
 runDataArray.on('change', (newVal, oldVal) => {
-  console.log(newVal);
-  console.log(oldVal);
+  ...
 });
 ```
 ### Example data
@@ -30,21 +31,21 @@ runDataArray.on('change', (newVal, oldVal) => {
   }
 ]
 ```
-(relevant link: [`runData` Object Structure](./RunData.md))
 
-An array of `runData` objects of all of the runs that have been imported/added. This is the same thing that is used in the *Run Player*/*Run Editor* panels, and any reordering done in the *Run Editor* panel is also reflected here. This can be an empty array if there are no runs defined.
+All of the runs that have been imported/added. This is the same thing that is used in the *Run Player*/*Run Editor* panels, and any reordering done in the *Run Editor* panel is also reflected here. This can be an empty array if there are no runs defined.
 
 
 ## runDataActiveRun
 
 *Types available in [./types/RunData.d.ts](../types/RunData.d.ts)*
 
+### Data
+- *[`object` or `undefined`]* Either a `runData` object or `undefined` if no active run is set (relevant link: [`runData` Object Structure](./RunData.md)).
 ### Example code
 ```javascript
 const runDataActiveRun = nodecg.Replicant('runDataActiveRun', 'nodecg-speedcontrol');
 runDataActiveRun.on('change', (newVal, oldVal) => {
-  console.log(newVal);
-  console.log(oldVal);
+  ...
 });
 ```
 ### Example data
@@ -53,21 +54,24 @@ runDataActiveRun.on('change', (newVal, oldVal) => {
   // for example contents, see "`runData` Object Structure"
 }
 ```
-(relevant link: [`runData` Object Structure](./RunData.md))
 
-Either `undefined` if none is set, or a `runData` object of the currently active run as set by the *Run Player* panel (or similar).
+Currently active run as set by the *Run Player* panel (or similar).
 
 
 ## runDataActiveRunSurrounding
 
 *Types available in [./schemas/runDataActiveRunSurrounding.d.ts](../schemas/runDataActiveRunSurrounding.d.ts)*
 
+### Data
+- *[`object`]*
+  - `previous` *[`string` or `undefined`]* ID of previous run if available.
+  - `current` *[`string` or `undefined`]* ID of current run if available.
+  - `next` *[`string` or `undefined`]* ID of next run if available.
 ### Example code
 ```javascript
 const runDataActiveRunSurrounding = nodecg.Replicant('runDataActiveRunSurrounding', 'nodecg-speedcontrol');
 runDataActiveRunSurrounding.on('change', (newVal, oldVal) => {
-  console.log(newVal);
-  console.log(oldVal);
+  ...
 });
 ```
 ### Example data
@@ -86,12 +90,24 @@ A reference for the previous/current/next run's IDs, if available. These are rec
 
 *Types available in [./types/Timer.d.ts](../types/Timer.d.ts)*
 
+### Data
+- *[`object`]*
+  - `time` *[`string`]* Current human readable time the timer is at; same as printed on the *Run Timer* panel.
+  - `state` *[`string`]* Current state of the timer:
+    - `"stopped"`: Timer is at 0
+    - `"running"`: Timer is currently running
+    - `"paused"`: Timer was runnig but has been paused
+    - `"finished"`: Timer has been ended and is showing final time
+  - `milliseconds` *[`number`]* Current time, but in milliseconds for calculations.
+  - `timestamp` *[`number`]* A `Date.now()` timestamp of when the last tick update happened, used internally for time recovery if NodeCG is closed/quits unexpectedly.
+  - `teamFinishTimes` *[`object`]* Keyed object for the time a team has finished; key is the team ID. This is used even during non-race runs, so if you need to know if one of those was forfeit you will need to check the finish time in here. Object is an identical copy to the `timer` replicant, except `teamFinishTimes` is removed, and `state` is different:
+    - `"completed"` This team successfully finished the run
+    - `"forfeit"` This team forfeit the runnow if one of those was forfeit you still need to check the finish time here.
 ### Example code
 ```javascript
 const timer = nodecg.Replicant('timer', 'nodecg-speedcontrol');
 timer.on('change', (newVal, oldVal) => {
-  console.log(newVal);
-  console.log(oldVal);
+  ...
 });
 ```
 ### Example data
@@ -115,18 +131,6 @@ During a race while the timer is still running but team with ID `278de963-c1f4-4
 
 An object with data on the current status of the timer. The timer tick happens every 100ms, if the current `state` is `"running"`.
 
-- `time` *[`string`]* Current human readable time the timer is at; same as printed on the *Run Timer* panel.
-- `state` *[`string`]* Current state of the timer:
-  - `"stopped"`: Timer is at 0
-  - `"running"`: Timer is currently running
-  - `"paused"`: Timer was runnig but has been paused
-  - `"finished"`: Timer has been ended and is showing final time
-- `milliseconds` *[`number`]* Current time, but in milliseconds for calculations.
-- `timestamp` *[`number`]* A `Date.now()` timestamp of when the last tick update happened, used internally for time recovery if NodeCG is closed/quits unexpectedly.
-- `teamFinishTimes` *[`object`]* Keyed object for the time a team has finished; key is the team ID. This is used even during non-race runs, so if you need to know if one of those was forfeit you will need to check the finish time in here. Object is an identical copy to the `timer` replicant, except `teamFinishTimes` is removed, and `state` is different:
-  - `"completed"` This team successfully finished the run
-  - `"forfeit"` This team forfeit the runnow if one of those was forfeit you still need to check the finish time here.
-
 The default object state:
 ```javascript
 {
@@ -143,12 +147,14 @@ The default object state:
 
 *Types available in [./types/Timer.d.ts](../types/Timer.d.ts)*
 
+### Data
+- *[`object`]* Keyed by run ID, with `timer` object clones.
+
 ### Example code
 ```javascript
 const runFinishTimes = nodecg.Replicant('runFinishTimes', 'nodecg-speedcontrol');
 runFinishTimes.on('change', (newVal, oldVal) => {
-  console.log(newVal);
-  console.log(oldVal);
+  ...
 });
 ```
 ### Example data
@@ -167,13 +173,14 @@ A keyed object; the keys are run IDs, the values are copies of the `timer` objec
 
 *Types available in [./schemas/timerChangesDisabled.d.ts](../schemas/timerChangesDisabled.d.ts)*
 
+### Data
+`timerChangesDisabled` *[`boolean`]* If the timer can be changed, either programatically or by a user.
 ### Example code
 ```javascript
 const timerChangesDisabled = nodecg.Replicant('timerChangesDisabled', 'nodecg-speedcontrol');
 // Listening to replicant changes.
 timerChangesDisabled.on('change', (newVal, oldVal) => {
-  console.log(newVal);
-  console.log(oldVal);
+  ...
 });
 timerChangesDisabled.value = true; // Disable timer changes
 timerChangesDisabled.value = false; // Enable timer changes

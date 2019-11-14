@@ -28,12 +28,12 @@
 ## twitchCommercialStarted
 
 ### Data
-- `data` [`object`]
-  - `duration` [`number`] How long the commercial will run for in seconds.
+- *[`object`]*
+  - `duration` *[`number`]* How long the commercial will run for in seconds.
 ### Example code
 ```javascript
 nodecg.listenFor('twitchCommercialStarted', 'nodecg-speedcontrol', (data) => {
-  console.log(data);
+  ...
 });
 ```
 ### Example data
@@ -48,11 +48,11 @@ Emitted when a Twitch commercial is successfully started via this bundle.
 ## repeaterFeaturedChannels
 
 ### Data
-- `names` [`array`[`string`]] List of Twitch usernames.
+- `names` *[`array`[`string`]]* List of Twitch usernames.
 ### Example code
 ```javascript
-nodecg.listenFor('repeaterFeaturedChannels', 'nodecg-speedcontrol', (data) => {
-  console.log(data);
+nodecg.listenFor('repeaterFeaturedChannels', 'nodecg-speedcontrol', (names) => {
+  ...
 });
 ```
 ### Example data
@@ -80,15 +80,15 @@ nodecg.sendMessageToBundle('timerStart', 'nodecg-speedcontrol');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('timerStart', 'nodecg-speedcontrol', (error) => {
-  // if no error, successful
+nodecg.sendMessageToBundle('timerStart', 'nodecg-speedcontrol', (err) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('timerStart', 'nodecg-speedcontrol')
-  .then(() => { /* successful */ })
-  .catch((err) => { console.log(err); });
+  .then(() => { ... })
+  .catch((err) => { ... });
 ```
 
 Will start the timer, or resume it if it was paused. This will only work if the timer is `"stopped"` or `"paused"`, and the `timerChangesDisabled` replicant is set to `false`.
@@ -104,15 +104,15 @@ nodecg.sendMessageToBundle('timerPause', 'nodecg-speedcontrol');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('timerPause', 'nodecg-speedcontrol', (error) => {
-  // if no error, successful
+nodecg.sendMessageToBundle('timerPause', 'nodecg-speedcontrol', (err) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('timerPause', 'nodecg-speedcontrol')
-  .then(() => { /* successful */ })
-  .catch((err) => { console.log(err); });
+  .then(() => { ... })
+  .catch((err) => { ... });
 ```
 
 Will pause the timer. This will only work if the timer is `"running"`, and the `timerChangesDisabled` replicant is set to `false`.
@@ -121,7 +121,7 @@ Will pause the timer. This will only work if the timer is `"running"`, and the `
 ## timerReset
 
 ### Parameters
-- `force` [`boolean`] (default: `false`) Will reset the timer even if the `timerChangesDisabled` replicant is set to `true`.
+- `force` *[`boolean`]* (default: `false`) Will reset the timer even if the `timerChangesDisabled` replicant is set to `true`.
 ### *No data returned*
 ### Example code (extension/no acknowledgement)
 ```javascript
@@ -129,42 +129,51 @@ nodecg.sendMessageToBundle('timerReset', 'nodecg-speedcontrol', false);
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('timerReset', 'nodecg-speedcontrol', false, (error) => {
-  // if no error, successful
+nodecg.sendMessageToBundle('timerReset', 'nodecg-speedcontrol', false, (err) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('timerReset', 'nodecg-speedcontrol', false)
-  .then(() => { /* successful */ })
-  .catch((err) => { console.log(err); });
+  .then(() => { ... })
+  .catch((err) => { ... });
 ```
 
-Will fully reset the timer. This will only work if the timer is not `"stopped"`, and the `timerChangesDisabled` replicant is set to `false` (unless the `force` boolean is `true`).
+Will fully reset the timer. This will only work if the timer is not `"stopped"`, and the `timerChangesDisabled` replicant is set to `false` (unless `force` is `true`).
 
 
 ## timerStop
 
 ### Parameters
-- `options` [`object`]
-  - `id` [`string`] Team ID to stop timer of.
-  - `forfeit` [`boolean`] (default: `false`) If true, the finish time will be recorded as `"forfeit"` instead of `"completed"`.
+- *[`object`]*
+  - `id` *[`string`]* Team ID to stop timer of.
+  - `forfeit` *[`boolean`]* (default: `false`) If true, the finish time will be recorded as `"forfeit"` instead of `"completed"`.
 ### *No data returned*
 ### Example code (extension/no acknowledgement)
 ```javascript
-nodecg.sendMessageToBundle('timerStop', 'nodecg-speedcontrol', { id: '18341eb2-eb45-4184-98f6-e74baafaf71a', forfeit: false });
+nodecg.sendMessageToBundle('timerStop', 'nodecg-speedcontrol', {
+  id: '18341eb2-eb45-4184-98f6-e74baafaf71a',
+  forfeit: false
+});
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('timerStop', 'nodecg-speedcontrol', { id: '18341eb2-eb45-4184-98f6-e74baafaf71a', forfeit: false }, (error) => {
-  // if no error, successful
+nodecg.sendMessageToBundle('timerStop', 'nodecg-speedcontrol', {
+  id: '18341eb2-eb45-4184-98f6-e74baafaf71a',
+  forfeit: false
+}, (err) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
-nodecg.sendMessageToBundle('timerStop', 'nodecg-speedcontrol', { id: '18341eb2-eb45-4184-98f6-e74baafaf71a', forfeit: false })
-  .then(() => { /* successful */ })
-  .catch((err) => { console.log(err); });
+nodecg.sendMessageToBundle('timerStop', 'nodecg-speedcontrol', {
+  id: '18341eb2-eb45-4184-98f6-e74baafaf71a',
+  forfeit: false
+})
+  .then(() => { ... })
+  .catch((err) => { ... });
 ```
 
 Will stop the timer for the specified team ID. This must be supplied if there is a run active and it has any teams, otherwise it'll fail. This will only work if the timer is `"running"`, and the `timerChangesDisabled` replicant is set to `false`. If the timer is `"running"` and the team you specify is the only one left to finish, this will automatically set it to `"finished"`.
@@ -173,7 +182,7 @@ Will stop the timer for the specified team ID. This must be supplied if there is
 ## timerUndo
 
 ### Parameters
-- `id` [`string`] Team ID to undo timer of.
+- `id` *[`string`]* Team ID to undo timer of.
 ### *No data returned*
 ### Example code (extension/no acknowledgement)
 ```javascript
@@ -181,15 +190,15 @@ nodecg.sendMessageToBundle('timerUndo', 'nodecg-speedcontrol', '18341eb2-eb45-41
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('timerUndo', 'nodecg-speedcontrol', '18341eb2-eb45-4184-98f6-e74baafaf71a', (error) => {
-  // if no error, successful
+nodecg.sendMessageToBundle('timerUndo', 'nodecg-speedcontrol', '18341eb2-eb45-4184-98f6-e74baafaf71a', (err) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('timerUndo', 'nodecg-speedcontrol','18341eb2-eb45-4184-98f6-e74baafaf71a')
-  .then(() => { /* successful */ })
-  .catch((err) => { console.log(err); });
+  .then(() => { ... })
+  .catch((err) => { ... });
 ```
 
 Will undo a stopped timer for the specified team ID. This must be supplied if there is a run active and it has any teams, otherwise it'll fail. This will only work if the timer is `"finished"` or `"running"`, and the `timerChangesDisabled` replicant is set to `false`. If the timer is `"finished"`, this will automatically return it to `"running"`.
@@ -198,7 +207,7 @@ Will undo a stopped timer for the specified team ID. This must be supplied if th
 ## timerEdit
 
 ### Parameters
-- `time` [`string`] Time to set timer at; should be in the format `"HH:MM:SS"`.
+- `time` *[`string`]* Time to set timer at; should be in the format `"HH:MM:SS"`.
 ### *No data returned*
 ### Example code (extension/no acknowledgement)
 ```javascript
@@ -206,15 +215,15 @@ nodecg.sendMessageToBundle('timerEdit', 'nodecg-speedcontrol', '01:37:23');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('timerEdit', 'nodecg-speedcontrol', '01:37:23', (error) => {
-  // if no error, successful
+nodecg.sendMessageToBundle('timerEdit', 'nodecg-speedcontrol', '01:37:23', (err) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('timerEdit', 'nodecg-speedcontrol', '01:37:23')
-  .then(() => { /* successful */ })
-  .catch((err) => { console.log(err); });
+  .then(() => { ... })
+  .catch((err) => { ... });
 ```
 
 Will edit the timer to the specified time. This will only work if the timer is `"paused"` or `"stopped"`, and the `timerChangesDisabled` replicant is set to `false`.
@@ -224,72 +233,70 @@ Will edit the timer to the specified time. This will only work if the timer is `
 
 ### *No parameters*
 ### Data
-- `noTwitchGame` [`boolean`] If the Twitch integration is enabled, auto-sync is turned on and the Twitch directory could not be set automatically, this will return `true`.
+- `noTwitchGame` *[`boolean`]* If the Twitch integration is enabled, auto-sync is turned on and the Twitch directory could not be set automatically, this will return `true`.
 ### Example code (extension/no acknowledgement)
 ```javascript
 nodecg.sendMessageToBundle('changeToNextRun', 'nodecg-speedcontrol');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('changeToNextRun', 'nodecg-speedcontrol', (error, data) => {
-  // if no error, successful
-  console.log(data);
+nodecg.sendMessageToBundle('changeToNextRun', 'nodecg-speedcontrol', (err, noTwitchGame) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('changeToNextRun', 'nodecg-speedcontrol')
-  .then((data) => { console.log(data); })
-  .catch((err) => { console.log(err); });
+  .then((noTwitchGame) => { ... })
+  .catch((err) => { ... });
 ```
 ### Example data
 ```javascript
 false
 ```
 
-Will move to the next run if possible; this is the same as pressing the "next game" button on the *Run Player* panel.
+Will move to the next run if possible; this is the same as pressing the "next game" button on the *Run Player* panel. This will only work if the timer is not `"running"` or `"paused"`.
 
 
 ## changeActiveRun
 
 ### Parameters
-- `id` [`string`] ID of the run you wish to change to.
+- `id` *[`string`]* ID of the run you wish to change to.
 ### Data
-- `noTwitchGame` [`boolean`] If the Twitch integration is enabled, auto-sync is turned on and the Twitch directory could not be set automatically, this will return `true`.
+- `noTwitchGame` *[`boolean`]* If the Twitch integration is enabled, auto-sync is turned on and the Twitch directory could not be set automatically, this will return `true`.
 ### Example code (extension/no acknowledgement)
 ```javascript
 nodecg.sendMessageToBundle('changeActiveRun', 'nodecg-speedcontrol');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('changeActiveRun', 'nodecg-speedcontrol', (error, data) => {
-  // if no error, successful
-  console.log(data);
+nodecg.sendMessageToBundle('changeActiveRun', 'nodecg-speedcontrol', (err, noTwitchGame) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('changeActiveRun', 'nodecg-speedcontrol')
-  .then((data) => { console.log(data); })
-  .catch((err) => { console.log(err); });
+  .then((noTwitchGame) => { ... })
+  .catch((err) => { ... });
 ```
 ### Example data
 ```javascript
 false
 ```
 
-Will change to the run with the ID supplied if possible; this is the same as pressing the "play" button on a specific run on the *Run Player* panel.
+Will change to the run with the ID supplied if possible; this is the same as pressing the "play" button on a specific run on the *Run Player* panel. This will only work if the timer is not `"running"` or `"paused"`.
 
 
 ## modifyRun
 
 ### Parameters
-- `data` [`object`]
-  - `runData` [`object`] A `runData` object (relevant link: [`runData` Object Structure](./RunData.md))
-  - `prevID` [`string`] If supplied and run is new, run will be added after the run with this ID.
-  - `updateTwitch` [`boolean`] If Twitch integration is enabled and this is `true`, we will attempt to update the Twitch information with this run data.
+- *[`object`]*
+  - `runData` *[`object`]* A `runData` object (relevant link: [`runData` Object Structure](./RunData.md)).
+  - `prevID` *[`string`]* If supplied and run is new, run will be added after the run with this ID.
+  - `updateTwitch` *[`boolean`]* If Twitch integration is enabled and this is `true`, we will attempt to update the Twitch information with this run data.
 ### Data
-- `noTwitchGame` [`boolean`] If the Twitch integration is enabled, `updateTwitch` was set to `true` and the Twitch directory could not be set automatically, this will return `true`.
+- `noTwitchGame` *[`boolean`]* If the Twitch integration is enabled, `updateTwitch` was set to `true` and the Twitch directory could not be set automatically, this will return `true`.
 ### Example code (extension/no acknowledgement)
 ```javascript
 nodecg.sendMessageToBundle('modifyRun', 'nodecg-speedcontrol', {
@@ -304,9 +311,8 @@ nodecg.sendMessageToBundle('modifyRun', 'nodecg-speedcontrol', {
   runData: { /* runData object */ },
   prevID: '889e22d3-d1ef-40b8-8b2a-1d7eabf84755',
   updateTwitch: false,
-}, (error, data) => {
-  // if no error, successful
-  console.log(data);
+}, (err, noTwitchGame) => {
+  ...
 });
 ```
 ### Example code (promise)
@@ -316,8 +322,8 @@ nodecg.sendMessageToBundle('modifyRun', 'nodecg-speedcontrol', {
   prevID: '889e22d3-d1ef-40b8-8b2a-1d7eabf84755',
   updateTwitch: false,
 })
-  .then((data) => { console.log(data); })
-  .catch((err) => { console.log(err); });
+  .then((noTwitchGame) => { ... })
+  .catch((err) => { ... });
 ```
 ### Example data
 ```javascript
@@ -330,7 +336,7 @@ Will either edit a run (if `runData` has an ID we already have added) or add a n
 ## removeRun
 
 ### Parameters
-- `id` [`string`] The ID of the run you wish to remove.
+- `id` *[`string`]* The ID of the run you wish to remove.
 ### *No data returned*
 ### Example code (extension/no acknowledgement)
 ```javascript
@@ -338,15 +344,15 @@ nodecg.sendMessageToBundle('removeRun', 'nodecg-speedcontrol', '889e22d3-d1ef-40
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('removeRun', 'nodecg-speedcontrol', '889e22d3-d1ef-40b8-8b2a-1d7eabf84755', (error) => {
-  // if no error, successful
+nodecg.sendMessageToBundle('removeRun', 'nodecg-speedcontrol', '889e22d3-d1ef-40b8-8b2a-1d7eabf84755', (err) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('removeRun', 'nodecg-speedcontrol', '889e22d3-d1ef-40b8-8b2a-1d7eabf84755')
-  .then(() => { /* successful */ })
-  .catch((err) => { console.log(err); });
+  .then(() => { ... })
+  .catch((err) => { ... });
 ```
 
 Will remove the run with the supplied ID from the `runDataArray` replicant. This will *not* remove the active run if this ID happens to be the same.
@@ -362,18 +368,18 @@ nodecg.sendMessageToBundle('returnToStart', 'nodecg-speedcontrol');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('returnToStart', 'nodecg-speedcontrol', (error) => {
-  // if no error, successful
+nodecg.sendMessageToBundle('returnToStart', 'nodecg-speedcontrol', (err) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('returnToStart', 'nodecg-speedcontrol')
-  .then(() => { /* successful */ })
-  .catch((err) => { console.log(err); });
+  .then(() => { ... })
+  .catch((err) => { ... });
 ```
 
-Will return the marathon schedule to the start; internally this just removes the active run.
+Will return the marathon schedule to the start; internally this just removes the active run. This will only work if the timer is not `"running"` or `"paused"`.
 
 
 ## removeAllRuns
@@ -386,42 +392,41 @@ nodecg.sendMessageToBundle('removeAllRuns', 'nodecg-speedcontrol');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('removeAllRuns', 'nodecg-speedcontrol', (error) => {
-  // if no error, successful
+nodecg.sendMessageToBundle('removeAllRuns', 'nodecg-speedcontrol', (err) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('removeAllRuns', 'nodecg-speedcontrol')
-  .then(() => { /* successful */ })
-  .catch((err) => { console.log(err); });
+  .then(() => { ... })
+  .catch((err) => { ... });
 ```
 
-Removes all of the runs in the `runDataArray` replicant, and also removes the active run. The timer is also reset if needed.
+Removes all of the runs in the `runDataArray` replicant, and also removes the active run. The timer is also reset if needed. This will only work if the timer is not `"running"` or `"paused"`.
 
 
 ## twitchStartCommercial
 
 ### *No parameters*
 ### Data
-- `data` [`object`]
-  - `duration` [`number`] How long the commercial will run for in seconds.
+- *[`object`]*
+  - `duration` *[`number`]* How long the commercial will run for in seconds.
 ### Example code (extension/no acknowledgement)
 ```javascript
 nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', (error, data) => {
-  // if no error, successful
-  console.log(data);
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', (err, data) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol')
-  .then((data) => { console.log(data); })
-  .catch((err) => { console.log(err); });
+  .then((data) => { ... })
+  .catch((err) => { ... });
 ```
 ### Example data
 ```javascript
@@ -436,27 +441,26 @@ Used to tell the Twitch API to run a commercial if applicable to your channel an
 ## twitchUpdateChannelInfo
 
 ### Parameters
-- `data` [`object`]
-  - `status` [`string`] What the title should be set to.
-  - `game` [`string`] Directory on Twitch to set channel to.
+- *[`object`]*
+  - `status` *[`string`]* What the title should be set to.
+  - `game` *[`string`]* Directory on Twitch to set channel to.
 ### Data
-- `noTwitchGame` [`boolean`] If the supplied `game` is not a valid directory on Twitch, this will return `true`.
+- `noTwitchGame` *[`boolean`]* If the supplied `game` is not a valid directory on Twitch, this will return `true`.
 ### Example code (extension/no acknowledgement)
 ```javascript
 nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol', (error, data) => {
-  // if no error, successful
-  console.log(data);
+nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol', (err, noTwitchGame) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('twitchUpdateChannelInfo', 'nodecg-speedcontrol')
-  .then((data) => { console.log(data); })
-  .catch((err) => { console.log(err); });
+  .then((noTwitchGame) => { ... })
+  .catch((err) => { ... });
 ```
 ### Example data
 ```javascript
@@ -469,7 +473,7 @@ Used to update the Twitch status (title) and/or game (directory), if the integra
 ## updateFeaturedChannels
 
 ### Parameters
-- `names` [`array`[`string`]] List of Twitch usernames to use.
+- `names` *[`array`[`string`]]* List of Twitch usernames to use.
 ### *No data returned*
 ### Example code (extension/no acknowledgement)
 ```javascript
@@ -477,15 +481,15 @@ nodecg.sendMessageToBundle('updateFeaturedChannels', 'nodecg-speedcontrol');
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('updateFeaturedChannels', 'nodecg-speedcontrol', (error) => {
-  // if no error, successful
+nodecg.sendMessageToBundle('updateFeaturedChannels', 'nodecg-speedcontrol', (err) => {
+  ...
 });
 ```
 ### Example code (promise)
 ```javascript
 nodecg.sendMessageToBundle('updateFeaturedChannels', 'nodecg-speedcontrol')
-  .then(() => { /* successful */ })
-  .catch((err) => { console.log(err); });
+  .then(() => { ... })
+  .catch((err) => { ... });
 ```
 
 Used to update the featured channels, if the integration is enabled. This is the same as changing it via the *Twitch Control* panel.
