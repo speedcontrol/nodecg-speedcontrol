@@ -85,15 +85,16 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 
 *(This is not an exhaustive list.)*
 
-- All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons starting from the Pre-ESA Marathon 2016, including the ESA ran Dreamhack speedrunning events in Sweden
-- All [GTA Marathons](https://www.twitch.tv/gtamarathon) starting from GTA Marathon 2016
-- [SpeedSouls Charity Marathon 2017 and 2018](https://www.twitch.tv/speedsouls)
+- All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons since Pre-ESA Marathon 2016, including the ESA ran Dreamhack speedrunning events in Sweden
+- All [GTA Marathons](https://www.twitch.tv/gtamarathon) since GTA Marathon 2016
+- All [SpeedSouls Charity Marathons](https://www.twitch.tv/speedsouls)
 - [Themeathon Pre-Marathon 2018](https://www.twitch.tv/themeathon)
 - Several [Voltathon](https://www.twitch.tv/voltagegg) marathons
-- All [DegenDash](https://www.twitch.tv/degendash) marathons
+- [DegenDash](https://www.twitch.tv/degendash)
 - Some marathons on [The Fast Force](https://www.twitch.tv/thefastforce) Twitch channel
-- [A Race Against Time 3](https://www.twitch.tv/araceagainsttime) marathon
-- [Power Up With Pride: Winter Pride 2018](https://www.twitch.tv/powerupwithpride) marathon
+- [A Race Against Time 3](https://www.twitch.tv/araceagainsttime)
+- [Power Up With Pride](https://www.twitch.tv/powerupwithpride) since Winter Pride 2018
+- [Bingothon](https://bingothon.com/)
 
 
 ## Authors/Contributors
@@ -108,7 +109,7 @@ With help from:
 
 ## Contribution/Development
 
-The `master` branch will always be the most recent stable release, while all development work is done in the `dev` branch; if you want to use experimental unfinished features or contribute, use that branch.
+The `master` branch will always be the most recent stable release, while all development work is done in the `dev` branch; if you want to use experimental unfinished features or contribute, use that branch, although it may require some manual build commands (`npm install` and `npm run build` should work fine).
 
 If you need to report an issue, you can [do that on GitHub](https://github.com/speedcontrol/nodecg-speedcontrol/issues).
 
