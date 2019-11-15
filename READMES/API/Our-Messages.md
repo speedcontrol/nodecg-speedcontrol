@@ -6,7 +6,7 @@ If you are sending messages to this bundle from the context of the extension and
 
 To do this, we expose some functions from our extension code: `sendMessage` and `listenFor`. To make this as easy to work with, we have attempted to mirror the native NodeCG messaging system, therefore you can refer to [that documentation](./NodeCG-Messages.md), make sure you use `sendMessage` and *not* `sendMessageToBundle`, drop any instance of having to specify the bundle name (`'nodecg-speedcontrol'`) and in the case of messages received, use the code examples marked *Example code (promise)*. Currently, `sendMessage` will only return a promise and not a callback, although we highly advise using this method anyway.
 
-### Example code
+#### Example code
 ```javascript
 const speedcontrol = nodecg.extensions['nodecg-speedcontrol'];
 // Listen for a message.
@@ -19,7 +19,7 @@ speedcontrol.sendMessage('changeActiveRun', 'f926048c-3527-4d2f-96f6-680b81bf06e
   .catch((err) => { ... })
 ```
 
-## TypeScript
+### TypeScript
 
 These are also available typed if you use TypeScript.
 
