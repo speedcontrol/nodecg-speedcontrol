@@ -354,5 +354,10 @@ events.listenFor('timerUndo', (id, ack) => {
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
+events.listenFor('timerEdit', (time, ack) => {
+  editTimer(time)
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
 
 setInterval(tick, 100);

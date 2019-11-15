@@ -1,24 +1,57 @@
+import { RunData } from "./RunData";
 
 export interface SendMessageArgsMap {
-  repeaterFeaturedChannels: string[];
+  // Timer
   timerStart: void;
   timerPause: void;
   timerReset?: boolean;
   timerStop: { id?: string; forfeit?: boolean; };
   timerUndo?: string;
-  twitchCommercialStarted: { duration: number; }
+  timerEdit: string;
+
+  // Run Control
   changeToNextRun: void;
+  changeActiveRun: string;
+  modifyRun: { runData: RunData, prevID?: string, updateTwitch?: boolean }
+  removeRun: string;
+  returnToStart: void;
+  removeAllRuns: void;
+
+  // Twitch
+  twitchCommercialStarted: { duration: number; }
+  twitchStartCommercial: void;
+  twitchUpdateChannelInfo: { status?: string, game?: string };
+
+  // Featured Channels
+  updateFeaturedChannels: string[];
+  repeaterFeaturedChannels: string[];
 }
 
 export interface SendMessageReturnMap {
-  repeaterFeaturedChannels: void;
+  // Timer
   timerStart: void;
   timerPause: void;
   timerReset: void;
   timerStop: void;
   timerUndo: void;
+  timerEdit: void;
+
+  // Run Control
+  changeToNextRun: boolean;
+  changeActiveRun: boolean;
+  modifyRun: boolean;
+  removeRun: void;
+  returnToStart: void;
+  removeAllRuns: void;
+
+  // Twitch
   twitchCommercialStarted: void;
-  changeToNextRun: void;
+  twitchStartCommercial: { duration: number; }
+  twitchUpdateChannelInfo: boolean;
+
+  // Featured Channels
+  updateFeaturedChannels: void;
+  repeaterFeaturedChannels: void;
 }
 
 export type SendMessageAck = HandledSendMessageAck | UnhandledSendMessageAck;

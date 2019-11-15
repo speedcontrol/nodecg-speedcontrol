@@ -255,13 +255,6 @@ function connect(): void {
 if (config.twitch.enabled && config.twitch.ffzIntegration) {
   nodecg.log.info('[FrankerFaceZ] Integration enabled');
 
-  // NodeCG messaging system.
-  nodecg.listenFor('updateFeaturedChannels', (names, ack) => {
-    setChannels(names)
-      .then(() => processAck(ack, null))
-      .catch((err) => processAck(ack, err));
-  });
-
   twitchAPIData.on('change', (newVal, oldVal) => {
     if (newVal.state === 'on' && (!oldVal || oldVal.state !== 'on')) {
       connect();
@@ -271,3 +264,17 @@ if (config.twitch.enabled && config.twitch.ffzIntegration) {
     }
   });
 }
+
+// NodeCG messaging system.
+nodecg.listenFor('updateFeaturedChannels', (names, ack) => {
+  setChannels(names)
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
+
+// Our messaging system.
+events.listenFor('updateFeaturedChannels', (names, ack) => {
+  setChannels(names)
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});

@@ -281,22 +281,7 @@ async function setUp(): Promise<void> {
 if (config.twitch.enabled) {
   nodecg.log.info('[Twitch] Integration enabled');
 
-  // NodeCG messaging system.
-  nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
-    updateChannelInfo(data.status, data.game)
-      .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
-      .catch((err) => processAck(ack, err));
-  });
-  nodecg.listenFor('twitchStartCommercial', (data, ack) => {
-    startCommercial()
-      .then(() => processAck(ack, null))
-      .catch((err) => processAck(ack, err));
-  });
-  nodecg.listenFor('playTwitchAd', (data, ack) => { // Legacy
-    startCommercial()
-      .then(() => processAck(ack, null))
-      .catch((err) => processAck(ack, err));
-  });
+  // Listen for logout command from button on dashboard.
   nodecg.listenFor('twitchLogout', (data, ack) => {
     logout()
       .then(() => processAck(ack, null))
@@ -346,3 +331,37 @@ if (config.twitch.enabled) {
 
   nodecg.mount(app);
 }
+
+// NodeCG messaging system.
+nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
+  updateChannelInfo(data.status, data.game)
+    .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
+    .catch((err) => processAck(ack, err));
+});
+nodecg.listenFor('twitchStartCommercial', (data, ack) => {
+  startCommercial()
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
+nodecg.listenFor('playTwitchAd', (data, ack) => { // Legacy
+  startCommercial()
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
+
+// Our messaging system.
+events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
+  updateChannelInfo(data.status, data.game)
+    .then((noTwitchGame) => {
+      processAck(ack, null, noTwitchGame);
+      if (noTwitchGame) {
+        nodecg.sendMessage('triggerAlert', 'NoTwitchGame');
+      }
+    })
+    .catch((err) => processAck(ack, err));
+});
+events.listenFor('twitchStartCommercial', (data, ack) => {
+  startCommercial()
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});

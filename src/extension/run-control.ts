@@ -295,6 +295,26 @@ nodecg.listenFor('removeAllRuns', (data, ack) => {
 });
 
 // Our messaging system.
+events.listenFor('changeActiveRun', (id, ack) => {
+  changeActiveRun(id)
+    .then((noTwitchGame) => {
+      processAck(ack, null, noTwitchGame);
+      if (noTwitchGame) {
+        nodecg.sendMessage('triggerAlert', 'NoTwitchGame');
+      }
+    })
+    .catch((err) => processAck(ack, err));
+});
+events.listenFor('removeRun', (id, ack) => {
+  removeRun(id)
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
+events.listenFor('modifyRun', (data, ack) => {
+  modifyRun(data.runData, data.prevID, data.updateTwitch)
+    .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
+    .catch((err) => processAck(ack, err));
+});
 events.listenFor('changeToNextRun', (data, ack) => {
   changeActiveRun(activeRunSurr.value.next)
     .then((noTwitchGame) => {
@@ -303,6 +323,16 @@ events.listenFor('changeToNextRun', (data, ack) => {
         nodecg.sendMessage('triggerAlert', 'NoTwitchGame');
       }
     })
+    .catch((err) => processAck(ack, err));
+});
+events.listenFor('returnToStart', (data, ack) => {
+  removeActiveRun()
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
+events.listenFor('removeAllRuns', (data, ack) => {
+  removeAllRuns()
+    .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
 
