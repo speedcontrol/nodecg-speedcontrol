@@ -104,14 +104,14 @@ module.exports = {
         ],
       },
       {
-        test: /\.(woff(2)?|ttf|eot)$/,
+        test: /\.(woff(2)?|ttf|eot|svg)$/,
         loader: 'file-loader',
         options: {
           name: 'font/[name].[ext]',
         },
       },
       {
-        test: /\.(png|svg)?$/,
+        test: /\.(png)?$/,
         loader: 'file-loader',
         options: {
           name: 'img/[name].[ext]',
