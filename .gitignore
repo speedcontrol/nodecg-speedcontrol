@@ -62,5 +62,5 @@ typings/
 
 # Built files
 .cache
-/dashboard/
-/extension/
+#/dashboard/
+#/extension/
