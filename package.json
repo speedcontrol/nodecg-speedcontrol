@@ -92,9 +92,6 @@
     "webpack-cli": "^3.3.9",
     "webpack-livereload-plugin": "^2.2.0"
   },
-  "alias": {
-    "vue": "./node_modules/vue/dist/vue.esm.js"
-  },
   "nodecg": {
     "compatibleRange": "^1.5.0",
     "dashboardPanels": [
@@ -159,8 +156,5 @@
         "dialog": true
       }
     ]
-  },
-  "vue": {
-    "runtimeCompiler": true
   }
 }

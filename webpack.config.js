@@ -72,7 +72,10 @@ module.exports = {
     filename: 'js/[name].js',
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx', '.json'],
+    extensions: ['.js', '.json'],
+    alias: {
+      vue: 'vue/dist/vue.esm.js',
+    },
   },
   module: {
     rules: [
