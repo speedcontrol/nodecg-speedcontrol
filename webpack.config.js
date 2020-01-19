@@ -72,7 +72,7 @@ module.exports = {
     filename: 'js/[name].js',
   },
   resolve: {
-    extensions: ['.js', '.json'],
+    extensions: ['.js', '.ts', '.tsx', '.json'],
     alias: {
       vue: 'vue/dist/vue.esm.js',
     },
@@ -117,7 +117,8 @@ module.exports = {
         test: /\.(png)?$/,
         loader: 'file-loader',
         options: {
-          name: 'img/[name].[ext]',
+          name: 'img/[name]-[contenthash].[ext]',
+          esModule: false,
         },
       },
       {
