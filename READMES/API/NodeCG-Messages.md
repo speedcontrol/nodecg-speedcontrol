@@ -408,7 +408,9 @@ Removes all of the runs in the `runDataArray` replicant, and also removes the ac
 
 ## twitchStartCommercial
 
-### *No parameters*
+### Parameters
+- *[`object`]*
+  - `duration` *[`number`]* How long you want the commercial to run for in seconds. Accepted values: 30, 60, 90, 120, 150, 180.
 ### Data
 - *[`object`]*
   - `duration` *[`number`]* How long the commercial will run for in seconds.
