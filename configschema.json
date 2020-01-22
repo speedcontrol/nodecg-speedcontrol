@@ -42,14 +42,18 @@
           "type": "boolean"
         },
         "ffzBlacklist": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "uniqueItems": true,
-          "items": {
-            "type": "string"
-          }
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -70,44 +74,52 @@
           "default": "https://horaro.org/event/schedule"
         },
         "ignoreGamesWhileImporting": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "uniqueItems": true,
-          "items": {
-            "type": "string"
-          }
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "disableSpeedrunComLookup": {
           "type": "boolean",
           "default": false
         },
         "customData": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "uniqueItems": true,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "key": {
-                "type": "string"
-              },
-              "ignoreMarkdown": {
-                "type": "boolean"
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  },
+                  "ignoreMarkdown": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name",
+                  "key"
+                ]
               }
             },
-            "required": [
-              "name",
-              "key"
-            ]
-          }
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
