@@ -343,7 +343,7 @@ nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('twitchStartCommercial', (data, ack) => {
-  startCommercial()
+  startCommercial(data.duration)
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
