@@ -6,7 +6,7 @@
     filled
     :class="{ LeftBorder: leftBorder }"
     @input="$emit('input', $event);"
-  ></v-text-field>
+  />
 </template>
 
 <script lang="ts">

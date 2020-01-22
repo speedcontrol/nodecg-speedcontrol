@@ -58,7 +58,7 @@
             tooltip="Play Run"
             :disabled="disableChange"
             @click="playRun"
-          ></modify-button>
+          />
         </div>
         <!-- Buttons for "Run Editor" dashboard panel. -->
         <div v-else>
@@ -66,22 +66,22 @@
             icon="mdi-content-duplicate"
             tooltip="Duplicate Run"
             @click="duplicateRun"
-          ></modify-button>
+          />
           <modify-button
             icon="mdi-file-plus-outline"
             tooltip="Add New Run After"
             @click="addNewRunAfter"
-          ></modify-button>
+          />
           <modify-button
             icon="mdi-square-edit-outline"
             tooltip="Edit Run"
             @click="editRun"
-          ></modify-button>
+          />
           <modify-button
             icon="mdi-file-remove-outline"
             tooltip="Remove Run"
             @click="removeRunConfirm"
-          ></modify-button>
+          />
         </div>
       </div>
     </v-expansion-panel-content>

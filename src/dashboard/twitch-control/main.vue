@@ -41,7 +41,7 @@
           v-model="sync"
           inset
           hide-details
-        ></v-switch>
+        />
         Auto-sync title/game<span
           v-if="config.ffzIntegration"
         >/featured channels</span>?
@@ -55,7 +55,7 @@
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
-      ></v-text-field>
+      />
       <v-text-field
         v-model="game"
         class="TextBox"
@@ -65,7 +65,7 @@
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
-      ></v-text-field>
+      />
       <v-text-field
         v-if="config.ffzIntegration"
         v-model="users"
@@ -76,7 +76,7 @@
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
-      ></v-text-field>
+      />
       <v-btn
         block
         @click="updateChannelInfo"

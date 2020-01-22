@@ -15,6 +15,7 @@ module.exports = {
     'plugin:import/typescript',
   ],
   settings: {
+    'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
     'import/resolver': {
       node: {
         moduleDirectory: [
@@ -37,6 +38,7 @@ module.exports = {
     }],
     'import/no-unresolved': [2, { caseSensitive: false }],
     'max-len': ["error", { "code": 100 }],
+    'lines-between-class-members': 'off',
     'require-atomic-updates': 'off',
   },
 };

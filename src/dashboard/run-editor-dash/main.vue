@@ -7,7 +7,7 @@
     >
       Edit Currently Active Run
     </v-btn>
-    <run-list :editor="true"></run-list>
+    <run-list :editor="true" />
   </v-app>
 </template>
 

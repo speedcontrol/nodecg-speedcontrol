@@ -11,19 +11,19 @@
       <text-input
         v-model="teamData.name"
         label="Team Name"
-      ></text-input>
+      />
       <modify-button
         :style="{ 'margin-left': '5px' }"
         icon="mdi-account-multiple-minus"
         tooltip="Remove Team"
         @click="removeTeam"
-      ></modify-button>
+      />
       <modify-button
         :style="{ 'margin-left': '5px' }"
         icon="mdi-account-plus"
         tooltip="Add New Player"
         @click="addNewPlayer"
-      ></modify-button>
+      />
     </div>
     <draggable
       v-model="teamData.players"
@@ -34,7 +34,7 @@
           v-for="player in teamData.players"
           :key="player.id"
           :player-data="player"
-        ></player>
+        />
       </transition-group>
     </draggable>
   </div>
