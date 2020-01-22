@@ -111,10 +111,25 @@ module.exports = {
         loader: 'file-loader',
         options: {
           name: 'font/[name].[ext]',
+          esModule: false,
         },
       },
       {
-        test: /\.(png)?$/,
+        test: /\.svg?$/,
+        include: [
+          path.resolve(__dirname, `src/dashboard/_misc/fonts`),
+        ],
+        loader: 'file-loader',
+        options: {
+          name: 'font/[name].[ext]',
+          esModule: false,
+        },
+      },
+      {
+        test: /\.(png|svg)?$/,
+        exclude: [
+          path.resolve(__dirname, `src/dashboard/_misc/fonts`),
+        ],
         loader: 'file-loader',
         options: {
           name: 'img/[name]-[contenthash].[ext]',
