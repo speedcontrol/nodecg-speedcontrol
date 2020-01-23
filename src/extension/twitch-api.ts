@@ -1,7 +1,7 @@
 import express from 'express';
 import needle, { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
+import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from 'schemas';
 import { CommercialDuration } from 'types';
-import { TwitchAPIData, TwitchChannelInfo } from '../../schemas';
 import * as events from './util/events';
 import { bundleConfig, processAck, to } from './util/helpers';
 import { get } from './util/nodecg';
@@ -11,6 +11,7 @@ const config = bundleConfig();
 const app = express();
 const apiData = nodecg.Replicant<TwitchAPIData>('twitchAPIData');
 const channelInfo = nodecg.Replicant<TwitchChannelInfo>('twitchChannelInfo');
+const commercialTimer = nodecg.Replicant<TwitchCommercialTimer>('twitchCommercialTimer');
 let channelInfoTO: NodeJS.Timeout;
 
 apiData.value.state = 'off'; // Set this to "off" on every start.
@@ -220,6 +221,17 @@ export async function updateChannelInfo(status?: string, game?: string): Promise
   }
 }
 
+function updateCommercialTimer(): void {
+  const timer = commercialTimer.value;
+  const remaining = timer.originalDuration - ((Date.now() - timer.timestamp) / 1000);
+  if (remaining > 0) {
+    commercialTimer.value.secondsRemaining = remaining;
+    setTimeout(updateCommercialTimer);
+  } else {
+    commercialTimer.value.secondsRemaining = 0;
+  }
+}
+
 /**
  * Attempts to start a commercial on the set channel.
  */
@@ -242,6 +254,10 @@ async function startCommercial(duration?: CommercialDuration):
     if (resp.statusCode !== 200) {
       throw new Error(JSON.stringify(resp.body));
     }
+    commercialTimer.value.originalDuration = dur;
+    commercialTimer.value.secondsRemaining = dur;
+    commercialTimer.value.timestamp = Date.now();
+    updateCommercialTimer();
     nodecg.log.info(`[Twitch] Commercial started successfully (${dur} seconds)`);
     nodecg.sendMessage('twitchCommercialStarted', { duration: dur });
     nodecg.sendMessage('twitchAdStarted', { duration: dur }); // Legacy

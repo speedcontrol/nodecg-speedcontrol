@@ -200,7 +200,7 @@ export default Vue.extend({
       }
     },
     startCommercial(): void {
-      nodecg.sendMessage('twitchStartCommercial').then(() => {
+      nodecg.sendMessage('twitchStartCommercial', { duration: 180 }).then(() => {
         // successful
       }).catch(() => {
         // unsuccessful
