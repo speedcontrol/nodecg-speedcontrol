@@ -83,13 +83,22 @@
       >
         Update
       </v-btn>
-      <v-btn
-        v-if="['affiliate', 'partner'].includes(channelInfo.broadcaster_type)"
-        block
-        @click="startCommercial"
-      >
-        Start 3m Commercial
-      </v-btn>
+      <template v-if="['affiliate', 'partner'].includes(channelInfo.broadcaster_type)">
+        <v-btn
+          v-if="timer.secondsRemaining <= 0"
+          block
+          @click="startCommercial"
+        >
+          Start 3m Commercial
+        </v-btn>
+        <v-btn
+          v-else
+          block
+          disabled
+        >
+          Commercial Running ({{ timer.secondsRemaining }}s Remaining)
+        </v-btn>
+      </template>
     </div>
   </v-app>
 </template>
@@ -100,7 +109,7 @@ import { debounce } from 'lodash';
 import { nodecg } from '../_misc/nodecg';
 import { Configschema } from '../../../configschema';
 import { store } from '../_misc/replicant-store';
-import { TwitchAPIData, TwitchChannelInfo } from '../../../schemas';
+import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '../../../schemas';
 
 export default Vue.extend({
   data() {
@@ -120,6 +129,9 @@ export default Vue.extend({
     },
     channelInfo(): TwitchChannelInfo {
       return store.state.twitchChannelInfo;
+    },
+    timer(): TwitchCommercialTimer {
+      return store.state.twitchCommercialTimer;
     },
     sync: {
       get(): boolean {
