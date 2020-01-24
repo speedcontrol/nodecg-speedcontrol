@@ -221,12 +221,17 @@ export async function updateChannelInfo(status?: string, game?: string): Promise
   }
 }
 
+/**
+ * Triggered when a commercial is started, and runs every second
+ * until it has assumed to have ended, to update the relevant replicant.
+ * We also do this during setup, in case there was one running when the app closed.
+ */
 function updateCommercialTimer(): void {
   const timer = commercialTimer.value;
   const remaining = timer.originalDuration - ((Date.now() - timer.timestamp) / 1000);
   if (remaining > 0) {
-    commercialTimer.value.secondsRemaining = remaining;
-    setTimeout(updateCommercialTimer);
+    commercialTimer.value.secondsRemaining = Math.round(remaining);
+    setTimeout(updateCommercialTimer, 1000);
   } else {
     commercialTimer.value.secondsRemaining = 0;
   }
@@ -254,10 +259,13 @@ async function startCommercial(duration?: CommercialDuration):
     if (resp.statusCode !== 200) {
       throw new Error(JSON.stringify(resp.body));
     }
+
+    // Update commercial timer values, trigger check logic.
     commercialTimer.value.originalDuration = dur;
     commercialTimer.value.secondsRemaining = dur;
     commercialTimer.value.timestamp = Date.now();
     updateCommercialTimer();
+
     nodecg.log.info(`[Twitch] Commercial started successfully (${dur} seconds)`);
     nodecg.sendMessage('twitchCommercialStarted', { duration: dur });
     nodecg.sendMessage('twitchAdStarted', { duration: dur }); // Legacy
@@ -296,6 +304,7 @@ async function setUp(): Promise<void> {
   clearTimeout(channelInfoTO);
   apiData.value.state = 'on';
   refreshChannelInfo();
+  updateCommercialTimer();
 }
 
 if (config.twitch.enabled) {
