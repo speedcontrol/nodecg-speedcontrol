@@ -16,16 +16,18 @@ export interface Configschema {
     streamDefaultGame: string;
     ffzIntegration?: boolean;
     ffzUseRepeater?: boolean;
-    ffzBlacklist?: string[];
+    ffzBlacklist?: string[] | null;
   };
   schedule: {
     defaultURL: string;
-    ignoreGamesWhileImporting?: string[];
+    ignoreGamesWhileImporting?: string[] | null;
     disableSpeedrunComLookup: boolean;
-    customData?: {
-      name: string;
-      key: string;
-      ignoreMarkdown?: boolean;
-    }[];
+    customData?:
+      | {
+          name: string;
+          key: string;
+          ignoreMarkdown?: boolean;
+        }[]
+      | null;
   };
 }

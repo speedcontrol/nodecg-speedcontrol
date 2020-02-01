@@ -28,6 +28,9 @@ module.exports = {
     'plugin:import/typescript',
   ],
   rules: {
+    'import/extensions': ['error', 'ignorePackages', {
+      ts: "never"
+    }],
     'import/no-extraneous-dependencies': ['error', {
       devDependencies: true, // Some places have dev deps imported where eslint complains.
       packageDir: ['.', '../..'], // Check for deps in NodeCG folder as well.

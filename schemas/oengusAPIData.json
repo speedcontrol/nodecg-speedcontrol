@@ -1,0 +1,39 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "state": {
+            "type": "string",
+            "enum": [
+                "off",
+                "authenticating",
+                "on"
+            ],
+            "default": "off"
+        },
+        "authorizeVia": {
+            "type": "string",
+            "enum": [
+                "discord",
+                "twitch",
+                "twitter"
+            ]
+        },
+        "accessToken": {
+            "type": "string"
+        },
+        "refreshToken": {
+            "type": "string"
+        },
+        "id": {
+            "type": "string"
+        },
+        "username": {
+            "type": "string"
+        },
+        "usernameJapanese": {
+            "type": "string"
+        }
+    }
+}
