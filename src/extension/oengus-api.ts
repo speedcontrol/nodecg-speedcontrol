@@ -2,7 +2,7 @@ import needle, { NeedleResponse } from 'needle';
 import { mapSeries } from 'p-iteration';
 import uuid from 'uuid/v4';
 import { parse as isoParse, Duration, toSeconds } from 'iso8601-duration';
-import { isOengusSchedule } from '../../types/Oengus';
+import { OengusSchedule } from '../../types/Oengus';
 import { get as ncgGet } from './util/nodecg';
 import { checkGameAgainstIgnoreList, padTimeNumber, processAck } from './util/helpers';
 import { RunData, RunDataTeam, RunDataPlayer, RunDataArray } from '../../types'; // eslint-disable-line object-curly-newline, max-len
@@ -28,6 +28,7 @@ async function get(endpoint: string): Promise<NeedleResponse> {
         },
       },
     );
+    nodecg.log.debug(resp.body);
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore: parser exists but isn't in the typings
     if (resp.parser !== 'json') {
@@ -57,6 +58,11 @@ function formatDuration(duration: Duration): string {
   return digits.join(':');
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isOengusSchedule(source: any): source is OengusSchedule {
+  return (typeof source.id === 'number' && source.lines !== undefined);
+}
+
 /**
  * Import schedule data in from Oengus.
  * @param marathonId Oengus's marathon id you want to import.
@@ -64,7 +70,7 @@ function formatDuration(duration: Duration): string {
  */
 async function importSchedule(marathonId: string, useJapanese: boolean): Promise<void> {
   // Changing import status is needed?
-  const resp = await get(`matarhon/${marathonId}/schedule`);
+  const resp = await get(`/marathon/${marathonId}/schedule`);
   if (!isOengusSchedule(resp.body)) {
     throw new Error('Failed to import schedule from Oengus.');
   }
@@ -81,15 +87,26 @@ async function importSchedule(marathonId: string, useJapanese: boolean): Promise
     };
 
     // General Run Data
-    runData.game = line.gameName;
-    runData.system = line.console;
-    runData.category = line.categoryName;
+    runData.game = line.gameName ?? undefined;
+    runData.system = line.console ?? undefined;
+    runData.category = line.categoryName ?? undefined;
     const parsedEstimate = isoParse(line.estimate);
     runData.estimate = formatDuration(parsedEstimate);
     runData.estimateS = toSeconds(parsedEstimate);
     const parsedSetup = isoParse(line.setupTime);
     runData.setupTime = formatDuration(parsedSetup);
     runData.setupTimeS = toSeconds(parsedSetup);
+    if (line.setupBlock) {
+      // "Setup" will set to RunData.game if the line is setup block
+      runData.game = 'Setup';
+      // In setup block, 'setupTime' should be estimated.
+      runData.estimate = runData.setupTime;
+      runData.estimateS = runData.setupTimeS;
+      runData.setupTime = formatDuration({ seconds: 0 });
+      runData.setupTimeS = 0;
+    }
+
+    // Team Data
     runData.teams = await mapSeries(line.runners, (runner) => {
       const team: RunDataTeam = {
         id: uuid(),
@@ -99,10 +116,11 @@ async function importSchedule(marathonId: string, useJapanese: boolean): Promise
         name: (useJapanese && runner.usernameJapanese) ? runner.usernameJapanese : runner.username,
         id: uuid(),
         teamID: team.id,
-        social: {
-          twitch: runner.twitchName,
-        },
+        social: {},
       };
+      if (runner.twitchName) {
+        player.social.twitch = runner.twitchName;
+      }
       team.players.push(player);
       return team;
     });
@@ -111,13 +129,17 @@ async function importSchedule(marathonId: string, useJapanese: boolean): Promise
   runDataArray.value = newRunDataArray;
 }
 
-nodecg.listenFor('importSchedule', (data, ack) => {
+nodecg.listenFor('importOengusSchedule', (data, ack) => {
   try {
     nodecg.log.info('[Oengus] Started importing schedule');
     importSchedule(data.marathonId, data.useJapanese)
       .then(() => {
         nodecg.log.info('[Oengus] Successfully imported schedule from Oengus.');
         processAck(ack, null);
+      })
+      .catch((err) => {
+        nodecg.log.warn('[Oengus] Error importing schedule:', err);
+        processAck(ack, err);
       });
   } catch (err) {
     nodecg.log.warn('[Oengus] Error importing schedule:', err);

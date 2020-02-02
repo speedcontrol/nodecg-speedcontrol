@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line import/no-unresolved, max-len
 import { Configschema } from '../../../configschema';
 import { RunData, RunDataArray, SendMessageAck } from '../../../types';

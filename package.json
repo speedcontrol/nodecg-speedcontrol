@@ -124,6 +124,13 @@
         "workspace": "Run Modifications"
       },
       {
+        "name": "oengus-schedule-import",
+        "title": "Oengus Schedule Import",
+        "file": "oengus-schedule-import.html",
+        "width": 2,
+        "workspace": "Run Modifications"
+      },
+      {
         "name": "timer",
         "title": "Timer",
         "file": "timer.html",

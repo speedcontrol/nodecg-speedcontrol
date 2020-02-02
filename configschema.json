@@ -114,10 +114,27 @@
         "defaultURL",
         "disableSpeedrunComLookup"
       ]
+    },
+    "oengus": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultMarathon": {
+          "type": "string"
+        },
+        "useJapanese": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "useJapanese"
+      ]
     }
   },
   "required": [
     "twitch",
-    "schedule"
+    "schedule",
+    "oengus"
   ]
 }
