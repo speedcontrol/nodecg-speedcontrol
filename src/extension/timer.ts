@@ -9,7 +9,9 @@ import { msToTimeStr, processAck, timeStrToMS } from './util/helpers';
 import { get } from './util/nodecg';
 
 const nodecg = get();
-const timerRep = nodecg.Replicant<Timer>('timer');
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: persistenceInterval not typed yet
+const timerRep = nodecg.Replicant<Timer>('timer', { persistenceInterval: 1000 });
 const activeRun = nodecg.Replicant<RunDataActiveRun>('runDataActiveRun');
 const runFinishTimes = nodecg.Replicant<RunFinishTimes>('runFinishTimes');
 const changesDisabled = nodecg.Replicant<TimerChangesDisabled>('timerChangesDisabled');

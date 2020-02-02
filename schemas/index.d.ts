@@ -10,3 +10,4 @@ export * from './timer';
 export * from './timerChangesDisabled';
 export * from './twitchAPIData';
 export * from './twitchChannelInfo';
+export * from './twitchCommercialTimer';

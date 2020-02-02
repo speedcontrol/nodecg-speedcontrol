@@ -33,7 +33,7 @@
         Cannot change run while timer is {{ timerState }}.
       </v-alert>
     </div>
-    <run-list></run-list>
+    <run-list />
   </v-app>
 </template>
 

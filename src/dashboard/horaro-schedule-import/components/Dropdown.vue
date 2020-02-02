@@ -17,7 +17,7 @@
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-divider class="mb-2"></v-divider>
+      <v-divider class="mb-2" />
     </template>
   </v-select>
 </template>

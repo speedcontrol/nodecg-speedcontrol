@@ -1,25 +1,25 @@
 <template>
   <v-app>
     <div :class="{ disabled: disableChanges }">
-      <timer-time></timer-time>
+      <timer-time />
       <div
         id="Controls"
         class="d-flex justify-center"
       >
-        <start-button></start-button>
-        <reset-button></reset-button>
+        <start-button />
+        <reset-button />
         <!-- Will not show if more than 1 team -->
         <template v-if="teams.length <= 1">
           <stop-button
             :info="teams[0]"
-          ></stop-button>
+          />
           <stop-button
             :info="teams[0]"
             forfeit
-          ></stop-button>
+          />
           <undo-button
             :info="teams[0]"
-          ></undo-button>
+          />
         </template>
       </div>
       <!-- Will only show if more than 1 team -->
@@ -32,7 +32,7 @@
           :key="team.id"
           :info="team"
           :index="index"
-        ></team>
+        />
       </div>
     </div>
     <div

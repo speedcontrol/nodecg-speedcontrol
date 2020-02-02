@@ -2,7 +2,7 @@ import clone from 'clone';
 import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line import/no-unresolved
 import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
-import { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo } from '../../../schemas'; // eslint-disable-line max-len, object-curly-newline
+import { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '../../../schemas'; // eslint-disable-line max-len, object-curly-newline
 import { RunDataActiveRun, RunDataArray, Timer } from '../../../types';
 
 Vue.use(Vuex);
@@ -19,6 +19,7 @@ const replicantNames = [
   'timerChangesDisabled',
   'twitchAPIData',
   'twitchChannelInfo',
+  'twitchCommercialTimer',
 ];
 const replicants: ReplicantBrowser<unknown>[] = [];
 
@@ -35,6 +36,7 @@ export const store = new Vuex.Store({
     timerChangesDisabled: false as TimerChangesDisabled,
     twitchAPIData: {} as TwitchAPIData,
     twitchChannelInfo: {} as TwitchChannelInfo,
+    twitchCommercialTimer: {} as TwitchCommercialTimer,
   },
   mutations: {
     updateReplicant(state, { name, value }): void {
@@ -107,6 +109,7 @@ export async function create(): Promise<Store<{
   timerChangesDisabled: TimerChangesDisabled;
   twitchAPIData: TwitchAPIData;
   twitchChannelInfo: TwitchChannelInfo;
+  twitchCommercialTimer: TwitchCommercialTimer;
 }>> {
   return NodeCG.waitForReplicants(...replicants).then(() => store);
 }

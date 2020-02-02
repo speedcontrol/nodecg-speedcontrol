@@ -9,14 +9,14 @@
       :messages="`
         ${filteredRunDataArray.length} run${filteredRunDataArray.length === 1 ? '' : 's'} found.
       `"
-    ></v-text-field>
+    />
     <div v-if="editor && twitchAPIData.state === 'on'">
       <v-checkbox
         v-model="hasNoTwitch"
         class="ma-1 pa-0"
         hide-details
         label="Run has no Twitch game directory listed"
-      ></v-checkbox>
+      />
     </div>
     <div
       ref="runList"
@@ -39,7 +39,7 @@
               :editor="editor"
               :disable-change="disableChange"
               :move-disabled="!!searchTerm || hasNoTwitch || !editor"
-            ></run-panel>
+            />
           </transition-group>
         </draggable>
       </v-expansion-panels>

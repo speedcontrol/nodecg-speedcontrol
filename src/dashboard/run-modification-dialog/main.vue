@@ -21,44 +21,44 @@
         <text-input
           v-model="runData.game"
           label="Game"
-        ></text-input>
+        />
         <text-input
           v-model="runData.category"
           label="Category"
           left-border
-        ></text-input>
+        />
       </div>
       <div class="d-flex">
         <text-input
           v-model="runData.region"
           label="Region"
-        ></text-input>
+        />
         <text-input
           v-model="runData.release"
           label="Released"
           left-border
-        ></text-input>
+        />
         <text-input
           v-model="runData.gameTwitch"
           label="Game (Twitch)"
           left-border
-        ></text-input>
+        />
       </div>
       <div class="d-flex">
         <text-input
           v-model="runData.system"
           label="System"
-        ></text-input>
+        />
         <text-input
           v-model="runData.estimate"
           label="Estimate"
           left-border
-        ></text-input>
+        />
         <text-input
           v-model="runData.setupTime"
           label="Setup Time"
           left-border
-        ></text-input>
+        />
       </div>
       <!-- Custom Data Inputs -->
       <div>
@@ -67,7 +67,7 @@
           :key="data.key"
           v-model="runData.customData[data.key]"
           :label="data.name"
-        ></text-input>
+        />
       </div>
     </div>
     <div>
@@ -81,7 +81,7 @@
             v-for="team in runData.teams"
             :key="team.id"
             :team-data="team"
-          ></team>
+          />
         </transition-group>
       </draggable>
     </div>
@@ -94,14 +94,14 @@
         icon="mdi-account-multiple-plus"
         tooltip="Add New Team"
         @click="addNewTeam"
-      ></modify-button>
+      />
       <v-checkbox
         v-if="mode === 'EditActive' && twitchAPIData.state === 'on'"
         v-model="updateTwitch"
         class="ma-0 pa-0 align-center justify-center"
         hide-details
         label="Update Twitch information"
-      ></v-checkbox>
+      />
       <v-btn
         :style="{ 'margin-left': '10px' }"
         @click="attemptSave"

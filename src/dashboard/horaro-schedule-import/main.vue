@@ -7,7 +7,7 @@
       hide-details
       label="Horaro Schedule URL"
       :disabled="importStatus.importing"
-    ></v-text-field>
+    />
     <!-- "Load Schedule Data" Button -->
     <v-btn
       :style="{ margin: '5px 0 10px 0' }"
@@ -31,7 +31,7 @@
         :option="option"
         :columns="columns"
         class="Dropdown"
-      ></dropdown>
+      />
       <div :style="{ 'margin-top': '10px' }">
         Split Players:
         <v-tooltip top>
@@ -58,8 +58,7 @@
         dense
         :height="27"
         class="Dropdown"
-      >
-      </v-select>
+      />
     </div>
     <!-- Message while importing is in progress -->
     <div v-else-if="importStatus.importing">
@@ -99,13 +98,13 @@
           tooltip="Save Configuration"
           :disabled="saved"
           @click="saveOpts"
-        ></config-button>
+        />
         <config-button
           icon="mdi-undo"
           tooltip="Clear Custom Configuration"
           :disabled="restored"
           @click="clearOpts"
-        ></config-button>
+        />
       </div>
     </div>
   </v-app>

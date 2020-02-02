@@ -2,14 +2,14 @@
   <div class="Team d-flex align-center">
     <stop-button
       :info="info"
-    ></stop-button>
+    />
     <stop-button
       :info="info"
       forfeit
-    ></stop-button>
+    />
     <undo-button
       :info="info"
-    ></undo-button>
+    />
     <div class="TeamName">
       <!-- Show team name if it exists -->
       <span v-if="info.name">{{ info.name }}</span>

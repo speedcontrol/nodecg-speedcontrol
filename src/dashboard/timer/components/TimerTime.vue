@@ -16,8 +16,7 @@
             :readonly="disableEditing"
             @blur="abandonEdit"
             @keyup.enter="finishEdit"
-          >
-          </v-text-field>
+          />
         </span>
       </template>
       <span>Click to edit, Enter to save</span>

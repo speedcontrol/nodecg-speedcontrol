@@ -5,7 +5,7 @@
       :alert-data="alertData"
       @confirm="close(true)"
       @dismiss="close(false)"
-    ></component>
+    />
   </v-app>
 </template>
 
