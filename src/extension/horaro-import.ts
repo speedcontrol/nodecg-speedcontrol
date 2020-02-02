@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import _ from 'lodash';
 import MarkdownIt from 'markdown-it';
 import needle from 'needle';
 import { mapSeries } from 'p-iteration';
