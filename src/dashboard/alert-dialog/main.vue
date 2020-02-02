@@ -18,6 +18,7 @@ import RemoveRunConfirm from './components/RemoveRunConfirm.vue';
 import TwitchLogoutConfirm from './components/TwitchLogoutConfirm.vue';
 import NoTwitchGame from './components/NoTwitchGame.vue';
 import { nodecg } from '../_misc/nodecg';
+import OengusImportConfirm from './components/OengusImportConfirm.vue';
 
 export default Vue.extend({
   data() {
@@ -60,6 +61,8 @@ export default Vue.extend({
           switch (name) {
             case 'HoraroImportConfirm':
               return HoraroImportConfirm;
+            case 'OengusImportConfirm':
+              return OengusImportConfirm;
             case 'ReturnToStartConfirm':
               return ReturnToStartConfirm;
             case 'RemoveAllRunsConfirm':

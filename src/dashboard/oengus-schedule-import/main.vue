@@ -27,7 +27,7 @@
       :style="{ margin: '5px 0' }"
       :disabled="importing"
       :loading="importing"
-      @click="importSchedule"
+      @click="importConfirm"
     >
       Import Schedule Data
     </v-btn>
@@ -46,16 +46,25 @@ export default Vue.extend({
     };
   },
   methods: {
-    importSchedule(): void {
-      this.importing = true;
-      nodecg.sendMessage('importOengusSchedule', {
-        marathonId: this.marathonId,
-        useJapanese: this.useJapanese,
-      }).then(() => {
-        this.importing = false;
-      }).catch(() => {
-        this.importing = false;
+    importConfirm(): void {
+      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+      alertDialog.querySelector('iframe').contentWindow.open({
+        name: 'OengusImportConfirm',
+        func: this.import,
       });
+    },
+    import(confirm: boolean): void {
+      if (confirm) {
+        this.importing = true;
+        nodecg.sendMessage('importOengusSchedule', {
+          marathonId: this.marathonId,
+          useJapanese: this.useJapanese,
+        }).then(() => {
+          this.importing = false;
+        }).catch(() => {
+          this.importing = false;
+        });
+      }
     },
   },
 });
