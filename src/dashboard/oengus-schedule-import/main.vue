@@ -17,7 +17,7 @@
     <v-switch
       v-model="useJapanese"
       hide-details
-      label="Using Japanese name"
+      label="Use Japanese name"
       color="primary"
       :style="{ margin: '5px 0'}"
     >
