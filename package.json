@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "clone": "^2.1.2",
+    "iso8601-duration": "^1.2.0",
     "livesplit-core": "^0.10.2",
     "lodash": "^4.17.15",
     "markdown-it": "^10.0.0",

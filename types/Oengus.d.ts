@@ -3,6 +3,10 @@ export interface OengusSchedule {
     lines: OengusLine[];
 }
 
+export function isOengusSchedule(source: any): source is OengusSchedule {
+    return (typeof source.id === 'number' && source.line !== undefined);
+}
+
 export interface OengusLine {
     id: number;
     gameName: string;
@@ -17,7 +21,7 @@ export interface OengusLine {
     position: number;
     categoryId: number;
     type: OengusRunType;
-    runners: OengusUser;
+    runners: OengusUser[];
 }
 
 export enum OengusRunType {
