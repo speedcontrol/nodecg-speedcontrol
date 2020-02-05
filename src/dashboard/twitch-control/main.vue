@@ -96,7 +96,7 @@
           block
           disabled
         >
-          Commercial Running ({{ timer.secondsRemaining }}s Remaining)
+          Commercial Running ({{ commercialTimeRemaining }} Remaining)
         </v-btn>
       </template>
     </div>
@@ -110,6 +110,7 @@ import { nodecg } from '../_misc/nodecg';
 import { Configschema } from '../../../configschema';
 import { store } from '../_misc/replicant-store';
 import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '../../../schemas';
+import { padTimeNumber } from '../_misc/helpers';
 
 export default Vue.extend({
   data() {
@@ -148,6 +149,11 @@ export default Vue.extend({
       + '&response_type=code'
       + '&scope=channel_editor+user_read+chat:read+chat:edit+channel_commercial'
       + '&force_verify=true';
+    },
+    commercialTimeRemaining(): string {
+      const minutes = Math.floor(this.timer.secondsRemaining / 60);
+      const seconds = Math.floor(this.timer.secondsRemaining - minutes * 60);
+      return `${minutes}:${padTimeNumber(seconds)}`;
     },
   },
   watch: {
