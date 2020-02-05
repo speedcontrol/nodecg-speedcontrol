@@ -11,19 +11,33 @@
     </div>
     <div>
       <v-btn
+        class="NextRunBtn"
+        width="100%"
         block
         :disabled="disableChange || !nextRun"
         @click="playNextRun"
       >
-        <span v-if="nextRun">
-          <v-icon left>mdi-play</v-icon>{{ nextRunGameName }}
-        </span>
-        <span v-else-if="runDataArray.length">
-          No Runs Left
-        </span>
-        <span v-else>
-          No Runs Added
-        </span>
+        <div
+          class="d-flex justify-center"
+          :style="{ width: '100%' }"
+        >
+          <template v-if="nextRun">
+            <div>
+              <v-icon left>
+                mdi-play
+              </v-icon>
+            </div>
+            <div :style="{ overflow: 'hidden' }">
+              {{ nextRunGameName }}
+            </div>
+          </template>
+          <div v-else-if="runDataArray.length">
+            No Runs Left
+          </div>
+          <div v-else>
+            No Runs Added
+          </div>
+        </div>
       </v-btn>
       <v-alert
         v-if="disableChange"
@@ -63,7 +77,7 @@ export default Vue.extend({
     },
     nextRunGameName(): string {
       if (this.nextRun && this.nextRun.game) {
-        return `${this.nextRun.game.slice(0, 35)}${(this.nextRun.game.length > 35) ? '...' : ''}`;
+        return this.nextRun.game;
       }
       return '(The Run With No Name)';
     },
@@ -112,5 +126,11 @@ export default Vue.extend({
 <style scoped>
   .v-btn {
     margin-bottom: 5px;
+  }
+</style>
+
+<style>
+  .NextRunBtn > .v-btn__content {
+    width: 100%;
   }
 </style>
