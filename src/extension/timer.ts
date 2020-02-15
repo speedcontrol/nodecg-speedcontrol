@@ -94,7 +94,7 @@ async function startTimer(force?: boolean): Promise<void> {
     timerRep.value.state = 'running';
   } catch (err) {
     nodecg.log.debug('[Timer] Cannot start/resume timer:', err);
-    throw err;
+    // throw err;
   }
 }
 
@@ -117,7 +117,7 @@ async function pauseTimer(): Promise<void> {
     nodecg.log.debug('[Timer] Paused');
   } catch (err) {
     nodecg.log.debug('[Timer] Cannot pause timer:', err);
-    throw err;
+    // throw err;
   }
 }
 
@@ -141,7 +141,7 @@ export async function resetTimer(force?: boolean): Promise<void> {
     nodecg.log.debug('[Timer] Reset');
   } catch (err) {
     nodecg.log.debug('[Timer] Cannot reset timer:', err);
-    throw err;
+    // throw err;
   }
 }
 
@@ -198,7 +198,7 @@ async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
     }
   } catch (err) {
     nodecg.log.debug('[Timer] Cannot stop timer:', err);
-    throw err;
+    // throw err;
   }
 }
 
@@ -238,7 +238,7 @@ async function undoTimer(id?: string): Promise<void> {
     }
   } catch (err) {
     nodecg.log.debug('[Timer] Cannot undo timer:', err);
-    throw err;
+    // throw err;
   }
 }
 
@@ -266,7 +266,7 @@ async function editTimer(time: string): Promise<void> {
     nodecg.log.debug(`[Timer] Edited to ${time}/${ms}`);
   } catch (err) {
     nodecg.log.debug('[Timer] Cannot edit timer:', err);
-    throw err;
+    // throw err;
   }
 }
 
