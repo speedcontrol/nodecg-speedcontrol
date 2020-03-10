@@ -112,7 +112,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import { nodecg } from '../_misc/nodecg';
 import { store as repStore } from '../_misc/replicant-store';
 import store from './store';

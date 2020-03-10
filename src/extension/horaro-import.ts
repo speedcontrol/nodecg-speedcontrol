@@ -5,7 +5,7 @@ import needle from 'needle';
 import { mapSeries } from 'p-iteration';
 import parseDuration from 'parse-duration';
 import removeMd from 'remove-markdown';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
 import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataTeam, UserData } from '../../types'; // eslint-disable-line object-curly-newline, max-len
 import { searchForTwitchGame, searchForUserData } from './srcom-api';

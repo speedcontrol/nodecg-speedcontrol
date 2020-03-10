@@ -1,5 +1,5 @@
 import clone from 'clone';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { RunData, RunDataPlayer, RunDataTeam } from '../../../types';
