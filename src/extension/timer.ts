@@ -66,12 +66,12 @@ function setGameTime(ms: number): void {
 
 /**
  * Start/resume the timer, depending on the current state.
- * @param force Force the timer to start, even if it's state is running.
+ * @param force Force the timer to start, even if it's state is running/changes are disabled.
  */
 async function startTimer(force?: boolean): Promise<void> {
   try {
     // Error if the timer is disabled.
-    if (changesDisabled.value) {
+    if (!force && changesDisabled.value) {
       throw new Error('Timer changes are disabled');
     }
     // Error if the timer is finished.
@@ -295,7 +295,8 @@ if (timerRep.value.state === 'running') {
   const timeOffset = previousTime + missedTime;
   setTime(timeOffset);
   nodecg.log.info(`[Timer] Recovered ${(missedTime / 1000).toFixed(2)} seconds of lost time`);
-  startTimer(true);
+  startTimer(true)
+    .catch(() => { /* catch error if needed, for safety */ });
 }
 
 // NodeCG messaging system.
