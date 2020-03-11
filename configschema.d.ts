@@ -30,4 +30,8 @@ export interface Configschema {
         }[]
       | null;
   };
+  oengus: {
+    defaultMarathon: string;
+    useJapanese: boolean;
+  };
 }

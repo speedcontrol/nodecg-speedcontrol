@@ -132,7 +132,8 @@
       "additionalProperties": false,
       "properties": {
         "defaultMarathon": {
-          "type": "string"
+          "type": "string",
+          "default": "SHORTNAME"
         },
         "useJapanese": {
           "type": "boolean",
@@ -140,6 +141,7 @@
         }
       },
       "required": [
+        "defaultMarathon",
         "useJapanese"
       ]
     }
