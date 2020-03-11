@@ -6,7 +6,7 @@
  */
 
 export interface OengusAPIData {
-  state?: "off" | "authenticating" | "on";
+  state: "off" | "authenticating" | "on";
   authorizeVia?: "discord" | "twitch" | "twitter";
   accessToken?: string;
   refreshToken?: string;

@@ -8,7 +8,7 @@
       label="Oengus marathon ID"
       placeholder="id"
       prefix="/marathon/"
-    ></v-text-field>
+    />
     <div :style="{ margin: '5px 0'}">
       Insert the Oengus marathon ID (not include "/schedule") above and press
       the "Import Schedule Data" button to import schedule.
@@ -20,8 +20,7 @@
       label="Use Japanese name"
       color="primary"
       :style="{ margin: '5px 0'}"
-    >
-    </v-switch>
+    />
     <!-- "Import Schedule Data" Button -->
     <v-btn
       :style="{ margin: '5px 0' }"
