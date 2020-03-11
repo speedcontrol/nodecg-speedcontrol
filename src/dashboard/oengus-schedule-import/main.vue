@@ -48,7 +48,7 @@ export default Vue.extend({
     importConfirm(): void {
       const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
       alertDialog.querySelector('iframe').contentWindow.open({
-        name: 'OengusImportConfirm',
+        name: 'ImportConfirm',
         func: this.import,
       });
     },
