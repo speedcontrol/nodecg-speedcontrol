@@ -16,7 +16,8 @@
     "Charleon",
     "btrim",
     "Zephyyrr",
-    "Planks"
+    "Planks",
+    "cma2819"
   ],
   "scripts": {
     "autofix": "run-s autofix:*",
