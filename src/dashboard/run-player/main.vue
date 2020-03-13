@@ -1,3 +1,14 @@
+<i18n>
+{
+  "en": {
+    "returnToStart": "Return to Start",
+    "noRunsLeft": "No Runs Left",
+    "noRunsAdded": "No Runs Added",
+    "cannotChange": "Cannot change run while timer is {state}"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <div>
@@ -6,7 +17,7 @@
         :disabled="!activeRun || disableChange"
         @click="returnToStartConfirm"
       >
-        Return to Start
+        {{ $t('returnToStart') }}
       </v-btn>
     </div>
     <div>
@@ -32,10 +43,10 @@
             </div>
           </template>
           <div v-else-if="runDataArray.length">
-            No Runs Left
+            {{ $t('noRunsLeft') }}
           </div>
           <div v-else>
-            No Runs Added
+            {{ $t('noRunsAdded') }}
           </div>
         </div>
       </v-btn>
@@ -44,7 +55,7 @@
         dense
         type="info"
       >
-        Cannot change run while timer is {{ timerState }}.
+        {{ $t('cannotChange', { state: timerState }) }}
       </v-alert>
     </div>
     <run-list />
