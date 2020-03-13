@@ -1,8 +1,28 @@
+<i18n>
+{
+  "en": {
+    "panelTitle": "Twitch Control",
+    "notEnabled": "Twitch integration is not enabled.",
+    "twitchLogin": "Click the image above to login to Twitch to auto-sync data.",
+    "authenticating": "Authenticating...",
+    "logout": "Logout",
+    "autosync": "Auto-sync title/game?",
+    "autosyncFFZ": "Auto-sync title/game/featured channels?",
+    "title": "Title",
+    "gameDirectory": "Game Directory",
+    "featuredChannels": "Featured Channels",
+    "update": "Update",
+    "startCommercial": "Start 3m Commercial",
+    "commercialRunning": "Commercial Running ({time} Remaining)"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <!-- Not enabled. -->
     <div v-if="!config.enabled">
-      Twitch integration is not enabled.
+      {{ $t('notEnabled') }}
     </div>
     <!-- Enabled but not logged in server-side. -->
     <div v-else-if="apiData.state === 'off'">
@@ -10,11 +30,11 @@
         :href="url"
         target="_blank"
       ><img src="./twitch-login.png"></a>
-      <br><em>Click the image above to login to Twitch to auto-sync data.</em>
+      <br><em>{{ $t('twitchLogin') }}</em>
     </div>
     <!-- Enabled, authenticating server-side. -->
     <div v-else-if="apiData.state === 'authenticating'">
-      Authenticating...
+      {{ $t('authenticating') }}
     </div>
     <!-- Ready server-side. -->
     <div v-else>
@@ -33,7 +53,7 @@
               <span>({{ apiData.channelName }})</span>
             </v-btn>
           </template>
-          <span>Logout</span>
+          <span>{{ $t('logout') }}</span>
         </v-tooltip>
       </div>
       <div id="AutoSyncContainer">
@@ -42,14 +62,17 @@
           inset
           hide-details
         />
-        Auto-sync title/game<span
-          v-if="config.ffzIntegration"
-        >/featured channels</span>?
+        <template v-if="!config.ffzIntegration">
+          {{ $t('autosync') }}
+        </template>
+        <template v-else>
+          {{ $t('autosyncFFZ') }}
+        </template>
       </div>
       <v-text-field
         v-model="title"
         class="TextBox"
-        label="Title"
+        :label="$t('title')"
         hide-details
         filled
         @input="inputActivity"
@@ -59,7 +82,7 @@
       <v-text-field
         v-model="game"
         class="TextBox"
-        label="Game Directory"
+        :label="$t('gameDirectory')"
         hide-details
         filled
         @input="inputActivity"
@@ -70,7 +93,7 @@
         v-if="config.ffzIntegration"
         v-model="users"
         class="TextBox"
-        label="Featured Channels"
+        :label="$t('featuredChannels')"
         hide-details
         filled
         @input="inputActivity"
@@ -81,7 +104,7 @@
         block
         @click="updateChannelInfo"
       >
-        Update
+        {{ $t('update') }}
       </v-btn>
       <template v-if="['affiliate', 'partner'].includes(channelInfo.broadcaster_type)">
         <v-btn
@@ -89,14 +112,14 @@
           block
           @click="startCommercial"
         >
-          Start 3m Commercial
+          {{ $t('startCommercial') }}
         </v-btn>
         <v-btn
           v-else
           block
           disabled
         >
-          Commercial Running ({{ commercialTimeRemaining }} Remaining)
+          {{ $t('commercialRunning', { time: commercialTimeRemaining }) }}
         </v-btn>
       </template>
     </div>
@@ -172,6 +195,11 @@ export default Vue.extend({
   },
   created() {
     this.blurInput = debounce(this.blurInput, 20 * 1000);
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
   methods: {
     inputActivity(evt: Event): void {
