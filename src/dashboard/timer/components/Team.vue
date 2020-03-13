@@ -1,3 +1,11 @@
+<i18n>
+{
+  "en": {
+    "forfeit": "Forfeit"
+  }
+}
+</i18n>
+
 <template>
   <div class="Team d-flex align-center">
     <stop-button
@@ -30,7 +38,7 @@
         [{{ finishTime }}]
       </span>
       <span v-else-if="finishTime && state === 'forfeit'">
-        [Forfeit]
+        [{{ $t('forfeit') }}]
       </span>
     </div>
   </div>

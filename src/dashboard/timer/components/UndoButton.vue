@@ -1,3 +1,11 @@
+<i18n>
+{
+  "en": {
+    "undo": "Undo"
+  }
+}
+</i18n>
+
 <template>
   <div>
     <v-tooltip
@@ -14,7 +22,7 @@
           </v-btn>
         </span>
       </template>
-      <span>Undo</span>
+      <span>{{ $t('undo') }}</span>
     </v-tooltip>
   </div>
 </template>

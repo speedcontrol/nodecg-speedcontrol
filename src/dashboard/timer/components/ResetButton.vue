@@ -1,3 +1,11 @@
+<i18n>
+{
+  "en": {
+    "reset": "Reset"
+  }
+}
+</i18n>
+
 <template>
   <div>
     <v-tooltip
@@ -14,7 +22,7 @@
           </v-btn>
         </span>
       </template>
-      <span>Reset</span>
+      <span>{{ $t('reset') }}</span>
     </v-tooltip>
   </div>
 </template>

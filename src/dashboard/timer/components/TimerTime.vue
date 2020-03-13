@@ -1,3 +1,11 @@
+<i18n>
+{
+  "en": {
+    "editTip": "Click to edit, Enter to save"
+  }
+}
+</i18n>
+
 <template>
   <div>
     <v-tooltip
@@ -19,7 +27,7 @@
           />
         </span>
       </template>
-      <span>Click to edit, Enter to save</span>
+      <span>{{ $t('editTip') }}</span>
     </v-tooltip>
   </div>
 </template>

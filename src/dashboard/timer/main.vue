@@ -1,3 +1,13 @@
+<i18n>
+{
+  "en": {
+    "enableChanges": "Enable Changes",
+    "disableChanges": "Disable Changes",
+    "toggleChangesNote": "Only use this button if needed."
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <div :class="{ disabled: disableChanges }">
@@ -44,17 +54,17 @@
         block
         @click="disableChanges = false; tempEnable = true"
       >
-        Enable Changes
+        {{ $t('enableChanges') }}
       </v-btn>
       <v-btn
         v-if="tempEnable"
         block
         @click="disableChanges = true"
       >
-        Disable Changes
+        {{ $t('disableChanges') }}
       </v-btn>
       <div :style="{ 'margin-top': '5px' }">
-        <em>Only use this button if needed.</em>
+        <em>{{ $t('toggleChangesNote') }}</em>
       </div>
     </div>
     <!-- Hidden toggle for testing -->
