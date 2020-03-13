@@ -5,19 +5,19 @@
       v-model="marathonId"
       filled
       hide-details
-      label="Oengus marathon ID"
+      label="Oengus Marathon Shortname"
       placeholder="id"
       prefix="/marathon/"
     />
     <div :style="{ margin: '5px 0'}">
-      Insert the Oengus marathon ID (not include "/schedule") above and press
-      the "Import Schedule Data" button to import schedule.
+      Insert the Oengus marathon shortname (not including "/schedule") above
+      and press the "Import Schedule Data" button.
     </div>
     <!-- Switch use Japanese or not for importing data -->
     <v-switch
       v-model="useJapanese"
       hide-details
-      label="Use Japanese name"
+      label="Use Japanese names?"
       color="primary"
       :style="{ margin: '5px 0'}"
     />
