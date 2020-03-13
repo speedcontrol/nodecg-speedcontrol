@@ -6,6 +6,7 @@
  */
 
 export interface Configschema {
+  language: "en";
   twitch: {
     enabled: boolean;
     clientID: string;
