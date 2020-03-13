@@ -1,15 +1,18 @@
 <i18n>
 {
   "en": {
-    "alertText": "Are you sure you want to remove all runs?"
-      + "\n\nThis will also remove the currently active run."
+    "alertText": "Are you sure you want to remove all runs?",
+    "alertText2": "This will also remove the currently active run."
   }
 }
 </i18n>
 
 <template>
   <div>
-    <div>{{ $t('alertText') }}</div>
+    <div>
+      {{ $t('alertText') }}
+      <br><br>{{ $t('alertText2') }}
+    </div>
     <br>
     <div :style="{ float: 'right' }">
       <v-btn @click="$emit('confirm')">

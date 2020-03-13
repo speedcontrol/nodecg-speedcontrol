@@ -3,16 +3,13 @@
   "en": {
     "panelTitle": "Horaro Schedule Import",
     "scheduleURL": "Horaro Schedule URL",
-    "helpTextPreLoad": "Insert the Horaro schedule URL above and press"
-      + " the \"Load Schedule Data\" button to continue.",
-    "helpTextPostLoad": "Select the correct columns that match the data"
-      + " type below, if the one auto-selected is wrong",
+    "helpTextPreLoad": "Insert the Horaro schedule URL above and press the \"Load Schedule Data\" button to continue.",
+    "helpTextPostLoad": "Select the correct columns that match the data type below, if the one auto-selected is wrong",
     "splitOpt": "Split Players",
     "splitLabel": "Player Split",
     "splitOptVersus": "vs/vs. [Teams]",
     "splitOptComma": "Comma (,) [No Teams]",
-    "splitHelp": "This option dictates how the players in your relevant"
-      + " schedule column are split; check the README for more information.",
+    "splitHelp": "This option dictates how the players in your relevant schedule column are split; check the README for more information.",
     "load": "Load Schedule Data",
     "import": "Import",
     "saveConfig": "Save Configuration",

@@ -50,7 +50,13 @@ module.exports = {
       packageDir: ['.', '../..'], // Check for deps in NodeCG folder as well.
     }],
     'import/no-unresolved': [2, { caseSensitive: false }],
-    'max-len': ["error", { "code": 100 }],
+    'max-len': [
+      'error',
+      {
+        'code': 100,
+        ignorePattern: '"(.*?)": "(.*?)"' // Pattern for i18n JSON
+      }
+    ],
     'lines-between-class-members': 'off',
   }
 };

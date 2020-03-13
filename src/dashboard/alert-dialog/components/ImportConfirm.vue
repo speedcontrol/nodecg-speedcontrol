@@ -1,15 +1,18 @@
 <i18n>
 {
   "en": {
-    "alertText": "Importing will remove all currently added runs, continue?"
-      + "\n\nThe currently active run will not be modified."
+    "alertText": "Importing will remove all currently added runs, continue?",
+    "alertText2": "The currently active run will not be modified."
   }
 }
 </i18n>
 
 <template>
   <div>
-    <div>{{ $t('alertText') }}</div>
+    <div>
+      {{ $t('alertText') }}
+      <br><br>{{ $t('alertText2') }}
+    </div>
     <br>
     <div :style="{ float: 'right' }">
       <v-btn @click="$emit('confirm')">
