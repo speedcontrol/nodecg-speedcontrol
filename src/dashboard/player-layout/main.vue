@@ -1,8 +1,17 @@
+<i18n>
+{
+  "en": {
+    "note": "This order is only temporary, it does not modify the permenant copy.",
+    "noneAvailable": "No Teams/Run Available"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
-    <em>This order is only temporary, it does not modify the permenant copy.</em>
+    <em>{{ $t('note') }}</em>
     <div v-if="!teams.length">
-      <br>No Teams/Run Available
+      <br>{{ $t('noneAvailable') }}
     </div>
     <draggable
       v-else
