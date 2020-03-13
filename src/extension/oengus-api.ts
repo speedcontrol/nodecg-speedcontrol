@@ -1,17 +1,17 @@
+import { Duration, parse as isoParse, toSeconds } from 'iso8601-duration';
 import needle, { NeedleResponse } from 'needle';
 import { mapSeries } from 'p-iteration';
 import uuid from 'uuid/v4';
-import { parse as isoParse, Duration, toSeconds } from 'iso8601-duration';
+import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line object-curly-newline, max-len
 import { OengusSchedule } from '../../types/Oengus';
-import { get as ncgGet } from './util/nodecg';
 import { checkGameAgainstIgnoreList, padTimeNumber, processAck } from './util/helpers';
-import { RunData, RunDataTeam, RunDataPlayer, RunDataArray } from '../../types'; // eslint-disable-line object-curly-newline, max-len
+import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
 const runDataArray = nodecg.Replicant<RunDataArray>('runDataArray');
 
 /**
- *
+ * Make a GET request to Oengus API.
  * @param endpoint
  */
 async function get(endpoint: string): Promise<NeedleResponse> {
@@ -28,13 +28,12 @@ async function get(endpoint: string): Promise<NeedleResponse> {
         },
       },
     );
-    nodecg.log.debug(resp.body);
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore: parser exists but isn't in the typings
     if (resp.parser !== 'json') {
-      nodecg.log.error('[Oengus] Response was not JSON');
+      throw new Error('Response was not JSON');
     } else if (resp.statusCode !== 200) {
-      nodecg.log.error(`[Oengus] ${JSON.stringify(resp.body)}`);
+      throw new Error(JSON.stringify(resp.body));
     }
     nodecg.log.debug(`[Oengus] API request successful on ${endpoint}`);
     return resp;
@@ -50,9 +49,7 @@ async function get(endpoint: string): Promise<NeedleResponse> {
  */
 function formatDuration(duration: Duration): string {
   const digits: (string | number)[] = [];
-  if (duration.hours) {
-    digits.push(duration.hours);
-  }
+  digits.push(duration.hours ? padTimeNumber(duration.hours) : '00');
   digits.push(duration.minutes ? padTimeNumber(duration.minutes) : '00');
   digits.push(duration.seconds ? padTimeNumber(duration.seconds) : '00');
   return digits.join(':');
@@ -72,7 +69,7 @@ async function importSchedule(marathonId: string, useJapanese: boolean): Promise
   // Changing import status is needed?
   const resp = await get(`/marathon/${marathonId}/schedule`);
   if (!isOengusSchedule(resp.body)) {
-    throw new Error('Failed to import schedule from Oengus.');
+    throw new Error('Failed to import schedule from Oengus');
   }
   const oengusLines = resp.body.lines;
 
@@ -134,7 +131,7 @@ nodecg.listenFor('importOengusSchedule', (data, ack) => {
     nodecg.log.info('[Oengus] Started importing schedule');
     importSchedule(data.marathonId, data.useJapanese)
       .then(() => {
-        nodecg.log.info('[Oengus] Successfully imported schedule from Oengus.');
+        nodecg.log.info('[Oengus] Successfully imported schedule from Oengus');
         processAck(ack, null);
       })
       .catch((err) => {
