@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line import/no-unresolved, max-len
 import { Configschema } from '../../../configschema';
 import { RunData, RunDataArray, SendMessageAck } from '../../../types';
@@ -125,4 +126,18 @@ export async function to<T>(promise: Promise<T>): Promise<[Error | null, T?]> {
  */
 export function randomInt(low: number, high: number): number {
   return Math.floor(Math.random() * (high - low) + low);
+}
+
+/**
+ * Checks if the game name appears in the ignore list in the configuration.
+ * @param game Game string (or null) to check against.
+ */
+export function checkGameAgainstIgnoreList(game: string | null): boolean {
+  if (!game) {
+    return false;
+  }
+  const list = bundleConfig().schedule.ignoreGamesWhileImporting || [];
+  return !!list.find((str) => !!str.toLowerCase().match(
+    new RegExp(`\\b${_.escapeRegExp(game.toLowerCase())}\\b`),
+  ));
 }

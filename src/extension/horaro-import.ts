@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import _ from 'lodash';
 import MarkdownIt from 'markdown-it';
 import needle from 'needle';
 import { mapSeries } from 'p-iteration';
@@ -10,7 +9,7 @@ import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
 import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataTeam, UserData } from '../../types'; // eslint-disable-line object-curly-newline, max-len
 import { searchForTwitchGame, searchForUserData } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
-import { bundleConfig, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { bundleConfig, msToTimeStr, processAck, to, checkGameAgainstIgnoreList } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 
 const nodecg = get();
@@ -105,20 +104,6 @@ async function parseSRcomUserData(name?: string, twitchURL?: string): Promise<{
  */
 function generateRunHash(colData: (string | null)[]): string {
   return crypto.createHash('sha1').update(colData.join(), 'utf8').digest('hex');
-}
-
-/**
- * Checks if the game name appears in the ignore list in the configuration.
- * @param game Game string (or null) to check against.
- */
-function checkGameAgainstIgnoreList(game: string | null): boolean {
-  if (!game) {
-    return false;
-  }
-  const list = config.schedule.ignoreGamesWhileImporting || [];
-  return !!list.find((str) => !!str.toLowerCase().match(
-    new RegExp(`\\b${_.escapeRegExp(game.toLowerCase())}\\b`),
-  ));
 }
 
 /**

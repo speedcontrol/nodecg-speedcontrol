@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import Vue, { VueConstructor } from 'vue';
-import HoraroImportConfirm from './components/HoraroImportConfirm.vue';
+import ImportConfirm from './components/ImportConfirm.vue';
 import ReturnToStartConfirm from './components/ReturnToStartConfirm.vue';
 import RemoveAllRunsConfirm from './components/RemoveAllRunsConfirm.vue';
 import RemoveRunConfirm from './components/RemoveRunConfirm.vue';
@@ -58,8 +58,8 @@ export default Vue.extend({
       document.addEventListener('dialog-opened', () => {
         this.currentComponent = ((name): VueConstructor | undefined => {
           switch (name) {
-            case 'HoraroImportConfirm':
-              return HoraroImportConfirm;
+            case 'ImportConfirm':
+              return ImportConfirm;
             case 'ReturnToStartConfirm':
               return ReturnToStartConfirm;
             case 'RemoveAllRunsConfirm':

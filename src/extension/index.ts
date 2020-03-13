@@ -13,6 +13,7 @@ export = (nodecg: NodeCG): ExtensionReturn => {
   require('./horaro-import');
   require('./twitch-api');
   require('./srcom-api');
+  require('./oengus-api');
   require('./ffz-ws');
 
   return {
