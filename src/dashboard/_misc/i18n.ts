@@ -9,13 +9,18 @@ export default new VueI18n({
   fallbackLocale: 'en',
   messages: {
     en: {
+      game: 'Game',
+      gameTwitch: 'Game (Twitch)',
       players: 'Players',
       category: 'Category',
       estimate: 'Estimate',
       system: 'System',
       region: 'Region',
       released: 'Released',
+      setupTime: 'Setup Time',
       finalTime: 'Final Time',
+      ok: 'OK',
+      cancel: 'Cancel',
     },
   },
 });

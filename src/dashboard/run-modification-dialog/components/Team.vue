@@ -1,3 +1,13 @@
+<i18n>
+{
+  "en": {
+    "teamName": "Team Name",
+    "removeTeam": "Remove Team",
+    "addNewPlayer": "Add New Player"
+  }
+}
+</i18n>
+
 <template>
   <div :style="{ 'margin-top': '20px' }">
     <div class="d-flex align-center">
@@ -10,18 +20,18 @@
       </v-icon>
       <text-input
         v-model="teamData.name"
-        label="Team Name"
+        :label="$t('teamName')"
       />
       <modify-button
         :style="{ 'margin-left': '5px' }"
         icon="mdi-account-multiple-minus"
-        tooltip="Remove Team"
+        :tooltip="$t('removeTeam')"
         @click="removeTeam"
       />
       <modify-button
         :style="{ 'margin-left': '5px' }"
         icon="mdi-account-plus"
-        tooltip="Add New Player"
+        :tooltip="$t('addNewPlayer')"
         @click="addNewPlayer"
       />
     </div>

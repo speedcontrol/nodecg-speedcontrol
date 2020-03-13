@@ -1,18 +1,31 @@
+<i18n>
+{
+  "en": {
+    "addNewRun": "Add New Run",
+    "duplicateRun": "Duplicate Run",
+    "editRun": "Edit Run",
+    "addNewTeam": "Add New Team",
+    "updateTwitch": "Update Twitch information"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <h1 v-if="mode === 'New'">
-      Add New Run
+      {{ $t('addNewRun') }}
     </h1>
     <h1 v-else-if="mode === 'Duplicate'">
-      Duplicate Run
+      {{ $t('duplicateRun') }}
     </h1>
     <h1 v-else>
-      Edit Run
+      {{ $t('editRun') }}
     </h1>
     <v-alert
       v-if="err"
       type="error"
     >
+      <!-- Errors are not being localised yet, they are from the server -->
       {{ err.message }}
     </v-alert>
     <div>
@@ -20,43 +33,43 @@
       <div class="d-flex">
         <text-input
           v-model="runData.game"
-          label="Game"
+          :label="$t('game')"
         />
         <text-input
           v-model="runData.category"
-          label="Category"
+          :label="$t('category')"
           left-border
         />
       </div>
       <div class="d-flex">
         <text-input
           v-model="runData.region"
-          label="Region"
+          :label="$t('region')"
         />
         <text-input
           v-model="runData.release"
-          label="Released"
+          :label="$t('released')"
           left-border
         />
         <text-input
           v-model="runData.gameTwitch"
-          label="Game (Twitch)"
+          :label="$t('gameTwitch')"
           left-border
         />
       </div>
       <div class="d-flex">
         <text-input
           v-model="runData.system"
-          label="System"
+          :label="$t('system')"
         />
         <text-input
           v-model="runData.estimate"
-          label="Estimate"
+          :label="$t('estimate')"
           left-border
         />
         <text-input
           v-model="runData.setupTime"
-          label="Setup Time"
+          :label="$t('setupTime')"
           left-border
         />
       </div>
@@ -92,7 +105,7 @@
       <modify-button
         class="mr-auto"
         icon="mdi-account-multiple-plus"
-        tooltip="Add New Team"
+        :tooltip="$t('addNewTeam')"
         @click="addNewTeam"
       />
       <v-checkbox
@@ -100,19 +113,19 @@
         v-model="updateTwitch"
         class="ma-0 pa-0 align-center justify-center"
         hide-details
-        label="Update Twitch information"
+        :label="$t('updateTwitch')"
       />
       <v-btn
         :style="{ 'margin-left': '10px' }"
         @click="attemptSave"
       >
-        OK
+        {{ $t('ok') }}
       </v-btn>
       <v-btn
         :style="{ 'margin-left': '10px' }"
         @click="close(false)"
       >
-        Cancel
+        {{ $t('cancel') }}
       </v-btn>
     </div>
   </v-app>

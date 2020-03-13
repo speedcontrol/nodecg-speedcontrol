@@ -1,3 +1,14 @@
+<i18n>
+{
+  "en": {
+    "name": "Name",
+    "twitch": "Twitch",
+    "countryCode": "Country Code",
+    "removePlayer": "Remove Player"
+  }
+}
+</i18n>
+
 <template>
   <div class="Player d-flex align-center">
     <v-icon class="PlayerHandle">
@@ -5,22 +16,22 @@
     </v-icon>
     <text-input
       v-model="playerData.name"
-      label="Name"
+      :label="$t('name')"
     />
     <text-input
       v-model="playerData.social.twitch"
-      label="Twitch"
+      :label="$t('twitch')"
       left-border
     />
     <text-input
       v-model="playerData.country"
-      label="Country Code"
+      :label="$t('countryCode')"
       left-border
     />
     <modify-button
       :style="{ 'margin-left': '5px' }"
       icon="mdi-account-minus"
-      tooltip="Remove Player"
+      :tooltip="$t('removePlayer')"
       @click="removePlayer"
     />
   </div>
