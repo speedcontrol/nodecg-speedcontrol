@@ -2,7 +2,8 @@
 {
   "en": {
     "search": "Search...",
-    "noTwitchGame": "Run has no Twitch game directory listed"
+    "noTwitchGame": "Run has no Twitch game directory listed",
+    "searchResultCount": "1 run found. | {count} runs found."
   }
 }
 </i18n>
@@ -15,9 +16,7 @@
       clearable
       :label="$t('search')"
       append-icon="mdi-magnify"
-      :messages="`
-        ${filteredRunDataArray.length} run${filteredRunDataArray.length === 1 ? '' : 's'} found.
-      `"
+      :messages="$tc('searchResultCount', filteredRunDataArray.length)"
     />
     <div v-if="editor && twitchAPIData.state === 'on'">
       <v-checkbox
