@@ -1,7 +1,6 @@
 export * from './defaultSetupTime';
 export * from './horaroImportSavedOpts';
 export * from './horaroImportStatus';
-export * from './oengusAPIData';
 export * from './runDataActiveRun';
 export * from './runDataActiveRunSurrounding';
 export * from './runDataArray';
