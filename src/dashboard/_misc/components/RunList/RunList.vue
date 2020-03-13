@@ -1,10 +1,19 @@
+<i18n>
+{
+  "en": {
+    "search": "Search...",
+    "noTwitchGame": "Run has no Twitch game directory listed"
+  }
+}
+</i18n>
+
 <template>
   <div>
     <v-text-field
       v-model="searchTerm"
       filled
       clearable
-      label="Search..."
+      :label="$t('search')"
       append-icon="mdi-magnify"
       :messages="`
         ${filteredRunDataArray.length} run${filteredRunDataArray.length === 1 ? '' : 's'} found.
@@ -15,7 +24,7 @@
         v-model="hasNoTwitch"
         class="ma-1 pa-0"
         hide-details
-        label="Run has no Twitch game directory listed"
+        :label="$t('noTwitchGame')"
       />
     </div>
     <div

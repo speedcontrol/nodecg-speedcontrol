@@ -8,6 +8,14 @@ export default new VueI18n({
   locale: (nodecg.bundleConfig as Configschema).language,
   fallbackLocale: 'en',
   messages: {
-    en: {},
+    en: {
+      players: 'Players',
+      category: 'Category',
+      estimate: 'Estimate',
+      system: 'System',
+      region: 'Region',
+      released: 'Released',
+      finalTime: 'Final Time',
+    },
   },
 });
