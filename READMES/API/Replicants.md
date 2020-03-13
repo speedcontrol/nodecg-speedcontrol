@@ -8,6 +8,7 @@
 - [timer](#timer)
 - [runFinishTimes](#runFinishTimes)
 - [timerChangesDisabled](#timerChangesDisabled)
+- [twitchCommercialTimer](#twitchCommercialTimer)
 
 
 ## runDataArray
@@ -191,3 +192,31 @@ false
 ```
 
 A `boolean` that can be set by you, which is used to disable any changes of the timer. This can be useful if you know you are in a part of a marathon where you know the timer should not be touched and need to make sure it cannot be, for example an intermission. If this has been set to `true`, it can be overridden/toggled in the *Timer* panel if needed in an emergency.
+
+
+## twitchCommercialTimer
+
+*Types available in [./schemas/twitchCommercialTimer.d.ts](../../schemas/twitchCommercialTimer.d.ts)*
+
+### Data
+- *[`object`]*
+  - `secondsRemaining` *[`number`]* How long is running on the currently active Twitch commercial if any; will be `0` if none is running.
+  - `originalDuration` *[`number`]* The length that the commercial triggered lasts for, or how long the previous one lasted for if none is currently running.
+  - `timestamp` *[`number`]* A `Date.now()` timestamp of the last time a commercial was successfully triggered, used internally for time recovery if NodeCG is closed/quits unexpectedly.
+### Example code
+```javascript
+const twitchCommercialTimer = nodecg.Replicant('twitchCommercialTimer', 'nodecg-speedcontrol');
+twitchCommercialTimer.on('change', (newVal, oldVal) => {
+  ...
+});
+```
+### Example data
+```javascript
+{
+  secondsRemaining: 46,
+  originalDuration: 180,
+  timestamp: 1584143073
+}
+```
+
+An object that stores information on if a Twitch commercial is currently active or not via this bundle and if so, more information about it. This is obviously only applicable if you are using the Twitch integration in this bundle. None of these values should ever be `undefined` but `originalDuration` and `timestamp` are not changed when the commercial has ended, so check that `secondsRemaining` is bigger than 0 to see if a commercial is currently running if needed. This timer may be useful if you need to display how long a commercial has left on a graphic.
