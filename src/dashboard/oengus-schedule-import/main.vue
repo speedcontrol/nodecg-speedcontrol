@@ -2,8 +2,8 @@
 {
   "en": {
     "shortname": "Oengus Marathon Shortname",
-    "helpText": "Insert the Oengus marathon shortname (not including \"/schedule\") " +
-      "above and press the \"Import Schedule Data\" button.",
+    "helpText": "Insert the Oengus marathon shortname (not including \"/schedule\")"
+      + " above and press the \"Import Schedule Data\" button.",
     "useJapaneseNames": "Use Japanese names?",
     "import": "Import Schedule Data"
   }
