@@ -1,3 +1,15 @@
+<i18n>
+{
+  "en": {
+    "shortname": "Oengus Marathon Shortname",
+    "helpText": "Insert the Oengus marathon shortname (not including \"/schedule\") " +
+      "above and press the \"Import Schedule Data\" button.",
+    "useJapaneseNames": "Use Japanese names?",
+    "import": "Import Schedule Data"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <!-- Oengus ID Field -->
@@ -5,19 +17,18 @@
       v-model="marathonId"
       filled
       hide-details
-      label="Oengus Marathon Shortname"
+      :label="$t('shortname')"
       placeholder="id"
       prefix="/marathon/"
     />
     <div :style="{ margin: '5px 0'}">
-      Insert the Oengus marathon shortname (not including "/schedule") above
-      and press the "Import Schedule Data" button.
+      {{ $t('helpText') }}
     </div>
     <!-- Switch use Japanese or not for importing data -->
     <v-switch
       v-model="useJapanese"
       hide-details
-      label="Use Japanese names?"
+      :label="$t('useJapaneseNames')"
       color="primary"
       :style="{ margin: '5px 0'}"
     />
@@ -28,7 +39,7 @@
       :loading="importing"
       @click="importConfirm"
     >
-      Import Schedule Data
+      {{ $t('import') }}
     </v-btn>
   </v-app>
 </template>
