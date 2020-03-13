@@ -14,6 +14,7 @@ Below is an example configuration file contents with everything that is availabl
 
 ```json
 {
+  "language": "en",
   "twitch": {
     "enable": true,
     "clientID": "CLIENT_ID",
@@ -48,6 +49,19 @@ Below is an example configuration file contents with everything that is availabl
 
 
 ## Breakdown
+
+### Language
+
+```json
+{
+  "language": "en"
+}
+```
+
+This is the language code for the language used on the dashboard UI.
+
+The currently available languages are:
+- `en` - English
 
 ### Twitch
 
