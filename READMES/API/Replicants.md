@@ -215,7 +215,7 @@ twitchCommercialTimer.on('change', (newVal, oldVal) => {
 {
   secondsRemaining: 46,
   originalDuration: 180,
-  timestamp: 1584143073
+  timestamp: 1584143073928
 }
 ```
 
