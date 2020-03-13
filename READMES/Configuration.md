@@ -12,14 +12,14 @@ If you're an experienced user you can also check out the [configschema.json here
 
 Below is an example configuration file contents with everything that is available (*do **not** copy this and put it in directly without any modifications; it won't work, sorry*):
 
-```
+```json
 {
   "twitch": {
     "enable": true,
     "clientID": "CLIENT_ID",
     "clientSecret": "CLIENT_SECRET",
     "redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
-    "channelName": "OTHER_CHANNEL"
+    "channelName": "OTHER_CHANNEL",
     "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
     "streamDefaultGame": "Games + Demos",
     "ffzIntegration": false,
@@ -38,6 +38,10 @@ Below is an example configuration file contents with everything that is availabl
         "ignoreMarkdown": false
       }
     ]
+  },
+  "oengus": {
+    "defaultMarathon": "SHORTNAME",
+    "useJapanese": false
   }
 }
 ```
@@ -47,17 +51,19 @@ Below is an example configuration file contents with everything that is availabl
 
 ### Twitch
 
-```
-"twitch": {
-  "enable": true,
-  "clientID": "CLIENT_ID",
-  "clientSecret": "CLIENT_SECRET",
-  "redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
-  "channelName": "OTHER_CHANNEL"
-  "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
-  "streamDefaultGame": "Games + Demos",
-  "ffzIntegration": false,
-  "ffzUseRepeater": false
+```json
+{
+  "twitch": {
+    "enable": true,
+    "clientID": "CLIENT_ID",
+    "clientSecret": "CLIENT_SECRET",
+    "redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
+    "channelName": "OTHER_CHANNEL",
+    "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
+    "streamDefaultGame": "Games + Demos",
+    "ffzIntegration": false,
+    "ffzUseRepeater": false
+  }
 }
 ```
 
@@ -77,22 +83,24 @@ Currently, you must either:
 If you decide to use the 2nd option above, there is also another boolean, `ffzUseRepeater`; if this is true it will never attempt to set the FrankerFaceZ featured channels but instead will make the bundle emit a `repeaterFeaturedChannels` message so if you want to work around this limitation in your own bundle you can; see the [API documentation](API.md) for more information.
 
 
-### Schedule
+### Horaro Schedule
 
-```
-"schedule": {
-  "defaultURL": "https://horaro.org/event/schedule",
-  "ignoreGamesWhileImporting": [
-    "Setup"
-  ],
-  "disableSpeedrunComLookup": false,
-  "customData": [
-    {
-      "name": "Game (Short)",
-      "key": "gameShort",
-      "ignoreMarkdown": false
-    }
-  ]
+```json
+{
+  "schedule": {
+    "defaultURL": "https://horaro.org/event/schedule",
+    "ignoreGamesWhileImporting": [
+      "Setup"
+    ],
+    "disableSpeedrunComLookup": false,
+    "customData": [
+      {
+        "name": "Game (Short)",
+        "key": "gameShort",
+        "ignoreMarkdown": false
+      }
+    ]
+  }
 }
 ```
 
@@ -103,3 +111,18 @@ If you decide to use the 2nd option above, there is also another boolean, `ffzUs
   - `name` is the formatted name that will appear in the Speedcontrol UI.
   - `key` is the key that will be used in the `customData` in the run data.
   - `ignoreMarkdown` is a boolean (defaults to false) which if true, will tell the Horaro import to not attempt to strip any markdown in the column's data for that run.
+
+
+### Oengus Schedule
+
+```json
+{
+  "oengus": {
+    "defaultMarathon": "SHORTNAME",
+    "useJapanese": false
+  }
+}
+```
+
+- `defaultMarathon` is the marathon's shortname on Oengus that will be pre-filled on the dashboard; this is the part of the URL *after* `oengus.io/marathon/`.
+- `useJapanese` is a boolean (defaults to false) which if true, will tell the import to use the Japanese names of players on import instead of the international ones. This setting can also be toggled from the dashboard itself.

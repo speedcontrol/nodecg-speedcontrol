@@ -7,7 +7,7 @@
 nodecg-speedcontrol, usually known as just "Speedcontrol", is a bundle for the [NodeCG](https://nodecg.com/) broadcast graphics framework/application developed for automating tasks for speedrunning marathons, mainly changing information on overlays and updating the Twitch information.
 
 Some basic information:
-- Import schedules from [Horaro](https://horaro.org/).
+- Import schedules from [Horaro](https://horaro.org/) and [Oengus](https://oengus.io/) [work in progress].
 - By default, can store information on the run and the players, but can also be customised to store more if needed by advanced users.
 - Automatically change Twitch title and/or game directory if needed.
 - Automatically feature the current player(s) on the [FrankerFaceZ](https://www.frankerfacez.com/) featured channels function below the stream.
@@ -23,7 +23,7 @@ You will need [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://
 
 - `nodecg install speedcontrol/nodecg-speedcontrol` to install the latest version of nodecg-speedcontrol
 
-This bundle can run without any extra configuration, but it's needed to use all of the functionality. Please see the [Configuration documentation](READMES/Configuration.md) for more information. You may also want to read the [Schedule Formatting documentation](READMES/Schedule-Formatting.md) for advice on formatting your schedules before importing.
+This bundle can run without any extra configuration, but it's needed to use all of the functionality. Please see the [Configuration documentation](READMES/Configuration.md) for more information. You may also want to read the [Schedule Formatting documentation](READMES/Schedule-Formatting.md) for advice on formatting your Horaro schedules before importing, if you choose to import via this method.
 
 ### tl;dr installation
 
@@ -38,6 +38,8 @@ nodecg start
 
 
 ## Basic Usage
+
+***Currently this basic guide assumes you are importing from a Horaro schedule; importing from Oengus is very simple anyway and the other parts of this guide still apply.***
 
 Once installed, go to `https://localhost:9090` (unless you have overridden the defaults in the NodeCG config) to access the dashboard.
 
@@ -105,6 +107,7 @@ With help from:
 - btrim
 - Zephyyrr
 - Planks
+- cma2819
 
 
 ## Contribution/Development
