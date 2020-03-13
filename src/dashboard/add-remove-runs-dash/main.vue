@@ -1,17 +1,26 @@
+<i18n>
+{
+  "en": {
+    "addNewRun": "Add New Run",
+    "removeAllRuns": "Remove All Runs"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <v-btn
       class="green darken-2"
       @click="openAddDialog"
     >
-      <v-icon>mdi-plus-box</v-icon>Add New Run
+      <v-icon>mdi-plus-box</v-icon>{{ $t('addNewRun') }}
     </v-btn>
     <v-btn
       class="red darken-2"
       :disabled="removeAllDisabled"
       @click="removeAllRunsConfirm"
     >
-      <v-icon>mdi-delete</v-icon>Remove All Runs
+      <v-icon>mdi-delete</v-icon>{{ $t('removeAllRuns') }}
     </v-btn>
   </v-app>
 </template>
