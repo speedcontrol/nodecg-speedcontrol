@@ -1,7 +1,7 @@
 import { Duration, parse as isoParse, toSeconds } from 'iso8601-duration';
 import needle, { NeedleResponse } from 'needle';
 import { mapSeries } from 'p-iteration';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line object-curly-newline, max-len
 import { OengusSchedule } from '../../types/Oengus';
 import { checkGameAgainstIgnoreList, padTimeNumber, processAck } from './util/helpers';
