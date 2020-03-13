@@ -1,3 +1,11 @@
+<i18n>
+{
+  "en": {
+    "editActive": "Edit Currently Active Run"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <v-btn
@@ -5,7 +13,7 @@
       :style="{ 'margin-bottom': '10px' }"
       @click="editActiveRun"
     >
-      Edit Currently Active Run
+      {{ $t('editActive') }}
     </v-btn>
     <run-list :editor="true" />
   </v-app>
