@@ -11,7 +11,7 @@ export default new VueI18n({
     en: {
       game: 'Game',
       gameTwitch: 'Game (Twitch)',
-      players: 'Players',
+      players: 'Player(s)',
       category: 'Category',
       estimate: 'Estimate',
       system: 'System',
@@ -21,6 +21,7 @@ export default new VueI18n({
       finalTime: 'Final Time',
       ok: 'OK',
       cancel: 'Cancel',
+      notApplicable: 'N/A',
     },
   },
 });

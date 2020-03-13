@@ -32,7 +32,7 @@ export default Vue.extend({
       type: Object,
       default(): object {
         return {
-          name: 'Game',
+          name: this.$t('game'),
           key: 'game',
           custom: false,
         };
@@ -50,7 +50,7 @@ export default Vue.extend({
       return [
         {
           value: -1,
-          text: 'N/A',
+          text: this.$t('notApplicable'),
         },
       ].concat(
         this.columns.map((value, index) => ({

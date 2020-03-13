@@ -1,3 +1,27 @@
+<i18n>
+{
+  "en": {
+    "scheduleURL": "Horaro Schedule URL",
+    "helpTextPreLoad": "Insert the Horaro schedule URL above and press"
+      + " the \"Load Schedule Data\" button to continue.",
+    "helpTextPostLoad": "Select the correct columns that match the data"
+      + " type below, if the one auto-selected is wrong",
+    "splitOpt": "Split Players",
+    "splitLabel": "Player Split",
+    "splitOptVersus": "vs/vs. [Teams]",
+    "splitOptComma": "Comma (,) [No Teams]",
+    "splitHelp": "This option dictates how the players in your relevant"
+      + " schedule column are split; check the README for more information.",
+    "load": "Load Schedule Data",
+    "import": "Import",
+    "saveConfig": "Save Configuration",
+    "importInProgressHelpText": "Import currently in progress...",
+    "importProgress": "Importing {item}/{total}",
+    "clearCustomConfig": "Clear Custom Configuration"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <!-- URL Field -->
@@ -5,7 +29,7 @@
       v-model="url"
       filled
       hide-details
-      label="Horaro Schedule URL"
+      :label="$t('scheduleURL')"
       :disabled="importStatus.importing"
     />
     <!-- "Load Schedule Data" Button -->
@@ -14,17 +38,15 @@
       :disabled="importStatus.importing"
       @click="loadSchedule"
     >
-      Load Schedule Data
+      {{ $t('load') }}
     </v-btn>
     <!-- Message before schedule data is loaded -->
     <div v-if="!loaded && !importStatus.importing">
-      Insert the Horaro schedule URL above and press
-      the "Load Schedule Data" button to continue.
+      {{ $t('helpTextPreLoad') }}
     </div>
     <!-- Dropdowns after data is imported to toggle settings -->
     <div v-if="loaded && !importStatus.importing">
-      Select the correct columns that match the data type below,
-      if the one auto-selected is wrong:
+      {{ $t('helpTextPostLoad') }}:
       <dropdown
         v-for="option in runDataOptions"
         :key="option.key"
@@ -33,7 +55,7 @@
         class="Dropdown"
       />
       <div :style="{ 'margin-top': '10px' }">
-        Split Players:
+        {{ $t('splitOpt') }}:
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -44,14 +66,13 @@
               mdi-help-circle-outline
             </v-icon>
           </template>
-          <span>This option dictates how the players in your relevant schedule column are split;
-            check the README for more information.</span>
+          <span>{{ $t('splitHelp') }}</span>
         </v-tooltip>
       </div>
       <v-select
         v-model="splitOption"
         :items="splitOptionsOpts"
-        label="Player Split"
+        :label="$t('splitLabel')"
         filled
         single-line
         hide-details
@@ -62,7 +83,7 @@
     </div>
     <!-- Message while importing is in progress -->
     <div v-else-if="importStatus.importing">
-      Import currently in progress...
+      {{ $t('importInProgressHelpText') }}
     </div>
     <div :style="{ 'margin-top': '10px' }">
       <!-- Import Button, if importing -->
@@ -71,7 +92,7 @@
         :disabled="true"
         block
       >
-        Importing {{ importStatus.item }}/{{ importStatus.total }}
+        {{ $t('importProgress', { item: importStatus.item, total: importStatus.total }) }}
       </v-btn>
       <!-- Import Button, if not importing and no data loaded -->
       <v-btn
@@ -80,7 +101,7 @@
         :disabled="!loaded"
         @click="importConfirm"
       >
-        Import
+        {{ $t('import') }}
       </v-btn>
       <!-- Import Button, if not importing but data loaded -->
       <div
@@ -91,17 +112,17 @@
           :style="{ flex: 1 }"
           @click="importConfirm"
         >
-          Import
+          {{ $t('import') }}
         </v-btn>
         <config-button
           icon="mdi-content-save-outline"
-          tooltip="Save Configuration"
+          :tooltip="$t('saveConfig')"
           :disabled="saved"
           @click="saveOpts"
         />
         <config-button
           icon="mdi-undo"
-          tooltip="Clear Custom Configuration"
+          :tooltip="$t('clearCustomConfig')"
           :disabled="restored"
           @click="clearOpts"
         />
@@ -138,11 +159,11 @@ export default Vue.extend({
       splitOptionsOpts: [
         {
           value: 0,
-          text: 'vs/vs. [Teams]',
+          text: this.$t('splitOptVersus'),
         },
         {
           value: 1,
-          text: 'Comma (,) [No Teams]',
+          text: this.$t('splitOptComma'),
         },
       ],
     };
