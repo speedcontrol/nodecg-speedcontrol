@@ -1,6 +1,7 @@
 <i18n>
 {
   "en": {
+    "panelTitle": "Horaro Schedule Import",
     "scheduleURL": "Horaro Schedule URL",
     "helpTextPreLoad": "Insert the Horaro schedule URL above and press"
       + " the \"Load Schedule Data\" button to continue.",
@@ -186,6 +187,11 @@ export default Vue.extend({
   },
   created() {
     this.addCustomDataDropdowns(); // Add dropdowns for custom data on page load.
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
   methods: {
     loadSchedule(): void {

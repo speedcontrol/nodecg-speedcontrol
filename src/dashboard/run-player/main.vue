@@ -1,6 +1,7 @@
 <i18n>
 {
   "en": {
+    "panelTitle": "Run Player",
     "returnToStart": "Return to Start",
     "noRunsLeft": "No Runs Left",
     "noRunsAdded": "No Runs Added",
@@ -98,6 +99,11 @@ export default Vue.extend({
     disableChange(): boolean {
       return ['running', 'paused'].includes(this.timerState);
     },
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
   methods: {
     returnToStartConfirm(): void {

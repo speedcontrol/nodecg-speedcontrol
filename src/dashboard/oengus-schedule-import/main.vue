@@ -1,6 +1,7 @@
 <i18n>
 {
   "en": {
+    "panelTitle": "Oengus Schedule Import",
     "shortname": "Oengus Marathon Shortname",
     "helpText": "Insert the Oengus marathon shortname (not including \"/schedule\")"
       + " above and press the \"Import Schedule Data\" button.",
@@ -54,6 +55,11 @@ export default Vue.extend({
       useJapanese: nodecg.bundleConfig.oengus.useJapanese,
       importing: false,
     };
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
   methods: {
     importConfirm(): void {

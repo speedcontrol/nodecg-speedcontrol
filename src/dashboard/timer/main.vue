@@ -1,6 +1,7 @@
 <i18n>
 {
   "en": {
+    "panelTitle": "Timer",
     "enableChanges": "Enable Changes",
     "disableChanges": "Disable Changes",
     "toggleChangesNote": "Only use this button if needed."
@@ -127,6 +128,11 @@ export default Vue.extend({
     activeRun(): void {
       this.tempEnable = false;
     },
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
 });
 </script>

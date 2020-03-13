@@ -1,6 +1,7 @@
 <i18n>
 {
   "en": {
+    "panelTitle": "Add/Remove Runs",
     "addNewRun": "Add New Run",
     "removeAllRuns": "Remove All Runs"
   }
@@ -35,6 +36,11 @@ export default Vue.extend({
     removeAllDisabled(): boolean {
       return ['running', 'paused'].includes(store.state.timer.state);
     },
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
   methods: {
     openAddDialog(): void {

@@ -1,6 +1,7 @@
 <i18n>
 {
   "en": {
+    "panelTitle": "Run Editor",
     "editActive": "Edit Currently Active Run"
   }
 }
@@ -34,6 +35,11 @@ export default Vue.extend({
     activeRun(): RunDataActiveRun {
       return store.state.runDataActiveRun;
     },
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
   methods: {
     editActiveRun(): void {

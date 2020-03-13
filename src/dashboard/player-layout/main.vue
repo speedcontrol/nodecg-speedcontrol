@@ -1,6 +1,7 @@
 <i18n>
 {
   "en": {
+    "panelTitle": "Player Layout",
     "note": "This order is only temporary, it does not modify the permenant copy.",
     "noneAvailable": "No Teams/Run Available"
   }
@@ -56,6 +57,11 @@ export default Vue.extend({
         store.commit('updateActiveRunTeamOrder', { value });
       },
     },
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
 });
 </script>
