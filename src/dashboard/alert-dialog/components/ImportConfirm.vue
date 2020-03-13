@@ -1,16 +1,22 @@
+<i18n>
+{
+  "en": {
+    "alertText": "Importing will remove all currently added runs, continue?"
+      + "\n\nThe currently active run will not be modified."
+  }
+}
+</i18n>
+
 <template>
   <div>
-    <div>
-      Importing will remove all currently added runs, continue?
-      <br><br>The currently active run will not be modified.
-    </div>
+    <div>{{ $t('alertText') }}</div>
     <br>
     <div :style="{ float: 'right' }">
       <v-btn @click="$emit('confirm')">
-        OK
+        {{ $t('ok') }}
       </v-btn>
       <v-btn @click="$emit('dismiss')">
-        Cancel
+        {{ $t('cancel') }}
       </v-btn>
     </div>
   </div>

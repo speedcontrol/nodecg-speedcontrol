@@ -1,16 +1,22 @@
+<i18n>
+{
+  "en": {
+    "alertText": "Are you sure you want to remove all runs?"
+      + "\n\nThis will also remove the currently active run."
+  }
+}
+</i18n>
+
 <template>
   <div>
-    <div>
-      Are you sure you want to remove all runs?
-      <br><br>This will also remove the currently active run.
-    </div>
+    <div>{{ $t('alertText') }}</div>
     <br>
     <div :style="{ float: 'right' }">
       <v-btn @click="$emit('confirm')">
-        OK
+        {{ $t('ok') }}
       </v-btn>
       <v-btn @click="$emit('dismiss')">
-        Cancel
+        {{ $t('cancel') }}
       </v-btn>
     </div>
   </div>

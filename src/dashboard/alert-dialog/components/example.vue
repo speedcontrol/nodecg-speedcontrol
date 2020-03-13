@@ -1,13 +1,21 @@
+<i18n>
+{
+  "en": {
+    "alertText": "Example Text"
+  }
+}
+</i18n>
+
 <template>
   <div>
-    <div>Example Text</div>
+    <div>{{ $t('alertText') }}</div>
     <br>
     <div :style="{ float: 'right' }">
       <v-btn @click="confirm">
-        OK
+        {{ $t('ok') }}
       </v-btn>
       <v-btn @click="dismiss">
-        Cancel
+        {{ $t('cancel') }}
       </v-btn>
     </div>
   </div>

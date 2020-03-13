@@ -1,7 +1,15 @@
+<i18n>
+{
+  "en": {
+    "alertText": "Are you sure you want to delete this run?"
+  }
+}
+</i18n>
+
 <template>
   <div>
     <div>
-      Are you sure you want to delete this run?
+      {{ $t('alertText') }}
       <div
         v-if="alertData.runData && alertData.runData.game && alertData.runData.category"
         style="margin-top: 10px; font-style: italic;"
@@ -20,10 +28,10 @@
     <br>
     <div :style="{ float: 'right' }">
       <v-btn @click="$emit('confirm')">
-        OK
+        {{ $t('ok') }}
       </v-btn>
       <v-btn @click="$emit('dismiss')">
-        Cancel
+        {{ $t('cancel') }}
       </v-btn>
     </div>
   </div>
