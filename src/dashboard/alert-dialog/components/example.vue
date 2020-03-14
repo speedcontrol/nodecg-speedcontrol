@@ -4,7 +4,7 @@
     "alertText": "Example Text"
   },
   "ja": {
-    "alertText": "Example Text"
+    "alertText": "Example Localised Text"
   }
 }
 </i18n>
