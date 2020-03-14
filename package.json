@@ -17,7 +17,8 @@
     "btrim",
     "Zephyyrr",
     "Planks",
-    "cma2819"
+    "cma2819",
+    "yagamuu"
   ],
   "scripts": {
     "autofix": "run-s autofix:*",

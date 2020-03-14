@@ -109,6 +109,7 @@ With help from:
 - Zephyyrr
 - Planks
 - cma2819 *(Oengus Support)*
+- yagamuu *(Japanese Localisation)*
 
 
 ## Contribution/Development
