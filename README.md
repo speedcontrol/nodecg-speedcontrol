@@ -13,6 +13,7 @@ Some basic information:
 - Automatically feature the current player(s) on the [FrankerFaceZ](https://www.frankerfacez.com/) featured channels function below the stream.
 - Has an inbuilt timer (powered by [livesplit-core](https://github.com/LiveSplit/livesplit-core)); no need to have a seperate application open.
 - Support for some donations trackers can be added with extra bundles (see below).
+- User interface avaiable in English and Japanese.
 
 This bundle doesn't come with any graphics, you will need to create them yourself in another bundle. If you have no experience in developing, you can check out [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext) for an simple example bundle, or check out the [API documentation](READMES/API.md) if you're are more advanced user.
 
@@ -23,7 +24,7 @@ You will need [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://
 
 - `nodecg install speedcontrol/nodecg-speedcontrol` to install the latest version of nodecg-speedcontrol
 
-This bundle can run without any extra configuration, but it's needed to use all of the functionality. Please see the [Configuration documentation](READMES/Configuration.md) for more information. You may also want to read the [Schedule Formatting documentation](READMES/Schedule-Formatting.md) for advice on formatting your Horaro schedules before importing, if you choose to import via this method.
+This bundle can run without any extra configuration, but it's needed to use all of the functionality, and if you want to switch to a different localisation. Please see the [Configuration documentation](READMES/Configuration.md) for more information. You may also want to read the [Schedule Formatting documentation](READMES/Schedule-Formatting.md) for advice on formatting your Horaro schedules before importing, if you choose to import via this method.
 
 ### tl;dr installation
 

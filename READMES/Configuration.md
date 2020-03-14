@@ -62,6 +62,7 @@ This is the language code for the language used on the dashboard UI. The default
 
 The currently available languages are:
 - `en` (English)
+- `ja` (Japanese)
 
 ### Twitch
 
