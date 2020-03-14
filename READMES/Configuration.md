@@ -58,10 +58,10 @@ Below is an example configuration file contents with everything that is availabl
 }
 ```
 
-This is the language code for the language used on the dashboard UI.
+This is the language code for the language used on the dashboard UI. The default is `en` (English).
 
 The currently available languages are:
-- `en` - English
+- `en` (English)
 
 ### Twitch
 

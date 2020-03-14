@@ -88,6 +88,7 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 *(This is not an exhaustive list.)*
 
 - All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons since Pre-ESA Marathon 2016, including the ESA ran Dreamhack speedrunning events in Sweden
+- All on-site based [United Kingdom Speedrunner Gathering](https://www.speedrun.com/uksg) marathons since Fall 2018.
 - All [GTA Marathons](https://www.twitch.tv/gtamarathon) since GTA Marathon 2016
 - All [SpeedSouls Charity Marathons](https://www.twitch.tv/speedsouls)
 - [Themeathon Pre-Marathon 2018](https://www.twitch.tv/themeathon)
@@ -107,7 +108,7 @@ With help from:
 - btrim
 - Zephyyrr
 - Planks
-- cma2819
+- cma2819 *(Oengus Support)*
 
 
 ## Contribution/Development
