@@ -2,6 +2,9 @@
 {
   "en": {
     "alertText": "Example Text"
+  },
+  "ja": {
+    "alertText": "Example Text"
   }
 }
 </i18n>

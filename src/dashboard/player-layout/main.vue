@@ -4,6 +4,11 @@
     "panelTitle": "Player Layout",
     "note": "This order is only temporary, it does not modify the permenant copy.",
     "noneAvailable": "No Teams/Run Available"
+  },
+  "ja": {
+    "panelTitle": "Player Layout",
+    "note": "This order is only temporary, it does not modify the permenant copy.",
+    "noneAvailable": "No Teams/Run Available"
   }
 }
 </i18n>

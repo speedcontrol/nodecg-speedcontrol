@@ -2,6 +2,9 @@
 {
   "en": {
     "alertText": "Are you sure you want to delete this run?"
+  },
+  "ja": {
+    "alertText": "Are you sure you want to delete this run?"
   }
 }
 </i18n>

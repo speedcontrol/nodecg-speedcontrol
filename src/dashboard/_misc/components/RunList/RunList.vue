@@ -4,6 +4,11 @@
     "search": "Search...",
     "noTwitchGame": "Run has no Twitch game directory listed",
     "searchResultCount": "1 run found. | {count} runs found."
+  },
+  "ja": {
+    "search": "Search...",
+    "noTwitchGame": "Run has no Twitch game directory listed",
+    "searchResultCount": "1 run found. | {count} runs found."
   }
 }
 </i18n>
