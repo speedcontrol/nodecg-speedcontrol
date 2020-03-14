@@ -1,8 +1,10 @@
 <i18n>
 {
   "en": {
-    "stop": "Stop",
-    "forfeit": "Forfeit"
+    "stop": "Stop"
+  },
+  "ja": {
+    "stop": "ストップ"
   }
 }
 </i18n>

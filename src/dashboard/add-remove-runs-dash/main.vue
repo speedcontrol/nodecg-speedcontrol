@@ -2,8 +2,11 @@
 {
   "en": {
     "panelTitle": "Add/Remove Runs",
-    "addNewRun": "Add New Run",
     "removeAllRuns": "Remove All Runs"
+  },
+  "ja": {
+    "panelTitle": "走者情報の追加/削除",
+    "removeAllRuns": "全ての走者情報の削除"
   }
 }
 </i18n>

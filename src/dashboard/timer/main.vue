@@ -5,6 +5,12 @@
     "enableChanges": "Enable Changes",
     "disableChanges": "Disable Changes",
     "toggleChangesNote": "Only use this button if needed."
+  },
+  "ja": {
+    "panelTitle": "タイマー",
+    "enableChanges": "Enable Changes",
+    "disableChanges": "Disable Changes",
+    "toggleChangesNote": "Only use this button if needed."
   }
 }
 </i18n>

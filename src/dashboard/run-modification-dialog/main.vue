@@ -1,11 +1,12 @@
 <i18n>
 {
   "en": {
-    "addNewRun": "Add New Run",
-    "duplicateRun": "Duplicate Run",
-    "editRun": "Edit Run",
     "addNewTeam": "Add New Team",
     "updateTwitch": "Update Twitch information"
+  },
+  "ja": {
+    "addNewTeam": "チームの追加",
+    "updateTwitch": "Twitchの情報を更新"
   }
 }
 </i18n>

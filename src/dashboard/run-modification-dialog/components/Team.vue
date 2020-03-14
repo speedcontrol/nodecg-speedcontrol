@@ -4,6 +4,11 @@
     "teamName": "Team Name",
     "removeTeam": "Remove Team",
     "addNewPlayer": "Add New Player"
+  },
+  "ja": {
+    "teamName": "チーム名",
+    "removeTeam": "チームの削除",
+    "addNewPlayer": "プレイヤーの追加"
   }
 }
 </i18n>

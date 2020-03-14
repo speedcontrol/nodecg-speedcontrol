@@ -3,6 +3,10 @@
   "en": {
     "panelTitle": "Run Editor",
     "editActive": "Edit Currently Active Run"
+  },
+  "ja": {
+    "panelTitle": "走者情報の編集",
+    "editActive": "現在進行中の走者情報の編集"
   }
 }
 </i18n>

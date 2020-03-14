@@ -2,10 +2,13 @@
 {
   "en": {
     "playRun": "Play Run",
-    "duplicateRun": "Duplicate Run",
     "newRunAfter": "Add New Run After",
-    "editRun": "Edit Run",
     "removeRun": "Remove Run"
+  },
+  "ja": {
+    "playRun": "走者情報の実行",
+    "newRunAfter": "後ろに走者情報を追加",
+    "removeRun": "走者情報の削除"
   }
 }
 </i18n>

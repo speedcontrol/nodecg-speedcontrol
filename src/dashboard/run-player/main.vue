@@ -6,6 +6,13 @@
     "noRunsLeft": "No Runs Left",
     "noRunsAdded": "No Runs Added",
     "cannotChange": "Cannot change run while timer is {state}"
+  },
+  "ja": {
+    "panelTitle": "現在の走者情報",
+    "returnToStart": "最初に戻す",
+    "noRunsLeft": "残りの走者情報はありません",
+    "noRunsAdded": "走者情報がありません",
+    "cannotChange": "タイマーが動作している間は編集できません。({state})"
   }
 }
 </i18n>

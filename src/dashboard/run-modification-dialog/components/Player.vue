@@ -5,6 +5,12 @@
     "twitch": "Twitch",
     "countryCode": "Country Code",
     "removePlayer": "Remove Player"
+  },
+  "ja": {
+    "name": "プレイヤー名",
+    "twitch": "Twitch ID",
+    "countryCode": "国名コード",
+    "removePlayer": "プレイヤーの削除"
   }
 }
 </i18n>

@@ -2,6 +2,9 @@
 {
   "en": {
     "editTip": "Click to edit, Enter to save"
+  },
+  "ja": {
+    "editTip": "クリックすると編集が行え、Enterすると保存します"
   }
 }
 </i18n>

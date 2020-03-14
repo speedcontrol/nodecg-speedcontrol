@@ -4,6 +4,11 @@
     "pause": "Pause",
     "resume": "Resume",
     "play": "Play"
+  },
+  "ja": {
+    "pause": "ポーズ",
+    "resume": "再開",
+    "play": "開始"
   }
 }
 </i18n>

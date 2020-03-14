@@ -14,6 +14,21 @@
     "update": "Update",
     "startCommercial": "Start 3m Commercial",
     "commercialRunning": "Commercial Running ({time} Remaining)"
+  },
+  "ja": {
+    "panelTitle": "Twitch連携",
+    "notEnabled": "Twitch連携が有効になっていません。",
+    "twitchLogin": "上記の画像をクリックしTwitchにログインすることで、データの自動同期が行えます。",
+    "authenticating": "認証中...",
+    "logout": "ログアウト",
+    "autosync": "タイトル/ゲームカテゴリーの同期を有効化しますか？",
+    "autosyncFFZ": "タイトル/ゲームカテゴリーの同期を有効化しますか/featured channels？",
+    "title": "タイトル",
+    "gameDirectory": "ゲームカテゴリー",
+    "featuredChannels": "Featured Channels",
+    "update": "更新",
+    "startCommercial": "3分間の広告を開始",
+    "commercialRunning": "Commercial Running ({time} Remaining)"
   }
 }
 </i18n>

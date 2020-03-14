@@ -2,6 +2,9 @@
 {
   "en": {
     "reset": "Reset"
+  },
+  "ja": {
+    "reset": "リセット"
   }
 }
 </i18n>
