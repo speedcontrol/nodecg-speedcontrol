@@ -16,7 +16,7 @@ export interface RunData {
     [key: string]: string;
   };
   id: string;
-  hash?: string;
+  externalID?: string;
 }
 
 export interface RunDataTeam {

@@ -35,5 +35,5 @@ export type RunDataActiveRun = {
     [k: string]: string;
   };
   id: string;
-  hash?: string;
+  externalID?: string;
 };

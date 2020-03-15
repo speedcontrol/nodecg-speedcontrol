@@ -9,7 +9,7 @@ import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
 import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataTeam, UserData } from '../../types'; // eslint-disable-line object-curly-newline, max-len
 import { searchForTwitchGame, searchForUserData } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
-import { bundleConfig, msToTimeStr, processAck, to, checkGameAgainstIgnoreList } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { bundleConfig, checkGameAgainstIgnoreList, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 
 const nodecg = get();
@@ -188,14 +188,14 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       const hash = generateRunHash(run.data);
       let matchingOldRun;
       if (!hashesSeen.includes(hash)) {
-        matchingOldRun = runDataArray.value.find((oldRun) => oldRun.hash === hash);
+        matchingOldRun = runDataArray.value.find((oldRun) => oldRun.externalID === hash);
         hashesSeen.push(hash);
       }
       const runData: RunData = {
         teams: [],
         customData: {},
         id: (matchingOldRun) ? matchingOldRun.id : uuid(),
-        hash,
+        externalID: hash,
       };
 
       // General Run Data
