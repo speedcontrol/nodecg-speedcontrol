@@ -1,3 +1,7 @@
+export interface OengusMarathon {
+  defaultSetupTime: string;
+}
+
 export interface OengusSchedule {
   id: number;
   lines: OengusLine[];

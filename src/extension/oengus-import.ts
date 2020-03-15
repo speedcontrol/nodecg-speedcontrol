@@ -1,13 +1,15 @@
 import { Duration, parse as isoParse, toSeconds } from 'iso8601-duration';
 import needle, { NeedleResponse } from 'needle';
 import { mapSeries } from 'p-iteration';
+import { DefaultSetupTime } from 'schemas';
 import { v4 as uuid } from 'uuid';
 import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line object-curly-newline, max-len
-import { OengusSchedule } from '../../types/Oengus';
+import { OengusMarathon, OengusSchedule } from '../../types/Oengus';
 import { checkGameAgainstIgnoreList, padTimeNumber, processAck } from './util/helpers';
 import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
+const defaultSetupTime = nodecg.Replicant<DefaultSetupTime>('defaultSetupTime');
 const runDataArray = nodecg.Replicant<RunDataArray>('runDataArray');
 
 /**
@@ -56,6 +58,11 @@ function formatDuration(duration: Duration): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isOengusMarathon(source: any): source is OengusMarathon {
+  return (typeof source.id === 'string' && typeof source.name === 'string');
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isOengusSchedule(source: any): source is OengusSchedule {
   return (typeof source.id === 'number' && source.lines !== undefined);
 }
@@ -67,20 +74,30 @@ function isOengusSchedule(source: any): source is OengusSchedule {
  */
 async function importSchedule(marathonId: string, useJapanese: boolean): Promise<void> {
   // Changing import status is needed?
-  const resp = await get(`/marathon/${marathonId}/schedule`);
-  if (!isOengusSchedule(resp.body)) {
-    throw new Error('Failed to import schedule from Oengus');
+  const marathonResp = await get(`/marathon/${marathonId}`);
+  const scheduleResp = await get(`/marathon/${marathonId}/schedule`);
+  if (!isOengusMarathon(marathonResp.body)) {
+    throw new Error('Did not receive marathon data correctly');
   }
-  const oengusLines = resp.body.lines;
+  if (!isOengusSchedule(scheduleResp.body)) {
+    throw new Error('Did not receive schedule data correctly');
+  }
+  defaultSetupTime.value = toSeconds(isoParse(marathonResp.body.defaultSetupTime));
+  const oengusLines = scheduleResp.body.lines;
 
   // Filtering out any games on the ignore list before processing them all.
   const newRunDataArray = await mapSeries(oengusLines.filter((line) => (
     !checkGameAgainstIgnoreList(line.gameName)
   )), async (line) => {
+    // If Oengus ID matches run already imported, re-use our UUID.
+    const matchingOldRun = runDataArray.value
+      .find((oldRun) => oldRun.externalID === line.id.toString());
+
     const runData: RunData = {
       teams: [],
       customData: {},
-      id: uuid(),
+      id: matchingOldRun?.id || uuid(),
+      externalID: line.id.toString(),
     };
 
     // General Run Data

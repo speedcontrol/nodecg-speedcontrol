@@ -194,7 +194,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       const runData: RunData = {
         teams: [],
         customData: {},
-        id: (matchingOldRun) ? matchingOldRun.id : uuid(),
+        id: matchingOldRun?.id || uuid(),
         externalID: hash,
       };
 
