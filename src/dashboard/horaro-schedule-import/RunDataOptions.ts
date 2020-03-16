@@ -59,4 +59,11 @@ export default [
       'runner',
     ],
   },
+  {
+    name: i18n.t('externalID'),
+    key: 'externalID',
+    predict: [
+      'id',
+    ],
+  },
 ] as RunDataOption[];

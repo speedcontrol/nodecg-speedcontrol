@@ -26,6 +26,7 @@ export default new VueI18n({
       duplicateRun: 'Duplicate Run',
       editRun: 'Edit Run',
       forfeit: 'Forfeit',
+      externalID: 'External ID',
     },
     ja: {
       game: 'ゲーム',
@@ -45,6 +46,7 @@ export default new VueI18n({
       duplicateRun: '走者情報の複製',
       editRun: '走者情報の編集',
       forfeit: 'リタイア',
+      externalID: 'External ID',
     },
   },
 });

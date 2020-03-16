@@ -14,6 +14,7 @@ const defaultOpts = {
     region: null,
     release: null,
     player: null,
+    externalID: null,
     custom: {},
   },
   split: 0,

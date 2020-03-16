@@ -165,6 +165,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
         region: (optsO.columns.region === null) ? -1 : optsO.columns.region,
         release: (optsO.columns.release === null) ? -1 : optsO.columns.release,
         player: (optsO.columns.player === null) ? -1 : optsO.columns.player,
+        externalID: (optsO.columns.externalID === null) ? -1 : optsO.columns.externalID,
         custom: {},
       },
       split: optsO.split,
@@ -182,20 +183,25 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       importStatus.value.item = index + 1;
       importStatus.value.total = arr.length;
 
-      // If a run with the same hash exists already, assume it's the same and use the same UUID.
-      // Will only work for the first instance of a hash, this is usually only an issue if the
-      // same "run" happens twice in a schedule (for example a Setup block).
-      const hash = generateRunHash(run.data);
+      // If a run with the same external ID exists already,
+      // assume it's the same and use the same UUID.
+      // If using the hash, this will only work for the first instance of a hash, this is usually
+      // only an issue if the same "run" happens twice in a schedule (for example a Setup block).
+      const schedID = run.data[opts.columns.externalID];
+      const externalID = schedID || generateRunHash(run.data);
       let matchingOldRun;
-      if (!hashesSeen.includes(hash)) {
-        matchingOldRun = runDataArray.value.find((oldRun) => oldRun.externalID === hash);
-        hashesSeen.push(hash);
+      if (schedID || (!schedID && !hashesSeen.includes(externalID))) {
+        matchingOldRun = runDataArray.value.find((oldRun) => oldRun.externalID === externalID);
+        if (!schedID) {
+          hashesSeen.push(externalID);
+        }
       }
+
       const runData: RunData = {
         teams: [],
         customData: {},
         id: matchingOldRun?.id || uuid(),
-        externalID: hash,
+        externalID,
       };
 
       // General Run Data

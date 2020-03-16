@@ -29,6 +29,7 @@ export interface ImportOptions {
     region: number | null;
     release: number | null;
     player: number | null;
+    externalID: number | null;
     custom: {
       [k: string]: number | null;
     };
@@ -45,6 +46,7 @@ export interface ImportOptionsSanitized {
     region: number;
     release: number;
     player: number;
+    externalID: number;
     custom: {
       [k: string]: number;
     };
