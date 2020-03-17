@@ -175,26 +175,23 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       opts.columns.custom[col] = (val === null) ? -1 : val;
     });
 
+    const externalIDsSeen: string[] = [];
     // Filtering out any games on the ignore list before processing them all.
-    const hashesSeen: string[] = [];
     const newRunDataArray = await mapSeries(runItems.filter((run) => (
       !checkGameAgainstIgnoreList(run.data[opts.columns.game])
     )), async (run, index, arr) => {
       importStatus.value.item = index + 1;
       importStatus.value.total = arr.length;
 
-      // If a run with the same external ID exists already,
-      // assume it's the same and use the same UUID.
-      // If using the hash, this will only work for the first instance of a hash, this is usually
-      // only an issue if the same "run" happens twice in a schedule (for example a Setup block).
-      const schedID = run.data[opts.columns.externalID];
-      const externalID = schedID || generateRunHash(run.data);
+      // If a run with the same external ID exists already, use the same UUID.
+      // This will only work for the first instance of an external ID; for hashes, this is usually
+      // only an issue if the same "run" happens twice in a schedule (for example a Setup block),
+      // and for actual defined IDs from a column should never happen, but idiot proofing it.
+      const externalID = run.data[opts.columns.externalID] || generateRunHash(run.data);
       let matchingOldRun;
-      if (schedID || (!schedID && !hashesSeen.includes(externalID))) {
+      if (!externalIDsSeen.includes(externalID)) {
         matchingOldRun = runDataArray.value.find((oldRun) => oldRun.externalID === externalID);
-        if (!schedID) {
-          hashesSeen.push(externalID);
-        }
+        externalIDsSeen.push(externalID);
       }
 
       const runData: RunData = {
