@@ -54,6 +54,9 @@ export default new Vuex.Store({
     setAsDuplicate(state): void {
       Vue.set(state, 'prevID', state.runData.id);
       Vue.set(state.runData, 'id', uuid());
+      Vue.delete(state.runData, 'scheduled');
+      Vue.delete(state.runData, 'scheduledS');
+      Vue.delete(state.runData, 'externalID');
     },
     setPreviousRunID(state, { value }): void {
       Vue.set(state, 'prevID', value);
