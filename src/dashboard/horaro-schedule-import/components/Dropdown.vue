@@ -1,10 +1,10 @@
 <i18n>
 {
   "en": {
-    "externalIDHelp": "If you have a column in your schedule with a unique ID for each run, select it here. This will make re-imports much smoother."
+    "externalIDHelp": "If you have a column in your schedule with a unique ID for each run, select it here. This will make re-imports much smoother. If you don't understand this, don't select one."
   },
   "jp": {
-    "externalIDHelp": "If you have a column in your schedule with a unique ID for each run, select it here. This will make re-imports much smoother."
+    "externalIDHelp": "If you have a column in your schedule with a unique ID for each run, select it here. This will make re-imports much smoother. If you don't understand this, don't select one."
   }
 }
 </i18n>
@@ -32,6 +32,7 @@
         <v-divider class="mb-2" />
       </template>
     </v-select>
+    <!-- Help Tooltip for External ID -->
     <template v-if="option.key === 'externalID'">
       <v-tooltip top>
         <template v-slot:activator="{ on }">

@@ -15,6 +15,8 @@ On top of the automatic importing of the estimate, the setup time and the schedu
 - **Released**: A generic string that can store when the game is released; if you use this, probably just stick to the year.
 - **Players**: The player or a list of players involved in this run. Check the *Players* section below for more information.
 
+There is also another selectable information type when you import your Horaro schedules: **External ID**. This is not stored/editable in the normal way, but if you have a column in your schedule that has unique IDs for each run, select it here and re-imports will be a lot smoother. If you don't understand what this means, ignore it!
+
 
 ## Players
 
