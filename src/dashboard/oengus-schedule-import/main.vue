@@ -8,11 +8,11 @@
     "import": "Import Schedule Data"
   },
   "ja": {
-    "panelTitle": "Oengus Schedule Import",
-    "shortname": "Oengus Marathon Shortname",
-    "helpText": "Insert the Oengus marathon shortname (not including \"/schedule\") above and press the \"Import Schedule Data\" button.",
-    "useJapaneseNames": "Use Japanese names?",
-    "import": "Import Schedule Data"
+    "panelTitle": null,
+    "shortname": null,
+    "helpText": null,
+    "useJapaneseNames": null,
+    "import": null
   }
 }
 </i18n>

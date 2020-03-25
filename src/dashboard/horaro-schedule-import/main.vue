@@ -23,15 +23,15 @@
     "helpTextPreLoad": "上記にHoraroのスケジュールURLを入力し、「スケジュールをロード」ボタンを押すと続行します。",
     "helpTextPostLoad": "自動選択されたものが間違っていた場合、 以下のデータ型に一致する正しい列を選択してください。",
     "splitOpt": "走者の分割",
-    "splitLabel": "Player Split",
-    "splitOptVersus": "vs/vs. [Teams]",
-    "splitOptComma": "Comma (,) [No Teams]",
+    "splitLabel": null,
+    "splitOptVersus": null,
+    "splitOptComma": null,
     "splitHelp": "このオプションは、関連する列の走者の分割方法の指定をします。 詳細はspeedcontrolのREADMEを参照してください。",
     "load": "スケジュールをロード",
     "import": "インポート",
     "saveConfig": "設定の保存",
-    "importInProgressHelpText": "Import currently in progress...",
-    "importProgress": "Importing {item}/{total}",
+    "importInProgressHelpText": null,
+    "importProgress": null,
     "clearCustomConfig": "設定の初期化"
   }
 }

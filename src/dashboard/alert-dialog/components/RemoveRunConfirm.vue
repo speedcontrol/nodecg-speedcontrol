@@ -4,7 +4,7 @@
     "alertText": "Are you sure you want to delete this run?"
   },
   "ja": {
-    "alertText": "Are you sure you want to delete this run?"
+    "alertText": null
   }
 }
 </i18n>

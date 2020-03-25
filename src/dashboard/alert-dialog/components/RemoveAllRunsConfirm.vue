@@ -5,8 +5,8 @@
     "alertText2": "This will also remove the currently active run."
   },
   "ja": {
-    "alertText": "Are you sure you want to remove all runs?",
-    "alertText2": "This will also remove the currently active run."
+    "alertText": null,
+    "alertText2": null
   }
 }
 </i18n>

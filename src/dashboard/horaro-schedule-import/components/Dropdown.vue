@@ -4,7 +4,7 @@
     "externalIDHelp": "If you have a column in your schedule with a unique ID for each run, select it here. This will make re-imports much smoother. If you don't understand this, don't select one."
   },
   "jp": {
-    "externalIDHelp": "If you have a column in your schedule with a unique ID for each run, select it here. This will make re-imports much smoother. If you don't understand this, don't select one."
+    "externalIDHelp": null
   }
 }
 </i18n>

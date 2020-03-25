@@ -8,9 +8,9 @@
   },
   "ja": {
     "panelTitle": "タイマー",
-    "enableChanges": "Enable Changes",
-    "disableChanges": "Disable Changes",
-    "toggleChangesNote": "Only use this button if needed."
+    "enableChanges": null,
+    "disableChanges": null,
+    "toggleChangesNote": null
   }
 }
 </i18n>

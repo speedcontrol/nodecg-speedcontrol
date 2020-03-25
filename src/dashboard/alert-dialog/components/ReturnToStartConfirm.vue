@@ -4,7 +4,7 @@
     "alertText": "Are you sure you want to return to the start?"
   },
   "ja": {
-    "alertText": "Are you sure you want to return to the start?"
+    "alertText": null
   }
 }
 </i18n>

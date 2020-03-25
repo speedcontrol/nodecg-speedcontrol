@@ -46,7 +46,7 @@ export default new VueI18n({
       duplicateRun: '走者情報の複製',
       editRun: '走者情報の編集',
       forfeit: 'リタイア',
-      externalID: 'External ID',
+      // externalID: 'External ID',
     },
   },
 });

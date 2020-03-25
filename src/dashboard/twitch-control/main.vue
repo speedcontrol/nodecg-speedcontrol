@@ -25,10 +25,10 @@
     "autosyncFFZ": "タイトル/ゲームカテゴリーの同期を有効化しますか/featured channels？",
     "title": "タイトル",
     "gameDirectory": "ゲームカテゴリー",
-    "featuredChannels": "Featured Channels",
+    "featuredChannels": null,
     "update": "更新",
     "startCommercial": "3分間の広告を開始",
-    "commercialRunning": "Commercial Running ({time} Remaining)"
+    "commercialRunning": null
   }
 }
 </i18n>

@@ -4,7 +4,7 @@
     "alertText": "The Twitch game directory could not be set correctly, it has been set to default. Change this manually if possible."
   },
   "ja": {
-    "alertText": "The Twitch game directory could not be set correctly, it has been set to default. Change this manually if possible."
+    "alertText": null
   }
 }
 </i18n>

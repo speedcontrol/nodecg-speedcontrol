@@ -5,8 +5,8 @@
     "alertText2": "The currently active run will not be modified."
   },
   "ja": {
-    "alertText": "Importing will remove all currently added runs, continue?",
-    "alertText2": "The currently active run will not be modified."
+    "alertText": null,
+    "alertText2": null
   }
 }
 </i18n>
