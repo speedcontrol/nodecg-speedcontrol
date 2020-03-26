@@ -98,6 +98,9 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
     defaultSetupTime.value = toSeconds(isoParse(marathonResp.body.defaultSetupTime));
     const oengusLines = scheduleResp.body.lines;
 
+    // This is updated for every run so we can calculate a scheduled time for each one.
+    let scheduledTime = Math.floor(Date.parse(marathonResp.body.startDate) / 1000);
+
     // Filtering out any games on the ignore list before processing them all.
     const newRunDataArray = await mapSeries(oengusLines.filter((line) => (
       !checkGameAgainstIgnoreList(line.gameName)
@@ -135,6 +138,11 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
         runData.setupTime = formatDuration({ seconds: 0 });
         runData.setupTimeS = 0;
       }
+
+      // Add the scheduled time then update the value above for the next run.
+      runData.scheduled = new Date(scheduledTime * 1000).toISOString();
+      runData.scheduledS = scheduledTime;
+      scheduledTime += runData.estimateS + runData.setupTimeS;
 
       // Team Data
       runData.teams = await mapSeries(line.runners, (runner) => {

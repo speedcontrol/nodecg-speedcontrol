@@ -1,5 +1,6 @@
 export interface OengusMarathon {
   defaultSetupTime: string;
+  startDate: string;
 }
 
 export interface OengusSchedule {
