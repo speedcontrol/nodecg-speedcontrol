@@ -4,10 +4,13 @@ import { mapSeries } from 'p-iteration';
 import { DefaultSetupTime, OengusImportStatus } from 'schemas';
 import { OengusMarathon, OengusSchedule, RunData, RunDataArray, RunDataPlayer, RunDataTeam } from 'types'; // eslint-disable-line object-curly-newline, max-len
 import { v4 as uuid } from 'uuid';
-import { checkGameAgainstIgnoreList, padTimeNumber, processAck } from './util/helpers';
+import { searchForTwitchGame } from './srcom-api';
+import { verifyTwitchDir } from './twitch-api';
+import { bundleConfig, checkGameAgainstIgnoreList, padTimeNumber, processAck, to } from './util/helpers';
 import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
+const config = bundleConfig();
 const importStatus = nodecg.Replicant<OengusImportStatus>('oengusImportStatus', {
   persistent: false,
 });
@@ -16,7 +19,7 @@ const defaultSetupTime = nodecg.Replicant<DefaultSetupTime>('defaultSetupTime');
 
 /**
  * Make a GET request to Oengus API.
- * @param endpoint
+ * @param endpoint Oengus API endpoint you want to access.
  */
 async function get(endpoint: string): Promise<NeedleResponse> {
   try {
@@ -115,7 +118,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
       const runData: RunData = {
         teams: [],
         customData: {},
-        id: matchingOldRun?.id || uuid(),
+        id: matchingOldRun?.id ?? uuid(),
         externalID: line.id.toString(),
       };
 
@@ -137,6 +140,17 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
         runData.estimateS = runData.setupTimeS;
         runData.setupTime = formatDuration({ seconds: 0 });
         runData.setupTimeS = 0;
+      } else if (line.gameName) {
+        // Attempt to find Twitch directory on speedrun.com if setting is enabled.
+        let srcomGameTwitch;
+        if (!config.oengus.disableSpeedrunComLookup) {
+          [, srcomGameTwitch] = await to(searchForTwitchGame(line.gameName));
+        }
+        let gameTwitch: string | undefined = srcomGameTwitch || line.gameName;
+        if (gameTwitch) { // Verify game directory supplied exists on Twitch.
+          [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
+        }
+        runData.gameTwitch = gameTwitch;
       }
 
       // Add the scheduled time then update the value above for the next run.

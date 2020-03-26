@@ -10,17 +10,17 @@ export interface OengusSchedule {
 
 export interface OengusLine {
   id: number;
-  gameName: string;
-  console: string;
+  gameName: string | null;
+  console: string | null;
   emulated: boolean;
-  ratio: string;
-  categoryName: string;
+  ratio: string | null;
+  categoryName: string | null;
   estimate: string;
   setupTime: string;
   setupBlock: boolean;
   customRun: boolean;
   position: number;
-  categoryId: number;
+  categoryId: number | null;
   type: OengusRunType;
   runners: OengusUser[];
 }
@@ -35,7 +35,7 @@ export enum OengusRunType {
 export interface OengusUser {
   id: number;
   username: string;
-  usernameJapanese?: string;
+  usernameJapanese: string | null;
   enabled: boolean;
   roles: OengusRole[];
   twitterName?: string;
