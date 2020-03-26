@@ -21,6 +21,7 @@ module.exports = {
         moduleDirectory: [
           'node_modules',
           '../..',
+          '.',
         ],
       },
     },
@@ -37,7 +38,7 @@ module.exports = {
       packageDir: ['.', '../..'], // Check for deps in NodeCG folder as well.
     }],
     'import/no-unresolved': [2, { caseSensitive: false }],
-    'max-len': ["error", { "code": 100 }],
+    'max-len': ['error', { 'code': 100 }],
     'lines-between-class-members': 'off',
     'require-atomic-updates': 'off',
   },
