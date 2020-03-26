@@ -12,7 +12,7 @@
     "gameDirectory": "Game Directory",
     "featuredChannels": "Featured Channels",
     "update": "Update",
-    "startCommercial": "Start 3m Commercial",
+    "startCommercial": "Start Commercial",
     "commercialRunning": "Commercial Running ({time} Remaining)"
   },
   "ja": {
@@ -27,7 +27,7 @@
     "gameDirectory": "ゲームカテゴリー",
     "featuredChannels": null,
     "update": "更新",
-    "startCommercial": "3分間の広告を開始",
+    "startCommercial": null,
     "commercialRunning": null
   }
 }
@@ -116,21 +116,41 @@
         @blur="inputActivity"
       />
       <v-btn
+        class="mt-2"
         block
         @click="updateChannelInfo"
       >
         {{ $t('update') }}
       </v-btn>
       <template v-if="['affiliate', 'partner'].includes(channelInfo.broadcaster_type)">
-        <v-btn
+        <div
           v-if="timer.secondsRemaining <= 0"
-          block
-          @click="startCommercial"
+          class="d-flex justify-center align-center mt-2"
         >
-          {{ $t('startCommercial') }}
-        </v-btn>
+          <div
+            class="flex-grow-1"
+            :style="{
+              'font-size': '0.9em',
+              'line-height': '100%',
+              'text-align': 'center',
+            }"
+          >
+            {{ $t('startCommercial') }}
+          </div>
+          <v-btn
+            v-for="(len, i) in [30, 60, 90, 120, 150, 180]"
+            :key="i"
+            class="ml-1"
+            :style="{ padding: '0 6px' }"
+            :min-width="0"
+            @click="startCommercial(len)"
+          >
+            {{ formatSeconds(len) }}
+          </v-btn>
+        </div>
         <v-btn
           v-else
+          class="mt-2"
           block
           disabled
         >
@@ -189,9 +209,7 @@ export default Vue.extend({
       + '&force_verify=true';
     },
     commercialTimeRemaining(): string {
-      const minutes = Math.floor(this.timer.secondsRemaining / 60);
-      const seconds = Math.floor(this.timer.secondsRemaining - minutes * 60);
-      return `${minutes}:${padTimeNumber(seconds)}`;
+      return this.formatSeconds(this.timer.secondsRemaining);
     },
   },
   watch: {
@@ -217,6 +235,11 @@ export default Vue.extend({
     }
   },
   methods: {
+    formatSeconds(sec: number): string {
+      const minutes = Math.floor(sec / 60);
+      const seconds = Math.floor(sec - minutes * 60);
+      return `${minutes}:${padTimeNumber(seconds)}`;
+    },
     inputActivity(evt: Event): void {
       if (['input', 'focus'].includes(evt.type)) {
         this.focus = true;
@@ -260,8 +283,8 @@ export default Vue.extend({
         });
       }
     },
-    startCommercial(): void {
-      nodecg.sendMessage('twitchStartCommercial', { duration: 180 }).then(() => {
+    startCommercial(duration: number): void {
+      nodecg.sendMessage('twitchStartCommercial', { duration }).then(() => {
         // successful
       }).catch(() => {
         // unsuccessful
@@ -288,10 +311,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  .v-btn {
-    margin-top: 5px;
-  }
-
   #AutoSyncContainer > .v-input {
     margin: 0;
     padding: 0;
