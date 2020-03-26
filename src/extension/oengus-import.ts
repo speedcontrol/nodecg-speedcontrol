@@ -1,16 +1,18 @@
 import { Duration, parse as isoParse, toSeconds } from 'iso8601-duration';
 import needle, { NeedleResponse } from 'needle';
 import { mapSeries } from 'p-iteration';
-import { DefaultSetupTime } from 'schemas';
+import { DefaultSetupTime, OengusImportStatus } from 'schemas';
+import { OengusMarathon, OengusSchedule, RunData, RunDataArray, RunDataPlayer, RunDataTeam } from 'types'; // eslint-disable-line object-curly-newline, max-len
 import { v4 as uuid } from 'uuid';
-import { RunData, RunDataArray, RunDataPlayer, RunDataTeam } from '../../types'; // eslint-disable-line object-curly-newline, max-len
-import { OengusMarathon, OengusSchedule } from '../../types/Oengus';
 import { checkGameAgainstIgnoreList, padTimeNumber, processAck } from './util/helpers';
 import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
-const defaultSetupTime = nodecg.Replicant<DefaultSetupTime>('defaultSetupTime');
+const importStatus = nodecg.Replicant<OengusImportStatus>('oengusImportStatus', {
+  persistent: false,
+});
 const runDataArray = nodecg.Replicant<RunDataArray>('runDataArray');
+const defaultSetupTime = nodecg.Replicant<DefaultSetupTime>('defaultSetupTime');
 
 /**
  * Make a GET request to Oengus API.
@@ -18,7 +20,7 @@ const runDataArray = nodecg.Replicant<RunDataArray>('runDataArray');
  */
 async function get(endpoint: string): Promise<NeedleResponse> {
   try {
-    nodecg.log.debug(`[Oengus] API request processing on ${endpoint}`);
+    nodecg.log.debug(`[Oengus Import] API request processing on ${endpoint}`);
     const resp = await needle(
       'get',
       `https://oengus.io/api${endpoint}`,
@@ -37,10 +39,10 @@ async function get(endpoint: string): Promise<NeedleResponse> {
     } else if (resp.statusCode !== 200) {
       throw new Error(JSON.stringify(resp.body));
     }
-    nodecg.log.debug(`[Oengus] API request successful on ${endpoint}`);
+    nodecg.log.debug(`[Oengus Import] API request successful on ${endpoint}`);
     return resp;
   } catch (err) {
-    nodecg.log.debug(`Oengus] API request error on ${endpoint}:`, err);
+    nodecg.log.debug(`[Oengus Import] API request error on ${endpoint}:`, err);
     throw err;
   }
 }
@@ -68,95 +70,112 @@ function isOengusSchedule(source: any): source is OengusSchedule {
 }
 
 /**
- * Import schedule data in from Oengus.
- * @param marathonId Oengus's marathon id you want to import.
- * @param useJapanese Use or not usernameJapanese in user data.
+ * Resets the replicant's values to default.
  */
-async function importSchedule(marathonId: string, useJapanese: boolean): Promise<void> {
-  // Changing import status is needed?
-  const marathonResp = await get(`/marathon/${marathonId}`);
-  const scheduleResp = await get(`/marathon/${marathonId}/schedule`);
-  if (!isOengusMarathon(marathonResp.body)) {
-    throw new Error('Did not receive marathon data correctly');
-  }
-  if (!isOengusSchedule(scheduleResp.body)) {
-    throw new Error('Did not receive schedule data correctly');
-  }
-  defaultSetupTime.value = toSeconds(isoParse(marathonResp.body.defaultSetupTime));
-  const oengusLines = scheduleResp.body.lines;
-
-  // Filtering out any games on the ignore list before processing them all.
-  const newRunDataArray = await mapSeries(oengusLines.filter((line) => (
-    !checkGameAgainstIgnoreList(line.gameName)
-  )), async (line) => {
-    // If Oengus ID matches run already imported, re-use our UUID.
-    const matchingOldRun = runDataArray.value
-      .find((oldRun) => oldRun.externalID === line.id.toString());
-
-    const runData: RunData = {
-      teams: [],
-      customData: {},
-      id: matchingOldRun?.id || uuid(),
-      externalID: line.id.toString(),
-    };
-
-    // General Run Data
-    runData.game = line.gameName ?? undefined;
-    runData.system = line.console ?? undefined;
-    runData.category = line.categoryName ?? undefined;
-    const parsedEstimate = isoParse(line.estimate);
-    runData.estimate = formatDuration(parsedEstimate);
-    runData.estimateS = toSeconds(parsedEstimate);
-    const parsedSetup = isoParse(line.setupTime);
-    runData.setupTime = formatDuration(parsedSetup);
-    runData.setupTimeS = toSeconds(parsedSetup);
-    if (line.setupBlock) {
-      // "Setup" will set to RunData.game if the line is setup block
-      runData.game = 'Setup';
-      // In setup block, 'setupTime' should be estimated.
-      runData.estimate = runData.setupTime;
-      runData.estimateS = runData.setupTimeS;
-      runData.setupTime = formatDuration({ seconds: 0 });
-      runData.setupTimeS = 0;
-    }
-
-    // Team Data
-    runData.teams = await mapSeries(line.runners, (runner) => {
-      const team: RunDataTeam = {
-        id: uuid(),
-        players: [],
-      };
-      const player: RunDataPlayer = {
-        name: (useJapanese && runner.usernameJapanese) ? runner.usernameJapanese : runner.username,
-        id: uuid(),
-        teamID: team.id,
-        social: {},
-      };
-      if (runner.twitchName) {
-        player.social.twitch = runner.twitchName;
-      }
-      team.players.push(player);
-      return team;
-    });
-    return runData;
-  });
-  runDataArray.value = newRunDataArray;
+function resetImportStatus(): void {
+  importStatus.value.importing = false;
+  importStatus.value.item = 0;
+  importStatus.value.total = 0;
+  nodecg.log.debug('[Oengus Import] Import status restored to default');
 }
 
-nodecg.listenFor('importOengusSchedule', (data, ack) => {
+/**
+ * Import schedule data in from Oengus.
+ * @param marathonShort Oengus' marathon shortname you want to import.
+ * @param useJapanese If you want to use usernameJapanese from the user data.
+ */
+async function importSchedule(marathonShort: string, useJapanese: boolean): Promise<void> {
   try {
-    nodecg.log.info('[Oengus] Started importing schedule');
-    importSchedule(data.marathonId, data.useJapanese)
-      .then(() => {
-        nodecg.log.info('[Oengus] Successfully imported schedule from Oengus');
-        processAck(ack, null);
-      })
-      .catch((err) => {
-        nodecg.log.warn('[Oengus] Error importing schedule:', err);
-        processAck(ack, err);
+    importStatus.value.importing = true;
+    const marathonResp = await get(`/marathon/${marathonShort}`);
+    const scheduleResp = await get(`/marathon/${marathonShort}/schedule`);
+    if (!isOengusMarathon(marathonResp.body)) {
+      throw new Error('Did not receive marathon data correctly');
+    }
+    if (!isOengusSchedule(scheduleResp.body)) {
+      throw new Error('Did not receive schedule data correctly');
+    }
+    defaultSetupTime.value = toSeconds(isoParse(marathonResp.body.defaultSetupTime));
+    const oengusLines = scheduleResp.body.lines;
+
+    // Filtering out any games on the ignore list before processing them all.
+    const newRunDataArray = await mapSeries(oengusLines.filter((line) => (
+      !checkGameAgainstIgnoreList(line.gameName)
+    )), async (line, index, arr) => {
+      importStatus.value.item = index + 1;
+      importStatus.value.total = arr.length;
+
+      // If Oengus ID matches run already imported, re-use our UUID.
+      const matchingOldRun = runDataArray.value
+        .find((oldRun) => oldRun.externalID === line.id.toString());
+
+      const runData: RunData = {
+        teams: [],
+        customData: {},
+        id: matchingOldRun?.id || uuid(),
+        externalID: line.id.toString(),
+      };
+
+      // General Run Data
+      runData.game = line.gameName ?? undefined;
+      runData.system = line.console ?? undefined;
+      runData.category = line.categoryName ?? undefined;
+      const parsedEstimate = isoParse(line.estimate);
+      runData.estimate = formatDuration(parsedEstimate);
+      runData.estimateS = toSeconds(parsedEstimate);
+      const parsedSetup = isoParse(line.setupTime);
+      runData.setupTime = formatDuration(parsedSetup);
+      runData.setupTimeS = toSeconds(parsedSetup);
+      if (line.setupBlock) {
+        // Game name set to "Setup" if the line is a setup block.
+        runData.game = 'Setup';
+        // Estimate for a setup block will be the setup time instead.
+        runData.estimate = runData.setupTime;
+        runData.estimateS = runData.setupTimeS;
+        runData.setupTime = formatDuration({ seconds: 0 });
+        runData.setupTimeS = 0;
+      }
+
+      // Team Data
+      runData.teams = await mapSeries(line.runners, (runner) => {
+        const team: RunDataTeam = {
+          id: uuid(),
+          players: [],
+        };
+        const player: RunDataPlayer = {
+          name: (useJapanese && runner.usernameJapanese)
+            ? runner.usernameJapanese : runner.username,
+          id: uuid(),
+          teamID: team.id,
+          social: {},
+        };
+        if (runner.twitchName) {
+          player.social.twitch = runner.twitchName;
+        }
+        team.players.push(player);
+        return team;
       });
+      return runData;
+    });
+    runDataArray.value = newRunDataArray;
+    resetImportStatus();
   } catch (err) {
-    nodecg.log.warn('[Oengus] Error importing schedule:', err);
+    resetImportStatus();
+    throw err;
+  }
+}
+
+nodecg.listenFor('importOengusSchedule', async (data, ack) => {
+  try {
+    if (importStatus.value.importing) {
+      throw new Error('Already importing schedule');
+    }
+    nodecg.log.info('[Oengus Import] Started importing schedule');
+    await importSchedule(data.marathonShort, data.useJapanese);
+    nodecg.log.info('[Oengus Import] Successfully imported schedule from Oengus');
+    processAck(ack, null);
+  } catch (err) {
+    nodecg.log.warn('[Oengus Import] Error importing schedule:', err);
     processAck(ack, err);
   }
 });

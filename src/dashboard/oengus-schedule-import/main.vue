@@ -4,63 +4,88 @@
     "panelTitle": "Oengus Schedule Import",
     "shortname": "Oengus Marathon Shortname",
     "helpText": "Insert the Oengus marathon shortname (not including \"/schedule\") above and press the \"Import Schedule Data\" button.",
+    "importInProgressHelpText": "Import currently in progress...",
     "useJapaneseNames": "Use Japanese names?",
-    "import": "Import Schedule Data"
+    "import": "Import Schedule Data",
+    "importProgress": "Importing {item}/{total}"
   },
   "ja": {
     "panelTitle": null,
     "shortname": null,
     "helpText": null,
+    "importInProgressHelpText": null,
     "useJapaneseNames": null,
-    "import": null
+    "import": null,
+    "importProgress": null
   }
 }
 </i18n>
 
 <template>
   <v-app>
-    <!-- Oengus ID Field -->
+    <!-- Oengus Shortname Field -->
     <v-text-field
-      v-model="marathonId"
+      v-model="marathonShort"
       filled
       hide-details
       :label="$t('shortname')"
       placeholder="id"
       prefix="/marathon/"
     />
-    <div :style="{ margin: '5px 0'}">
-      {{ $t('helpText') }}
+    <div class="mt-2">
+      <template v-if="!importStatus.importing">
+        <div>
+          {{ $t('helpText') }}
+        </div>
+        <!-- Switch use Japanese or not for importing data -->
+        <v-switch
+          v-model="useJapanese"
+          class="ma-1"
+          hide-details
+          :label="$t('useJapaneseNames')"
+        />
+      </template>
+      <template v-else>
+        {{ $t('importInProgressHelpText') }}
+      </template>
     </div>
-    <!-- Switch use Japanese or not for importing data -->
-    <v-switch
-      v-model="useJapanese"
-      hide-details
-      :label="$t('useJapaneseNames')"
-      color="primary"
-      :style="{ margin: '5px 0'}"
-    />
-    <!-- "Import Schedule Data" Button -->
-    <v-btn
-      :style="{ margin: '5px 0' }"
-      :disabled="importing"
-      :loading="importing"
-      @click="importConfirm"
-    >
-      {{ $t('import') }}
-    </v-btn>
+    <div class="mt-1">
+      <!-- Import Button, if importing -->
+      <v-btn
+        v-if="importStatus.importing"
+        :disabled="true"
+        block
+      >
+        {{ $t('importProgress', { item: importStatus.item, total: importStatus.total }) }}
+      </v-btn>
+      <!-- Import Button, if not importing -->
+      <v-btn
+        v-else
+        block
+        @click="importConfirm"
+      >
+        {{ $t('import') }}
+      </v-btn>
+    </div>
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { OengusImportStatus } from 'schemas';
+import { store as repStore } from '../_misc/replicant-store';
 
 export default Vue.extend({
   data() {
     return {
-      marathonId: nodecg.bundleConfig.oengus.defaultMarathon || '',
+      marathonShort: nodecg.bundleConfig.oengus.defaultMarathon || '',
       useJapanese: nodecg.bundleConfig.oengus.useJapanese,
-      importing: false,
     };
+  },
+  computed: {
+    importStatus(): OengusImportStatus {
+      return repStore.state.oengusImportStatus;
+    },
   },
   mounted() {
     if (window.frameElement) {
@@ -77,14 +102,13 @@ export default Vue.extend({
     },
     import(confirm: boolean): void {
       if (confirm) {
-        this.importing = true;
         nodecg.sendMessage('importOengusSchedule', {
-          marathonId: this.marathonId,
+          marathonShort: this.marathonShort,
           useJapanese: this.useJapanese,
         }).then(() => {
-          this.importing = false;
+          // successful
         }).catch(() => {
-          this.importing = false;
+          // unsuccessful
         });
       }
     },

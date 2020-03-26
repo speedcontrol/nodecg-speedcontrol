@@ -2,7 +2,7 @@ import clone from 'clone';
 import { ReplicantBrowser } from 'nodecg/types/browser'; // eslint-disable-line import/no-unresolved
 import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
-import { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '../../../schemas'; // eslint-disable-line max-len, object-curly-newline
+import { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, OengusImportStatus, RunDataActiveRunSurrounding, RunFinishTimes, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '../../../schemas'; // eslint-disable-line max-len, object-curly-newline
 import { RunDataActiveRun, RunDataArray, Timer } from '../../../types';
 
 Vue.use(Vuex);
@@ -14,6 +14,7 @@ const replicantNames = [
   'runFinishTimes',
   'horaroImportStatus',
   'horaroImportSavedOpts',
+  'oengusImportStatus',
   'defaultSetupTime',
   'timer',
   'timerChangesDisabled',
@@ -31,6 +32,7 @@ export const store = new Vuex.Store({
     runFinishTimes: {} as RunFinishTimes,
     horaroImportStatus: {} as HoraroImportStatus,
     horaroImportSavedOpts: null as HoraroImportSavedOpts,
+    oengusImportStatus: {} as OengusImportStatus,
     defaultSetupTime: 0 as DefaultSetupTime,
     timer: {} as Timer,
     timerChangesDisabled: false as TimerChangesDisabled,
@@ -104,6 +106,7 @@ export async function create(): Promise<Store<{
   runFinishTimes: RunFinishTimes;
   horaroImportStatus: HoraroImportStatus;
   horaroImportSavedOpts: HoraroImportSavedOpts;
+  oengusImportStatus: OengusImportStatus;
   defaultSetupTime: DefaultSetupTime;
   timer: Timer;
   timerChangesDisabled: TimerChangesDisabled;
