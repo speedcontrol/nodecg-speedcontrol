@@ -4,9 +4,9 @@ import needle from 'needle';
 import { mapSeries } from 'p-iteration';
 import parseDuration from 'parse-duration';
 import removeMd from 'remove-markdown';
+import { DefaultSetupTime, HoraroImportStatus } from 'schemas';
+import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataTeam, UserData } from 'types'; // eslint-disable-line object-curly-newline, max-len
 import { v4 as uuid } from 'uuid';
-import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
-import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataTeam, UserData } from '../../types'; // eslint-disable-line object-curly-newline, max-len
 import { searchForTwitchGame, searchForUserData } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
 import { bundleConfig, checkGameAgainstIgnoreList, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
@@ -340,17 +340,15 @@ nodecg.listenFor('loadSchedule', (data, ack) => {
     .catch((err) => processAck(ack, err));
 });
 
-nodecg.listenFor('importSchedule', (data, ack) => {
+nodecg.listenFor('importSchedule', async (data, ack) => {
   try {
     if (importStatus.value.importing) {
       throw new Error('Already importing schedule');
     }
     nodecg.log.info('[Horaro Import] Started importing schedule');
-    importSchedule(data.opts, data.dashID)
-      .then(() => {
-        nodecg.log.info('[Horaro Import] Successfully imported schedule');
-        processAck(ack, null);
-      });
+    await importSchedule(data.opts, data.dashID);
+    nodecg.log.info('[Horaro Import] Successfully imported schedule');
+    processAck(ack, null);
   } catch (err) {
     nodecg.log.warn('[Horaro Import] Error importing schedule:', err);
     processAck(ack, err);
