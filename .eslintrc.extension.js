@@ -41,5 +41,7 @@ module.exports = {
     'max-len': ['error', { 'code': 100 }],
     'lines-between-class-members': 'off',
     'require-atomic-updates': 'off',
+    'no-restricted-syntax': 'off',
+    'no-await-in-loop': 'off',
   },
 };

@@ -4,9 +4,9 @@ import { mapSeries } from 'p-iteration';
 import { DefaultSetupTime, OengusImportStatus } from 'schemas';
 import { OengusMarathon, OengusSchedule, RunData, RunDataArray, RunDataPlayer, RunDataTeam } from 'types'; // eslint-disable-line object-curly-newline, max-len
 import { v4 as uuid } from 'uuid';
-import { searchForTwitchGame } from './srcom-api';
+import { searchForTwitchGame, searchForUserDataMultiple } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
-import { bundleConfig, checkGameAgainstIgnoreList, padTimeNumber, processAck, to } from './util/helpers';
+import { bundleConfig, checkGameAgainstIgnoreList, padTimeNumber, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
@@ -159,7 +159,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
       scheduledTime += runData.estimateS + runData.setupTimeS;
 
       // Team Data
-      runData.teams = await mapSeries(line.runners, (runner) => {
+      runData.teams = await mapSeries(line.runners, async (runner) => {
         const team: RunDataTeam = {
           id: uuid(),
           players: [],
@@ -169,10 +169,24 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
             ? runner.usernameJapanese : runner.username,
           id: uuid(),
           teamID: team.id,
-          social: {},
+          social: {
+            twitch: runner.twitchName ?? undefined,
+          },
         };
-        if (runner.twitchName) {
-          player.social.twitch = runner.twitchName;
+        if (!config.oengus.disableSpeedrunComLookup) {
+          const data = await searchForUserDataMultiple(
+            runner.speedruncomName,
+            runner.twitchName,
+            runner.username,
+          );
+          if (data) {
+            // Always favour the supplied Twitch username from schedule if available.
+            if (!runner.twitchName) {
+              const tURL = (data.twitch && data.twitch.uri) ? data.twitch.uri : undefined;
+              player.social.twitch = tURL ? tURL.split('/')[tURL.split('/').length - 1] : undefined;
+            }
+            player.country = (data.location) ? data.location.country.code : undefined;
+          }
         }
         team.players.push(player);
         return team;

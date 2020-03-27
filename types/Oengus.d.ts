@@ -38,9 +38,9 @@ export interface OengusUser {
   usernameJapanese: string | null;
   enabled: boolean;
   roles: OengusRole[];
-  twitterName?: string;
-  twitchName?: string;
-  speedruncomName?: string;
+  twitterName: string | null;
+  twitchName: string | null;
+  speedruncomName: string | null;
   atLeastOneAccountSynchronized: boolean;
   emailPresentForExistingUser: boolean;
 }
