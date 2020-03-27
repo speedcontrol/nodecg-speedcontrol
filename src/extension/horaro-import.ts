@@ -5,11 +5,11 @@ import { mapSeries } from 'p-iteration';
 import parseDuration from 'parse-duration';
 import removeMd from 'remove-markdown';
 import { DefaultSetupTime, HoraroImportStatus } from 'schemas';
-import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataTeam, UserData } from 'types'; // eslint-disable-line object-curly-newline, max-len
+import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataPlayer, RunDataTeam } from 'types'; // eslint-disable-line object-curly-newline, max-len
 import { v4 as uuid } from 'uuid';
-import { searchForTwitchGame, searchForUserData } from './srcom-api';
+import { searchForTwitchGame, searchForUserDataMultiple } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
-import { bundleConfig, checkGameAgainstIgnoreList, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { bundleConfig, checkGameAgainstIgnoreList, getTwitchUserFromURL, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 
 const nodecg = get();
@@ -45,57 +45,6 @@ function parseMarkdown(str?: string | null): ParsedMarkdown {
   } catch (err) {
     return results;
   }
-}
-
-/**
- * Used to look up a user's data on speedrun.com with an arbitrary string,
- * usually name or Twitch username. If nothing is specified, will resolve immediately.
- * @param str String to attempt to look up the user by.
- */
-async function querySRcomUserData(str?: string): Promise<UserData | undefined> {
-  if (str && !config.schedule.disableSpeedrunComLookup) {
-    try {
-      const data = await searchForUserData(str);
-      return data;
-    } catch (err) {
-      return undefined;
-    }
-  }
-  return undefined;
-}
-
-/**
- * Attempt to get information about a player using several options.
- * @param name Name to attempt to use.
- * @param twitchURL Twitch URL to attempt to use.
- */
-async function parseSRcomUserData(name?: string, twitchURL?: string): Promise<{
-  country?: string;
-  twitchURL?: string;
-}> {
-  const foundData: {
-    country?: string;
-    twitchURL?: string;
-  } = {};
-
-  // Get username from Twitch URL.
-  const twitchUsername = (
-    twitchURL && twitchURL.includes('twitch.tv')
-  ) ? twitchURL.split('/')[twitchURL.split('/').length - 1] : undefined;
-
-  // First query using Twitch username, then normal name if needed.
-  let data = await querySRcomUserData(twitchUsername);
-  if (!data) {
-    data = await querySRcomUserData(name);
-  }
-
-  // Parse data if possible.
-  if (data) {
-    foundData.country = (data.location) ? data.location.country.code : undefined;
-    foundData.twitchURL = (data.twitch && data.twitch.uri) ? data.twitch.uri : undefined;
-  }
-
-  return foundData;
 }
 
 /**
@@ -301,19 +250,28 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
               rawTeam.players,
               async (rawPlayer) => {
                 const { str, url } = parseMarkdown(rawPlayer);
-                const { country, twitchURL } = await parseSRcomUserData(str, url);
-                const usedURL = url || twitchURL; // Always favour URL from Horaro.
-                return {
+                const twitchUsername = getTwitchUserFromURL(url);
+                const player: RunDataPlayer = {
                   name: str || '',
                   id: uuid(),
                   teamID: team.id,
-                  country,
                   social: {
-                    twitch: (
-                      usedURL && usedURL.includes('twitch.tv')
-                    ) ? usedURL.split('/')[usedURL.split('/').length - 1] : undefined,
+                    twitch: twitchUsername,
                   },
                 };
+                if (!config.schedule.disableSpeedrunComLookup) {
+                  const sData = await searchForUserDataMultiple(twitchUsername, str);
+                  if (sData) {
+                    // Always favour the supplied Twitch username from schedule if available.
+                    if (!twitchUsername) {
+                      const tURL = (sData.twitch && sData.twitch.uri)
+                        ? sData.twitch.uri : undefined;
+                      player.social.twitch = getTwitchUserFromURL(tURL);
+                    }
+                    player.country = (sData.location) ? sData.location.country.code : undefined;
+                  }
+                }
+                return player;
               },
             );
 

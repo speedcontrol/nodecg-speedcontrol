@@ -141,3 +141,10 @@ export function checkGameAgainstIgnoreList(game: string | null): boolean {
     new RegExp(`\\b${_.escapeRegExp(game.toLowerCase())}\\b`),
   ));
 }
+
+/**
+ * Will attempt to extract the Twitch username from a Twitch URL if possible.
+ */
+export function getTwitchUserFromURL(url?: string): string | undefined {
+  return url && url.includes('twitch.tv') ? url.split('/')[url.split('/').length - 1] : undefined;
+}

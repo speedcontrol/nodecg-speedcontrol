@@ -6,7 +6,7 @@ import { OengusMarathon, OengusSchedule, RunData, RunDataArray, RunDataPlayer, R
 import { v4 as uuid } from 'uuid';
 import { searchForTwitchGame, searchForUserDataMultiple } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
-import { bundleConfig, checkGameAgainstIgnoreList, padTimeNumber, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { bundleConfig, checkGameAgainstIgnoreList, getTwitchUserFromURL, padTimeNumber, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
@@ -183,7 +183,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
             // Always favour the supplied Twitch username from schedule if available.
             if (!runner.twitchName) {
               const tURL = (data.twitch && data.twitch.uri) ? data.twitch.uri : undefined;
-              player.social.twitch = tURL ? tURL.split('/')[tURL.split('/').length - 1] : undefined;
+              player.social.twitch = getTwitchUserFromURL(tURL);
             }
             player.country = (data.location) ? data.location.country.code : undefined;
           }
