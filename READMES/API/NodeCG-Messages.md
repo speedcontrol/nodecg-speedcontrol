@@ -408,23 +408,25 @@ Removes all of the runs in the `runDataArray` replicant, and also removes the ac
 
 ## twitchStartCommercial
 
-### *No parameters*
+### Parameters
+- *[`object`]*
+  - `duration` *[`number`]* How long you want the commercial to run for in seconds. Accepted values: 30, 60, 90, 120, 150, 180.
 ### Data
 - *[`object`]*
   - `duration` *[`number`]* How long the commercial will run for in seconds.
 ### Example code (extension/no acknowledgement)
 ```javascript
-nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol');
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180 });
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', (err, data) => {
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180 }, (err, data) => {
   ...
 });
 ```
 ### Example code (promise)
 ```javascript
-nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol')
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180 })
   .then((data) => { ... })
   .catch((err) => { ... });
 ```
@@ -435,7 +437,7 @@ nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol')
 }
 ```
 
-Used to tell the Twitch API to run a commercial if applicable to your channel and you have the Twitch API integration enabled. Currently the commercials will all be 180 seconds (3 minutes); there is no way to specify this yet.
+Used to tell the Twitch API to run a commercial if applicable to your channel and you have the Twitch API integration enabled. You can specify the length using `duration` in the paramters object; if not specified it will default to 180.
 
 
 ## twitchUpdateChannelInfo

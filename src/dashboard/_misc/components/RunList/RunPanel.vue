@@ -1,3 +1,18 @@
+<i18n>
+{
+  "en": {
+    "playRun": "Play Run",
+    "newRunAfter": "Add New Run After",
+    "removeRun": "Remove Run"
+  },
+  "ja": {
+    "playRun": "走者情報の実行",
+    "newRunAfter": "後ろに走者情報を追加",
+    "removeRun": "走者情報の削除"
+  }
+}
+</i18n>
+
 <template>
   <v-expansion-panel
     :class="{ 'grey darken-2': !editor && activeRun && activeRun.id === runData.id }"
@@ -16,31 +31,31 @@
     </v-expansion-panel-header>
     <v-expansion-panel-content class="body-2">
       <div v-if="playerStr">
-        <span class="font-weight-bold">Players:</span>
+        <span class="font-weight-bold">{{ $t('players') }}:</span>
         <span>{{ playerStr }}</span>
       </div>
       <div v-if="runData.category">
-        <span class="font-weight-bold">Category:</span>
+        <span class="font-weight-bold">{{ $t('category') }}:</span>
         <span>{{ runData.category }}</span>
       </div>
       <div v-if="runData.estimate">
-        <span class="font-weight-bold">Estimate:</span>
+        <span class="font-weight-bold">{{ $t('estimate') }}:</span>
         <span>{{ runData.estimate }}</span>
       </div>
       <div v-if="runData.system">
-        <span class="font-weight-bold">System:</span>
+        <span class="font-weight-bold">{{ $t('system') }}:</span>
         <span>{{ runData.system }}</span>
       </div>
       <div v-if="runData.region">
-        <span class="font-weight-bold">Region:</span>
+        <span class="font-weight-bold">{{ $t('region') }}:</span>
         <span>{{ runData.region }}</span>
       </div>
       <div v-if="runData.release">
-        <span class="font-weight-bold">Released:</span>
+        <span class="font-weight-bold">{{ $t('released') }}:</span>
         <span>{{ runData.release }}</span>
       </div>
       <div v-if="runFinishTime">
-        <span class="font-weight-bold">Final Time:</span>
+        <span class="font-weight-bold">{{ $t('finalTime') }}:</span>
         <span>{{ runFinishTime.time }}</span>
       </div>
       <div
@@ -55,33 +70,33 @@
         <div v-if="!editor">
           <modify-button
             icon="mdi-play"
-            tooltip="Play Run"
+            :tooltip="$t('playRun')"
             :disabled="disableChange"
             @click="playRun"
-          ></modify-button>
+          />
         </div>
         <!-- Buttons for "Run Editor" dashboard panel. -->
         <div v-else>
           <modify-button
             icon="mdi-content-duplicate"
-            tooltip="Duplicate Run"
+            :tooltip="$t('duplicateRun')"
             @click="duplicateRun"
-          ></modify-button>
+          />
           <modify-button
             icon="mdi-file-plus-outline"
-            tooltip="Add New Run After"
+            :tooltip="$t('newRunAfter')"
             @click="addNewRunAfter"
-          ></modify-button>
+          />
           <modify-button
             icon="mdi-square-edit-outline"
-            tooltip="Edit Run"
+            :tooltip="$t('editRun')"
             @click="editRun"
-          ></modify-button>
+          />
           <modify-button
             icon="mdi-file-remove-outline"
-            tooltip="Remove Run"
+            :tooltip="$t('removeRun')"
             @click="removeRunConfirm"
-          ></modify-button>
+          />
         </div>
       </div>
     </v-expansion-panel-content>

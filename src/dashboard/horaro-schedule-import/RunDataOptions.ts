@@ -1,3 +1,5 @@
+import i18n from '../_misc/i18n';
+
 interface RunDataOption {
   name: string;
   key: string;
@@ -7,28 +9,28 @@ interface RunDataOption {
 
 export default [
   {
-    name: 'Game',
+    name: i18n.t('game'),
     key: 'game',
     predict: [
       'game',
     ],
   },
   {
-    name: 'Game (Twitch)',
+    name: i18n.t('gameTwitch'),
     key: 'gameTwitch',
     predict: [
       // none yet
     ],
   },
   {
-    name: 'Category',
+    name: i18n.t('category'),
     key: 'category',
     predict: [
       'category',
     ],
   },
   {
-    name: 'System',
+    name: i18n.t('system'),
     key: 'system',
     predict: [
       'system',
@@ -36,25 +38,32 @@ export default [
     ],
   },
   {
-    name: 'Region',
+    name: i18n.t('region'),
     key: 'region',
     predict: [
       'region',
     ],
   },
   {
-    name: 'Released',
+    name: i18n.t('released'),
     key: 'release',
     predict: [
       'release',
     ],
   },
   {
-    name: 'Player(s)',
+    name: i18n.t('players'),
     key: 'player',
     predict: [
       'player',
       'runner',
+    ],
+  },
+  {
+    name: i18n.t('externalID'),
+    key: 'externalID',
+    predict: [
+      'id',
     ],
   },
 ] as RunDataOption[];

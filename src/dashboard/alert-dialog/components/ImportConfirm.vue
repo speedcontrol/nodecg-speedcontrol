@@ -1,8 +1,8 @@
 <i18n>
 {
   "en": {
-    "alertText": "Are you sure you want to remove all runs?",
-    "alertText2": "This will also remove the currently active run."
+    "alertText": "Importing will remove all currently added runs, continue?",
+    "alertText2": "The currently active run will not be modified."
   },
   "ja": {
     "alertText": null,

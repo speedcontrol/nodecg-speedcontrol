@@ -1,22 +1,35 @@
+<i18n>
+{
+  "en": {
+    "search": "Search...",
+    "noTwitchGame": "Run has no Twitch game directory listed",
+    "searchResultCount": "1 run found. | {count} runs found."
+  },
+  "ja": {
+    "search": null,
+    "noTwitchGame": null,
+    "searchResultCount": null
+  }
+}
+</i18n>
+
 <template>
   <div>
     <v-text-field
       v-model="searchTerm"
       filled
       clearable
-      label="Search..."
+      :label="$t('search')"
       append-icon="mdi-magnify"
-      :messages="`
-        ${filteredRunDataArray.length} run${filteredRunDataArray.length === 1 ? '' : 's'} found.
-      `"
-    ></v-text-field>
+      :messages="$tc('searchResultCount', filteredRunDataArray.length)"
+    />
     <div v-if="editor && twitchAPIData.state === 'on'">
       <v-checkbox
         v-model="hasNoTwitch"
         class="ma-1 pa-0"
         hide-details
-        label="Run has no Twitch game directory listed"
-      ></v-checkbox>
+        :label="$t('noTwitchGame')"
+      />
     </div>
     <div
       ref="runList"
@@ -39,7 +52,7 @@
               :editor="editor"
               :disable-change="disableChange"
               :move-disabled="!!searchTerm || hasNoTwitch || !editor"
-            ></run-panel>
+            />
           </transition-group>
         </draggable>
       </v-expansion-panels>

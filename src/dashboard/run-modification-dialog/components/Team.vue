@@ -1,3 +1,18 @@
+<i18n>
+{
+  "en": {
+    "teamName": "Team Name",
+    "removeTeam": "Remove Team",
+    "addNewPlayer": "Add New Player"
+  },
+  "ja": {
+    "teamName": "チーム名",
+    "removeTeam": "チームの削除",
+    "addNewPlayer": "プレイヤーの追加"
+  }
+}
+</i18n>
+
 <template>
   <div :style="{ 'margin-top': '20px' }">
     <div class="d-flex align-center">
@@ -10,20 +25,20 @@
       </v-icon>
       <text-input
         v-model="teamData.name"
-        label="Team Name"
-      ></text-input>
+        :label="$t('teamName')"
+      />
       <modify-button
         :style="{ 'margin-left': '5px' }"
         icon="mdi-account-multiple-minus"
-        tooltip="Remove Team"
+        :tooltip="$t('removeTeam')"
         @click="removeTeam"
-      ></modify-button>
+      />
       <modify-button
         :style="{ 'margin-left': '5px' }"
         icon="mdi-account-plus"
-        tooltip="Add New Player"
+        :tooltip="$t('addNewPlayer')"
         @click="addNewPlayer"
-      ></modify-button>
+      />
     </div>
     <draggable
       v-model="teamData.players"
@@ -34,7 +49,7 @@
           v-for="player in teamData.players"
           :key="player.id"
           :player-data="player"
-        ></player>
+        />
       </transition-group>
     </draggable>
   </div>

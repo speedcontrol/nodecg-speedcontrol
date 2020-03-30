@@ -1,3 +1,14 @@
+<i18n>
+{
+  "en": {
+    "stop": "Stop"
+  },
+  "ja": {
+    "stop": "ストップ"
+  }
+}
+</i18n>
+
 <template>
   <div>
     <v-tooltip
@@ -15,8 +26,8 @@
           </v-btn>
         </span>
       </template>
-      <span v-if="forfeit">Forfeit</span>
-      <span v-else>Stop</span>
+      <span v-if="forfeit">{{ $t('forfeit') }}</span>
+      <span v-else>{{ $t('stop') }}</span>
     </v-tooltip>
   </div>
 </template>

@@ -14,7 +14,9 @@ const nodecg = get();
 const array = nodecg.Replicant<RunDataArray>('runDataArray');
 const activeRun = nodecg.Replicant<RunDataActiveRun>('runDataActiveRun');
 const activeRunSurr = nodecg.Replicant<RunDataActiveRunSurrounding>('runDataActiveRunSurrounding');
-const timer = nodecg.Replicant<Timer>('timer');
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: persistenceInterval not typed yet
+const timer = nodecg.Replicant<Timer>('timer', { persistenceInterval: 1000 });
 const twitchAPIData = nodecg.Replicant<TwitchAPIData>('twitchAPIData');
 
 /**

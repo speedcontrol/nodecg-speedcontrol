@@ -1,17 +1,30 @@
+<i18n>
+{
+  "en": {
+    "panelTitle": "Add/Remove Runs",
+    "removeAllRuns": "Remove All Runs"
+  },
+  "ja": {
+    "panelTitle": "走者情報の追加/削除",
+    "removeAllRuns": "全ての走者情報の削除"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <v-btn
       class="green darken-2"
       @click="openAddDialog"
     >
-      <v-icon>mdi-plus-box</v-icon>Add New Run
+      <v-icon>mdi-plus-box</v-icon>{{ $t('addNewRun') }}
     </v-btn>
     <v-btn
       class="red darken-2"
       :disabled="removeAllDisabled"
       @click="removeAllRunsConfirm"
     >
-      <v-icon>mdi-delete</v-icon>Remove All Runs
+      <v-icon>mdi-delete</v-icon>{{ $t('removeAllRuns') }}
     </v-btn>
   </v-app>
 </template>
@@ -26,6 +39,11 @@ export default Vue.extend({
     removeAllDisabled(): boolean {
       return ['running', 'paused'].includes(store.state.timer.state);
     },
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
   methods: {
     openAddDialog(): void {

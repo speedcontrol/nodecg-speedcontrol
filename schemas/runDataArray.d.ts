@@ -35,5 +35,5 @@ export type RunDataArray = {
     [k: string]: string;
   };
   id: string;
-  hash?: string;
+  externalID?: string;
 }[];

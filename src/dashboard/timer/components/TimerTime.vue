@@ -1,3 +1,14 @@
+<i18n>
+{
+  "en": {
+    "editTip": "Click to edit, Enter to save"
+  },
+  "ja": {
+    "editTip": "クリックすると編集が行え、Enterすると保存します"
+  }
+}
+</i18n>
+
 <template>
   <div>
     <v-tooltip
@@ -16,11 +27,10 @@
             :readonly="disableEditing"
             @blur="abandonEdit"
             @keyup.enter="finishEdit"
-          >
-          </v-text-field>
+          />
         </span>
       </template>
-      <span>Click to edit, Enter to save</span>
+      <span>{{ $t('editTip') }}</span>
     </v-tooltip>
   </div>
 </template>

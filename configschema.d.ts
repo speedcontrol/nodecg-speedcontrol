@@ -6,6 +6,7 @@
  */
 
 export interface Configschema {
+  language: "en" | "ja";
   twitch: {
     enabled: boolean;
     clientID: string;
@@ -16,16 +17,23 @@ export interface Configschema {
     streamDefaultGame: string;
     ffzIntegration?: boolean;
     ffzUseRepeater?: boolean;
-    ffzBlacklist?: string[];
+    ffzBlacklist?: string[] | null;
   };
   schedule: {
     defaultURL: string;
-    ignoreGamesWhileImporting?: string[];
+    ignoreGamesWhileImporting?: string[] | null;
     disableSpeedrunComLookup: boolean;
-    customData?: {
-      name: string;
-      key: string;
-      ignoreMarkdown?: boolean;
-    }[];
+    customData?:
+      | {
+          name: string;
+          key: string;
+          ignoreMarkdown?: boolean;
+        }[]
+      | null;
+  };
+  oengus: {
+    defaultMarathon: string;
+    useJapanese: boolean;
+    disableSpeedrunComLookup: boolean;
   };
 }

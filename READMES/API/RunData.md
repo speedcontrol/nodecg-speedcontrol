@@ -71,8 +71,8 @@ Various places in this bundle store information in the format we refer to as the
 - `estimateS` *Number* Same as above but in seconds.
 - `setupTime` *[`string`]* Run setup time (to be added to the end of the run) in a human readable string.
 - `setupTimeS` *Number* Same as above but in seconds.
-- `scheduled` *[`string`]* Timestamp for when the run is scheduled, with the timezone; only applicable for runs imported from Horaro.
-- `scheduledS` *[`number`]* Same as above but as a unix timestamp.
+- `scheduled` *[`string`]* ISO 8601 timestamp for when the run is scheduled; for Horaro this will also have the timezone, but for Oengus it will always be in UTC.
+- `scheduledS` *[`number`]* Same as above but as a unix timestamp in seconds.
 - `teams` *[`array`[`object`]]* Teams that are doing this run. Length can be 0 (no teams/players), 1 (single player run or co-op) or 2 or more (race and/or co-op race); this will always be an array even if no teams are contained within it.
 - `customData` *[`object`]* Contains keyed strings, with the key(s) from your configuration for custom data; this will always be an object even if no data is contained within it.
 - `id` *[`string`]* Unique ID; will always be set.

@@ -94,3 +94,25 @@ export async function searchForUserData(query: string): Promise<UserData> {
     throw err;
   }
 }
+
+/**
+ * Try to find user data using multiple strings, will loop through them until one is successful.
+ * Does not return any errors, if those happen this will just treat it as unsuccessful.
+ * @param queries List of queries to use, if any are falsey they will be skipped.
+ */
+export async function searchForUserDataMultiple(...queries: (string | undefined | null)[]):
+  Promise<UserData | undefined> {
+  let userData;
+  for (const query of queries) {
+    if (query) {
+      try {
+        const data = await searchForUserData(query);
+        userData = data;
+        break;
+      } catch (err) {
+        // nothing found
+      }
+    }
+  }
+  return userData;
+}

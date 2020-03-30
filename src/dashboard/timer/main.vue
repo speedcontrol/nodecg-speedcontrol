@@ -1,25 +1,42 @@
+<i18n>
+{
+  "en": {
+    "panelTitle": "Timer",
+    "enableChanges": "Enable Changes",
+    "disableChanges": "Disable Changes",
+    "toggleChangesNote": "Only use this button if needed."
+  },
+  "ja": {
+    "panelTitle": "タイマー",
+    "enableChanges": null,
+    "disableChanges": null,
+    "toggleChangesNote": null
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <div :class="{ disabled: disableChanges }">
-      <timer-time></timer-time>
+      <timer-time />
       <div
         id="Controls"
         class="d-flex justify-center"
       >
-        <start-button></start-button>
-        <reset-button></reset-button>
+        <start-button />
+        <reset-button />
         <!-- Will not show if more than 1 team -->
         <template v-if="teams.length <= 1">
           <stop-button
             :info="teams[0]"
-          ></stop-button>
+          />
           <stop-button
             :info="teams[0]"
             forfeit
-          ></stop-button>
+          />
           <undo-button
             :info="teams[0]"
-          ></undo-button>
+          />
         </template>
       </div>
       <!-- Will only show if more than 1 team -->
@@ -32,7 +49,7 @@
           :key="team.id"
           :info="team"
           :index="index"
-        ></team>
+        />
       </div>
     </div>
     <div
@@ -44,17 +61,17 @@
         block
         @click="disableChanges = false; tempEnable = true"
       >
-        Enable Changes
+        {{ $t('enableChanges') }}
       </v-btn>
       <v-btn
         v-if="tempEnable"
         block
         @click="disableChanges = true"
       >
-        Disable Changes
+        {{ $t('disableChanges') }}
       </v-btn>
       <div :style="{ 'margin-top': '5px' }">
-        <em>Only use this button if needed.</em>
+        <em>{{ $t('toggleChangesNote') }}</em>
       </div>
     </div>
     <!-- Hidden toggle for testing -->
@@ -117,6 +134,11 @@ export default Vue.extend({
     activeRun(): void {
       this.tempEnable = false;
     },
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
 });
 </script>

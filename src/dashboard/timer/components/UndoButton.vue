@@ -1,3 +1,14 @@
+<i18n>
+{
+  "en": {
+    "undo": "Undo"
+  },
+  "ja": {
+    "undo": "元に戻す"
+  }
+}
+</i18n>
+
 <template>
   <div>
     <v-tooltip
@@ -14,7 +25,7 @@
           </v-btn>
         </span>
       </template>
-      <span>Undo</span>
+      <span>{{ $t('undo') }}</span>
     </v-tooltip>
   </div>
 </template>

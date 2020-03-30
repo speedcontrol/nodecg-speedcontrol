@@ -1,8 +1,43 @@
+<i18n>
+{
+  "en": {
+    "panelTitle": "Twitch Control",
+    "notEnabled": "Twitch integration is not enabled.",
+    "twitchLogin": "Click the image above to login to Twitch to auto-sync data.",
+    "authenticating": "Authenticating...",
+    "logout": "Logout",
+    "autosync": "Auto-sync title/game?",
+    "autosyncFFZ": "Auto-sync title/game/featured channels?",
+    "title": "Title",
+    "gameDirectory": "Game Directory",
+    "featuredChannels": "Featured Channels",
+    "update": "Update",
+    "startCommercial": "Start Commercial",
+    "commercialRunning": "Commercial Running ({time} Remaining)"
+  },
+  "ja": {
+    "panelTitle": "Twitch連携",
+    "notEnabled": "Twitch連携が有効になっていません。",
+    "twitchLogin": "上記の画像をクリックしTwitchにログインすることで、データの自動同期が行えます。",
+    "authenticating": "認証中...",
+    "logout": "ログアウト",
+    "autosync": "タイトル/ゲームカテゴリーの同期を有効化しますか？",
+    "autosyncFFZ": "タイトル/ゲームカテゴリーの同期を有効化しますか/featured channels？",
+    "title": "タイトル",
+    "gameDirectory": "ゲームカテゴリー",
+    "featuredChannels": null,
+    "update": "更新",
+    "startCommercial": null,
+    "commercialRunning": null
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <!-- Not enabled. -->
     <div v-if="!config.enabled">
-      Twitch integration is not enabled.
+      {{ $t('notEnabled') }}
     </div>
     <!-- Enabled but not logged in server-side. -->
     <div v-else-if="apiData.state === 'off'">
@@ -10,11 +45,11 @@
         :href="url"
         target="_blank"
       ><img src="./twitch-login.png"></a>
-      <br><em>Click the image above to login to Twitch to auto-sync data.</em>
+      <br><em>{{ $t('twitchLogin') }}</em>
     </div>
     <!-- Enabled, authenticating server-side. -->
     <div v-else-if="apiData.state === 'authenticating'">
-      Authenticating...
+      {{ $t('authenticating') }}
     </div>
     <!-- Ready server-side. -->
     <div v-else>
@@ -33,7 +68,7 @@
               <span>({{ apiData.channelName }})</span>
             </v-btn>
           </template>
-          <span>Logout</span>
+          <span>{{ $t('logout') }}</span>
         </v-tooltip>
       </div>
       <div id="AutoSyncContainer">
@@ -41,55 +76,87 @@
           v-model="sync"
           inset
           hide-details
-        ></v-switch>
-        Auto-sync title/game<span
-          v-if="config.ffzIntegration"
-        >/featured channels</span>?
+        />
+        <template v-if="!config.ffzIntegration">
+          {{ $t('autosync') }}
+        </template>
+        <template v-else>
+          {{ $t('autosyncFFZ') }}
+        </template>
       </div>
       <v-text-field
         v-model="title"
         class="TextBox"
-        label="Title"
+        :label="$t('title')"
         hide-details
         filled
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
-      ></v-text-field>
+      />
       <v-text-field
         v-model="game"
         class="TextBox"
-        label="Game Directory"
+        :label="$t('gameDirectory')"
         hide-details
         filled
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
-      ></v-text-field>
+      />
       <v-text-field
         v-if="config.ffzIntegration"
         v-model="users"
         class="TextBox"
-        label="Featured Channels"
+        :label="$t('featuredChannels')"
         hide-details
         filled
         @input="inputActivity"
         @focus="inputActivity"
         @blur="inputActivity"
-      ></v-text-field>
+      />
       <v-btn
+        class="mt-2"
         block
         @click="updateChannelInfo"
       >
-        Update
+        {{ $t('update') }}
       </v-btn>
-      <v-btn
-        v-if="['affiliate', 'partner'].includes(channelInfo.broadcaster_type)"
-        block
-        @click="startCommercial"
-      >
-        Start 3m Commercial
-      </v-btn>
+      <template v-if="['affiliate', 'partner'].includes(channelInfo.broadcaster_type)">
+        <div
+          v-if="timer.secondsRemaining <= 0"
+          class="d-flex justify-center align-center mt-2"
+        >
+          <div
+            class="flex-grow-1"
+            :style="{
+              'font-size': '0.9em',
+              'line-height': '100%',
+              'text-align': 'center',
+            }"
+          >
+            {{ $t('startCommercial') }}
+          </div>
+          <v-btn
+            v-for="(len, i) in [30, 60, 90, 120, 150, 180]"
+            :key="i"
+            class="ml-1"
+            :style="{ padding: '0 6px' }"
+            :min-width="0"
+            @click="startCommercial(len)"
+          >
+            {{ formatSeconds(len) }}
+          </v-btn>
+        </div>
+        <v-btn
+          v-else
+          class="mt-2"
+          block
+          disabled
+        >
+          {{ $t('commercialRunning', { time: commercialTimeRemaining }) }}
+        </v-btn>
+      </template>
     </div>
   </v-app>
 </template>
@@ -100,7 +167,8 @@ import { debounce } from 'lodash';
 import { nodecg } from '../_misc/nodecg';
 import { Configschema } from '../../../configschema';
 import { store } from '../_misc/replicant-store';
-import { TwitchAPIData, TwitchChannelInfo } from '../../../schemas';
+import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '../../../schemas';
+import { padTimeNumber } from '../_misc/helpers';
 
 export default Vue.extend({
   data() {
@@ -121,6 +189,9 @@ export default Vue.extend({
     channelInfo(): TwitchChannelInfo {
       return store.state.twitchChannelInfo;
     },
+    timer(): TwitchCommercialTimer {
+      return store.state.twitchCommercialTimer;
+    },
     sync: {
       get(): boolean {
         return store.state.twitchAPIData.sync;
@@ -136,6 +207,9 @@ export default Vue.extend({
       + '&response_type=code'
       + '&scope=channel_editor+user_read+chat:read+chat:edit+channel_commercial'
       + '&force_verify=true';
+    },
+    commercialTimeRemaining(): string {
+      return this.formatSeconds(this.timer.secondsRemaining);
     },
   },
   watch: {
@@ -155,7 +229,17 @@ export default Vue.extend({
   created() {
     this.blurInput = debounce(this.blurInput, 20 * 1000);
   },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
+  },
   methods: {
+    formatSeconds(sec: number): string {
+      const minutes = Math.floor(sec / 60);
+      const seconds = Math.floor(sec - minutes * 60);
+      return `${minutes}:${padTimeNumber(seconds)}`;
+    },
     inputActivity(evt: Event): void {
       if (['input', 'focus'].includes(evt.type)) {
         this.focus = true;
@@ -199,8 +283,8 @@ export default Vue.extend({
         });
       }
     },
-    startCommercial(): void {
-      nodecg.sendMessage('twitchStartCommercial').then(() => {
+    startCommercial(duration: number): void {
+      nodecg.sendMessage('twitchStartCommercial', { duration }).then(() => {
         // successful
       }).catch(() => {
         // unsuccessful
@@ -227,10 +311,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  .v-btn {
-    margin-top: 5px;
-  }
-
   #AutoSyncContainer > .v-input {
     margin: 0;
     padding: 0;

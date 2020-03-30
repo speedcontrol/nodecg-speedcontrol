@@ -108,7 +108,7 @@
     "id": {
       "type": "string"
     },
-    "hash": {
+    "externalID": {
       "type": "string"
     }
   },

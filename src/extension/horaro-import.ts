@@ -1,16 +1,15 @@
 import crypto from 'crypto';
-import _ from 'lodash';
 import MarkdownIt from 'markdown-it';
 import needle from 'needle';
 import { mapSeries } from 'p-iteration';
 import parseDuration from 'parse-duration';
 import removeMd from 'remove-markdown';
-import uuid from 'uuid/v4';
-import { DefaultSetupTime, HoraroImportStatus } from '../../schemas';
-import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataTeam, UserData } from '../../types'; // eslint-disable-line object-curly-newline, max-len
-import { searchForTwitchGame, searchForUserData } from './srcom-api';
+import { DefaultSetupTime, HoraroImportStatus } from 'schemas';
+import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataPlayer, RunDataTeam } from 'types'; // eslint-disable-line object-curly-newline, max-len
+import { v4 as uuid } from 'uuid';
+import { searchForTwitchGame, searchForUserDataMultiple } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
-import { bundleConfig, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { bundleConfig, checkGameAgainstIgnoreList, getTwitchUserFromURL, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 
 const nodecg = get();
@@ -49,76 +48,11 @@ function parseMarkdown(str?: string | null): ParsedMarkdown {
 }
 
 /**
- * Used to look up a user's data on speedrun.com with an arbitrary string,
- * usually name or Twitch username. If nothing is specified, will resolve immediately.
- * @param str String to attempt to look up the user by.
- */
-async function querySRcomUserData(str?: string): Promise<UserData | undefined> {
-  if (str && !config.schedule.disableSpeedrunComLookup) {
-    try {
-      const data = await searchForUserData(str);
-      return data;
-    } catch (err) {
-      return undefined;
-    }
-  }
-  return undefined;
-}
-
-/**
- * Attempt to get information about a player using several options.
- * @param name Name to attempt to use.
- * @param twitchURL Twitch URL to attempt to use.
- */
-async function parseSRcomUserData(name?: string, twitchURL?: string): Promise<{
-  country?: string;
-  twitchURL?: string;
-}> {
-  const foundData: {
-    country?: string;
-    twitchURL?: string;
-  } = {};
-
-  // Get username from Twitch URL.
-  const twitchUsername = (
-    twitchURL && twitchURL.includes('twitch.tv')
-  ) ? twitchURL.split('/')[twitchURL.split('/').length - 1] : undefined;
-
-  // First query using Twitch username, then normal name if needed.
-  let data = await querySRcomUserData(twitchUsername);
-  if (!data) {
-    data = await querySRcomUserData(name);
-  }
-
-  // Parse data if possible.
-  if (data) {
-    foundData.country = (data.location) ? data.location.country.code : undefined;
-    foundData.twitchURL = (data.twitch && data.twitch.uri) ? data.twitch.uri : undefined;
-  }
-
-  return foundData;
-}
-
-/**
  * Generates a hash based on the contents of the string based run data from Horaro.
  * @param colData Array of strings (or nulls), obtained from the Horaro JSON data.
  */
 function generateRunHash(colData: (string | null)[]): string {
   return crypto.createHash('sha1').update(colData.join(), 'utf8').digest('hex');
-}
-
-/**
- * Checks if the game name appears in the ignore list in the configuration.
- * @param game Game string (or null) to check against.
- */
-function checkGameAgainstIgnoreList(game: string | null): boolean {
-  if (!game) {
-    return false;
-  }
-  const list = config.schedule.ignoreGamesWhileImporting || [];
-  return !!list.find((str) => !!str.toLowerCase().match(
-    new RegExp(`\\b${_.escapeRegExp(game.toLowerCase())}\\b`),
-  ));
 }
 
 /**
@@ -180,6 +114,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
         region: (optsO.columns.region === null) ? -1 : optsO.columns.region,
         release: (optsO.columns.release === null) ? -1 : optsO.columns.release,
         player: (optsO.columns.player === null) ? -1 : optsO.columns.player,
+        externalID: (optsO.columns.externalID === null) ? -1 : optsO.columns.externalID,
         custom: {},
       },
       split: optsO.split,
@@ -189,28 +124,30 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       opts.columns.custom[col] = (val === null) ? -1 : val;
     });
 
+    const externalIDsSeen: string[] = [];
     // Filtering out any games on the ignore list before processing them all.
-    const hashesSeen: string[] = [];
     const newRunDataArray = await mapSeries(runItems.filter((run) => (
       !checkGameAgainstIgnoreList(run.data[opts.columns.game])
     )), async (run, index, arr) => {
       importStatus.value.item = index + 1;
       importStatus.value.total = arr.length;
 
-      // If a run with the same hash exists already, assume it's the same and use the same UUID.
-      // Will only work for the first instance of a hash, this is usually only an issue if the
-      // same "run" happens twice in a schedule (for example a Setup block).
-      const hash = generateRunHash(run.data);
+      // If a run with the same external ID exists already, use the same UUID.
+      // This will only work for the first instance of an external ID; for hashes, this is usually
+      // only an issue if the same "run" happens twice in a schedule (for example a Setup block),
+      // and for actual defined IDs from a column should never happen, but idiot proofing it.
+      const externalID = run.data[opts.columns.externalID] || generateRunHash(run.data);
       let matchingOldRun;
-      if (!hashesSeen.includes(hash)) {
-        matchingOldRun = runDataArray.value.find((oldRun) => oldRun.hash === hash);
-        hashesSeen.push(hash);
+      if (!externalIDsSeen.includes(externalID)) {
+        matchingOldRun = runDataArray.value.find((oldRun) => oldRun.externalID === externalID);
+        externalIDsSeen.push(externalID);
       }
+
       const runData: RunData = {
         teams: [],
         customData: {},
-        id: (matchingOldRun) ? matchingOldRun.id : uuid(),
-        hash,
+        id: matchingOldRun?.id || uuid(),
+        externalID,
       };
 
       // General Run Data
@@ -313,19 +250,28 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
               rawTeam.players,
               async (rawPlayer) => {
                 const { str, url } = parseMarkdown(rawPlayer);
-                const { country, twitchURL } = await parseSRcomUserData(str, url);
-                const usedURL = url || twitchURL; // Always favour URL from Horaro.
-                return {
+                const twitchUsername = getTwitchUserFromURL(url);
+                const player: RunDataPlayer = {
                   name: str || '',
                   id: uuid(),
                   teamID: team.id,
-                  country,
                   social: {
-                    twitch: (
-                      usedURL && usedURL.includes('twitch.tv')
-                    ) ? usedURL.split('/')[usedURL.split('/').length - 1] : undefined,
+                    twitch: twitchUsername,
                   },
                 };
+                if (!config.schedule.disableSpeedrunComLookup) {
+                  const sData = await searchForUserDataMultiple(twitchUsername, str);
+                  if (sData) {
+                    // Always favour the supplied Twitch username from schedule if available.
+                    if (!twitchUsername) {
+                      const tURL = (sData.twitch && sData.twitch.uri)
+                        ? sData.twitch.uri : undefined;
+                      player.social.twitch = getTwitchUserFromURL(tURL);
+                    }
+                    player.country = (sData.location) ? sData.location.country.code : undefined;
+                  }
+                }
+                return player;
               },
             );
 
@@ -352,17 +298,15 @@ nodecg.listenFor('loadSchedule', (data, ack) => {
     .catch((err) => processAck(ack, err));
 });
 
-nodecg.listenFor('importSchedule', (data, ack) => {
+nodecg.listenFor('importSchedule', async (data, ack) => {
   try {
     if (importStatus.value.importing) {
       throw new Error('Already importing schedule');
     }
     nodecg.log.info('[Horaro Import] Started importing schedule');
-    importSchedule(data.opts, data.dashID)
-      .then(() => {
-        nodecg.log.info('[Horaro Import] Successfully imported schedule');
-        processAck(ack, null);
-      });
+    await importSchedule(data.opts, data.dashID);
+    nodecg.log.info('[Horaro Import] Successfully imported schedule');
+    processAck(ack, null);
   } catch (err) {
     nodecg.log.warn('[Horaro Import] Error importing schedule:', err);
     processAck(ack, err);

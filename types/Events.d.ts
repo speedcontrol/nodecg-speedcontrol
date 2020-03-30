@@ -1,4 +1,5 @@
 import { RunData } from "./RunData";
+import { CommercialDuration } from "./Twitch";
 
 export interface SendMessageArgsMap {
   // Timer
@@ -18,8 +19,8 @@ export interface SendMessageArgsMap {
   removeAllRuns: void;
 
   // Twitch
-  twitchCommercialStarted: { duration: number; }
-  twitchStartCommercial: void;
+  twitchCommercialStarted: { duration: CommercialDuration; }
+  twitchStartCommercial: { duration?: CommercialDuration; }
   twitchUpdateChannelInfo: { status?: string, game?: string };
 
   // Featured Channels
@@ -46,7 +47,7 @@ export interface SendMessageReturnMap {
 
   // Twitch
   twitchCommercialStarted: void;
-  twitchStartCommercial: { duration: number; }
+  twitchStartCommercial: { duration: CommercialDuration; }
   twitchUpdateChannelInfo: boolean;
 
   // Featured Channels

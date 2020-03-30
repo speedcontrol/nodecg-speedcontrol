@@ -1,8 +1,23 @@
+<i18n>
+{
+  "en": {
+    "panelTitle": "Player Layout",
+    "note": "This order is only temporary, it does not modify the permenant copy.",
+    "noneAvailable": "No Teams/Run Available"
+  },
+  "ja": {
+    "panelTitle": null,
+    "note": null,
+    "noneAvailable": null
+  }
+}
+</i18n>
+
 <template>
   <v-app>
-    <em>This order is only temporary, it does not modify the permenant copy.</em>
+    <em>{{ $t('note') }}</em>
     <div v-if="!teams.length">
-      <br>No Teams/Run Available
+      <br>{{ $t('noneAvailable') }}
     </div>
     <draggable
       v-else
@@ -47,6 +62,11 @@ export default Vue.extend({
         store.commit('updateActiveRunTeamOrder', { value });
       },
     },
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
 });
 </script>

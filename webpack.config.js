@@ -73,6 +73,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.ts', '.tsx', '.json'],
+    alias: {
+      vue: 'vue/dist/vue.esm.js',
+    },
   },
   module: {
     rules: [
@@ -108,13 +111,29 @@ module.exports = {
         loader: 'file-loader',
         options: {
           name: 'font/[name].[ext]',
+          esModule: false,
         },
       },
       {
-        test: /\.(png)?$/,
+        test: /\.svg?$/,
+        include: [
+          path.resolve(__dirname, `src/dashboard/_misc/fonts`),
+        ],
         loader: 'file-loader',
         options: {
-          name: 'img/[name].[ext]',
+          name: 'font/[name].[ext]',
+          esModule: false,
+        },
+      },
+      {
+        test: /\.(png|svg)?$/,
+        exclude: [
+          path.resolve(__dirname, `src/dashboard/_misc/fonts`),
+        ],
+        loader: 'file-loader',
+        options: {
+          name: 'img/[name]-[contenthash].[ext]',
+          esModule: false,
         },
       },
       {
@@ -124,6 +143,11 @@ module.exports = {
           transpileOnly: true, // ForkTsCheckerWebpackPlugin will do type checking
           appendTsSuffixTo: [/\.vue$/],
         },
+      },
+      {
+        resourceQuery: /blockType=i18n/,
+        type: 'javascript/auto',
+        loader: '@intlify/vue-i18n-loader',
       },
     ],
   },

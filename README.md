@@ -7,12 +7,13 @@
 nodecg-speedcontrol, usually known as just "Speedcontrol", is a bundle for the [NodeCG](https://nodecg.com/) broadcast graphics framework/application developed for automating tasks for speedrunning marathons, mainly changing information on overlays and updating the Twitch information.
 
 Some basic information:
-- Import schedules from [Horaro](https://horaro.org/).
+- Import schedules from [Horaro](https://horaro.org/) and [Oengus](https://oengus.io/) [work in progress].
 - By default, can store information on the run and the players, but can also be customised to store more if needed by advanced users.
 - Automatically change Twitch title and/or game directory if needed.
 - Automatically feature the current player(s) on the [FrankerFaceZ](https://www.frankerfacez.com/) featured channels function below the stream.
 - Has an inbuilt timer (powered by [livesplit-core](https://github.com/LiveSplit/livesplit-core)); no need to have a seperate application open.
 - Support for some donations trackers can be added with extra bundles (see below).
+- User interface avaiable in English and Japanese (partially complete).
 
 This bundle doesn't come with any graphics, you will need to create them yourself in another bundle. If you have no experience in developing, you can check out [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext) for an simple example bundle, or check out the [API documentation](READMES/API.md) if you're are more advanced user.
 
@@ -23,7 +24,7 @@ You will need [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://
 
 - `nodecg install speedcontrol/nodecg-speedcontrol` to install the latest version of nodecg-speedcontrol
 
-This bundle can run without any extra configuration, but it's needed to use all of the functionality. Please see the [Configuration documentation](READMES/Configuration.md) for more information. You may also want to read the [Schedule Formatting documentation](READMES/Schedule-Formatting.md) for advice on formatting your schedules before importing.
+This bundle can run without any extra configuration, but it's needed to use all of the functionality, and if you want to switch to a different localisation. Please see the [Configuration documentation](READMES/Configuration.md) for more information. You may also want to read the [Schedule Formatting documentation](READMES/Schedule-Formatting.md) for advice on formatting your Horaro schedules before importing, if you choose to import via this method.
 
 ### tl;dr installation
 
@@ -38,6 +39,8 @@ nodecg start
 
 
 ## Basic Usage
+
+***Currently this basic guide assumes you are importing from a Horaro schedule; importing from Oengus is very simple anyway and the other parts of this guide still apply.***
 
 Once installed, go to `https://localhost:9090` (unless you have overridden the defaults in the NodeCG config) to access the dashboard.
 
@@ -86,6 +89,7 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 *(This is not an exhaustive list.)*
 
 - All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons since Pre-ESA Marathon 2016, including the ESA ran Dreamhack speedrunning events in Sweden
+- All on-site based [United Kingdom Speedrunner Gathering](https://www.speedrun.com/uksg) marathons since Fall 2018.
 - All [GTA Marathons](https://www.twitch.tv/gtamarathon) since GTA Marathon 2016
 - All [SpeedSouls Charity Marathons](https://www.twitch.tv/speedsouls)
 - [Themeathon Pre-Marathon 2018](https://www.twitch.tv/themeathon)
@@ -105,6 +109,8 @@ With help from:
 - btrim
 - Zephyyrr
 - Planks
+- cma2819 *(Oengus Support)*
+- yagamuu *(Japanese Localisation)*
 
 
 ## Contribution/Development
@@ -114,3 +120,7 @@ The `master` branch will always be the most recent stable release, while all dev
 If you need to report an issue, you can [do that on GitHub](https://github.com/speedcontrol/nodecg-speedcontrol/issues).
 
 Feel free to raise an issue/Pull Request if you have used our bundle(s) for a marathon and would like to be linked above.
+
+### Localisation
+
+This bundle supports additional languages using [Vue I18n](https://kazupon.github.io/vue-i18n/). If you wish to add support for another language, you must add the language code in `configschema.json`, under `language` > `enum`, and then also run `npm run typeschemas` to regenerate the `configschema.d.ts` file. You can then specify this language in the bundle's configuration file. Then, in the `src\dashboard\_misc\i18n.ts` file, add an additional object inside of the `messages` object inside the `VueI18n` instance for your newly added language. There are some reused pieces of text in this file that should be translated, but the rest are stored in the Single File Components (SFC) inside of the `src\dashboard` folder and subfolders, within the `<i18n>` blocks inside of those (in JSON format). If a piece of text is not translated yet, it will fall back to English (`en`).

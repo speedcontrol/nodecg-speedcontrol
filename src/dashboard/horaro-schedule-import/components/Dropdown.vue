@@ -1,25 +1,53 @@
+<i18n>
+{
+  "en": {
+    "externalIDHelp": "If you have a column in your schedule with a unique ID for each run, select it here. This will make re-imports much smoother. If you don't understand this, don't select one."
+  },
+  "jp": {
+    "externalIDHelp": null
+  }
+}
+</i18n>
+
 <template>
-  <v-select
-    v-model="selected"
-    :items="dropdownOpts"
-    :label="option.name"
-    filled
-    single-line
-    hide-details
-    dense
-    :height="27"
-  >
-    <template v-slot:prepend-item>
-      <v-list-item disabled>
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ option.name }}
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-      <v-divider class="mb-2"></v-divider>
+  <div class="d-flex">
+    <v-select
+      v-model="selected"
+      :items="dropdownOpts"
+      :label="option.name"
+      filled
+      single-line
+      hide-details
+      dense
+      :height="27"
+    >
+      <template v-slot:prepend-item>
+        <v-list-item disabled>
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ option.name }}
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-divider class="mb-2" />
+      </template>
+    </v-select>
+    <!-- Help Tooltip for External ID -->
+    <template v-if="option.key === 'externalID'">
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-icon
+            small
+            :style="{ 'padding-left': '2px' }"
+            v-on="on"
+          >
+            mdi-help-circle-outline
+          </v-icon>
+        </template>
+        <span>{{ $t('externalIDHelp') }}</span>
+      </v-tooltip>
     </template>
-  </v-select>
+  </div>
 </template>
 
 <script lang="ts">
@@ -32,7 +60,7 @@ export default Vue.extend({
       type: Object,
       default(): object {
         return {
-          name: 'Game',
+          name: this.$t('game'),
           key: 'game',
           custom: false,
         };
@@ -50,7 +78,7 @@ export default Vue.extend({
       return [
         {
           value: -1,
-          text: 'N/A',
+          text: this.$t('notApplicable'),
         },
       ].concat(
         this.columns.map((value, index) => ({

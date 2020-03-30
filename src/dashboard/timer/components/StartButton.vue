@@ -1,3 +1,18 @@
+<i18n>
+{
+  "en": {
+    "pause": "Pause",
+    "resume": "Resume",
+    "play": "Play"
+  },
+  "ja": {
+    "pause": "ポーズ",
+    "resume": "再開",
+    "play": "開始"
+  }
+}
+</i18n>
+
 <template>
   <div>
     <v-tooltip
@@ -19,9 +34,9 @@
           </v-btn>
         </span>
       </template>
-      <span v-if="state === 'running'">Pause</span>
-      <span v-else-if="state === 'paused'">Resume</span>
-      <span v-else>Play</span>
+      <span v-if="state === 'running'">{{ $t('pause') }}</span>
+      <span v-else-if="state === 'paused'">{{ $t('resume') }}</span>
+      <span v-else>{{ $t('play') }}</span>
     </v-tooltip>
   </div>
 </template>

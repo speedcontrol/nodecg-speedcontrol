@@ -3,6 +3,14 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "ja"
+      ],
+      "default": "en"
+    },
     "twitch": {
       "type": "object",
       "additionalProperties": false,
@@ -42,14 +50,18 @@
           "type": "boolean"
         },
         "ffzBlacklist": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "uniqueItems": true,
-          "items": {
-            "type": "string"
-          }
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -70,54 +82,87 @@
           "default": "https://horaro.org/event/schedule"
         },
         "ignoreGamesWhileImporting": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "uniqueItems": true,
-          "items": {
-            "type": "string"
-          }
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "disableSpeedrunComLookup": {
           "type": "boolean",
           "default": false
         },
         "customData": {
-          "type": [
-            "array",
-            "null"
-          ],
-          "uniqueItems": true,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "key": {
-                "type": "string"
-              },
-              "ignoreMarkdown": {
-                "type": "boolean"
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  },
+                  "ignoreMarkdown": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name",
+                  "key"
+                ]
               }
             },
-            "required": [
-              "name",
-              "key"
-            ]
-          }
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
         "defaultURL",
         "disableSpeedrunComLookup"
       ]
+    },
+    "oengus": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultMarathon": {
+          "type": "string",
+          "default": "SHORTNAME"
+        },
+        "useJapanese": {
+          "type": "boolean",
+          "default": false
+        },
+        "disableSpeedrunComLookup": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "defaultMarathon",
+        "useJapanese",
+        "disableSpeedrunComLookup"
+      ]
     }
   },
   "required": [
+    "language",
     "twitch",
-    "schedule"
+    "schedule",
+    "oengus"
   ]
 }

@@ -1,3 +1,42 @@
+<i18n>
+{
+  "en": {
+    "panelTitle": "Horaro Schedule Import",
+    "scheduleURL": "Horaro Schedule URL",
+    "helpTextPreLoad": "Insert the Horaro schedule URL above and press the \"Load Schedule Data\" button to continue.",
+    "helpTextPostLoad": "Select the correct columns that match the data type below, if the one auto-selected is wrong",
+    "splitOpt": "Split Players",
+    "splitLabel": "Player Split",
+    "splitOptVersus": "vs/vs. [Teams]",
+    "splitOptComma": "Comma (,) [No Teams]",
+    "splitHelp": "This option dictates how the players in your relevant schedule column are split; check the README for more information.",
+    "load": "Load Schedule Data",
+    "import": "Import",
+    "saveConfig": "Save Configuration",
+    "importInProgressHelpText": "Import currently in progress...",
+    "importProgress": "Importing {item}/{total}",
+    "clearCustomConfig": "Clear Custom Configuration"
+  },
+  "ja": {
+    "panelTitle": "Horaroからインポート",
+    "scheduleURL": "Horaro スケジュールURL",
+    "helpTextPreLoad": "上記にHoraroのスケジュールURLを入力し、「スケジュールをロード」ボタンを押すと続行します。",
+    "helpTextPostLoad": "自動選択されたものが間違っていた場合、 以下のデータ型に一致する正しい列を選択してください。",
+    "splitOpt": "走者の分割",
+    "splitLabel": null,
+    "splitOptVersus": null,
+    "splitOptComma": null,
+    "splitHelp": "このオプションは、関連する列の走者の分割方法の指定をします。 詳細はspeedcontrolのREADMEを参照してください。",
+    "load": "スケジュールをロード",
+    "import": "インポート",
+    "saveConfig": "設定の保存",
+    "importInProgressHelpText": null,
+    "importProgress": null,
+    "clearCustomConfig": "設定の初期化"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <!-- URL Field -->
@@ -5,35 +44,33 @@
       v-model="url"
       filled
       hide-details
-      label="Horaro Schedule URL"
+      :label="$t('scheduleURL')"
       :disabled="importStatus.importing"
-    ></v-text-field>
+    />
     <!-- "Load Schedule Data" Button -->
     <v-btn
       :style="{ margin: '5px 0 10px 0' }"
       :disabled="importStatus.importing"
       @click="loadSchedule"
     >
-      Load Schedule Data
+      {{ $t('load') }}
     </v-btn>
     <!-- Message before schedule data is loaded -->
     <div v-if="!loaded && !importStatus.importing">
-      Insert the Horaro schedule URL above and press
-      the "Load Schedule Data" button to continue.
+      {{ $t('helpTextPreLoad') }}
     </div>
     <!-- Dropdowns after data is imported to toggle settings -->
     <div v-if="loaded && !importStatus.importing">
-      Select the correct columns that match the data type below,
-      if the one auto-selected is wrong:
+      {{ $t('helpTextPostLoad') }}:
       <dropdown
         v-for="option in runDataOptions"
         :key="option.key"
         :option="option"
         :columns="columns"
         class="Dropdown"
-      ></dropdown>
+      />
       <div :style="{ 'margin-top': '10px' }">
-        Split Players:
+        {{ $t('splitOpt') }}:
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -44,26 +81,24 @@
               mdi-help-circle-outline
             </v-icon>
           </template>
-          <span>This option dictates how the players in your relevant schedule column are split;
-            check the README for more information.</span>
+          <span>{{ $t('splitHelp') }}</span>
         </v-tooltip>
       </div>
       <v-select
         v-model="splitOption"
         :items="splitOptionsOpts"
-        label="Player Split"
+        :label="$t('splitLabel')"
         filled
         single-line
         hide-details
         dense
         :height="27"
         class="Dropdown"
-      >
-      </v-select>
+      />
     </div>
     <!-- Message while importing is in progress -->
     <div v-else-if="importStatus.importing">
-      Import currently in progress...
+      {{ $t('importInProgressHelpText') }}
     </div>
     <div :style="{ 'margin-top': '10px' }">
       <!-- Import Button, if importing -->
@@ -72,7 +107,7 @@
         :disabled="true"
         block
       >
-        Importing {{ importStatus.item }}/{{ importStatus.total }}
+        {{ $t('importProgress', { item: importStatus.item, total: importStatus.total }) }}
       </v-btn>
       <!-- Import Button, if not importing and no data loaded -->
       <v-btn
@@ -81,7 +116,7 @@
         :disabled="!loaded"
         @click="importConfirm"
       >
-        Import
+        {{ $t('import') }}
       </v-btn>
       <!-- Import Button, if not importing but data loaded -->
       <div
@@ -92,20 +127,20 @@
           :style="{ flex: 1 }"
           @click="importConfirm"
         >
-          Import
+          {{ $t('import') }}
         </v-btn>
         <config-button
           icon="mdi-content-save-outline"
-          tooltip="Save Configuration"
+          :tooltip="$t('saveConfig')"
           :disabled="saved"
           @click="saveOpts"
-        ></config-button>
+        />
         <config-button
           icon="mdi-undo"
-          tooltip="Clear Custom Configuration"
+          :tooltip="$t('clearCustomConfig')"
           :disabled="restored"
           @click="clearOpts"
-        ></config-button>
+        />
       </div>
     </div>
   </v-app>
@@ -113,7 +148,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import { nodecg } from '../_misc/nodecg';
 import { store as repStore } from '../_misc/replicant-store';
 import store from './store';
@@ -139,11 +174,11 @@ export default Vue.extend({
       splitOptionsOpts: [
         {
           value: 0,
-          text: 'vs/vs. [Teams]',
+          text: this.$t('splitOptVersus'),
         },
         {
           value: 1,
-          text: 'Comma (,) [No Teams]',
+          text: this.$t('splitOptComma'),
         },
       ],
     };
@@ -166,6 +201,11 @@ export default Vue.extend({
   },
   created() {
     this.addCustomDataDropdowns(); // Add dropdowns for custom data on page load.
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
   methods: {
     loadSchedule(): void {
@@ -217,7 +257,7 @@ export default Vue.extend({
     importConfirm(): void {
       const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
       alertDialog.querySelector('iframe').contentWindow.open({
-        name: 'HoraroImportConfirm',
+        name: 'ImportConfirm',
         func: this.import,
       });
     },

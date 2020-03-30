@@ -1,3 +1,22 @@
+<i18n>
+{
+  "en": {
+    "panelTitle": "Run Player",
+    "returnToStart": "Return to Start",
+    "noRunsLeft": "No Runs Left",
+    "noRunsAdded": "No Runs Added",
+    "cannotChange": "Cannot change run while timer is {state}"
+  },
+  "ja": {
+    "panelTitle": "現在の走者情報",
+    "returnToStart": "最初に戻す",
+    "noRunsLeft": "残りの走者情報はありません",
+    "noRunsAdded": "走者情報がありません",
+    "cannotChange": "タイマーが動作している間は編集できません。({state})"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <div>
@@ -6,34 +25,48 @@
         :disabled="!activeRun || disableChange"
         @click="returnToStartConfirm"
       >
-        Return to Start
+        {{ $t('returnToStart') }}
       </v-btn>
     </div>
     <div>
       <v-btn
+        class="NextRunBtn"
+        width="100%"
         block
         :disabled="disableChange || !nextRun"
         @click="playNextRun"
       >
-        <span v-if="nextRun">
-          <v-icon left>mdi-play</v-icon>{{ nextRunGameName }}
-        </span>
-        <span v-else-if="runDataArray.length">
-          No Runs Left
-        </span>
-        <span v-else>
-          No Runs Added
-        </span>
+        <div
+          class="d-flex justify-center"
+          :style="{ width: '100%' }"
+        >
+          <template v-if="nextRun">
+            <div>
+              <v-icon left>
+                mdi-play
+              </v-icon>
+            </div>
+            <div :style="{ overflow: 'hidden' }">
+              {{ nextRunGameName }}
+            </div>
+          </template>
+          <div v-else-if="runDataArray.length">
+            {{ $t('noRunsLeft') }}
+          </div>
+          <div v-else>
+            {{ $t('noRunsAdded') }}
+          </div>
+        </div>
       </v-btn>
       <v-alert
         v-if="disableChange"
         dense
         type="info"
       >
-        Cannot change run while timer is {{ timerState }}.
+        {{ $t('cannotChange', { state: timerState }) }}
       </v-alert>
     </div>
-    <run-list></run-list>
+    <run-list />
   </v-app>
 </template>
 
@@ -63,7 +96,7 @@ export default Vue.extend({
     },
     nextRunGameName(): string {
       if (this.nextRun && this.nextRun.game) {
-        return `${this.nextRun.game.slice(0, 35)}${(this.nextRun.game.length > 35) ? '...' : ''}`;
+        return this.nextRun.game;
       }
       return '(The Run With No Name)';
     },
@@ -73,6 +106,11 @@ export default Vue.extend({
     disableChange(): boolean {
       return ['running', 'paused'].includes(this.timerState);
     },
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
   methods: {
     returnToStartConfirm(): void {
@@ -112,5 +150,11 @@ export default Vue.extend({
 <style scoped>
   .v-btn {
     margin-bottom: 5px;
+  }
+</style>
+
+<style>
+  .NextRunBtn > .v-btn__content {
+    width: 100%;
   }
 </style>

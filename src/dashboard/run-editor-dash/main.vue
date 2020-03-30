@@ -1,3 +1,16 @@
+<i18n>
+{
+  "en": {
+    "panelTitle": "Run Editor",
+    "editActive": "Edit Currently Active Run"
+  },
+  "ja": {
+    "panelTitle": "走者情報の編集",
+    "editActive": "現在進行中の走者情報の編集"
+  }
+}
+</i18n>
+
 <template>
   <v-app>
     <v-btn
@@ -5,9 +18,9 @@
       :style="{ 'margin-bottom': '10px' }"
       @click="editActiveRun"
     >
-      Edit Currently Active Run
+      {{ $t('editActive') }}
     </v-btn>
-    <run-list :editor="true"></run-list>
+    <run-list :editor="true" />
   </v-app>
 </template>
 
@@ -26,6 +39,11 @@ export default Vue.extend({
     activeRun(): RunDataActiveRun {
       return store.state.runDataActiveRun;
     },
+  },
+  mounted() {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+    }
   },
   methods: {
     editActiveRun(): void {

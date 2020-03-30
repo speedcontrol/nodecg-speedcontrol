@@ -1,6 +1,7 @@
 import express from 'express';
 import needle, { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
-import { TwitchAPIData, TwitchChannelInfo } from '../../schemas';
+import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from 'schemas';
+import { CommercialDuration } from 'types';
 import * as events from './util/events';
 import { bundleConfig, processAck, to } from './util/helpers';
 import { get } from './util/nodecg';
@@ -10,6 +11,7 @@ const config = bundleConfig();
 const app = express();
 const apiData = nodecg.Replicant<TwitchAPIData>('twitchAPIData');
 const channelInfo = nodecg.Replicant<TwitchChannelInfo>('twitchChannelInfo');
+const commercialTimer = nodecg.Replicant<TwitchCommercialTimer>('twitchCommercialTimer');
 let channelInfoTO: NodeJS.Timeout;
 
 apiData.value.state = 'off'; // Set this to "off" on every start.
@@ -220,29 +222,55 @@ export async function updateChannelInfo(status?: string, game?: string): Promise
 }
 
 /**
+ * Triggered when a commercial is started, and runs every second
+ * until it has assumed to have ended, to update the relevant replicant.
+ * We also do this during setup, in case there was one running when the app closed.
+ */
+function updateCommercialTimer(): void {
+  const timer = commercialTimer.value;
+  const remaining = timer.originalDuration - ((Date.now() - timer.timestamp) / 1000);
+  if (remaining > 0) {
+    commercialTimer.value.secondsRemaining = Math.round(remaining);
+    setTimeout(updateCommercialTimer, 1000);
+  } else {
+    commercialTimer.value.secondsRemaining = 0;
+  }
+}
+
+/**
  * Attempts to start a commercial on the set channel.
  */
-async function startCommercial(): Promise<{ duration: number }> {
+async function startCommercial(duration?: CommercialDuration):
+  Promise<{ duration: CommercialDuration }> {
   if (apiData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
   try {
+    const dur = duration && typeof duration === 'number'
+      && [30, 60, 90, 120, 150, 180].includes(duration) ? duration : 180;
     nodecg.log.info('[Twitch] Requested a commercial to be started');
     const resp = await request(
       'post',
       `/channels/${apiData.value.channelID}/commercial`,
       {
-        duration: 180,
+        length: dur,
       },
     );
     if (resp.statusCode !== 200) {
       throw new Error(JSON.stringify(resp.body));
     }
-    nodecg.log.info('[Twitch] Commercial started successfully');
-    nodecg.sendMessage('twitchCommercialStarted', { duration: 180 });
-    nodecg.sendMessage('twitchAdStarted', { duration: 180 }); // Legacy
-    to(events.sendMessage('twitchCommercialStarted', { duration: 180 }));
-    return { duration: 180 };
+
+    // Update commercial timer values, trigger check logic.
+    commercialTimer.value.originalDuration = dur;
+    commercialTimer.value.secondsRemaining = dur;
+    commercialTimer.value.timestamp = Date.now();
+    updateCommercialTimer();
+
+    nodecg.log.info(`[Twitch] Commercial started successfully (${dur} seconds)`);
+    nodecg.sendMessage('twitchCommercialStarted', { duration: dur });
+    nodecg.sendMessage('twitchAdStarted', { duration: dur }); // Legacy
+    to(events.sendMessage('twitchCommercialStarted', { duration: dur }));
+    return { duration: dur };
   } catch (err) {
     nodecg.log.warn('[Twitch] Error starting commercial');
     nodecg.log.debug('[Twitch] Error starting commercial:', err);
@@ -276,6 +304,7 @@ async function setUp(): Promise<void> {
   clearTimeout(channelInfoTO);
   apiData.value.state = 'on';
   refreshChannelInfo();
+  updateCommercialTimer();
 }
 
 if (config.twitch.enabled) {
@@ -339,12 +368,12 @@ nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('twitchStartCommercial', (data, ack) => {
-  startCommercial()
+  startCommercial(data.duration)
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('playTwitchAd', (data, ack) => { // Legacy
-  startCommercial()
+  startCommercial(data.duration)
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
@@ -361,7 +390,7 @@ events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     .catch((err) => processAck(ack, err));
 });
 events.listenFor('twitchStartCommercial', (data, ack) => {
-  startCommercial()
+  startCommercial(data.duration)
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
