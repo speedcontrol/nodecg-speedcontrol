@@ -7,6 +7,7 @@ module.exports = function (nodecg) {
     require('./run-control');
     require('./timer');
     require('./horaro-import');
+    require('./oengus-import');
     require('./twitch-api');
     require('./srcom-api');
     require('./ffz-ws');

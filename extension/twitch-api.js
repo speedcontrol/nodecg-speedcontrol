@@ -56,6 +56,7 @@ var config = helpers_1.bundleConfig();
 var app = express_1.default();
 var apiData = nodecg.Replicant('twitchAPIData');
 var channelInfo = nodecg.Replicant('twitchChannelInfo');
+var commercialTimer = nodecg.Replicant('twitchCommercialTimer');
 var channelInfoTO;
 apiData.value.state = 'off'; // Set this to "off" on every start.
 apiData.value.featuredChannels.length = 0; // Empty on every start.
@@ -334,11 +335,27 @@ function updateChannelInfo(status, game) {
 }
 exports.updateChannelInfo = updateChannelInfo;
 /**
+ * Triggered when a commercial is started, and runs every second
+ * until it has assumed to have ended, to update the relevant replicant.
+ * We also do this during setup, in case there was one running when the app closed.
+ */
+function updateCommercialTimer() {
+    var timer = commercialTimer.value;
+    var remaining = timer.originalDuration - ((Date.now() - timer.timestamp) / 1000);
+    if (remaining > 0) {
+        commercialTimer.value.secondsRemaining = Math.round(remaining);
+        setTimeout(updateCommercialTimer, 1000);
+    }
+    else {
+        commercialTimer.value.secondsRemaining = 0;
+    }
+}
+/**
  * Attempts to start a commercial on the set channel.
  */
-function startCommercial() {
+function startCommercial(duration) {
     return __awaiter(this, void 0, void 0, function () {
-        var resp, err_5;
+        var dur, resp, err_5;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -348,20 +365,27 @@ function startCommercial() {
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
+                    dur = duration && typeof duration === 'number'
+                        && [30, 60, 90, 120, 150, 180].includes(duration) ? duration : 180;
                     nodecg.log.info('[Twitch] Requested a commercial to be started');
                     return [4 /*yield*/, request('post', "/channels/" + apiData.value.channelID + "/commercial", {
-                            duration: 180,
+                            length: dur,
                         })];
                 case 2:
                     resp = _a.sent();
                     if (resp.statusCode !== 200) {
                         throw new Error(JSON.stringify(resp.body));
                     }
-                    nodecg.log.info('[Twitch] Commercial started successfully');
-                    nodecg.sendMessage('twitchCommercialStarted', { duration: 180 });
-                    nodecg.sendMessage('twitchAdStarted', { duration: 180 }); // Legacy
-                    helpers_1.to(events.sendMessage('twitchCommercialStarted', { duration: 180 }));
-                    return [2 /*return*/, { duration: 180 }];
+                    // Update commercial timer values, trigger check logic.
+                    commercialTimer.value.originalDuration = dur;
+                    commercialTimer.value.secondsRemaining = dur;
+                    commercialTimer.value.timestamp = Date.now();
+                    updateCommercialTimer();
+                    nodecg.log.info("[Twitch] Commercial started successfully (" + dur + " seconds)");
+                    nodecg.sendMessage('twitchCommercialStarted', { duration: dur });
+                    nodecg.sendMessage('twitchAdStarted', { duration: dur }); // Legacy
+                    helpers_1.to(events.sendMessage('twitchCommercialStarted', { duration: dur }));
+                    return [2 /*return*/, { duration: dur }];
                 case 3:
                     err_5 = _a.sent();
                     nodecg.log.warn('[Twitch] Error starting commercial');
@@ -414,6 +438,7 @@ function setUp() {
                     clearTimeout(channelInfoTO);
                     apiData.value.state = 'on';
                     refreshChannelInfo();
+                    updateCommercialTimer();
                     return [2 /*return*/];
             }
         });
@@ -471,12 +496,12 @@ nodecg.listenFor('twitchUpdateChannelInfo', function (data, ack) {
         .catch(function (err) { return helpers_1.processAck(ack, err); });
 });
 nodecg.listenFor('twitchStartCommercial', function (data, ack) {
-    startCommercial()
+    startCommercial(data.duration)
         .then(function () { return helpers_1.processAck(ack, null); })
         .catch(function (err) { return helpers_1.processAck(ack, err); });
 });
 nodecg.listenFor('playTwitchAd', function (data, ack) {
-    startCommercial()
+    startCommercial(data.duration)
         .then(function () { return helpers_1.processAck(ack, null); })
         .catch(function (err) { return helpers_1.processAck(ack, err); });
 });
@@ -492,7 +517,7 @@ events.listenFor('twitchUpdateChannelInfo', function (data, ack) {
         .catch(function (err) { return helpers_1.processAck(ack, err); });
 });
 events.listenFor('twitchStartCommercial', function (data, ack) {
-    startCommercial()
+    startCommercial(data.duration)
         .then(function () { return helpers_1.processAck(ack, null); })
         .catch(function (err) { return helpers_1.processAck(ack, err); });
 });

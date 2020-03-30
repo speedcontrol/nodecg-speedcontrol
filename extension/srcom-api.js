@@ -154,3 +154,44 @@ function searchForUserData(query) {
     });
 }
 exports.searchForUserData = searchForUserData;
+/**
+ * Try to find user data using multiple strings, will loop through them until one is successful.
+ * Does not return any errors, if those happen this will just treat it as unsuccessful.
+ * @param queries List of queries to use, if any are falsey they will be skipped.
+ */
+function searchForUserDataMultiple() {
+    var queries = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        queries[_i] = arguments[_i];
+    }
+    return __awaiter(this, void 0, void 0, function () {
+        var userData, _a, queries_1, query, data, err_4;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _a = 0, queries_1 = queries;
+                    _b.label = 1;
+                case 1:
+                    if (!(_a < queries_1.length)) return [3 /*break*/, 6];
+                    query = queries_1[_a];
+                    if (!query) return [3 /*break*/, 5];
+                    _b.label = 2;
+                case 2:
+                    _b.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, searchForUserData(query)];
+                case 3:
+                    data = _b.sent();
+                    userData = data;
+                    return [3 /*break*/, 6];
+                case 4:
+                    err_4 = _b.sent();
+                    return [3 /*break*/, 5];
+                case 5:
+                    _a++;
+                    return [3 /*break*/, 1];
+                case 6: return [2 /*return*/, userData];
+            }
+        });
+    });
+}
+exports.searchForUserDataMultiple = searchForUserDataMultiple;

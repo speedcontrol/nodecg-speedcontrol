@@ -64,7 +64,9 @@ var events = __importStar(require("./util/events"));
 var helpers_1 = require("./util/helpers");
 var nodecg_1 = require("./util/nodecg");
 var nodecg = nodecg_1.get();
-var timerRep = nodecg.Replicant('timer');
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: persistenceInterval not typed yet
+var timerRep = nodecg.Replicant('timer', { persistenceInterval: 1000 });
 var activeRun = nodecg.Replicant('runDataActiveRun');
 var runFinishTimes = nodecg.Replicant('runFinishTimes');
 var changesDisabled = nodecg.Replicant('timerChangesDisabled');
@@ -114,14 +116,14 @@ function setGameTime(ms) {
 }
 /**
  * Start/resume the timer, depending on the current state.
- * @param force Force the timer to start, even if it's state is running.
+ * @param force Force the timer to start, even if it's state is running/changes are disabled.
  */
 function startTimer(force) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             try {
                 // Error if the timer is disabled.
-                if (changesDisabled.value) {
+                if (!force && changesDisabled.value) {
                     throw new Error('Timer changes are disabled');
                 }
                 // Error if the timer is finished.
@@ -359,7 +361,8 @@ if (timerRep.value.state === 'running') {
     var timeOffset = previousTime + missedTime;
     setTime(timeOffset);
     nodecg.log.info("[Timer] Recovered " + (missedTime / 1000).toFixed(2) + " seconds of lost time");
-    startTimer(true);
+    startTimer(true)
+        .catch(function () { });
 }
 // NodeCG messaging system.
 nodecg.listenFor('timerStart', function (data, ack) {

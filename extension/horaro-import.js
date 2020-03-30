@@ -40,13 +40,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var crypto_1 = __importDefault(require("crypto"));
-var lodash_1 = __importDefault(require("lodash"));
 var markdown_it_1 = __importDefault(require("markdown-it"));
 var needle_1 = __importDefault(require("needle"));
 var p_iteration_1 = require("p-iteration");
 var parse_duration_1 = __importDefault(require("parse-duration"));
 var remove_markdown_1 = __importDefault(require("remove-markdown"));
-var v4_1 = __importDefault(require("uuid/v4"));
+var uuid_1 = require("uuid");
 var srcom_api_1 = require("./srcom-api");
 var twitch_api_1 = require("./twitch-api");
 var helpers_1 = require("./util/helpers"); // eslint-disable-line object-curly-newline, max-len
@@ -84,81 +83,11 @@ function parseMarkdown(str) {
     }
 }
 /**
- * Used to look up a user's data on speedrun.com with an arbitrary string,
- * usually name or Twitch username. If nothing is specified, will resolve immediately.
- * @param str String to attempt to look up the user by.
- */
-function querySRcomUserData(str) {
-    return __awaiter(this, void 0, void 0, function () {
-        var data, err_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!(str && !config.schedule.disableSpeedrunComLookup)) return [3 /*break*/, 4];
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, srcom_api_1.searchForUserData(str)];
-                case 2:
-                    data = _a.sent();
-                    return [2 /*return*/, data];
-                case 3:
-                    err_1 = _a.sent();
-                    return [2 /*return*/, undefined];
-                case 4: return [2 /*return*/, undefined];
-            }
-        });
-    });
-}
-/**
- * Attempt to get information about a player using several options.
- * @param name Name to attempt to use.
- * @param twitchURL Twitch URL to attempt to use.
- */
-function parseSRcomUserData(name, twitchURL) {
-    return __awaiter(this, void 0, void 0, function () {
-        var foundData, twitchUsername, data;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    foundData = {};
-                    twitchUsername = (twitchURL && twitchURL.includes('twitch.tv')) ? twitchURL.split('/')[twitchURL.split('/').length - 1] : undefined;
-                    return [4 /*yield*/, querySRcomUserData(twitchUsername)];
-                case 1:
-                    data = _a.sent();
-                    if (!!data) return [3 /*break*/, 3];
-                    return [4 /*yield*/, querySRcomUserData(name)];
-                case 2:
-                    data = _a.sent();
-                    _a.label = 3;
-                case 3:
-                    // Parse data if possible.
-                    if (data) {
-                        foundData.country = (data.location) ? data.location.country.code : undefined;
-                        foundData.twitchURL = (data.twitch && data.twitch.uri) ? data.twitch.uri : undefined;
-                    }
-                    return [2 /*return*/, foundData];
-            }
-        });
-    });
-}
-/**
  * Generates a hash based on the contents of the string based run data from Horaro.
  * @param colData Array of strings (or nulls), obtained from the Horaro JSON data.
  */
 function generateRunHash(colData) {
     return crypto_1.default.createHash('sha1').update(colData.join(), 'utf8').digest('hex');
-}
-/**
- * Checks if the game name appears in the ignore list in the configuration.
- * @param game Game string (or null) to check against.
- */
-function checkGameAgainstIgnoreList(game) {
-    if (!game) {
-        return false;
-    }
-    var list = config.schedule.ignoreGamesWhileImporting || [];
-    return !!list.find(function (str) { return !!str.toLowerCase().match(new RegExp("\\b" + lodash_1.default.escapeRegExp(game.toLowerCase()) + "\\b")); });
 }
 /**
  * Resets the replicant's values to default.
@@ -176,7 +105,7 @@ function resetImportStatus() {
  */
 function loadSchedule(url, dashID) {
     return __awaiter(this, void 0, void 0, function () {
-        var jsonURL, urlMatch, keyMatch, resp, err_2;
+        var jsonURL, urlMatch, keyMatch, resp, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -197,9 +126,9 @@ function loadSchedule(url, dashID) {
                     nodecg.log.debug('[Horaro Import] Schedule successfully loaded');
                     return [2 /*return*/, resp.body];
                 case 2:
-                    err_2 = _a.sent();
-                    nodecg.log.debug('[Horaro Import] Schedule could not be loaded:', err_2);
-                    throw err_2;
+                    err_1 = _a.sent();
+                    nodecg.log.debug('[Horaro Import] Schedule could not be loaded:', err_1);
+                    throw err_1;
                 case 3: return [2 /*return*/];
             }
         });
@@ -212,7 +141,7 @@ function loadSchedule(url, dashID) {
  */
 function importSchedule(optsO, dashID) {
     return __awaiter(this, void 0, void 0, function () {
-        var data, runItems_1, setupTime_1, opts_1, hashesSeen_1, newRunDataArray, err_3;
+        var data, runItems_1, setupTime_1, opts_1, externalIDsSeen_1, newRunDataArray, err_2;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -232,6 +161,7 @@ function importSchedule(optsO, dashID) {
                             region: (optsO.columns.region === null) ? -1 : optsO.columns.region,
                             release: (optsO.columns.release === null) ? -1 : optsO.columns.release,
                             player: (optsO.columns.player === null) ? -1 : optsO.columns.player,
+                            externalID: (optsO.columns.externalID === null) ? -1 : optsO.columns.externalID,
                             custom: {},
                         },
                         split: optsO.split,
@@ -240,9 +170,9 @@ function importSchedule(optsO, dashID) {
                         var val = optsO.columns.custom[col];
                         opts_1.columns.custom[col] = (val === null) ? -1 : val;
                     });
-                    hashesSeen_1 = [];
-                    return [4 /*yield*/, p_iteration_1.mapSeries(runItems_1.filter(function (run) { return (!checkGameAgainstIgnoreList(run.data[opts_1.columns.game])); }), function (run, index, arr) { return __awaiter(_this, void 0, void 0, function () {
-                            var hash, matchingOldRun, runData, game, gameTwitch, srcomGameTwitch, gameAbbr, runSetupTime, duration, playerList, teamSplittingRegex, teamsRaw, _a;
+                    externalIDsSeen_1 = [];
+                    return [4 /*yield*/, p_iteration_1.mapSeries(runItems_1.filter(function (run) { return (!helpers_1.checkGameAgainstIgnoreList(run.data[opts_1.columns.game])); }), function (run, index, arr) { return __awaiter(_this, void 0, void 0, function () {
+                            var externalID, matchingOldRun, runData, game, gameTwitch, srcomGameTwitch, gameAbbr, runSetupTime, duration, playerList, teamSplittingRegex, teamsRaw, _a;
                             var _b, _c, _d;
                             var _this = this;
                             return __generator(this, function (_e) {
@@ -250,16 +180,16 @@ function importSchedule(optsO, dashID) {
                                     case 0:
                                         importStatus.value.item = index + 1;
                                         importStatus.value.total = arr.length;
-                                        hash = generateRunHash(run.data);
-                                        if (!hashesSeen_1.includes(hash)) {
-                                            matchingOldRun = runDataArray.value.find(function (oldRun) { return oldRun.hash === hash; });
-                                            hashesSeen_1.push(hash);
+                                        externalID = run.data[opts_1.columns.externalID] || generateRunHash(run.data);
+                                        if (!externalIDsSeen_1.includes(externalID)) {
+                                            matchingOldRun = runDataArray.value.find(function (oldRun) { return oldRun.externalID === externalID; });
+                                            externalIDsSeen_1.push(externalID);
                                         }
                                         runData = {
                                             teams: [],
                                             customData: {},
-                                            id: (matchingOldRun) ? matchingOldRun.id : v4_1.default(),
-                                            hash: hash,
+                                            id: (matchingOldRun === null || matchingOldRun === void 0 ? void 0 : matchingOldRun.id) || uuid_1.v4(),
+                                            externalID: externalID,
                                         };
                                         // General Run Data
                                         runData.game = parseMarkdown(run.data[opts_1.columns.game]).str;
@@ -350,31 +280,42 @@ function importSchedule(optsO, dashID) {
                                                     switch (_b.label) {
                                                         case 0:
                                                             team = {
-                                                                id: v4_1.default(),
+                                                                id: uuid_1.v4(),
                                                                 name: parseMarkdown(rawTeam.name).str,
                                                                 players: [],
                                                             };
                                                             // Mapping player information into needed format.
                                                             _a = team;
                                                             return [4 /*yield*/, p_iteration_1.mapSeries(rawTeam.players, function (rawPlayer) { return __awaiter(_this, void 0, void 0, function () {
-                                                                    var _a, str, url, _b, country, twitchURL, usedURL;
-                                                                    return __generator(this, function (_c) {
-                                                                        switch (_c.label) {
+                                                                    var _a, str, url, twitchUsername, player, sData, tURL;
+                                                                    return __generator(this, function (_b) {
+                                                                        switch (_b.label) {
                                                                             case 0:
                                                                                 _a = parseMarkdown(rawPlayer), str = _a.str, url = _a.url;
-                                                                                return [4 /*yield*/, parseSRcomUserData(str, url)];
+                                                                                twitchUsername = helpers_1.getTwitchUserFromURL(url);
+                                                                                player = {
+                                                                                    name: str || '',
+                                                                                    id: uuid_1.v4(),
+                                                                                    teamID: team.id,
+                                                                                    social: {
+                                                                                        twitch: twitchUsername,
+                                                                                    },
+                                                                                };
+                                                                                if (!!config.schedule.disableSpeedrunComLookup) return [3 /*break*/, 2];
+                                                                                return [4 /*yield*/, srcom_api_1.searchForUserDataMultiple(twitchUsername, str)];
                                                                             case 1:
-                                                                                _b = _c.sent(), country = _b.country, twitchURL = _b.twitchURL;
-                                                                                usedURL = url || twitchURL;
-                                                                                return [2 /*return*/, {
-                                                                                        name: str || '',
-                                                                                        id: v4_1.default(),
-                                                                                        teamID: team.id,
-                                                                                        country: country,
-                                                                                        social: {
-                                                                                            twitch: (usedURL && usedURL.includes('twitch.tv')) ? usedURL.split('/')[usedURL.split('/').length - 1] : undefined,
-                                                                                        },
-                                                                                    }];
+                                                                                sData = _b.sent();
+                                                                                if (sData) {
+                                                                                    // Always favour the supplied Twitch username from schedule if available.
+                                                                                    if (!twitchUsername) {
+                                                                                        tURL = (sData.twitch && sData.twitch.uri)
+                                                                                            ? sData.twitch.uri : undefined;
+                                                                                        player.social.twitch = helpers_1.getTwitchUserFromURL(tURL);
+                                                                                    }
+                                                                                    player.country = (sData.location) ? sData.location.country.code : undefined;
+                                                                                }
+                                                                                _b.label = 2;
+                                                                            case 2: return [2 /*return*/, player];
                                                                         }
                                                                     });
                                                                 }); })];
@@ -401,9 +342,9 @@ function importSchedule(optsO, dashID) {
                     resetImportStatus();
                     return [3 /*break*/, 3];
                 case 2:
-                    err_3 = _a.sent();
+                    err_2 = _a.sent();
                     resetImportStatus();
-                    throw err_3;
+                    throw err_2;
                 case 3: return [2 /*return*/];
             }
         });
@@ -414,20 +355,28 @@ nodecg.listenFor('loadSchedule', function (data, ack) {
         .then(function (data_) { return helpers_1.processAck(ack, null, data_); })
         .catch(function (err) { return helpers_1.processAck(ack, err); });
 });
-nodecg.listenFor('importSchedule', function (data, ack) {
-    try {
-        if (importStatus.value.importing) {
-            throw new Error('Already importing schedule');
+nodecg.listenFor('importSchedule', function (data, ack) { return __awaiter(void 0, void 0, void 0, function () {
+    var err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                if (importStatus.value.importing) {
+                    throw new Error('Already importing schedule');
+                }
+                nodecg.log.info('[Horaro Import] Started importing schedule');
+                return [4 /*yield*/, importSchedule(data.opts, data.dashID)];
+            case 1:
+                _a.sent();
+                nodecg.log.info('[Horaro Import] Successfully imported schedule');
+                helpers_1.processAck(ack, null);
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _a.sent();
+                nodecg.log.warn('[Horaro Import] Error importing schedule:', err_3);
+                helpers_1.processAck(ack, err_3);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
-        nodecg.log.info('[Horaro Import] Started importing schedule');
-        importSchedule(data.opts, data.dashID)
-            .then(function () {
-            nodecg.log.info('[Horaro Import] Successfully imported schedule');
-            helpers_1.processAck(ack, null);
-        });
-    }
-    catch (err) {
-        nodecg.log.warn('[Horaro Import] Error importing schedule:', err);
-        helpers_1.processAck(ack, err);
-    }
-});
+    });
+}); });

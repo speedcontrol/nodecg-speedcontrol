@@ -59,7 +59,9 @@ var nodecg = nodecg_1.get();
 var array = nodecg.Replicant('runDataArray');
 var activeRun = nodecg.Replicant('runDataActiveRun');
 var activeRunSurr = nodecg.Replicant('runDataActiveRunSurrounding');
-var timer = nodecg.Replicant('timer');
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: persistenceInterval not typed yet
+var timer = nodecg.Replicant('timer', { persistenceInterval: 1000 });
 var twitchAPIData = nodecg.Replicant('twitchAPIData');
 /**
  * Used to update the replicant that stores ID references to previous/current/next runs.

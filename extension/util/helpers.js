@@ -35,7 +35,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var lodash_1 = __importDefault(require("lodash"));
 var nodecg_1 = require("./nodecg");
 var nodecg = nodecg_1.get();
 /**
@@ -162,3 +166,22 @@ function randomInt(low, high) {
     return Math.floor(Math.random() * (high - low) + low);
 }
 exports.randomInt = randomInt;
+/**
+ * Checks if the game name appears in the ignore list in the configuration.
+ * @param game Game string (or null) to check against.
+ */
+function checkGameAgainstIgnoreList(game) {
+    if (!game) {
+        return false;
+    }
+    var list = bundleConfig().schedule.ignoreGamesWhileImporting || [];
+    return !!list.find(function (str) { return !!str.toLowerCase().match(new RegExp("\\b" + lodash_1.default.escapeRegExp(game.toLowerCase()) + "\\b")); });
+}
+exports.checkGameAgainstIgnoreList = checkGameAgainstIgnoreList;
+/**
+ * Will attempt to extract the Twitch username from a Twitch URL if possible.
+ */
+function getTwitchUserFromURL(url) {
+    return url && url.includes('twitch.tv') ? url.split('/')[url.split('/').length - 1] : undefined;
+}
+exports.getTwitchUserFromURL = getTwitchUserFromURL;
