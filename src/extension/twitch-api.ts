@@ -89,13 +89,13 @@ export async function refreshToken(): Promise<void> {
 
 /**
  * Make a request to Twitch API v5.
- * @param url Twitch API v5 endpoint you want to access.
  */
 async function request(
-  method: NeedleHttpVerbs, endpoint: string, data: BodyData = null,
+  method: NeedleHttpVerbs, endpoint: string, data: BodyData = null, newAPI = false,
 ): Promise<NeedleResponse> {
+  const ep = `/${newAPI ? 'helix' : 'kraken'}${endpoint}`;
   try {
-    nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request processing on ${endpoint}`);
+    nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request processing on ${ep}`);
     let retry = false;
     let attempts = 0;
     let resp;
@@ -105,13 +105,13 @@ async function request(
       // eslint-disable-next-line no-await-in-loop
       resp = await needle(
         method,
-        `https://api.twitch.tv/kraken${endpoint}`,
+        `https://api.twitch.tv${ep}`,
         data,
         {
           headers: {
-            Accept: 'application/vnd.twitchtv.v5+json',
+            Accept: !newAPI ? 'application/vnd.twitchtv.v5+json' : '',
             'Content-Type': 'application/json',
-            Authorization: `OAuth ${apiData.value.accessToken}`,
+            Authorization: `${newAPI ? 'Bearer' : 'OAuth'} ${apiData.value.accessToken}`,
             'Client-ID': config.twitch.clientID,
           },
         },
@@ -119,7 +119,7 @@ async function request(
       if (resp.statusCode === 401 && attempts <= 1) {
         nodecg.log.debug(
           `[Twitch] API ${method.toUpperCase()} request `
-          + `resulted in ${resp.statusCode} on ${endpoint}:`,
+          + `resulted in ${resp.statusCode} on ${ep}:`,
           JSON.stringify(resp.body),
         );
         await refreshToken(); // eslint-disable-line no-await-in-loop
@@ -130,10 +130,10 @@ async function request(
         // Do we need to retry here?
       }
     } while (retry);
-    nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request successful on ${endpoint}`);
+    nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request successful on ${ep}`);
     return resp;
   } catch (err) {
-    nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request error on ${endpoint}:`, err);
+    nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request error on ${ep}:`, err);
     throw err;
   }
 }
@@ -392,5 +392,10 @@ events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
 events.listenFor('twitchStartCommercial', (data, ack) => {
   startCommercial(data.duration)
     .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
+events.listenFor('twitchAPIRequest', (data, ack) => {
+  request(data.method, data.endpoint, data.data, data.newAPI)
+    .then((resp) => processAck(ack, null, resp))
     .catch((err) => processAck(ack, err));
 });

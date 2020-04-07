@@ -1,3 +1,4 @@
+import { BodyData, NeedleHttpVerbs, NeedleResponse } from "needle";
 import { RunData } from "./RunData";
 import { CommercialDuration } from "./Twitch";
 
@@ -6,22 +7,23 @@ export interface SendMessageArgsMap {
   timerStart: void;
   timerPause: void;
   timerReset?: boolean;
-  timerStop: { id?: string; forfeit?: boolean; };
+  timerStop: { id?: string; forfeit?: boolean };
   timerUndo?: string;
   timerEdit: string;
 
   // Run Control
   changeToNextRun: void;
   changeActiveRun: string;
-  modifyRun: { runData: RunData, prevID?: string, updateTwitch?: boolean }
+  modifyRun: { runData: RunData; prevID?: string; updateTwitch?: boolean }
   removeRun: string;
   returnToStart: void;
   removeAllRuns: void;
 
   // Twitch
-  twitchCommercialStarted: { duration: CommercialDuration; }
-  twitchStartCommercial: { duration?: CommercialDuration; }
-  twitchUpdateChannelInfo: { status?: string, game?: string };
+  twitchCommercialStarted: { duration: CommercialDuration }
+  twitchStartCommercial: { duration?: CommercialDuration }
+  twitchUpdateChannelInfo: { status?: string; game?: string };
+  twitchAPIRequest: { method: NeedleHttpVerbs; endpoint: string; data?: BodyData; newAPI?: boolean };
 
   // Featured Channels
   updateFeaturedChannels: string[];
@@ -47,8 +49,9 @@ export interface SendMessageReturnMap {
 
   // Twitch
   twitchCommercialStarted: void;
-  twitchStartCommercial: { duration: CommercialDuration; }
+  twitchStartCommercial: { duration: CommercialDuration }
   twitchUpdateChannelInfo: boolean;
+  twitchAPIRequest: NeedleResponse;
 
   // Featured Channels
   updateFeaturedChannels: void;
