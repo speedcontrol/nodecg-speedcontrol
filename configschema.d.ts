@@ -12,6 +12,7 @@ export interface Configschema {
     clientID: string;
     clientSecret: string;
     redirectURI: string;
+    additionalScopes?: string[] | null;
     channelName?: string;
     streamTitle: string;
     streamDefaultGame: string;

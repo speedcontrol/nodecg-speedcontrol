@@ -201,11 +201,22 @@ export default Vue.extend({
       },
     },
     url(): string {
+      const config = (nodecg.bundleConfig as Configschema).twitch;
+      const scopes = [
+        'channel_editor',
+        'user_read',
+        'chat:read',
+        'chat:edit',
+        'channel_commercial',
+      ];
+      if (config.additionalScopes) {
+        scopes.push(...config.additionalScopes);
+      }
       return 'https://id.twitch.tv/oauth2/authorize'
       + `?client_id=${this.config.clientID}`
       + `&redirect_uri=${this.config.redirectURI}`
       + '&response_type=code'
-      + '&scope=channel_editor+user_read+chat:read+chat:edit+channel_commercial'
+      + `&scope=${scopes.join('+')}`
       + '&force_verify=true';
     },
     commercialTimeRemaining(): string {
