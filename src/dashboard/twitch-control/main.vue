@@ -210,7 +210,8 @@ export default Vue.extend({
         'channel_commercial',
       ];
       if (config.additionalScopes) {
-        scopes.push(...config.additionalScopes);
+        const addScopes = config.additionalScopes.filter((s) => !scopes.includes(s));
+        scopes.push(...addScopes);
       }
       return 'https://id.twitch.tv/oauth2/authorize'
       + `?client_id=${this.config.clientID}`

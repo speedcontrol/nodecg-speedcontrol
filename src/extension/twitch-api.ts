@@ -377,6 +377,11 @@ nodecg.listenFor('playTwitchAd', (data, ack) => { // Legacy
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
+nodecg.listenFor('twitchAPIRequest', (data, ack) => {
+  request(data.method, data.endpoint, data.data, data.newAPI)
+    .then((resp) => processAck(ack, null, resp))
+    .catch((err) => processAck(ack, err));
+});
 
 // Our messaging system.
 events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
