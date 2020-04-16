@@ -172,9 +172,14 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
           [, srcomGameTwitch] = await to(searchForTwitchGame(game.str));
         }
       }
-      gameTwitch = gameTwitch || srcomGameTwitch || game.str;
-      if (gameTwitch) { // Verify game directory supplied exists on Twitch.
-        [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
+      // Verify some game directory supplied exists on Twitch.
+      for (const str of [gameTwitch, srcomGameTwitch, game.str]) {
+        if (str) {
+          [, gameTwitch] = await to(verifyTwitchDir(str));
+          if (gameTwitch) {
+            break; // If a directory was successfully found, stop loop early.
+          }
+        }
       }
       runData.gameTwitch = gameTwitch;
 

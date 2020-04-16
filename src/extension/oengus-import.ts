@@ -146,9 +146,15 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
         if (!config.oengus.disableSpeedrunComLookup) {
           [, srcomGameTwitch] = await to(searchForTwitchGame(line.gameName));
         }
-        let gameTwitch: string | undefined = srcomGameTwitch || line.gameName;
-        if (gameTwitch) { // Verify game directory supplied exists on Twitch.
-          [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
+        let gameTwitch;
+        // Verify some game directory supplied exists on Twitch.
+        for (const str of [srcomGameTwitch, line.gameName]) {
+          if (str) {
+            [, gameTwitch] = await to(verifyTwitchDir(str));
+            if (gameTwitch) {
+              break; // If a directory was successfully found, stop loop early.
+            }
+          }
         }
         runData.gameTwitch = gameTwitch;
       }
