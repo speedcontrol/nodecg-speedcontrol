@@ -27,7 +27,7 @@
     "gameDirectory": "ゲームカテゴリー",
     "featuredChannels": "注目のチャンネル",
     "update": "更新",
-    "startCommercial": null,
+    "startCommercial": "広告を開始",
     "commercialRunning": "広告再生中 (残り{time}秒)"
   }
 }

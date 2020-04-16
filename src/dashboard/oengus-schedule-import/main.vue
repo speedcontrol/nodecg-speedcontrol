@@ -11,7 +11,7 @@
   },
   "ja": {
     "panelTitle": "Oengusからインポート",
-    "shortname": null,
+    "shortname": "Oengusマラソンの略称",
     "helpText": "上記にインポートしたいOengusのイベントの略称を入力し(\"/schedule\"を含めないでください)、「スケジュール情報のインポート」ボタンを押してください。",
     "importInProgressHelpText": "インポート処理の実行中...",
     "useJapaneseNames": "日本語ユーザーネームを使用しますか？",
