@@ -33,7 +33,7 @@ export default new VueI18n({
       gameTwitch: 'Twitchのゲームカテゴリー',
       players: 'プレイヤー',
       category: 'カテゴリー',
-      estimate: 'EST',
+      estimate: '予定タイム',
       system: '機種',
       region: 'リージョン',
       released: 'リリース日',
