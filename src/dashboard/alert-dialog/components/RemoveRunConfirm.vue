@@ -4,7 +4,7 @@
     "alertText": "Are you sure you want to delete this run?"
   },
   "ja": {
-    "alertText": null
+    "alertText": "この走者情報を削除してもよろしいですか？"
   }
 }
 </i18n>

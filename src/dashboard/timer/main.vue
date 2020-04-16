@@ -8,9 +8,9 @@
   },
   "ja": {
     "panelTitle": "タイマー",
-    "enableChanges": null,
-    "disableChanges": null,
-    "toggleChangesNote": null
+    "enableChanges": "タイマーの有効化",
+    "disableChanges": "タイマーの無効化",
+    "toggleChangesNote": "このボタンは必要な際に限り利用してください。"
   }
 }
 </i18n>

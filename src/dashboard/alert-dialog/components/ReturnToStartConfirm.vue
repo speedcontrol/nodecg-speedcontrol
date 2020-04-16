@@ -4,7 +4,7 @@
     "alertText": "Are you sure you want to return to the start?"
   },
   "ja": {
-    "alertText": null
+    "alertText": "走者情報を最初に戻してもよろしいですか？"
   }
 }
 </i18n>

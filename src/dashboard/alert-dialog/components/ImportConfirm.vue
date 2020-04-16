@@ -5,8 +5,8 @@
     "alertText2": "The currently active run will not be modified."
   },
   "ja": {
-    "alertText": null,
-    "alertText2": null
+    "alertText": "インポートを行うと現在追加されている走者情報が全て削除されますが、続行しますか？",
+    "alertText2": "現在実行中の走者情報は変更されません。"
   }
 }
 </i18n>

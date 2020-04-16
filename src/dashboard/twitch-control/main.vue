@@ -22,13 +22,13 @@
     "authenticating": "認証中...",
     "logout": "ログアウト",
     "autosync": "タイトル/ゲームカテゴリーの同期を有効化しますか？",
-    "autosyncFFZ": "タイトル/ゲームカテゴリーの同期を有効化しますか/featured channels？",
+    "autosyncFFZ": "タイトル/ゲームカテゴリーの同期を有効化しますか/注目のチャンネル？",
     "title": "タイトル",
     "gameDirectory": "ゲームカテゴリー",
-    "featuredChannels": null,
+    "featuredChannels": "注目のチャンネル",
     "update": "更新",
     "startCommercial": null,
-    "commercialRunning": null
+    "commercialRunning": "広告再生中 (残り{time}秒)"
   }
 }
 </i18n>

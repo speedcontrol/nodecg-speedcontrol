@@ -10,13 +10,13 @@
     "importProgress": "Importing {item}/{total}"
   },
   "ja": {
-    "panelTitle": null,
+    "panelTitle": "Oengusからインポート",
     "shortname": null,
-    "helpText": null,
-    "importInProgressHelpText": null,
-    "useJapaneseNames": null,
-    "import": null,
-    "importProgress": null
+    "helpText": "上記にインポートしたいOengusのイベントの略称を入力し(\"/schedule\"を含めないでください)、「スケジュール情報のインポート」ボタンを押してください。",
+    "importInProgressHelpText": "インポート処理の実行中...",
+    "useJapaneseNames": "日本語ユーザーネームを使用しますか？",
+    "import": "スケジュール情報のインポート",
+    "importProgress": "{item}/{total}件をインポート"
   }
 }
 </i18n>
