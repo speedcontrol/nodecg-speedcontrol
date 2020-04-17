@@ -34,10 +34,14 @@ function parseMarkdown(str?: string | null): ParsedMarkdown {
     // Some stuff can break this, so try/catching it if needed.
     try {
       const res = md.parseInline(str, {});
-      const url = res[0].children.find((child) => (
-        child.type === 'link_open' && child.attrs[0] && child.attrs[0][0] === 'href'
-      ));
-      results.url = (url) ? url.attrs[0][1] : undefined;
+      let url;
+      if (res[0] && res[0].children) {
+        url = res[0].children.find((child) => (
+          child.type === 'link_open' && child.attrs
+          && child.attrs[0] && child.attrs[0][0] === 'href'
+        ));
+      }
+      results.url = (url && url.attrs) ? url.attrs[0][1] : undefined;
       results.str = removeMd(str);
     } catch (err) {
       // return nothing
