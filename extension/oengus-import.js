@@ -151,12 +151,12 @@ function importSchedule(marathonShort, useJapanese) {
                     oengusLines = scheduleResp.body.lines;
                     scheduledTime_1 = Math.floor(Date.parse(marathonResp.body.startDate) / 1000);
                     return [4 /*yield*/, p_iteration_1.mapSeries(oengusLines.filter(function (line) { return (!helpers_1.checkGameAgainstIgnoreList(line.gameName)); }), function (line, index, arr) { return __awaiter(_this, void 0, void 0, function () {
-                            var matchingOldRun, runData, parsedEstimate, parsedSetup, srcomGameTwitch, gameTwitch, _a;
-                            var _b, _c;
+                            var matchingOldRun, runData, parsedEstimate, parsedSetup, srcomGameTwitch, gameTwitch, _i, _a, str, _b;
+                            var _c, _d;
                             var _this = this;
-                            var _d, _e, _f, _g;
-                            return __generator(this, function (_h) {
-                                switch (_h.label) {
+                            var _e, _f, _g, _h;
+                            return __generator(this, function (_j) {
+                                switch (_j.label) {
                                     case 0:
                                         importStatus.value.item = index + 1;
                                         importStatus.value.total = arr.length;
@@ -165,13 +165,13 @@ function importSchedule(marathonShort, useJapanese) {
                                         runData = {
                                             teams: [],
                                             customData: {},
-                                            id: (_d = matchingOldRun === null || matchingOldRun === void 0 ? void 0 : matchingOldRun.id) !== null && _d !== void 0 ? _d : uuid_1.v4(),
+                                            id: (_e = matchingOldRun === null || matchingOldRun === void 0 ? void 0 : matchingOldRun.id) !== null && _e !== void 0 ? _e : uuid_1.v4(),
                                             externalID: line.id.toString(),
                                         };
                                         // General Run Data
-                                        runData.game = (_e = line.gameName) !== null && _e !== void 0 ? _e : undefined;
-                                        runData.system = (_f = line.console) !== null && _f !== void 0 ? _f : undefined;
-                                        runData.category = (_g = line.categoryName) !== null && _g !== void 0 ? _g : undefined;
+                                        runData.game = (_f = line.gameName) !== null && _f !== void 0 ? _f : undefined;
+                                        runData.system = (_g = line.console) !== null && _g !== void 0 ? _g : undefined;
+                                        runData.category = (_h = line.categoryName) !== null && _h !== void 0 ? _h : undefined;
                                         parsedEstimate = iso8601_duration_1.parse(line.estimate);
                                         runData.estimate = formatDuration(parsedEstimate);
                                         runData.estimateS = iso8601_duration_1.toSeconds(parsedEstimate);
@@ -186,32 +186,43 @@ function importSchedule(marathonShort, useJapanese) {
                                         runData.estimateS = runData.setupTimeS;
                                         runData.setupTime = formatDuration({ seconds: 0 });
                                         runData.setupTimeS = 0;
-                                        return [3 /*break*/, 6];
+                                        return [3 /*break*/, 8];
                                     case 1:
-                                        if (!line.gameName) return [3 /*break*/, 6];
+                                        if (!line.gameName) return [3 /*break*/, 8];
                                         srcomGameTwitch = void 0;
                                         if (!!config.oengus.disableSpeedrunComLookup) return [3 /*break*/, 3];
                                         return [4 /*yield*/, helpers_1.to(srcom_api_1.searchForTwitchGame(line.gameName))];
                                     case 2:
-                                        _b = _h.sent(), srcomGameTwitch = _b[1];
-                                        _h.label = 3;
+                                        _c = _j.sent(), srcomGameTwitch = _c[1];
+                                        _j.label = 3;
                                     case 3:
-                                        gameTwitch = srcomGameTwitch || line.gameName;
-                                        if (!gameTwitch) return [3 /*break*/, 5];
-                                        return [4 /*yield*/, helpers_1.to(twitch_api_1.verifyTwitchDir(gameTwitch))];
+                                        gameTwitch = void 0;
+                                        _i = 0, _a = [srcomGameTwitch, line.gameName];
+                                        _j.label = 4;
                                     case 4:
-                                        _c = _h.sent(), gameTwitch = _c[1];
-                                        _h.label = 5;
+                                        if (!(_i < _a.length)) return [3 /*break*/, 7];
+                                        str = _a[_i];
+                                        if (!str) return [3 /*break*/, 6];
+                                        return [4 /*yield*/, helpers_1.to(twitch_api_1.verifyTwitchDir(str))];
                                     case 5:
-                                        runData.gameTwitch = gameTwitch;
-                                        _h.label = 6;
+                                        _d = _j.sent(), gameTwitch = _d[1];
+                                        if (gameTwitch) {
+                                            return [3 /*break*/, 7]; // If a directory was successfully found, stop loop early.
+                                        }
+                                        _j.label = 6;
                                     case 6:
+                                        _i++;
+                                        return [3 /*break*/, 4];
+                                    case 7:
+                                        runData.gameTwitch = gameTwitch;
+                                        _j.label = 8;
+                                    case 8:
                                         // Add the scheduled time then update the value above for the next run.
                                         runData.scheduled = new Date(scheduledTime_1 * 1000).toISOString();
                                         runData.scheduledS = scheduledTime_1;
                                         scheduledTime_1 += runData.estimateS + runData.setupTimeS;
                                         // Team Data
-                                        _a = runData;
+                                        _b = runData;
                                         return [4 /*yield*/, p_iteration_1.mapSeries(line.runners, function (runner) { return __awaiter(_this, void 0, void 0, function () {
                                                 var team, player, data, tURL;
                                                 var _a;
@@ -250,9 +261,9 @@ function importSchedule(marathonShort, useJapanese) {
                                                     }
                                                 });
                                             }); })];
-                                    case 7:
+                                    case 9:
                                         // Team Data
-                                        _a.teams = _h.sent();
+                                        _b.teams = _j.sent();
                                         return [2 /*return*/, runData];
                                 }
                             });

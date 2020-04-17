@@ -18,20 +18,20 @@
 }
 
 
-.disabled[data-v-5f4b7fe2] {
+.disabled[data-v-4c475550] {
   pointer-events: none;
   opacity: 0.5;
 }
-#Controls[data-v-5f4b7fe2] {
+#Controls[data-v-4c475550] {
   padding-top: 10px;
 }
-#Controls > *[data-v-5f4b7fe2] {
+#Controls > *[data-v-4c475550] {
   flex: 1;
 }
-#Controls > *[data-v-5f4b7fe2]:not(:first-child) {
+#Controls > *[data-v-4c475550]:not(:first-child) {
   margin-left: 5px;
 }
-#Controls[data-v-5f4b7fe2] .v-btn {
+#Controls[data-v-4c475550] .v-btn {
   min-width: 0;
   width: 100%;
 }

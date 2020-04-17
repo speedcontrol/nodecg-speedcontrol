@@ -1,14 +1,14 @@
 
-.list-move[data-v-3c9b87d0] {
+.list-move[data-v-574fab04] {
   transition: transform 0.2s;
 }
-.list-enter[data-v-3c9b87d0], .list-leave-to[data-v-3c9b87d0]
+.list-enter[data-v-574fab04], .list-leave-to[data-v-574fab04]
 /* .logo-list-complete-leave-active below version 2.1.8 */ {
   opacity: 0;
   transition: transform 0.2s;
   transition: opacity 0.2s;
 }
-.list-leave-active[data-v-3c9b87d0] {
+.list-leave-active[data-v-574fab04] {
   position: absolute;
 }
 

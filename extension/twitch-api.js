@@ -144,60 +144,63 @@ function refreshToken() {
 exports.refreshToken = refreshToken;
 /**
  * Make a request to Twitch API v5.
- * @param url Twitch API v5 endpoint you want to access.
  */
-function request(method, endpoint, data) {
+function request(method, endpoint, data, newAPI) {
     if (data === void 0) { data = null; }
+    if (newAPI === void 0) { newAPI = false; }
     return __awaiter(this, void 0, void 0, function () {
-        var retry, attempts, resp, err_2;
+        var ep, retry, attempts, resp, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 7, , 8]);
-                    nodecg.log.debug("[Twitch] API " + method.toUpperCase() + " request processing on " + endpoint);
+                    ep = "/" + (newAPI ? 'helix' : 'kraken') + endpoint;
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 8, , 9]);
+                    nodecg.log.debug("[Twitch] API " + method.toUpperCase() + " request processing on " + ep);
                     retry = false;
                     attempts = 0;
                     resp = void 0;
-                    _a.label = 1;
-                case 1:
+                    _a.label = 2;
+                case 2:
                     retry = false;
                     attempts += 1;
-                    return [4 /*yield*/, needle_1.default(method, "https://api.twitch.tv/kraken" + endpoint, data, {
+                    return [4 /*yield*/, needle_1.default(method, "https://api.twitch.tv" + ep, data, {
                             headers: {
-                                Accept: 'application/vnd.twitchtv.v5+json',
+                                Accept: !newAPI ? 'application/vnd.twitchtv.v5+json' : '',
                                 'Content-Type': 'application/json',
-                                Authorization: "OAuth " + apiData.value.accessToken,
+                                Authorization: (newAPI ? 'Bearer' : 'OAuth') + " " + apiData.value.accessToken,
                                 'Client-ID': config.twitch.clientID,
                             },
                         })];
-                case 2:
+                case 3:
                     // eslint-disable-next-line no-await-in-loop
                     resp = _a.sent();
-                    if (!(resp.statusCode === 401 && attempts <= 1)) return [3 /*break*/, 4];
+                    if (!(resp.statusCode === 401 && attempts <= 1)) return [3 /*break*/, 5];
                     nodecg.log.debug("[Twitch] API " + method.toUpperCase() + " request "
-                        + ("resulted in " + resp.statusCode + " on " + endpoint + ":"), JSON.stringify(resp.body));
+                        + ("resulted in " + resp.statusCode + " on " + ep + ":"), JSON.stringify(resp.body));
                     return [4 /*yield*/, refreshToken()];
-                case 3:
+                case 4:
                     _a.sent(); // eslint-disable-line no-await-in-loop
                     retry = true;
-                    return [3 /*break*/, 5];
-                case 4:
+                    return [3 /*break*/, 6];
+                case 5:
                     if (resp.statusCode !== 200) {
                         throw new Error(JSON.stringify(resp.body));
                         // Do we need to retry here?
                     }
-                    _a.label = 5;
-                case 5:
-                    if (retry) return [3 /*break*/, 1];
                     _a.label = 6;
                 case 6:
-                    nodecg.log.debug("[Twitch] API " + method.toUpperCase() + " request successful on " + endpoint);
-                    return [2 /*return*/, resp];
+                    if (retry) return [3 /*break*/, 2];
+                    _a.label = 7;
                 case 7:
+                    nodecg.log.debug("[Twitch] API " + method.toUpperCase() + " request successful on " + ep);
+                    return [2 /*return*/, resp];
+                case 8:
                     err_2 = _a.sent();
-                    nodecg.log.debug("[Twitch] API " + method.toUpperCase() + " request error on " + endpoint + ":", err_2);
+                    nodecg.log.debug("[Twitch] API " + method.toUpperCase() + " request error on " + ep + ":", err_2);
                     throw err_2;
-                case 8: return [2 /*return*/];
+                case 9: return [2 /*return*/];
             }
         });
     });
@@ -505,6 +508,11 @@ nodecg.listenFor('playTwitchAd', function (data, ack) {
         .then(function () { return helpers_1.processAck(ack, null); })
         .catch(function (err) { return helpers_1.processAck(ack, err); });
 });
+nodecg.listenFor('twitchAPIRequest', function (data, ack) {
+    request(data.method, data.endpoint, data.data, data.newAPI)
+        .then(function (resp) { return helpers_1.processAck(ack, null, resp); })
+        .catch(function (err) { return helpers_1.processAck(ack, err); });
+});
 // Our messaging system.
 events.listenFor('twitchUpdateChannelInfo', function (data, ack) {
     updateChannelInfo(data.status, data.game)
@@ -519,5 +527,10 @@ events.listenFor('twitchUpdateChannelInfo', function (data, ack) {
 events.listenFor('twitchStartCommercial', function (data, ack) {
     startCommercial(data.duration)
         .then(function () { return helpers_1.processAck(ack, null); })
+        .catch(function (err) { return helpers_1.processAck(ack, err); });
+});
+events.listenFor('twitchAPIRequest', function (data, ack) {
+    request(data.method, data.endpoint, data.data, data.newAPI)
+        .then(function (resp) { return helpers_1.processAck(ack, null, resp); })
         .catch(function (err) { return helpers_1.processAck(ack, err); });
 });

@@ -67,20 +67,23 @@ var scheduleDataCache = {};
  */
 function parseMarkdown(str) {
     var results = {};
-    if (!str) {
-        return results;
+    if (str) {
+        // Some stuff can break this, so try/catching it if needed.
+        try {
+            var res = md.parseInline(str, {});
+            var url = void 0;
+            if (res[0] && res[0].children) {
+                url = res[0].children.find(function (child) { return (child.type === 'link_open' && child.attrs
+                    && child.attrs[0] && child.attrs[0][0] === 'href'); });
+            }
+            results.url = (url && url.attrs) ? url.attrs[0][1] : undefined;
+            results.str = remove_markdown_1.default(str);
+        }
+        catch (err) {
+            // return nothing
+        }
     }
-    // Some stuff can break this, so try/catching it if needed.
-    try {
-        var res = md.parseInline(str, {});
-        var url = res[0].children.find(function (child) { return (child.type === 'link_open' && child.attrs[0] && child.attrs[0][0] === 'href'); });
-        results.url = (url) ? url.attrs[0][1] : undefined;
-        results.str = remove_markdown_1.default(str);
-        return results;
-    }
-    catch (err) {
-        return results;
-    }
+    return results;
 }
 /**
  * Generates a hash based on the contents of the string based run data from Horaro.
@@ -172,11 +175,11 @@ function importSchedule(optsO, dashID) {
                     });
                     externalIDsSeen_1 = [];
                     return [4 /*yield*/, p_iteration_1.mapSeries(runItems_1.filter(function (run) { return (!helpers_1.checkGameAgainstIgnoreList(run.data[opts_1.columns.game])); }), function (run, index, arr) { return __awaiter(_this, void 0, void 0, function () {
-                            var externalID, matchingOldRun, runData, game, gameTwitch, srcomGameTwitch, gameAbbr, runSetupTime, duration, playerList, teamSplittingRegex, teamsRaw, _a;
-                            var _b, _c, _d;
+                            var externalID, matchingOldRun, runData, game, gameTwitch, srcomGameTwitch, gameAbbr, _i, _a, str, runSetupTime, duration, playerList, teamSplittingRegex, teamsRaw, _b;
+                            var _c, _d, _e;
                             var _this = this;
-                            return __generator(this, function (_e) {
-                                switch (_e.label) {
+                            return __generator(this, function (_f) {
+                                switch (_f.label) {
                                     case 0:
                                         importStatus.value.item = index + 1;
                                         importStatus.value.total = arr.length;
@@ -207,22 +210,32 @@ function importSchedule(optsO, dashID) {
                                             .split('#')[0];
                                         return [4 /*yield*/, helpers_1.to(srcom_api_1.searchForTwitchGame(gameAbbr, true))];
                                     case 1:
-                                        _b = _e.sent(), srcomGameTwitch = _b[1];
-                                        _e.label = 2;
+                                        _c = _f.sent(), srcomGameTwitch = _c[1];
+                                        _f.label = 2;
                                     case 2:
                                         if (!(!srcomGameTwitch && game.str)) return [3 /*break*/, 4];
                                         return [4 /*yield*/, helpers_1.to(srcom_api_1.searchForTwitchGame(game.str))];
                                     case 3:
-                                        _c = _e.sent(), srcomGameTwitch = _c[1];
-                                        _e.label = 4;
+                                        _d = _f.sent(), srcomGameTwitch = _d[1];
+                                        _f.label = 4;
                                     case 4:
-                                        gameTwitch = gameTwitch || srcomGameTwitch || game.str;
-                                        if (!gameTwitch) return [3 /*break*/, 6];
-                                        return [4 /*yield*/, helpers_1.to(twitch_api_1.verifyTwitchDir(gameTwitch))];
+                                        _i = 0, _a = [gameTwitch, srcomGameTwitch, game.str];
+                                        _f.label = 5;
                                     case 5:
-                                        _d = _e.sent(), gameTwitch = _d[1];
-                                        _e.label = 6;
+                                        if (!(_i < _a.length)) return [3 /*break*/, 8];
+                                        str = _a[_i];
+                                        if (!str) return [3 /*break*/, 7];
+                                        return [4 /*yield*/, helpers_1.to(twitch_api_1.verifyTwitchDir(str))];
                                     case 6:
+                                        _e = _f.sent(), gameTwitch = _e[1];
+                                        if (gameTwitch) {
+                                            return [3 /*break*/, 8]; // If a directory was successfully found, stop loop early.
+                                        }
+                                        _f.label = 7;
+                                    case 7:
+                                        _i++;
+                                        return [3 /*break*/, 5];
+                                    case 8:
                                         runData.gameTwitch = gameTwitch;
                                         // Scheduled Date/Time
                                         runData.scheduledS = run.scheduled_t;
@@ -255,7 +268,7 @@ function importSchedule(optsO, dashID) {
                                             }
                                         });
                                         playerList = run.data[opts_1.columns.player];
-                                        if (!playerList) return [3 /*break*/, 9];
+                                        if (!playerList) return [3 /*break*/, 11];
                                         teamSplittingRegex = [
                                             /\s+vs\.?\s+/,
                                             /\s*,\s*/,
@@ -269,10 +282,10 @@ function importSchedule(optsO, dashID) {
                                                         : [team.replace(/^(.+)(:\s)/, '')],
                                                 };
                                             })];
-                                    case 7:
-                                        teamsRaw = _e.sent();
+                                    case 9:
+                                        teamsRaw = _f.sent();
                                         // Mapping team information from above into needed format.
-                                        _a = runData;
+                                        _b = runData;
                                         return [4 /*yield*/, p_iteration_1.mapSeries(teamsRaw, function (rawTeam) { return __awaiter(_this, void 0, void 0, function () {
                                                 var team, _a;
                                                 var _this = this;
@@ -326,11 +339,11 @@ function importSchedule(optsO, dashID) {
                                                     }
                                                 });
                                             }); })];
-                                    case 8:
+                                    case 10:
                                         // Mapping team information from above into needed format.
-                                        _a.teams = _e.sent();
-                                        _e.label = 9;
-                                    case 9:
+                                        _b.teams = _f.sent();
+                                        _f.label = 11;
+                                    case 11:
                                         nodecg.log.debug("[Horaro Import] Successfully imported " + (index + 1) + "/" + runItems_1.length);
                                         return [2 /*return*/, runData];
                                 }

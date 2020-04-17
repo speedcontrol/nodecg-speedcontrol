@@ -182,6 +182,8 @@ exports.checkGameAgainstIgnoreList = checkGameAgainstIgnoreList;
  * Will attempt to extract the Twitch username from a Twitch URL if possible.
  */
 function getTwitchUserFromURL(url) {
-    return url && url.includes('twitch.tv') ? url.split('/')[url.split('/').length - 1] : undefined;
+    var sanitised = (url === null || url === void 0 ? void 0 : url.endsWith('/')) ? url.substring(0, url.length - 1) : url;
+    return sanitised && sanitised.includes('twitch.tv')
+        ? sanitised.split('/')[sanitised.split('/').length - 1] : undefined;
 }
 exports.getTwitchUserFromURL = getTwitchUserFromURL;
