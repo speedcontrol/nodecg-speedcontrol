@@ -30,21 +30,24 @@ const scheduleDataCache: { [k: string]: HoraroSchedule } = {};
  */
 function parseMarkdown(str?: string | null): ParsedMarkdown {
   const results: ParsedMarkdown = {};
-  if (!str) {
-    return results;
+  if (str) {
+    // Some stuff can break this, so try/catching it if needed.
+    try {
+      const res = md.parseInline(str, {});
+      let url;
+      if (res[0] && res[0].children) {
+        url = res[0].children.find((child) => (
+          child.type === 'link_open' && child.attrs
+          && child.attrs[0] && child.attrs[0][0] === 'href'
+        ));
+      }
+      results.url = (url && url.attrs) ? url.attrs[0][1] : undefined;
+      results.str = removeMd(str);
+    } catch (err) {
+      // return nothing
+    }
   }
-  // Some stuff can break this, so try/catching it if needed.
-  try {
-    const res = md.parseInline(str, {});
-    const url = res[0].children.find((child) => (
-      child.type === 'link_open' && child.attrs[0] && child.attrs[0][0] === 'href'
-    ));
-    results.url = (url) ? url.attrs[0][1] : undefined;
-    results.str = removeMd(str);
-    return results;
-  } catch (err) {
-    return results;
-  }
+  return results;
 }
 
 /**
@@ -173,9 +176,14 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
           [, srcomGameTwitch] = await to(searchForTwitchGame(game.str));
         }
       }
-      gameTwitch = gameTwitch || srcomGameTwitch || game.str;
-      if (gameTwitch) { // Verify game directory supplied exists on Twitch.
-        [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
+      // Verify some game directory supplied exists on Twitch.
+      for (const str of [gameTwitch, srcomGameTwitch, game.str]) {
+        if (str) {
+          [, gameTwitch] = await to(verifyTwitchDir(str));
+          if (gameTwitch) {
+            break; // If a directory was successfully found, stop loop early.
+          }
+        }
       }
       runData.gameTwitch = gameTwitch;
 

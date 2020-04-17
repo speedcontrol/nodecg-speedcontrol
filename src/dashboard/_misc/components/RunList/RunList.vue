@@ -6,9 +6,9 @@
     "searchResultCount": "1 run found. | {count} runs found."
   },
   "ja": {
-    "search": null,
-    "noTwitchGame": null,
-    "searchResultCount": null
+    "search": "検索",
+    "noTwitchGame": "Twitchゲームカテゴリを設定していない走者情報のみ表示",
+    "searchResultCount": "1件の走者情報が見つかりました。 | {count}件の走者情報が見つかりました。"
   }
 }
 </i18n>

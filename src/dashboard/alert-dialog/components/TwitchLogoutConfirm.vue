@@ -4,7 +4,7 @@
     "alertText": "Are you sure you want to logout from the Twitch integration?"
   },
   "ja": {
-    "alertText": null
+    "alertText": "Twitch連携をログアウトしてもよろしいですか？"
   }
 }
 </i18n>

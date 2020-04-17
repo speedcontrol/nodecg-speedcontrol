@@ -11,7 +11,7 @@ If you have this bundle listed as a dependency in your bundle (`nodecg.bundleDep
 
 ### <a name="nodecg-version"></a> Bumped required NodeCG version
 
-This bundle now requires NodeCG version `1.5.0`.
+This bundle now requires NodeCG version `1.6.0`.
 
 
 ### <a name="run-data-changes"></a> Minor changes to the run data objects

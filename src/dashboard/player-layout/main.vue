@@ -6,9 +6,9 @@
     "noneAvailable": "No Teams/Run Available"
   },
   "ja": {
-    "panelTitle": null,
-    "note": null,
-    "noneAvailable": null
+    "panelTitle": "走者レイアウト",
+    "note": "この順番は一時的なものであり、永続的にデータを変更するものではありません。",
+    "noneAvailable": "ゲーム情報/プレイヤー情報がありません。"
   }
 }
 </i18n>

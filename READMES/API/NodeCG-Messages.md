@@ -18,6 +18,7 @@
   - [removeAllRuns](#removeAllRuns)
   - [twitchStartCommercial](#twitchStartCommercial)
   - [twitchUpdateChannelInfo](#twitchUpdateChannelInfo)
+  - [twitchAPIRequest](#twitchAPIRequest)
   - [updateFeaturedChannels](#updateFeaturedChannels)
 
 
@@ -479,6 +480,67 @@ false
 ```
 
 Used to update the Twitch status (title) and/or game (directory), if the integration is enabled. This is the same as changing it via the *Twitch Control* panel.
+
+
+## twitchAPIRequest
+
+*Notes about this message:*
+ - *Internally we use the [needle](https://github.com/tomas/needle) package, so their documentation may be of help for this message.*
+ - *This can be used via the NodeCG messaging system, although if used in an extension you should use [our messaging service](./Our-Messages.md) so you can actually get a proper response.*
+ - *Yoy may need to add an `additionalScope` to the [relevant configuration](../Configuration.md#Twitch); the example below requires the `user:edit:broadcast` scope, for example.*
+
+### Parameters
+- *[`object`]*
+  - `method` *[`string`]* Request HTTP type: `"get"`/`"head"`/`"delete"`/`"patch"`/`"post"`/`"put"`.
+  - `endpoint` *[`string`]* Endpoint you wish to request.
+  - `data` *[`object` (usually) or `undefined`]* Data, if any, to be sent alongside this request.
+  - `newAPI` *[`boolean` or `undefined`]* If this request is for Twitch's "new" API; if false it will request on the v5 API.
+### Data
+- `response` *[`object`]* The received response; see the [needle](https://github.com/tomas/needle) documentation for more information.
+### Example code (extension/no acknowledgement)
+```javascript
+nodecg.sendMessageToBundle('twitchAPIRequest', 'nodecg-speedcontrol', {
+  method: 'get',
+  endpont: '/streams/markers',
+  data: {
+    user_id: '123', 
+    description: 'hello, this is a marker!'
+  },
+  newAPI: true
+});
+```
+### Example code (callback)
+```javascript
+nodecg.sendMessageToBundle('twitchAPIRequest', 'nodecg-speedcontrol', {
+  method: 'get',
+  endpont: '/streams/markers',
+  data: {
+    user_id: '123', 
+    description: 'hello, this is a marker!'
+  },
+  newAPI: true
+}, (err, response) => {
+  ...
+});
+```
+### Example code (promise)
+```javascript
+nodecg.sendMessageToBundle('twitchAPIRequest', 'nodecg-speedcontrol', {
+  method: 'get',
+  endpont: '/streams/markers',
+  data: {
+    user_id: '123', 
+    description: 'hello, this is a marker!'
+  },
+  newAPI: true
+})
+  .then((response) => { ... })
+  .catch((err) => { ... });
+```
+### Example data
+*See the [needle](https://github.com/tomas/needle) documentation.*
+
+Allows you to use the Twitch API implementation in this bundle to do your own requests if needed. You may need to add [additional scopes in the configuration](../Configuration.md#Twitch) if you need more authorisation than we provide by default to make your request. Supports either the v5 API or the "new" API via a boolean flag; Twitch prefers you use the "new" API whenever possible, although (at the time of writing) not everything is available via it.
 
 
 ## updateFeaturedChannels

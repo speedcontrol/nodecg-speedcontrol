@@ -20,6 +20,9 @@ Below is an example configuration file contents with everything that is availabl
     "clientID": "CLIENT_ID",
     "clientSecret": "CLIENT_SECRET",
     "redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
+    "additionalScopes": [
+      "SCOPE"
+    ],
     "channelName": "OTHER_CHANNEL",
     "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
     "streamDefaultGame": "Games + Demos",
@@ -62,7 +65,7 @@ This is the language code for the language used on the dashboard UI. The default
 
 The currently available languages are:
 - `en` (English)
-- `ja` (Japanese, partially complete)
+- `ja` (Japanese)
 
 ### Twitch
 
@@ -73,6 +76,9 @@ The currently available languages are:
     "clientID": "CLIENT_ID",
     "clientSecret": "CLIENT_SECRET",
     "redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
+    "additionalScopes": [
+      "SCOPE"
+    ],
     "channelName": "OTHER_CHANNEL",
     "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
     "streamDefaultGame": "Games + Demos",
@@ -96,6 +102,13 @@ Currently, you must either:
 - Specify a channel name in the `channelName` setting that the account you logged in with has editor access for. Currently if this setting is used, the FrankerFaceZ integration will not successfully be able set the featured channels due to a limitation in the FrankerFaceZ service.
 
 If you decide to use the 2nd option above, there is also another boolean, `ffzUseRepeater`; if this is true it will never attempt to set the FrankerFaceZ featured channels but instead will make the bundle emit a `repeaterFeaturedChannels` message so if you want to work around this limitation in your own bundle you can; see the [API documentation](API.md) for more information.
+
+There is also another optional parameter, `additionalScopes`, which is an array of strings, which if any are specified will be added to the Twitch authorisation request and allow the token to have more control, which can be useful if you plan to use the [Twitch API request feature](./API/NodeCG-Messages.md#twitchAPIRequest) feature. By default we request these scopes, so if you specify these again they will be ignored:
+- `channel_editor`
+- `user_read`
+- `chat:read`
+- `chat:edit`
+- `channel_commercial`
 
 
 ### Horaro Schedule

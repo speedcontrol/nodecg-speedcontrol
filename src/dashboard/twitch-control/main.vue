@@ -22,13 +22,13 @@
     "authenticating": "認証中...",
     "logout": "ログアウト",
     "autosync": "タイトル/ゲームカテゴリーの同期を有効化しますか？",
-    "autosyncFFZ": "タイトル/ゲームカテゴリーの同期を有効化しますか/featured channels？",
+    "autosyncFFZ": "タイトル/ゲームカテゴリーの同期を有効化しますか/注目のチャンネル？",
     "title": "タイトル",
     "gameDirectory": "ゲームカテゴリー",
-    "featuredChannels": null,
+    "featuredChannels": "注目のチャンネル",
     "update": "更新",
-    "startCommercial": null,
-    "commercialRunning": null
+    "startCommercial": "広告を開始",
+    "commercialRunning": "広告再生中 (残り{time}秒)"
   }
 }
 </i18n>
@@ -201,11 +201,23 @@ export default Vue.extend({
       },
     },
     url(): string {
+      const config = (nodecg.bundleConfig as Configschema).twitch;
+      const scopes = [
+        'channel_editor',
+        'user_read',
+        'chat:read',
+        'chat:edit',
+        'channel_commercial',
+      ];
+      if (config.additionalScopes) {
+        const addScopes = config.additionalScopes.filter((s) => !scopes.includes(s));
+        scopes.push(...addScopes);
+      }
       return 'https://id.twitch.tv/oauth2/authorize'
       + `?client_id=${this.config.clientID}`
       + `&redirect_uri=${this.config.redirectURI}`
       + '&response_type=code'
-      + '&scope=channel_editor+user_read+chat:read+chat:edit+channel_commercial'
+      + `&scope=${scopes.join('+')}`
       + '&force_verify=true';
     },
     commercialTimeRemaining(): string {
@@ -275,7 +287,7 @@ export default Vue.extend({
       if (this.config.ffzIntegration) {
         nodecg.sendMessage(
           'updateFeaturedChannels',
-          this.users.replace(/\s/g, '').split(','),
+          this.users.replace(/\s/g, '').split(',').filter(Boolean),
         ).then(() => {
           // successful
         }).catch(() => {

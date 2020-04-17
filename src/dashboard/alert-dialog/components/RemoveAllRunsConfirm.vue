@@ -5,8 +5,8 @@
     "alertText2": "This will also remove the currently active run."
   },
   "ja": {
-    "alertText": null,
-    "alertText2": null
+    "alertText": "全ての走者情報を削除してもよろしいですか？",
+    "alertText2": "これは現在実行中の走者情報も削除します。"
   }
 }
 </i18n>
