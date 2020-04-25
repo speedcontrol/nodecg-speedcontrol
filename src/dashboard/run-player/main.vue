@@ -33,6 +33,7 @@
         class="NextRunBtn"
         width="100%"
         block
+        :title="nextRunStr"
         :disabled="disableChange || !nextRun"
         @click="playNextRun"
       >
@@ -47,7 +48,7 @@
               </v-icon>
             </div>
             <div :style="{ overflow: 'hidden' }">
-              {{ nextRunGameName }}
+              {{ nextRunStr }}
             </div>
           </template>
           <div v-else-if="runDataArray.length">
@@ -94,11 +95,15 @@ export default Vue.extend({
     nextRun(): RunData | undefined {
       return this.runDataArray.find((run) => run.id === this.runDataActiveRunSurrounding.next);
     },
-    nextRunGameName(): string {
-      if (this.nextRun && this.nextRun.game) {
-        return this.nextRun.game;
+    nextRunStr(): string {
+      if (this.nextRun) {
+        const arr = [
+          this.nextRun.game || '?',
+          this.nextRun.category,
+        ].filter(Boolean);
+        return arr.join(' - ');
       }
-      return '(The Run With No Name)';
+      return '?';
     },
     timerState(): string {
       return store.state.timer.state;

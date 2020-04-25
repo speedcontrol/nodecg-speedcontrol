@@ -14,18 +14,10 @@
     <div>
       {{ $t('alertText') }}
       <div
-        v-if="alertData.runData && alertData.runData.game && alertData.runData.category"
+        v-if="getRunStr"
         style="margin-top: 10px; font-style: italic;"
       >
-        <span v-if="alertData.runData.game">
-          {{ alertData.runData.game }}
-        </span>
-        <span v-if="alertData.runData.game && alertData.runData.category">
-          -
-        </span>
-        <span v-if="alertData.runData.category">
-          {{ alertData.runData.category }}
-        </span>
+        {{ getRunStr }}
       </div>
     </div>
     <br>
@@ -50,6 +42,19 @@ export default Vue.extend({
       default(): object {
         return {};
       },
+    },
+  },
+  computed: {
+    getRunStr(): string | undefined {
+      if (this.alertData.runData
+        && (this.alertData.runData.game || this.alertData.runData.category)) {
+        const arr = [
+          this.alertData.runData.game || '?',
+          this.alertData.runData.category,
+        ].filter(Boolean);
+        return arr.join(' - ');
+      }
+      return undefined;
     },
   },
 });
