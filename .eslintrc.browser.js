@@ -28,6 +28,7 @@ module.exports = {
     'plugin:import/typescript',
   ],
   settings: {
+    'import/core-modules': ['nodecg/types/browser'],
     'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
     'import/resolver': {
       node: {

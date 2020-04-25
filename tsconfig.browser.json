@@ -73,7 +73,6 @@
   "include": [
     "src/dashboard/**/*.ts",
     "src/dashboard/**/*.vue",
-    "../../types/browser.d.ts",
     "types/**/*.ts"
   ]
 }
