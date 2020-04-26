@@ -20,7 +20,7 @@ This bundle doesn't come with any graphics, you will need to create them yoursel
 
 ## Installation
 
-You will need [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://git-scm.com/) installed to install NodeCG, then see the [NodeCG documentation](http://nodecg.com/) on how to install that. I also suggest installing `nodecg-cli`; information on that is also on the documentation just linked.
+You will need [Node.js](https://nodejs.org) (12.x LTS tested) and [git](https://git-scm.com/) installed to install NodeCG, then see the [NodeCG documentation](http://nodecg.com/) on how to install that. I also suggest installing `nodecg-cli`; information on that is also on the documentation just linked.
 
 - `nodecg install speedcontrol/nodecg-speedcontrol` to install the latest version of nodecg-speedcontrol
 
