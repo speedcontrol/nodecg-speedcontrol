@@ -57,7 +57,7 @@ export default Vue.extend({
     isDisabled(): boolean {
       return (
         this.info.id && !!store.state.timer.teamFinishTimes[this.info.id as string]
-      ) || store.state.timer.state !== 'running';
+      ) || !['running', 'paused'].includes(store.state.timer.state);
     },
   },
   methods: {
