@@ -232,7 +232,12 @@ async function undoTimer(id?: string): Promise<void> {
 
     // Undo the split if needed.
     if (timerRep.value.state === 'finished') {
-      timer.undoSplit();
+      if (timer.currentPhase() === 0) {
+        timer.start();
+        setGameTime(timerRep.value.milliseconds);
+      } else {
+        timer.undoSplit();
+      }
       timerRep.value.state = 'running';
       if (activeRun.value && runFinishTimes.value[activeRun.value.id]) {
         delete runFinishTimes.value[activeRun.value.id];
