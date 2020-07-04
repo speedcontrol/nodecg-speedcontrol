@@ -45,7 +45,8 @@ Below is an example configuration file contents with everything that is availabl
   },
   "oengus": {
     "defaultMarathon": "SHORTNAME",
-    "useJapanese": false
+    "useJapanese": false,
+    "disableSpeedrunComLookup": false
   }
 }
 ```
@@ -148,7 +149,7 @@ There is also another optional parameter, `additionalScopes`, which is an array 
   "oengus": {
     "defaultMarathon": "SHORTNAME",
     "useJapanese": false,
-    "disableSpeedrunComLookup": false,
+    "disableSpeedrunComLookup": false
   }
 }
 ```
