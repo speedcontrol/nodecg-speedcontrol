@@ -77,7 +77,7 @@ export function sleep(ms: number): Promise<void> {
  * @param id Unique ID of the run you want to attempt to find in the run data array.
  */
 export function findRunIndexFromId(id?: string): number {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: readReplicant not in NodeCGServer typings
   const arr = nodecg.readReplicant('runDataArray') as RunDataArray;
   return arr.findIndex((run) => run.id === id);
