@@ -165,6 +165,7 @@ async function modifyRun(runData: RunData, prevID?: string, twitch = false): Pro
       teamData.players = teamData.players.map((player) => {
         const playerData = _.pickBy(player, _.identity) as RunDataPlayer;
         playerData.social = _.pickBy(playerData.social, _.identity);
+        playerData.customData = _.pickBy(playerData.customData, _.identity);
         return playerData;
       });
       return teamData;

@@ -37,4 +37,10 @@ export interface Configschema {
     useJapanese: boolean;
     disableSpeedrunComLookup: boolean;
   };
+  customData?: {
+    player?: {
+      name: string;
+      key: string;
+    }[];
+  } | null;
 }

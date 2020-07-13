@@ -34,6 +34,13 @@
       :label="$t('countryCode')"
       left-border
     />
+    <text-input
+      v-for="data in customData"
+      :key="data.key"
+      v-model="playerData.customData[data.key]"
+      :label="data.name"
+      left-border
+    />
     <modify-button
       :style="{ 'margin-left': '5px' }"
       icon="mdi-account-minus"
@@ -45,9 +52,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Configschema } from 'configschema';
 import store from '../store';
 import TextInput from './TextInput.vue';
 import ModifyButton from './ModifyButton.vue';
+import { nodecg } from '../../_misc/nodecg';
 
 export default Vue.extend({
   name: 'Player',
@@ -61,6 +70,11 @@ export default Vue.extend({
       default(): object {
         return {};
       },
+    },
+  },
+  computed: {
+    customData(): { name: string, key: string }[] {
+      return (nodecg.bundleConfig as Configschema).customData.player || [];
     },
   },
   methods: {

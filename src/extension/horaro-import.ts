@@ -266,6 +266,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
                   social: {
                     twitch: twitchUsername,
                   },
+                  customData: {},
                 };
                 if (!config.schedule.disableSpeedrunComLookup) {
                   const sData = await searchForUserDataMultiple(twitchUsername, str);

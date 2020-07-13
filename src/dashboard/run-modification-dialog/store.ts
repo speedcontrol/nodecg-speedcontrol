@@ -31,6 +31,7 @@ const defaultPlayer: RunDataPlayer = {
   teamID: '',
   name: '',
   social: {},
+  customData: {},
 };
 
 export default new Vuex.Store({

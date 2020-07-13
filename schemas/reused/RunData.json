@@ -79,13 +79,23 @@
                       "type": "string"
                     }
                   }
+                },
+                "customData": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "type": "string"
+                  }
                 }
               },
               "required": [
                 "name",
                 "id",
                 "teamID",
-                "social"
+                "social",
+                "customData"
               ]
             }
           }

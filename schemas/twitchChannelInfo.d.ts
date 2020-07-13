@@ -6,5 +6,5 @@
  */
 
 export interface TwitchChannelInfo {
-  [k: string]: any;
+  [k: string]: unknown;
 }
