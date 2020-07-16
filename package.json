@@ -38,7 +38,7 @@
     "clone": "^2.1.2",
     "iso8601-duration": "^1.2.0",
     "livesplit-core": "^0.10.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "markdown-it": "^10.0.0",
     "needle": "^2.4.1",
     "p-iteration": "^1.1.8",
