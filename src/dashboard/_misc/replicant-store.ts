@@ -44,13 +44,6 @@ export const store = new Vuex.Store({
     updateReplicant(state, { name, value }): void {
       Vue.set(state, name, value);
     },
-    updateActiveRunTeamOrder(state, { value }): void {
-      const rep = replicants.find((repObj) => repObj.name === 'runDataActiveRun');
-      if (state.runDataActiveRun && rep && rep.value) {
-        Vue.set(state.runDataActiveRun, 'teams', value);
-        rep.value = state.runDataActiveRun;
-      }
-    },
     updateRunOrder(state, { value }): void {
       const rep = replicants.find((repObj) => repObj.name === 'runDataArray');
       if (state.runDataArray && rep && rep.value) {
