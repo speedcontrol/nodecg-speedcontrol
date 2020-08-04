@@ -1,2 +1,4 @@
 .eslintrc.js
 .eslintrc.*.js
+types/**/*
+schemas/**/*
