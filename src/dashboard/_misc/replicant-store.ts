@@ -53,13 +53,6 @@ export const store = new Vuex.Store({
         rep.value = value;
       }
     },
-    saveHoraroImportOpts(state, { value }): void {
-      const rep = replicants.find(
-        (repObj) => repObj.name === 'horaroImportSavedOpts',
-      ) as ReplicantBrowser<HoraroImportSavedOpts>;
-      Vue.set(state, 'horaroImportSavedOpts', value);
-      rep.value = value;
-    },
   },
 });
 
