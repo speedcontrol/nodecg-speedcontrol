@@ -33,44 +33,31 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue';
-import { nodecg } from '../../_misc/nodecg';
-import { store } from '../../_misc/replicant-store';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { Timer } from 'schemas';
 
-export default Vue.extend({
-  name: 'StopButton',
-  props: {
-    info: {
-      type: Object,
-      default() {
-        return {
-          id: undefined,
-        };
-      },
-    } as PropOptions<{ id: string | undefined }>,
-    forfeit: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  computed: {
-    isDisabled(): boolean {
-      return (
-        this.info.id && !!store.state.timer.teamFinishTimes[this.info.id as string]
-      ) || !['running', 'paused'].includes(store.state.timer.state);
-    },
-  },
-  methods: {
-    button(): void {
-      nodecg.sendMessage('timerStop', {
-        id: this.info.id,
-        forfeit: this.forfeit,
-      }).then(() => {
-        // successful
-      }).catch(() => {
-        // error
-      });
-    },
-  },
-});
+@Component
+export default class extends Vue {
+  @Prop({ type: Object, default: { id: undefined } }) readonly info!: { id?: string };
+  @Prop(Boolean) readonly forfeit!: boolean;
+  @State timer!: Timer;
+
+  get isDisabled(): boolean {
+    return (
+      this.info.id && !!this.timer.teamFinishTimes[this.info.id as string]
+    ) || !['running', 'paused'].includes(this.timer.state);
+  }
+
+  button(): void {
+    nodecg.sendMessage('timerStop', {
+      id: this.info.id,
+      forfeit: this.forfeit,
+    }).then(() => {
+      // successful
+    }).catch(() => {
+      // error
+    });
+  }
+}
 </script>

@@ -31,25 +31,24 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { nodecg } from '../../_misc/nodecg';
-import { store } from '../../_misc/replicant-store';
+import { Vue, Component } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { Timer } from 'schemas';
 
-export default Vue.extend({
-  name: 'ResetButton',
-  computed: {
-    state(): 'stopped' | 'running' | 'paused' | 'finished' {
-      return store.state.timer.state;
-    },
-  },
-  methods: {
-    button(): void {
-      nodecg.sendMessage('timerReset').then(() => {
-        // successful
-      }).catch(() => {
-        // error
-      });
-    },
-  },
-});
+@Component
+export default class extends Vue {
+  @State timer!: Timer;
+
+  get state(): Timer['state'] {
+    return this.timer.state;
+  }
+
+  button(): void {
+    nodecg.sendMessage('timerReset').then(() => {
+      // successful
+    }).catch(() => {
+      // error
+    });
+  }
+}
 </script>

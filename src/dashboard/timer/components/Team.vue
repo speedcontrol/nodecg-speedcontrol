@@ -37,44 +37,46 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { Timer } from 'schemas';
+import { RunDataTeam } from 'types';
 import StopButton from './StopButton.vue';
 import UndoButton from './UndoButton.vue';
-import { store } from '../../_misc/replicant-store';
 
-export default Vue.extend({
-  name: 'Team',
+@Component({
   components: {
     StopButton,
     UndoButton,
   },
-  props: {
-    info: {
-      type: Object,
-      default(): object {
-        return {};
-      },
-    },
-    index: {
-      type: Number,
-      default: 0,
-    },
-  },
-  computed: {
-    finishTime(): string | undefined {
-      if (store.state.timer.teamFinishTimes[this.info.id]) {
-        return store.state.timer.teamFinishTimes[this.info.id].time;
-      }
-      return undefined;
-    },
-    state(): string | undefined {
-      if (store.state.timer.teamFinishTimes[this.info.id]) {
-        return store.state.timer.teamFinishTimes[this.info.id].state;
-      }
-      return undefined;
-    },
-  },
-});
+})
+export default class extends Vue {
+  @Prop(Object) readonly info!: RunDataTeam;
+  @Prop({ type: Number, default: 0 }) readonly index!: number;
+  @State timer!: Timer;
+
+  get state(): string | undefined {
+    if (this.timer.teamFinishTimes[this.info.id]) {
+      return this.timer.teamFinishTimes[this.info.id].state;
+    }
+    return undefined;
+  }
+
+  get finishTime(): string | undefined {
+    if (this.timer.teamFinishTimes[this.info.id]) {
+      return this.timer.teamFinishTimes[this.info.id].time;
+    }
+    return undefined;
+  }
+
+  button(): void {
+    nodecg.sendMessage('timerReset').then(() => {
+      // successful
+    }).catch(() => {
+      // error
+    });
+  }
+}
 </script>
 
 <style scoped>

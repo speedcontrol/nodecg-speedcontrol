@@ -44,15 +44,6 @@ export const store = new Vuex.Store({
     updateReplicant(state, { name, value }): void {
       Vue.set(state, name, value);
     },
-    updateTimerDisabledToggle(state, { value }): void {
-      const rep = replicants.find(
-        (repObj) => repObj.name === 'timerChangesDisabled',
-      ) as ReplicantBrowser<TimerChangesDisabled>;
-      if (typeof rep.value === 'boolean') {
-        Vue.set(state, 'timerChangesDisabled', value);
-        rep.value = value;
-      }
-    },
   },
 });
 

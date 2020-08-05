@@ -84,17 +84,19 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Watch } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { State2Way } from 'vuex-class-state2way';
+import { RunDataActiveRun } from 'schemas';
+import { RunDataTeam } from 'types';
 import TimerTime from './components/TimerTime.vue';
 import StartButton from './components/StartButton.vue';
 import ResetButton from './components/ResetButton.vue';
 import StopButton from './components/StopButton.vue';
 import UndoButton from './components/UndoButton.vue';
 import Team from './components/Team.vue';
-import { store } from '../_misc/replicant-store';
-import { RunDataActiveRun, RunDataTeam } from '../../../types';
 
-export default Vue.extend({
+@Component({
   components: {
     TimerTime,
     StartButton,
@@ -103,44 +105,36 @@ export default Vue.extend({
     UndoButton,
     Team,
   },
-  data() {
-    return {
-      tempEnable: false,
-    };
-  },
-  computed: {
-    activeRun(): RunDataActiveRun {
-      return store.state.runDataActiveRun;
-    },
-    teams(): RunDataTeam[] {
-      return (this.activeRun)
-        ? this.activeRun.teams : [];
-    },
-    disableChanges: {
-      get(): boolean {
-        return store.state.timerChangesDisabled;
-      },
-      set(value: boolean): void {
-        store.commit('updateTimerDisabledToggle', { value });
-      },
-    },
-  },
-  watch: {
-    disableChanges(val): void {
-      if (val) {
-        this.tempEnable = false;
-      }
-    },
-    activeRun(): void {
+})
+export default class extends Vue {
+  tempEnable = false;
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun;
+  @State2Way('updateDisabledToggle', 'timerChangesDisabled') disableChanges!: boolean;
+
+  @Watch('disableChanges')
+  onDisableChangesChange(val: boolean): void {
+    if (val) {
       this.tempEnable = false;
-    },
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
     }
-  },
-});
+  }
+  @Watch('activeRun')
+  onActiveRunChange(): void {
+    this.tempEnable = false;
+  }
+
+  get teams(): RunDataTeam[] {
+    return (this.activeRun) ? this.activeRun.teams : [];
+  }
+
+  mounted(): void {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
+    }
+  }
+}
 </script>
 
 <style scoped>
