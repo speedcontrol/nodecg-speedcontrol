@@ -44,15 +44,6 @@ export const store = new Vuex.Store({
     updateReplicant(state, { name, value }): void {
       Vue.set(state, name, value);
     },
-    updateTwitchSyncToggle(state, { value }): void {
-      const rep = replicants.find(
-        (repObj) => repObj.name === 'twitchAPIData',
-      ) as ReplicantBrowser<TwitchAPIData>;
-      if (rep.value) {
-        Vue.set(state.twitchAPIData, 'sync', value);
-        rep.value.sync = value;
-      }
-    },
     updateTimerDisabledToggle(state, { value }): void {
       const rep = replicants.find(
         (repObj) => repObj.name === 'timerChangesDisabled',
