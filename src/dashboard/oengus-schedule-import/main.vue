@@ -71,47 +71,50 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component } from 'vue-property-decorator';
+import { State, Mutation } from 'vuex-class';
+import { State2Way } from 'vuex-class-state2way';
+import { Configschema } from 'configschema';
 import { OengusImportStatus } from 'schemas';
-import { store as repStore } from '../_misc/replicant-store';
 
-export default Vue.extend({
-  data() {
-    return {
-      marathonShort: nodecg.bundleConfig.oengus.defaultMarathon || '',
-      useJapanese: nodecg.bundleConfig.oengus.useJapanese,
-    };
-  },
-  computed: {
-    importStatus(): OengusImportStatus {
-      return repStore.state.oengusImportStatus;
-    },
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
-    }
-  },
-  methods: {
-    importConfirm(): void {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      alertDialog.querySelector('iframe').contentWindow.open({
-        name: 'ImportConfirm',
-        func: this.import,
+@Component
+export default class extends Vue {
+  @State('oengusImportStatus') importStatus!: OengusImportStatus;
+  marathonShort = (nodecg.bundleConfig as Configschema).oengus.defaultMarathon || '';
+  useJapanese = (nodecg.bundleConfig as Configschema).oengus.useJapanese;
+
+  importConfirm(): void {
+    const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+    alertDialog.querySelector('iframe').contentWindow.open({
+      name: 'ImportConfirm',
+      func: this.import,
+    });
+  }
+
+  import(confirm: boolean): void {
+    if (confirm) {
+      nodecg.sendMessage('importOengusSchedule', {
+        marathonShort: this.marathonShort,
+        useJapanese: this.useJapanese,
+      }).then(() => {
+        // successful
+      }).catch(() => {
+        // unsuccessful
       });
-    },
-    import(confirm: boolean): void {
-      if (confirm) {
-        nodecg.sendMessage('importOengusSchedule', {
-          marathonShort: this.marathonShort,
-          useJapanese: this.useJapanese,
-        }).then(() => {
-          // successful
-        }).catch(() => {
-          // unsuccessful
-        });
-      }
-    },
-  },
-});
+    }
+  }
+
+  mounted(): void {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
+    }
+  }
+}
 </script>
+
+<style scoped>
+  
+</style>
