@@ -25,36 +25,36 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { store } from '../_misc/replicant-store';
-import { nodecg } from '../_misc/nodecg';
+import { Vue, Component } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { RunDataActiveRun } from 'schemas';
 import RunList from '../_misc/components/RunList/RunList.vue';
-import { RunDataActiveRun } from '../../../types';
 
-export default Vue.extend({
+@Component({
   components: {
     RunList,
   },
-  computed: {
-    activeRun(): RunDataActiveRun {
-      return store.state.runDataActiveRun;
-    },
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+})
+export default class extends Vue {
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun;
+
+  editActiveRun(): void {
+    if (this.activeRun) {
+      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+      runInfoDialog.querySelector('iframe').contentWindow.open({
+        mode: 'EditActive',
+        runData: this.activeRun,
+      });
     }
-  },
-  methods: {
-    editActiveRun(): void {
-      if (this.activeRun) {
-        const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-        runInfoDialog.querySelector('iframe').contentWindow.open({
-          mode: 'EditActive',
-          runData: this.activeRun,
-        });
-      }
-    },
-  },
-});
+  }
+
+  mounted(): void {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
+    }
+  }
+}
 </script>

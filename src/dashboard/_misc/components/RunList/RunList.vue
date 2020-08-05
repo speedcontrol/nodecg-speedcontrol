@@ -61,82 +61,67 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Watch, Prop } from 'vue-property-decorator'; // eslint-disable-line object-curly-newline, max-len
+import { State } from 'vuex-class';
+import { State2Way } from 'vuex-class-state2way';
+import goTo from 'vuetify/es5/services/goto';
+import { RunDataActiveRun, TwitchAPIData, Timer, RunDataArray } from 'schemas'; // eslint-disable-line object-curly-newline, max-len
+import { RunData } from 'types';
 import Draggable from 'vuedraggable';
 import RunPanel from './RunPanel.vue';
-import { store } from '../../replicant-store';
-import { RunData, RunDataArray, RunDataActiveRun } from '../../../../../types';
-import { TwitchAPIData } from '../../../../../schemas';
 
-export default Vue.extend({
+@Component({
   components: {
     Draggable,
     RunPanel,
   },
-  props: {
-    editor: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      searchTerm: null,
-      hasNoTwitch: false,
-    };
-  },
-  computed: {
-    runDataArray: {
-      get(): RunDataArray {
-        return store.state.runDataArray;
-      },
-      set(value: RunData[]): void {
-        store.commit('updateRunOrder', { value });
-      },
-    },
-    filteredRunDataArray(): RunData[] {
-      return store.state.runDataArray.filter((run) => {
-        const str = (this.searchTerm) ? this.searchTerm.toLowerCase() : '';
-        const searchMatch = !str || (str && ((run.game && run.game.toLowerCase().includes(str))
-          || !!run.teams.find((team) => (team.name && team.name.toLowerCase().includes(str))
-          || !!team.players.find((player) => player.name.toLowerCase().includes(str)))));
-        return searchMatch && ((this.hasNoTwitch && !run.gameTwitch) || (!this.hasNoTwitch));
-      });
-    },
-    activeRun(): RunDataActiveRun {
-      return store.state.runDataActiveRun;
-    },
-    disableChange(): boolean {
-      return ['running', 'paused'].includes(store.state.timer.state);
-    },
-    twitchAPIData(): TwitchAPIData {
-      return store.state.twitchAPIData;
-    },
-  },
-  watch: {
-    activeRun(val): void {
-      if (!this.editor) {
-        this.scroll(val);
-      }
-    },
-  },
-  mounted() {
+})
+export default class extends Vue {
+  @Prop(Boolean) readonly editor!: boolean;
+  @State2Way('updateRunOrder', 'runDataArray') runDataArray!: RunDataArray;
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun;
+  @State twitchAPIData!: TwitchAPIData;
+  @State timer!: Timer;
+  searchTerm = null;
+  hasNoTwitch = false;
+
+  get filteredRunDataArray(): RunData[] {
+    return this.runDataArray.filter((run) => {
+      const str = (this.searchTerm) ? this.searchTerm.toLowerCase() : '';
+      const searchMatch = !str || (str && ((run.game && run.game.toLowerCase().includes(str))
+        || !!run.teams.find((team) => (team.name && team.name.toLowerCase().includes(str))
+        || !!team.players.find((player) => player.name.toLowerCase().includes(str)))));
+      return searchMatch && ((this.hasNoTwitch && !run.gameTwitch) || (!this.hasNoTwitch));
+    });
+  }
+
+  get disableChange(): boolean {
+    return ['running', 'paused'].includes(this.timer.state);
+  }
+
+  @Watch('activeRun')
+  onActiveRunChange(val?: RunDataActiveRun): void {
+    if (!this.editor) {
+      this.scroll(val);
+    }
+  }
+
+  scroll(val?: RunDataActiveRun): void {
+    if (val) {
+      goTo(`#run-${val.id}`, { offset: 25, container: '.RunList' });
+    } else {
+      goTo(0, { container: '.RunList' });
+    }
+  }
+
+  mounted(): void {
     // Cannot be done with "immediate: true" on watcher
     // due to element not being mounted at that point.
     if (!this.editor) {
       this.scroll(this.activeRun);
     }
-  },
-  methods: {
-    scroll(val): void {
-      if (val) {
-        this.$vuetify.goTo(`#run-${val.id}`, { offset: 25, container: '.RunList' });
-      } else {
-        this.$vuetify.goTo(0, { container: '.RunList' });
-      }
-    },
-  },
-});
+  }
+}
 </script>
 
 <style scoped>

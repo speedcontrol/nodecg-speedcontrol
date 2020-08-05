@@ -104,108 +104,97 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { nodecg } from '../../nodecg';
-import { store } from '../../replicant-store';
-import { Configschema } from '../../../../../configschema';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { RunDataActiveRun, RunFinishTimes, Timer } from 'schemas';
+import { RunData } from 'types';
+import { Configschema } from 'configschema';
 import ModifyButton from './ModifyButton.vue';
-import { Timer, RunDataActiveRun } from '../../../../../types';
 
-export default Vue.extend({
-  name: 'RunPanel',
+@Component({
   components: {
     ModifyButton,
   },
-  props: {
-    runData: {
-      type: Object,
-      default(): object {
-        return {};
-      },
-    },
-    editor: {
-      type: Boolean,
-      default: false,
-    },
-    disableChange: {
-      type: Boolean,
-      default: false,
-    },
-    moveDisabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  computed: {
-    playerStr(): string {
-      return this.runData.teams.map((team) => (
-        `${team.name ? `${team.name}:` : ''}
-        ${team.players.map((player) => player.name).join(', ')}`
-      )).join(' vs. ');
-    },
-    activeRun(): RunDataActiveRun {
-      return store.state.runDataActiveRun;
-    },
-    runFinishTime(): Timer {
-      return store.state.runFinishTimes[this.runData.id];
-    },
-  },
-  methods: {
-    customDataName(key): string {
-      return (nodecg.bundleConfig as Configschema).schedule.customData.find(
-        (custom) => custom.key === key,
-      ).name;
-    },
-    playRun(): void {
-      nodecg.sendMessage('changeActiveRun', this.runData.id).then((noTwitchGame) => {
-        if (noTwitchGame) {
-          const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-          alertDialog.querySelector('iframe').contentWindow.open({
-            name: 'NoTwitchGame',
-          });
-        }
+})
+export default class extends Vue {
+  @Prop({ type: Object, default: {} }) readonly runData!: RunData;
+  @Prop(Boolean) readonly editor!: boolean;
+  @Prop(Boolean) readonly disableChange!: boolean;
+  @Prop(Boolean) readonly moveDisabled!: boolean;
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun;
+  @State runFinishTimes!: RunFinishTimes;
+
+  get playerStr(): string {
+    return this.runData.teams.map((team) => (
+      `${team.name ? `${team.name}:` : ''}
+      ${team.players.map((player) => player.name).join(', ')}`
+    )).join(' vs. ');
+  }
+
+  get runFinishTime(): Timer {
+    return this.runFinishTimes[this.runData.id];
+  }
+
+  customDataName(key: string): string {
+    return (nodecg.bundleConfig as Configschema).schedule.customData.find(
+      (custom) => custom.key === key,
+    ).name;
+  }
+
+  playRun(): void {
+    nodecg.sendMessage('changeActiveRun', this.runData.id).then((noTwitchGame) => {
+      if (noTwitchGame) {
+        const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+        alertDialog.querySelector('iframe').contentWindow.open({
+          name: 'NoTwitchGame',
+        });
+      }
+    }).catch(() => {
+      // run change unsuccessful
+    });
+  }
+
+  duplicateRun(): void {
+    const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+    runInfoDialog.querySelector('iframe').contentWindow.open({
+      mode: 'Duplicate',
+      runData: this.runData,
+    });
+  }
+
+  addNewRunAfter(): void {
+    const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+    runInfoDialog.querySelector('iframe').contentWindow.open({
+      mode: 'New',
+      prevID: this.runData.id,
+    });
+  }
+
+  editRun(): void {
+    const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+    runInfoDialog.querySelector('iframe').contentWindow.open({
+      mode: 'EditOther',
+      runData: this.runData,
+    });
+  }
+
+  removeRunConfirm(): void {
+    const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+    alertDialog.querySelector('iframe').contentWindow.open({
+      name: 'RemoveRunConfirm',
+      data: { runData: this.runData },
+      func: this.removeRun,
+    });
+  }
+
+  removeRun(confirm: boolean): void {
+    if (confirm) {
+      nodecg.sendMessage('removeRun', this.runData.id).then(() => {
+        // run change successful
       }).catch(() => {
         // run change unsuccessful
       });
-    },
-    duplicateRun(): void {
-      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      runInfoDialog.querySelector('iframe').contentWindow.open({
-        mode: 'Duplicate',
-        runData: this.runData,
-      });
-    },
-    addNewRunAfter(): void {
-      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      runInfoDialog.querySelector('iframe').contentWindow.open({
-        mode: 'New',
-        prevID: this.runData.id,
-      });
-    },
-    editRun(): void {
-      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      runInfoDialog.querySelector('iframe').contentWindow.open({
-        mode: 'EditOther',
-        runData: this.runData,
-      });
-    },
-    removeRunConfirm(): void {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      alertDialog.querySelector('iframe').contentWindow.open({
-        name: 'RemoveRunConfirm',
-        data: { runData: this.runData },
-        func: this.removeRun,
-      });
-    },
-    removeRun(confirm: boolean): void {
-      if (confirm) {
-        nodecg.sendMessage('removeRun', this.runData.id).then(() => {
-          // run change successful
-        }).catch(() => {
-          // run change unsuccessful
-        });
-      }
-    },
-  },
-});
+    }
+  }
+}
 </script>

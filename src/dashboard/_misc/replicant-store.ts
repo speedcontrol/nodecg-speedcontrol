@@ -44,13 +44,6 @@ export const store = new Vuex.Store({
     updateReplicant(state, { name, value }): void {
       Vue.set(state, name, value);
     },
-    updateRunOrder(state, { value }): void {
-      const rep = replicants.find((repObj) => repObj.name === 'runDataArray');
-      if (state.runDataArray && rep && rep.value) {
-        Vue.set(state, 'runDataArray', value);
-        rep.value = state.runDataArray;
-      }
-    },
     updateTwitchSyncToggle(state, { value }): void {
       const rep = replicants.find(
         (repObj) => repObj.name === 'twitchAPIData',

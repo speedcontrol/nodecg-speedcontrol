@@ -72,84 +72,88 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { RunDataArray, RunDataActiveRun, RunDataActiveRunSurrounding, Timer } from 'schemas'; // eslint-disable-line object-curly-newline, max-len
+import { RunData } from 'types';
 import RunList from '../_misc/components/RunList/RunList.vue';
-import { store } from '../_misc/replicant-store';
-import { RunData, RunDataArray, RunDataActiveRun } from '../../../types';
-import { RunDataActiveRunSurrounding } from '../../../schemas';
 
-export default Vue.extend({
+@Component({
   components: {
     RunList,
   },
-  computed: {
-    runDataArray(): RunDataArray {
-      return store.state.runDataArray;
-    },
-    activeRun(): RunDataActiveRun {
-      return store.state.runDataActiveRun;
-    },
-    runDataActiveRunSurrounding(): RunDataActiveRunSurrounding {
-      return store.state.runDataActiveRunSurrounding;
-    },
-    nextRun(): RunData | undefined {
-      return this.runDataArray.find((run) => run.id === this.runDataActiveRunSurrounding.next);
-    },
-    nextRunStr(): string {
-      if (this.nextRun) {
-        const arr = [
-          this.nextRun.game || '?',
-          this.nextRun.category,
-        ].filter(Boolean);
-        return arr.join(' - ');
-      }
-      return '?';
-    },
-    timerState(): string {
-      return store.state.timer.state;
-    },
-    disableChange(): boolean {
-      return ['running', 'paused'].includes(this.timerState);
-    },
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+})
+export default class extends Vue {
+  @State runDataArray!: RunDataArray;
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun;
+  @State runDataActiveRunSurrounding!: RunDataActiveRunSurrounding;
+  @State timer!: Timer;
+
+  get nextRun(): RunData | undefined {
+    return this.runDataArray.find((run) => run.id === this.runDataActiveRunSurrounding.next);
+  }
+
+  get nextRunStr(): string {
+    if (this.nextRun) {
+      const arr = [
+        this.nextRun.game || '?',
+        this.nextRun.category,
+      ].filter(Boolean);
+      return arr.join(' - ');
     }
-  },
-  methods: {
-    returnToStartConfirm(): void {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      alertDialog.querySelector('iframe').contentWindow.open({
-        name: 'ReturnToStartConfirm',
-        func: this.returnToStart,
+    return '?';
+  }
+
+  get timerState(): string {
+    return this.timer.state;
+  }
+
+  get disableChange(): boolean {
+    return ['running', 'paused'].includes(this.timerState);
+  }
+
+  returnToStartConfirm(): void {
+    const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+    alertDialog.querySelector('iframe').contentWindow.open({
+      name: 'ReturnToStartConfirm',
+      func: this.returnToStart,
+    });
+  }
+
+  returnToStart(confirm: boolean): void {
+    if (confirm) {
+      nodecg.sendMessage('returnToStart').then(() => {
+        // run removal successful
+      }).catch(() => {
+        // run removal unsuccessful
       });
-    },
-    returnToStart(confirm: boolean): void {
-      if (confirm) {
-        nodecg.sendMessage('returnToStart').then(() => {
-          // run removal successful
-        }).catch(() => {
-          // run removal unsuccessful
-        });
-      }
-    },
-    playNextRun(): void {
-      if (this.nextRun) {
-        nodecg.sendMessage('changeToNextRun').then((noTwitchGame) => {
-          if (noTwitchGame) {
-            const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-            alertDialog.querySelector('iframe').contentWindow.open({
-              name: 'NoTwitchGame',
-            });
-          }
-        }).catch(() => {
-          // run change unsuccessful
-        });
-      }
-    },
-  },
-});
+    }
+  }
+
+  playNextRun(): void {
+    if (this.nextRun) {
+      nodecg.sendMessage('changeToNextRun').then((noTwitchGame) => {
+        if (noTwitchGame) {
+          const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+          alertDialog.querySelector('iframe').contentWindow.open({
+            name: 'NoTwitchGame',
+          });
+        }
+      }).catch(() => {
+        // run change unsuccessful
+      });
+    }
+  }
+
+  mounted(): void {
+    if (window.frameElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
+    }
+  }
+}
 </script>
 
 <style scoped>
