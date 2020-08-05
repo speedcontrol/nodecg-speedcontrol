@@ -31,13 +31,13 @@
         :style="{ 'margin-left': '5px' }"
         icon="mdi-account-multiple-minus"
         :tooltip="$t('removeTeam')"
-        @click="removeTeam"
+        @click="removeTeam(teamData.id)"
       />
       <modify-button
         :style="{ 'margin-left': '5px' }"
         icon="mdi-account-plus"
         :tooltip="$t('addNewPlayer')"
-        @click="addNewPlayer"
+        @click="addNewPlayer(teamData.id)"
       />
     </div>
     <draggable
@@ -56,36 +56,26 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Mutation } from 'vuex-class';
 import Draggable from 'vuedraggable';
-import store from '../store';
+import { RunDataTeam } from 'types';
 import Player from './Player.vue';
 import TextInput from './TextInput.vue';
 import ModifyButton from './ModifyButton.vue';
+import { AddNewPlayer, RemoveTeam } from '../store';
 
-export default Vue.extend({
-  name: 'Team',
+@Component({
   components: {
     TextInput,
     Player,
     Draggable,
     ModifyButton,
   },
-  props: {
-    teamData: {
-      type: Object,
-      default(): object {
-        return {};
-      },
-    },
-  },
-  methods: {
-    addNewPlayer(): void {
-      store.commit('addNewPlayer', { teamID: this.teamData.id });
-    },
-    removeTeam(): void {
-      store.commit('removeTeam', { teamID: this.teamData.id });
-    },
-  },
-});
+})
+export default class extends Vue {
+  @Prop({ type: Object, default: {} }) teamData!: RunDataTeam;
+  @Mutation addNewPlayer!: AddNewPlayer;
+  @Mutation removeTeam!: RemoveTeam;
+}
 </script>

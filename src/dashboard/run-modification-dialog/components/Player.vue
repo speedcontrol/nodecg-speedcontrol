@@ -45,45 +45,32 @@
       :style="{ 'margin-left': '5px' }"
       icon="mdi-account-minus"
       :tooltip="$t('removePlayer')"
-      @click="removePlayer"
+      @click="removePlayer({ teamID: playerData.teamID, id: playerData.id })"
     />
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Mutation } from 'vuex-class';
 import { Configschema } from 'configschema';
-import store from '../store';
+import { RunDataPlayer } from 'types';
 import TextInput from './TextInput.vue';
 import ModifyButton from './ModifyButton.vue';
-import { nodecg } from '../../_misc/nodecg';
+import { RemovePlayer } from '../store';
 
-export default Vue.extend({
-  name: 'Player',
+@Component({
   components: {
     TextInput,
     ModifyButton,
   },
-  props: {
-    playerData: {
-      type: Object,
-      default(): object {
-        return {};
-      },
-    },
-  },
-  computed: {
-    customData(): { name: string, key: string }[] {
-      return (nodecg.bundleConfig as Configschema).customData.player || [];
-    },
-  },
-  methods: {
-    removePlayer(): void {
-      store.commit('removePlayer', {
-        teamID: this.playerData.teamID,
-        id: this.playerData.id,
-      });
-    },
-  },
-});
+})
+export default class extends Vue {
+  @Prop({ type: Object, default: {} }) playerData!: RunDataPlayer;
+  @Mutation removePlayer!: RemovePlayer;
+
+  get customData(): { name: string, key: string }[] {
+    return (nodecg.bundleConfig as Configschema).customData.player || [];
+  }
+}
 </script>

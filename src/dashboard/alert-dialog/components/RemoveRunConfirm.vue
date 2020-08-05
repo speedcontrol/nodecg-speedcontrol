@@ -14,10 +14,10 @@
     <div>
       {{ $t('alertText') }}
       <div
-        v-if="getRunStr"
+        v-if="runStr"
         style="margin-top: 10px; font-style: italic;"
       >
-        {{ getRunStr }}
+        {{ runStr }}
       </div>
     </div>
     <br>
@@ -33,29 +33,23 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { RunData } from 'types';
 
-export default Vue.extend({
-  props: {
-    alertData: {
-      type: Object,
-      default(): object {
-        return {};
-      },
-    },
-  },
-  computed: {
-    getRunStr(): string | undefined {
-      if (this.alertData.runData
-        && (this.alertData.runData.game || this.alertData.runData.category)) {
-        const arr = [
-          this.alertData.runData.game || '?',
-          this.alertData.runData.category,
-        ].filter(Boolean);
-        return arr.join(' - ');
-      }
-      return undefined;
-    },
-  },
-});
+@Component
+export default class extends Vue {
+  @Prop({ type: Object, default: {} }) readonly alertData!: { runData?: RunData };
+
+  get runStr(): string | undefined {
+    if (this.alertData.runData
+      && (this.alertData.runData.game || this.alertData.runData.category)) {
+      const arr = [
+        this.alertData.runData.game || '?',
+        this.alertData.runData.category,
+      ].filter(Boolean);
+      return arr.join(' - ');
+    }
+    return undefined;
+  }
+}
 </script>

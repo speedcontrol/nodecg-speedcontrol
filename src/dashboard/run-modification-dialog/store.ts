@@ -1,10 +1,11 @@
 import clone from 'clone';
+import type { ReplicantBrowser } from 'nodecg/types/browser';
+import type { DefaultSetupTime, TwitchAPIData } from 'schemas';
+import { RunData, RunDataPlayer, RunDataTeam } from 'types';
 import { v4 as uuid } from 'uuid';
 import Vue from 'vue';
-import Vuex from 'vuex';
-import { RunData, RunDataPlayer, RunDataTeam } from '../../../types';
+import Vuex, { Store } from 'vuex';
 import { msToTimeStr } from '../_misc/helpers';
-import { store as repStore } from '../_misc/replicant-store';
 
 Vue.use(Vuex);
 
@@ -34,23 +35,50 @@ const defaultPlayer: RunDataPlayer = {
   customData: {},
 };
 
-export default new Vuex.Store({
+// Replicants and their types
+const reps: {
+  twitchAPIData: ReplicantBrowser<TwitchAPIData>;
+  defaultSetupTime: ReplicantBrowser<DefaultSetupTime>;
+  [k: string]: ReplicantBrowser<unknown>;
+} = {
+  twitchAPIData: nodecg.Replicant('twitchAPIData'),
+  defaultSetupTime: nodecg.Replicant('defaultSetupTime'),
+};
+
+// Types for mutations below
+export type UpdateRunData = (runData: RunData) => void;
+export type UpdateMode = (mode: Mode) => void;
+export type UpdateTwitch = (toggle: boolean) => void;
+export type SetAsDuplicate = () => void;
+export type SetPreviousRunID = (id: string) => void;
+export type ResetRunData = () => void;
+export type AddNewTeam = () => void;
+export type AddNewPlayer = (teamID: string) => void;
+export type RemoveTeam = (teamID: string) => void;
+export type RemovePlayer = (opts: { teamID: string, id: string }) => void;
+export type SaveRunData = () => Promise<boolean>;
+
+const store = new Vuex.Store({
   state: {
     runData: clone(defaultRunData),
     mode: 'New' as Mode,
     prevID: undefined as string | undefined,
     updateTwitch: false,
+    defaultSetupTime: 0 as DefaultSetupTime,
   },
   mutations: {
-    updateRunData(state, { value }): void {
-      Vue.set(state, 'runData', clone(value));
+    setState(state, { name, val }): void {
+      Vue.set(state, name, val);
+    },
+    updateRunData(state, runData: RunData): void {
+      Vue.set(state, 'runData', clone(runData));
       Vue.set(state, 'updateTwitch', false);
     },
-    updateMode(state, { value }): void {
-      Vue.set(state, 'mode', value);
+    updateMode(state, mode: Mode): void {
+      Vue.set(state, 'mode', mode);
     },
-    updateTwitch(state, { value }): void {
-      Vue.set(state, 'updateTwitch', value);
+    updateTwitch(state, toggle: boolean): void {
+      Vue.set(state, 'updateTwitch', toggle);
     },
     setAsDuplicate(state): void {
       Vue.set(state, 'prevID', state.runData.id);
@@ -59,15 +87,15 @@ export default new Vuex.Store({
       Vue.delete(state.runData, 'scheduledS');
       Vue.delete(state.runData, 'externalID');
     },
-    setPreviousRunID(state, { value }): void {
-      Vue.set(state, 'prevID', value);
+    setPreviousRunID(state, id: string): void {
+      Vue.set(state, 'prevID', id);
     },
     resetRunData(state): void {
       Vue.set(state, 'runData', clone(defaultRunData));
-      if (repStore.state.defaultSetupTime) { // Fill in default setup time if available.
-        Vue.set(state.runData, 'setupTimeS', repStore.state.defaultSetupTime);
+      if (state.defaultSetupTime) { // Fill in default setup time if available.
+        Vue.set(state.runData, 'setupTimeS', state.defaultSetupTime);
         Vue.set(state.runData, 'setupTime', msToTimeStr(
-          repStore.state.defaultSetupTime * 1000,
+          state.defaultSetupTime * 1000,
         ));
       }
       Vue.set(state.runData, 'id', uuid());
@@ -85,7 +113,7 @@ export default new Vuex.Store({
 
       state.runData.teams.push(teamData);
     },
-    addNewPlayer(state, { teamID }): void {
+    addNewPlayer(state, teamID: string): void {
       const teamIndex = state.runData.teams.findIndex((team) => teamID === team.id);
       if (teamIndex >= 0) {
         const data = clone(defaultPlayer);
@@ -94,13 +122,13 @@ export default new Vuex.Store({
         state.runData.teams[teamIndex].players.push(data);
       }
     },
-    removeTeam(state, { teamID }): void {
+    removeTeam(state, teamID: string): void {
       const teamIndex = state.runData.teams.findIndex((team) => teamID === team.id);
       if (teamIndex >= 0) {
         state.runData.teams.splice(teamIndex, 1);
       }
     },
-    removePlayer(state, { teamID, id }): void {
+    removePlayer(state, { teamID, id }: { teamID: string, id: string }): void {
       const teamIndex = state.runData.teams.findIndex((team) => teamID === team.id);
       const playerIndex = (teamIndex >= 0)
         ? state.runData.teams[teamIndex].players.findIndex((player) => id === player.id) : -1;
@@ -122,3 +150,14 @@ export default new Vuex.Store({
     },
   },
 });
+
+Object.keys(reps).forEach((key) => {
+  reps[key].on('change', (val) => {
+    store.commit('setState', { name: key, val: clone(val) });
+  });
+});
+
+export default async (): Promise<Store<Record<string, unknown>>> => {
+  await NodeCG.waitForReplicants(...Object.keys(reps).map((key) => reps[key]));
+  return store;
+};

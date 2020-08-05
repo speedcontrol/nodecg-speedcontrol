@@ -133,16 +133,17 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component } from 'vue-property-decorator';
+import { State, Mutation, Action } from 'vuex-class';
+import { State2Way } from 'vuex-class-state2way';
+import { TwitchAPIData } from 'schemas';
+import { Configschema } from 'configschema';
 import Draggable from 'vuedraggable';
-import store from './store';
-import { store as repStore } from '../_misc/replicant-store';
+import { RunData } from 'types';
 import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
 import ModifyButton from './components/ModifyButton.vue';
-import { nodecg } from '../_misc/nodecg';
-import { RunData, RunDataActiveRun } from '../../../types';
-import { TwitchAPIData } from '../../../schemas';
+import { SaveRunData, UpdateRunData, SetAsDuplicate, SetPreviousRunID, ResetRunData, AddNewTeam } from './store'; // eslint-disable-line object-curly-newline, max-len
 
 enum Mode {
   New = 'New',
@@ -151,111 +152,93 @@ enum Mode {
   Duplicate = 'Duplicate',
 }
 
-export default Vue.extend({
+@Component({
   components: {
+    Draggable,
     TextInput,
     Team,
-    Draggable,
     ModifyButton,
   },
-  data() {
-    return {
-      dialog: undefined as unknown,
-      err: undefined as Error | undefined,
-    };
-  },
-  computed: {
-    runData: {
-      get(): RunDataActiveRun {
-        return store.state.runData;
-      },
-      set(value: RunData): void {
-        store.commit('updateRunData', { value });
-      },
-    },
-    mode: {
-      get(): string {
-        return store.state.mode;
-      },
-      set(value: Mode): void {
-        store.commit('updateMode', { value });
-      },
-    },
-    updateTwitch: {
-      get(): boolean {
-        return store.state.updateTwitch;
-      },
-      set(value: boolean): void {
-        store.commit('updateTwitch', { value });
-      },
-    },
-    customData(): array {
-      return nodecg.bundleConfig.schedule.customData || [];
-    },
-    twitchAPIData(): TwitchAPIData {
-      return repStore.state.twitchAPIData;
-    },
-  },
-  mounted() {
+})
+export default class extends Vue {
+  @Mutation updateRunData!: UpdateRunData;
+  @Mutation setAsDuplicate!: SetAsDuplicate;
+  @Mutation setPreviousRunID!: SetPreviousRunID;
+  @Mutation resetRunData!: ResetRunData;
+  @Mutation addNewTeam!: AddNewTeam;
+  @Action saveRunData!: SaveRunData;
+  @State twitchAPIData!: TwitchAPIData;
+  @State2Way('updateMode', 'mode') mode!: Mode;
+  @State2Way('updateTwitch', 'updateTwitch') updateTwitch!: boolean;
+  @State2Way('updateRunData', 'runData') runData!: RunData;
+  dialog = null;
+  err: Error | null = null;
+
+  get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
+    return (nodecg.bundleConfig as Configschema).schedule.customData || [];
+  }
+
+  open(opts: { mode: Mode; runData?: RunData; prevID?: string }): void {
+    // Waits for dialog to actually open before changing storage.
+    this.dialog.open();
+    document.addEventListener('dialog-opened', () => {
+      this.mode = opts.mode;
+      this.err = undefined;
+      if (opts.runData) {
+        this.updateRunData(opts.runData);
+        if (opts.mode === 'Duplicate') {
+          this.setAsDuplicate();
+        }
+      } else if (opts.mode === 'New') {
+        this.setPreviousRunID(opts.prevID);
+        this.resetRunData();
+        this.addNewTeam();
+      }
+    }, { once: true });
+    document.addEventListener('dialog-confirmed', this.confirm, { once: true });
+    document.addEventListener('dialog-dismissed', this.dismiss, { once: true });
+  }
+
+  attemptSave(): void {
+    this.err = null;
+    this.saveRunData().then((noTwitchGame) => {
+      this.close(true);
+      if (noTwitchGame) {
+        const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+        alertDialog.querySelector('iframe').contentWindow.open({
+          name: 'NoTwitchGame',
+        });
+      }
+    }).catch((err) => {
+      this.err = err;
+    });
+  }
+
+  close(confirm: boolean): void {
+    this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle, max-len
+    this.dialog.close();
+  }
+
+  confirm(): void {
+    document.removeEventListener('dialog-dismissed', this.dismiss);
+  }
+
+  dismiss(): void {
+    document.removeEventListener('dialog-confirmed', this.confirm);
+  }
+
+  mounted(): void {
     this.dialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
 
     // Attaching this function to the window for easy access from dashboard panels.
-    (window as unknown).open = (opts: { mode: Mode; runData?: RunData }): void => this.open(opts);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).open = (opts: { mode: Mode; runData?: RunData }): void => this.open(opts);
 
     // Small hack to make the NodeCG dialog look a little better for us, not perfect yet.
     const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;
     elem.style.marginBottom = '12px';
-  },
-  methods: {
-    open(opts: { mode: Mode; runData?: RunData; prevID?: string }): void {
-      // Waits for dialog to actually open before changing storage.
-      this.dialog.open();
-      document.addEventListener('dialog-opened', () => {
-        this.mode = opts.mode;
-        this.err = undefined;
-        if (opts.runData) {
-          store.commit('updateRunData', { value: opts.runData });
-          if (opts.mode === 'Duplicate') {
-            store.commit('setAsDuplicate');
-          }
-        } else if (opts.mode === 'New') {
-          store.commit('setPreviousRunID', { value: opts.prevID });
-          store.commit('resetRunData');
-          store.commit('addNewTeam');
-        }
-      }, { once: true });
-      document.addEventListener('dialog-confirmed', this.confirm, { once: true });
-      document.addEventListener('dialog-dismissed', this.dismiss, { once: true });
-    },
-    addNewTeam(): void {
-      store.commit('addNewTeam');
-    },
-    attemptSave(): void {
-      this.err = undefined;
-      store.dispatch('saveRunData').then((noTwitchGame) => {
-        this.close(true);
-        if (noTwitchGame) {
-          const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-          alertDialog.querySelector('iframe').contentWindow.open({
-            name: 'NoTwitchGame',
-          });
-        }
-      }).catch((err) => {
-        this.err = err;
-      });
-    },
-    close(confirm: boolean): void {
-      this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle, max-len
-      this.dialog.close();
-    },
-    confirm(): void {
-      document.removeEventListener('dialog-dismissed', this.dismiss);
-    },
-    dismiss(): void {
-      document.removeEventListener('dialog-confirmed', this.confirm);
-    },
-  },
-});
+  }
+}
 </script>
 
 <style>

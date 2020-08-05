@@ -10,25 +10,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
-export default Vue.extend({
-  name: 'TextInput',
-  props: {
-    value: {
-      type: String,
-      default: '',
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    leftBorder: {
-      type: Boolean,
-      default: false,
-    },
-  },
-});
+@Component
+export default class extends Vue {
+  @Prop({ type: String, default: '' }) value!: string;
+  @Prop({ type: String, default: '' }) label!: string;
+  @Prop(Boolean) leftBorder!: boolean;
+}
 </script>
 
 <style scoped>
