@@ -171,7 +171,7 @@ export default class extends Vue {
   @State2Way('updateMode', 'mode') mode!: Mode;
   @State2Way('updateTwitch', 'updateTwitch') updateTwitch!: boolean;
   @State2Way('updateRunData', 'runData') runData!: RunData;
-  dialog = null;
+  dialog!: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   err: Error | null = null;
 
   get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
@@ -183,7 +183,7 @@ export default class extends Vue {
     this.dialog.open();
     document.addEventListener('dialog-opened', () => {
       this.mode = opts.mode;
-      this.err = undefined;
+      this.err = null;
       if (opts.runData) {
         this.updateRunData(opts.runData);
         if (opts.mode === 'Duplicate') {

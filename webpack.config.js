@@ -48,13 +48,13 @@ plugins = plugins.concat(
           template: './template.html',
         }),
     ),
-    /* new ForkTsCheckerWebpackPlugin({
+    new ForkTsCheckerWebpackPlugin({
       typescript: {
         extensions: {
           vue: true,
         },
       },
-    }), */
+    }),
   ]
 );
 if (isProd) {

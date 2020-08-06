@@ -62,7 +62,7 @@ export default class extends Vue {
   ) teams!: RunDataTeam[];
 
   mounted(): void {
-    if (window.frameElement) {
+    if (window.frameElement?.parentElement) {
       window.frameElement.parentElement.setAttribute(
         'display-title',
         this.$t('panelTitle') as string,

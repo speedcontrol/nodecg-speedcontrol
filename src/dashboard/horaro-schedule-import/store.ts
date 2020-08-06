@@ -50,7 +50,7 @@ const reps: {
 
 // Types for mutations below
 export type SaveOpts = () => void;
-export type UpdateColumn = (opts: { name: string, value: number, custom: boolean }) => void;
+export type UpdateColumn = (opts: { name: string, value: number | null, custom: boolean }) => void;
 export type UpdateSplit = (split: number) => void;
 export type AddCustomColumn = (name: string) => void;
 export type LoadOpts = () => void;
@@ -76,7 +76,7 @@ const store = new Vuex.Store({
     /* Mutations to replicants end */
     updateColumn(
       state,
-      { name, value, custom }: { name: string, value: number, custom: boolean },
+      { name, value, custom }: { name: string, value: number | null, custom: boolean },
     ): void {
       if (custom) {
         Vue.set(state.opts.columns.custom, name, value);

@@ -49,7 +49,7 @@ export default class extends Vue {
   }
 
   mounted(): void {
-    if (window.frameElement) {
+    if (window.frameElement?.parentElement) {
       window.frameElement.parentElement.setAttribute(
         'display-title',
         this.$t('panelTitle') as string,

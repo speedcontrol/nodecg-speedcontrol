@@ -70,7 +70,7 @@ export default class extends Vue {
   @Mutation removePlayer!: RemovePlayer;
 
   get customData(): { name: string, key: string }[] {
-    return (nodecg.bundleConfig as Configschema).customData.player || [];
+    return (nodecg.bundleConfig as Configschema).customData?.player || [];
   }
 }
 </script>

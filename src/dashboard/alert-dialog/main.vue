@@ -21,10 +21,10 @@ import NoTwitchGame from './components/NoTwitchGame.vue';
 
 @Component
 export default class extends Vue {
-  dialog = null;
+  dialog!: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   currentComponent: VueConstructor | null = null;
   alertData: { [k: string ]: unknown } = {};
-  callbackFunc: (confirm?: boolean) => void = null;
+  callbackFunc: ((confirm?: boolean) => void) | null = null;
 
   open(opts: {
     name: string;
@@ -51,8 +51,8 @@ export default class extends Vue {
           default:
             return undefined;
         }
-      })(opts.name);
-      this.callbackFunc = opts.func;
+      })(opts.name) || null;
+      this.callbackFunc = opts.func || null;
       this.alertData = (opts.data) ? opts.data : {};
     }, { once: true });
     document.addEventListener('dialog-confirmed', this.confirm, { once: true });
@@ -66,9 +66,9 @@ export default class extends Vue {
     }
     this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle, max-len
     this.dialog.close();
-    this.currentComponent = undefined;
+    this.currentComponent = null;
     this.alertData = {};
-    this.callbackFunc = undefined;
+    this.callbackFunc = null;
   }
 
   confirm(): void {

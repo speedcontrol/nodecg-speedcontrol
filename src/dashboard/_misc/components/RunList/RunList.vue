@@ -82,7 +82,7 @@ export default class extends Vue {
   @State('runDataActiveRun') activeRun!: RunDataActiveRun;
   @State twitchAPIData!: TwitchAPIData;
   @State timer!: Timer;
-  searchTerm = null;
+  searchTerm = '';
   hasNoTwitch = false;
 
   get filteredRunDataArray(): RunData[] {

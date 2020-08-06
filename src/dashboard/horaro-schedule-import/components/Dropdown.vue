@@ -98,13 +98,13 @@ export default class extends Vue {
     );
   }
 
-  get selected(): number {
+  get selected(): number | null {
     if (this.option.custom) {
       return this.opts.columns.custom[this.option.key];
     }
-    return this.opts.columns[this.option.key];
+    return (this.opts.columns as unknown as { [k: string]: number | null })[this.option.key];
   }
-  set selected(value: number) {
+  set selected(value: number | null) {
     this.updateColumn({
       name: this.option.key,
       value,

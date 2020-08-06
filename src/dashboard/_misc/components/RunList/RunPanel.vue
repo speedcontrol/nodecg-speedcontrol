@@ -136,9 +136,10 @@ export default class extends Vue {
   }
 
   customDataName(key: string): string {
-    return (nodecg.bundleConfig as Configschema).schedule.customData.find(
+    const customData = (nodecg.bundleConfig as Configschema).schedule.customData || [];
+    return customData.find(
       (custom) => custom.key === key,
-    ).name;
+    )?.name || '?';
   }
 
   playRun(): void {

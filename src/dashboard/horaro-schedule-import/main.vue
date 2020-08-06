@@ -255,7 +255,7 @@ export default class extends Vue {
       this.updateColumn({
         name: option.key,
         value: (index >= 0) ? index : null,
-        custom: option.custom,
+        custom: option.custom || false,
       });
     });
   }
@@ -302,7 +302,7 @@ export default class extends Vue {
   }
 
   mounted(): void {
-    if (window.frameElement) {
+    if (window.frameElement?.parentElement) {
       window.frameElement.parentElement.setAttribute(
         'display-title',
         this.$t('panelTitle') as string,

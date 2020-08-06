@@ -50,7 +50,7 @@ export type UpdateRunData = (runData: RunData) => void;
 export type UpdateMode = (mode: Mode) => void;
 export type UpdateTwitch = (toggle: boolean) => void;
 export type SetAsDuplicate = () => void;
-export type SetPreviousRunID = (id: string) => void;
+export type SetPreviousRunID = (id?: string) => void;
 export type ResetRunData = () => void;
 export type AddNewTeam = () => void;
 export type AddNewPlayer = (teamID: string) => void;
@@ -87,7 +87,7 @@ const store = new Vuex.Store({
       Vue.delete(state.runData, 'scheduledS');
       Vue.delete(state.runData, 'externalID');
     },
-    setPreviousRunID(state, id: string): void {
+    setPreviousRunID(state, id?: string): void {
       Vue.set(state, 'prevID', id);
     },
     resetRunData(state): void {
