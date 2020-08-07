@@ -26,8 +26,8 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 
 @Component
 export default class extends Vue {
-  @Prop({ type: String, default: '' }) readonly icon!: string;
-  @Prop({ type: String, default: '' }) readonly tooltip!: string;
+  @Prop({ type: String, required: true }) readonly icon!: string;
+  @Prop({ type: String, required: true }) readonly tooltip!: string;
   @Prop(Boolean) readonly disabled!: boolean;
 }
 </script>

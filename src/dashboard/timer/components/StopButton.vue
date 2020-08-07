@@ -49,15 +49,15 @@ export default class extends Vue {
     ) || !['running', 'paused'].includes(this.timer.state);
   }
 
-  button(): void {
-    nodecg.sendMessage('timerStop', {
-      id: this.info.id,
-      forfeit: this.forfeit,
-    }).then(() => {
-      // successful
-    }).catch(() => {
-      // error
-    });
+  async button(): Promise<void> {
+    try {
+      await nodecg.sendMessage('timerStop', {
+        id: this.info.id,
+        forfeit: this.forfeit,
+      });
+    } catch (err) {
+      // catch
+    }
   }
 }
 </script>

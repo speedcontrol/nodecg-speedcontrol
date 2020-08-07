@@ -76,7 +76,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { RunDataArray, RunDataActiveRun, RunDataActiveRunSurrounding, Timer } from 'schemas'; // eslint-disable-line object-curly-newline, max-len
 import { RunData } from 'types';
-import RunList from '../_misc/components/RunList/RunList.vue';
+import RunList from '../_misc/components/RunList.vue';
 
 @Component({
   components: {
@@ -120,28 +120,29 @@ export default class extends Vue {
     });
   }
 
-  returnToStart(confirm: boolean): void {
+  async returnToStart(confirm: boolean): Promise<void> {
     if (confirm) {
-      nodecg.sendMessage('returnToStart').then(() => {
-        // run removal successful
-      }).catch(() => {
+      try {
+        await nodecg.sendMessage('returnToStart');
+      } catch (err) {
         // run removal unsuccessful
-      });
+      }
     }
   }
 
-  playNextRun(): void {
+  async playNextRun(): Promise<void> {
     if (this.nextRun) {
-      nodecg.sendMessage('changeToNextRun').then((noTwitchGame) => {
+      try {
+        const noTwitchGame = await nodecg.sendMessage('changeToNextRun');
         if (noTwitchGame) {
           const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
           alertDialog.querySelector('iframe').contentWindow.open({
             name: 'NoTwitchGame',
           });
         }
-      }).catch(() => {
+      } catch (err) {
         // run change unsuccessful
-      });
+      }
     }
   }
 

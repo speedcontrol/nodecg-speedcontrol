@@ -55,13 +55,13 @@ export default class extends Vue {
     });
   }
 
-  removeAllRuns(confirm: boolean): void {
+  async removeAllRuns(confirm: boolean): Promise<void> {
     if (confirm) {
-      nodecg.sendMessage('removeAllRuns').then(() => {
-        // successful
-      }).catch(() => {
+      try {
+        await nodecg.sendMessage('removeAllRuns');
+      } catch (err) {
         // unsuccessful
-      });
+      }
     }
   }
 

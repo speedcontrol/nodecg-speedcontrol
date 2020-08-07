@@ -34,7 +34,10 @@
     <div
       ref="runList"
       class="RunList"
-      :style="{ height: '400px', 'overflow-y': 'scroll' }"
+      :style="{
+        height: '400px',
+        'overflow-y': 'scroll',
+      }"
     >
       <v-expansion-panels accordion>
         <draggable
@@ -61,14 +64,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch, Prop } from 'vue-property-decorator'; // eslint-disable-line object-curly-newline, max-len
+import { Vue, Component, Watch, Prop } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { State2Way } from 'vuex-class-state2way';
 import goTo from 'vuetify/es5/services/goto';
-import { RunDataActiveRun, TwitchAPIData, Timer, RunDataArray } from 'schemas'; // eslint-disable-line object-curly-newline, max-len
+import { RunDataActiveRun, TwitchAPIData, Timer, RunDataArray } from 'schemas';
 import { RunData } from 'types';
 import Draggable from 'vuedraggable';
-import RunPanel from './RunPanel.vue';
+import RunPanel from './RunList/RunPanel.vue';
 
 @Component({
   components: {
@@ -79,7 +82,7 @@ import RunPanel from './RunPanel.vue';
 export default class extends Vue {
   @Prop(Boolean) readonly editor!: boolean;
   @State2Way('updateRunOrder', 'runDataArray') runDataArray!: RunDataArray;
-  @State('runDataActiveRun') activeRun!: RunDataActiveRun;
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
   @State twitchAPIData!: TwitchAPIData;
   @State timer!: Timer;
   searchTerm = '';
@@ -128,11 +131,9 @@ export default class extends Vue {
   .list-move {
     transition: transform 0.2s;
   }
-  .list-enter, .list-leave-to
-  /* .logo-list-complete-leave-active below version 2.1.8 */ {
+  .list-enter, .list-leave-to {
     opacity: 0;
-    transition: transform 0.2s;
-    transition: opacity 0.2s;
+    transition: transform 0.2s, opacity 0.2s;
   }
   .list-leave-active {
     position: absolute;

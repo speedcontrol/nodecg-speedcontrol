@@ -211,11 +211,12 @@ export default class extends Vue {
     return (nodecg.bundleConfig as Configschema).schedule.customData || [];
   }
 
-  loadSchedule(): void {
-    nodecg.sendMessage('loadSchedule', {
-      url: this.url,
-      dashID: this.dashID,
-    }).then((data) => {
+  async loadSchedule(): Promise<void> {
+    try {
+      const data = await nodecg.sendMessage('loadSchedule', {
+        url: this.url,
+        dashID: this.dashID,
+      });
       this.loaded = true;
       this.columns = data.schedule.columns;
       if (this.horaroImportSavedOpts) {
@@ -223,9 +224,9 @@ export default class extends Vue {
       } else {
         this.predictColumns();
       }
-    }).catch(() => {
+    } catch (err) {
       this.loaded = false;
-    });
+    }
   }
 
   addCustomDataDropdowns(): void {
@@ -268,16 +269,17 @@ export default class extends Vue {
     });
   }
 
-  import(confirm: boolean): void {
+  async import(confirm: boolean): Promise<void> {
     if (confirm) {
-      nodecg.sendMessage('importSchedule', {
-        opts: this.opts,
-        dashID: this.dashID,
-      }).then(() => {
-        this.loaded = false;
-      }).catch(() => {
-        this.loaded = false;
-      });
+      try {
+        await nodecg.sendMessage('importSchedule', {
+          opts: this.opts,
+          dashID: this.dashID,
+        });
+      } catch (err) {
+        // catch
+      }
+      this.loaded = false;
     }
   }
 

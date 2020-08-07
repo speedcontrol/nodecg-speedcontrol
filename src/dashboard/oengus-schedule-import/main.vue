@@ -91,16 +91,16 @@ export default class extends Vue {
     });
   }
 
-  import(confirm: boolean): void {
+  async import(confirm: boolean): Promise<void> {
     if (confirm) {
-      nodecg.sendMessage('importOengusSchedule', {
-        marathonShort: this.marathonShort,
-        useJapanese: this.useJapanese,
-      }).then(() => {
-        // successful
-      }).catch(() => {
-        // unsuccessful
-      });
+      try {
+        await nodecg.sendMessage('importOengusSchedule', {
+          marathonShort: this.marathonShort,
+          useJapanese: this.useJapanese,
+        });
+      } catch (err) {
+        // catch
+      }
     }
   }
 

@@ -75,13 +75,13 @@ export default class extends Vue {
     this.time = val;
   }
 
-  finishEdit(event: Event): void {
+  async finishEdit(event: Event): Promise<void> {
     if (this.time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-      nodecg.sendMessage('timerEdit', this.time).then(() => {
-        // successful
-      }).catch(() => {
-        // error
-      });
+      try {
+        await nodecg.sendMessage('timerEdit', this.time);
+      } catch (err) {
+        // catch
+      }
       (event.target as HTMLTextAreaElement).blur();
     }
   }

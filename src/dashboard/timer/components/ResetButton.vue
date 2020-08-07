@@ -43,12 +43,12 @@ export default class extends Vue {
     return this.timer.state;
   }
 
-  button(): void {
-    nodecg.sendMessage('timerReset').then(() => {
-      // successful
-    }).catch(() => {
+  async button(): Promise<void> {
+    try {
+      await nodecg.sendMessage('timerReset');
+    } catch (err) {
       // error
-    });
+    }
   }
 }
 </script>

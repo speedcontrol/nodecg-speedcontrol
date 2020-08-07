@@ -51,12 +51,12 @@ export default class extends Vue {
     );
   }
 
-  button(): void {
-    nodecg.sendMessage('timerUndo', this.info.id).then(() => {
-      // successful
-    }).catch(() => {
-      // error
-    });
+  async button(): Promise<void> {
+    try {
+      await nodecg.sendMessage('timerUndo', this.info.id);
+    } catch (err) {
+      // catch
+    }
   }
 }
 </script>

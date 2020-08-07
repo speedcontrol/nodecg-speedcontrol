@@ -199,9 +199,10 @@ export default class extends Vue {
     document.addEventListener('dialog-dismissed', this.dismiss, { once: true });
   }
 
-  attemptSave(): void {
+  async attemptSave(): Promise<void> {
     this.err = null;
-    this.saveRunData().then((noTwitchGame) => {
+    try {
+      const noTwitchGame = await this.saveRunData();
       this.close(true);
       if (noTwitchGame) {
         const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
@@ -209,9 +210,9 @@ export default class extends Vue {
           name: 'NoTwitchGame',
         });
       }
-    }).catch((err) => {
+    } catch (err) {
       this.err = err;
-    });
+    }
   }
 
   close(confirm: boolean): void {

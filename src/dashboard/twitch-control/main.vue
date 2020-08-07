@@ -246,38 +246,39 @@ export default class extends Vue {
     }
   }
 
-  updateChannelInfo(): void {
-    nodecg.sendMessage('twitchUpdateChannelInfo', {
-      status: this.title,
-      game: this.game,
-    }).then((noTwitchGame) => {
+  async updateChannelInfo(): Promise<void> {
+    try {
+      const noTwitchGame = await nodecg.sendMessage('twitchUpdateChannelInfo', {
+        status: this.title,
+        game: this.game,
+      });
       if (noTwitchGame) {
         const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
         alertDialog.querySelector('iframe').contentWindow.open({
           name: 'NoTwitchGame',
         });
       }
-    }).catch(() => {
-      // unsuccessful
-    });
+    } catch (err) {
+      // catch
+    }
     if (this.config.ffzIntegration) {
-      nodecg.sendMessage(
-        'updateFeaturedChannels',
-        this.users.replace(/\s/g, '').split(',').filter(Boolean),
-      ).then(() => {
-        // successful
-      }).catch(() => {
-        // unsuccessful
-      });
+      try {
+        await nodecg.sendMessage(
+          'updateFeaturedChannels',
+          this.users.replace(/\s/g, '').split(',').filter(Boolean),
+        );
+      } catch (err) {
+        // catch
+      }
     }
   }
 
-  startCommercial(duration: number): void {
-    nodecg.sendMessage('twitchStartCommercial', { duration }).then(() => {
-      // successful
-    }).catch(() => {
-      // unsuccessful
-    });
+  async startCommercial(duration: number): Promise<void> {
+    try {
+      await nodecg.sendMessage('twitchStartCommercial', { duration });
+    } catch (err) {
+      // catch
+    }
   }
 
   logoutConfirm(): void {
@@ -288,13 +289,13 @@ export default class extends Vue {
     });
   }
 
-  logout(confirm: boolean): void {
+  async logout(confirm: boolean): Promise<void> {
     if (confirm) {
-      nodecg.sendMessage('twitchLogout').then(() => {
-        // successful
-      }).catch(() => {
-        // unsuccessful
-      });
+      try {
+        await nodecg.sendMessage('twitchLogout');
+      } catch (err) {
+        // catch
+      }
     }
   }
 

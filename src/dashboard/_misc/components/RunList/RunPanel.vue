@@ -117,11 +117,11 @@ import ModifyButton from './ModifyButton.vue';
   },
 })
 export default class extends Vue {
-  @Prop({ type: Object, default: {} }) readonly runData!: RunData;
+  @Prop({ type: Object, required: true }) readonly runData!: RunData;
   @Prop(Boolean) readonly editor!: boolean;
   @Prop(Boolean) readonly disableChange!: boolean;
   @Prop(Boolean) readonly moveDisabled!: boolean;
-  @State('runDataActiveRun') activeRun!: RunDataActiveRun;
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
   @State runFinishTimes!: RunFinishTimes;
 
   get playerStr(): string {
@@ -131,7 +131,7 @@ export default class extends Vue {
     )).join(' vs. ');
   }
 
-  get runFinishTime(): Timer {
+  get runFinishTime(): Timer | undefined {
     return this.runFinishTimes[this.runData.id];
   }
 
@@ -139,20 +139,21 @@ export default class extends Vue {
     const customData = (nodecg.bundleConfig as Configschema).schedule.customData || [];
     return customData.find(
       (custom) => custom.key === key,
-    )?.name || '?';
+    )?.name || `? (${key})`;
   }
 
-  playRun(): void {
-    nodecg.sendMessage('changeActiveRun', this.runData.id).then((noTwitchGame) => {
+  async playRun(): Promise<void> {
+    try {
+      const noTwitchGame = await nodecg.sendMessage('changeActiveRun', this.runData.id);
       if (noTwitchGame) {
         const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
         alertDialog.querySelector('iframe').contentWindow.open({
           name: 'NoTwitchGame',
         });
       }
-    }).catch(() => {
+    } catch (err) {
       // run change unsuccessful
-    });
+    }
   }
 
   duplicateRun(): void {
@@ -188,13 +189,13 @@ export default class extends Vue {
     });
   }
 
-  removeRun(confirm: boolean): void {
+  async removeRun(confirm: boolean): Promise<void> {
     if (confirm) {
-      nodecg.sendMessage('removeRun', this.runData.id).then(() => {
-        // run change successful
-      }).catch(() => {
+      try {
+        await nodecg.sendMessage('removeRun', this.runData.id);
+      } catch (err) {
         // run change unsuccessful
-      });
+      }
     }
   }
 }

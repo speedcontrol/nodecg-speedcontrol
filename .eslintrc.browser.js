@@ -60,5 +60,6 @@ module.exports = {
     ],
     'lines-between-class-members': 'off',
     'class-methods-use-this': 'off',
+    'object-curly-newline': 'off',
   }
 };

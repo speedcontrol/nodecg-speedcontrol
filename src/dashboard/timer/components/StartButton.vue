@@ -54,19 +54,15 @@ export default class extends Vue {
     return this.timer.state;
   }
 
-  button(): void {
-    if (this.state === 'stopped' || this.state === 'paused') {
-      nodecg.sendMessage('timerStart').then(() => {
-        // successful
-      }).catch(() => {
-        // error
-      });
-    } else if (this.state === 'running') {
-      nodecg.sendMessage('timerPause').then(() => {
-        // successful
-      }).catch(() => {
-        // error
-      });
+  async button(): Promise<void> {
+    try {
+      if (this.state === 'stopped' || this.state === 'paused') {
+        await nodecg.sendMessage('timerStart');
+      } else if (this.state === 'running') {
+        await nodecg.sendMessage('timerPause');
+      }
+    } catch (err) {
+      // catch
     }
   }
 }

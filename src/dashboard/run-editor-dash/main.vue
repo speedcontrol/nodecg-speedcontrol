@@ -28,7 +28,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { RunDataActiveRun } from 'schemas';
-import RunList from '../_misc/components/RunList/RunList.vue';
+import RunList from '../_misc/components/RunList.vue';
 
 @Component({
   components: {
