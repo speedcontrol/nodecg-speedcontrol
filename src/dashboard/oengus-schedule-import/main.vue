@@ -85,10 +85,13 @@ export default class extends Vue {
 
   importConfirm(): void {
     const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-    (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
-      name: 'ImportConfirm',
-      func: this.import,
-    });
+    const frame = dialog.querySelector('iframe');
+    if (frame) {
+      (frame.contentWindow as Alert.Dialog).openDialog({
+        name: 'ImportConfirm',
+        func: this.import,
+      });
+    }
   }
 
   async import(confirm: boolean): Promise<void> {

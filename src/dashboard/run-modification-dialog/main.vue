@@ -199,9 +199,12 @@ export default class extends Vue {
       this.close(true);
       if (noTwitchGame) {
         const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-        (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
-          name: 'NoTwitchGame',
-        });
+        const frame = dialog.querySelector('iframe');
+        if (frame) {
+          (frame.contentWindow as Alert.Dialog).openDialog({
+            name: 'NoTwitchGame',
+          });
+        }
       }
     } catch (err) {
       this.err = err;

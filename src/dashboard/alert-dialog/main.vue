@@ -25,10 +25,10 @@ export default class extends Vue {
   dialog!: Dialog;
   currentComponent: VueConstructor | null = null;
   alertData: { [k: string ]: unknown } = {};
-  callbackFunc: ((confirm?: boolean) => void) | null = null;
+  callbackFunc: ((confirm: boolean) => void) | null = null;
 
   open(
-    opts: { name: string, data?: { [k: string ]: unknown }, func?: (confirm?: boolean) => void },
+    opts: { name: string, data?: { [k: string ]: unknown }, func?: (confirm: boolean) => void },
   ): void {
     // Waits for dialog to actually open before doing stuff.
     this.dialog.open();
@@ -85,7 +85,7 @@ export default class extends Vue {
 
     // Attaching this function to the window for easy access from dashboard panels.
     (window as Window as Alert.Dialog).openDialog = (
-      opts: { name: string, data?: { [k: string ]: unknown }, func?: (confirm?: boolean) => void },
+      opts: { name: string, data?: { [k: string ]: unknown }, func?: (confirm: boolean) => void },
     ): void => this.open(opts);
 
     // Small hack to make the NodeCG dialog look a little better for us.

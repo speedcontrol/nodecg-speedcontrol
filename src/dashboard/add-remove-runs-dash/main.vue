@@ -45,16 +45,22 @@ export default class extends Vue {
 
   openAddDialog(): void {
     const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
-    (dialog.querySelector('iframe').contentWindow as RunModification.Dialog)
-      .openDialog({ mode: RunModification.Mode.New });
+    const frame = dialog.querySelector('iframe');
+    if (frame) {
+      (frame.contentWindow as RunModification.Dialog)
+        .openDialog({ mode: 'New' });
+    }
   }
 
   removeAllRunsConfirm(): void {
     const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-    (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
-      name: 'RemoveAllRunsConfirm',
-      func: this.removeAllRuns,
-    });
+    const frame = dialog.querySelector('iframe');
+    if (frame) {
+      (frame.contentWindow as Alert.Dialog).openDialog({
+        name: 'RemoveAllRunsConfirm',
+        func: this.removeAllRuns,
+      });
+    }
   }
 
   async removeAllRuns(confirm: boolean): Promise<void> {

@@ -255,9 +255,12 @@ export default class extends Vue {
       });
       if (noTwitchGame) {
         const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-        (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
-          name: 'NoTwitchGame',
-        });
+        const frame = dialog.querySelector('iframe');
+        if (frame) {
+          (frame.contentWindow as Alert.Dialog).openDialog({
+            name: 'NoTwitchGame',
+          });
+        }
       }
     } catch (err) {
       // catch
@@ -284,10 +287,13 @@ export default class extends Vue {
 
   logoutConfirm(): void {
     const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-    (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
-      name: 'TwitchLogoutConfirm',
-      func: this.logout,
-    });
+    const frame = dialog.querySelector('iframe');
+    if (frame) {
+      (frame.contentWindow as Alert.Dialog).openDialog({
+        name: 'TwitchLogoutConfirm',
+        func: this.logout,
+      });
+    }
   }
 
   async logout(confirm: boolean): Promise<void> {

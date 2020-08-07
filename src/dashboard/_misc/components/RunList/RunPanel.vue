@@ -147,9 +147,12 @@ export default class extends Vue {
       const noTwitchGame = await nodecg.sendMessage('changeActiveRun', this.runData.id);
       if (noTwitchGame) {
         const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-        (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
-          name: 'NoTwitchGame',
-        });
+        const frame = dialog.querySelector('iframe');
+        if (frame) {
+          (frame.contentWindow as Alert.Dialog).openDialog({
+            name: 'NoTwitchGame',
+          });
+        }
       }
     } catch (err) {
       // catch
@@ -158,38 +161,47 @@ export default class extends Vue {
 
   duplicateRun(): void {
     const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
-    (dialog.querySelector('iframe').contentWindow as RunModification.Dialog)
-      .openDialog({
-        mode: RunModification.Mode.Duplicate,
+    const frame = dialog.querySelector('iframe');
+    if (frame) {
+      (frame.contentWindow as RunModification.Dialog).openDialog({
+        mode: 'Duplicate',
         runData: this.runData,
       });
+    }
   }
 
   addNewRunAfter(): void {
     const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
-    (dialog.querySelector('iframe').contentWindow as RunModification.Dialog)
-      .openDialog({
-        mode: RunModification.Mode.New,
+    const frame = dialog.querySelector('iframe');
+    if (frame) {
+      (frame.contentWindow as RunModification.Dialog).openDialog({
+        mode: 'New',
         prevID: this.runData.id,
       });
+    }
   }
 
   editRun(): void {
     const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
-    (dialog.querySelector('iframe').contentWindow as RunModification.Dialog)
-      .openDialog({
-        mode: RunModification.Mode.EditOther,
+    const frame = dialog.querySelector('iframe');
+    if (frame) {
+      (frame.contentWindow as RunModification.Dialog).openDialog({
+        mode: 'EditOther',
         runData: this.runData,
       });
+    }
   }
 
   removeRunConfirm(): void {
     const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-    (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
-      name: 'RemoveRunConfirm',
-      data: { runData: this.runData },
-      func: this.removeRun,
-    });
+    const frame = dialog.querySelector('iframe');
+    if (frame) {
+      (frame.contentWindow as Alert.Dialog).openDialog({
+        name: 'RemoveRunConfirm',
+        data: { runData: this.runData },
+        func: this.removeRun,
+      });
+    }
   }
 
   async removeRun(confirm: boolean): Promise<void> {

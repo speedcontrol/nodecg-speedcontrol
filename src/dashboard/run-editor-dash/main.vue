@@ -42,11 +42,13 @@ export default class extends Vue {
   editActiveRun(): void {
     if (this.activeRun) {
       const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
-      (dialog.querySelector('iframe').contentWindow as RunModification.Dialog)
-        .openDialog({
-          mode: RunModification.Mode.EditActive,
+      const frame = dialog.querySelector('iframe');
+      if (frame) {
+        (frame.contentWindow as RunModification.Dialog).openDialog({
+          mode: 'EditActive',
           runData: this.activeRun,
         });
+      }
     }
   }
 
