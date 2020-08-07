@@ -37,7 +37,7 @@ import { Timer } from 'schemas';
 
 @Component
 export default class extends Vue {
-  @Prop({ type: Object, default: { id: undefined } }) readonly info!: { id?: string };
+  @Prop({ type: Object, default: () => ({ id: undefined }) }) readonly info!: { id?: string };
   @State timer!: Timer;
 
   get isDisabled(): boolean {

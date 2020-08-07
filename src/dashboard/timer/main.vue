@@ -108,7 +108,7 @@ import Team from './components/Team.vue';
 })
 export default class extends Vue {
   tempEnable = false;
-  @State('runDataActiveRun') activeRun!: RunDataActiveRun;
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
   @State2Way('updateDisabledToggle', 'timerChangesDisabled') disableChanges!: boolean;
 
   @Watch('disableChanges')

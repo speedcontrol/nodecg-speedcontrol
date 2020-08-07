@@ -38,7 +38,7 @@ import { getDialog } from '../_misc/helpers';
   },
 })
 export default class extends Vue {
-  @State('runDataActiveRun') activeRun!: RunDataActiveRun;
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
 
   editActiveRun(): void {
     if (this.activeRun) {

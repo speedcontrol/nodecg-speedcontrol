@@ -58,7 +58,7 @@ import { RunDataTeam } from 'types';
 export default class extends Vue {
   @State2Way(
     'updateTeamOrder',
-    (state: { runDataActiveRun: RunDataActiveRun }) => state.runDataActiveRun?.teams || [],
+    (state: { runDataActiveRun?: RunDataActiveRun }) => state.runDataActiveRun?.teams || [],
   ) teams!: RunDataTeam[];
 
   mounted(): void {

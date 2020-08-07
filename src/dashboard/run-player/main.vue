@@ -86,7 +86,7 @@ import { getDialog } from '../_misc/helpers';
 })
 export default class extends Vue {
   @State runDataArray!: RunDataArray;
-  @State('runDataActiveRun') activeRun!: RunDataActiveRun;
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
   @State runDataActiveRunSurrounding!: RunDataActiveRunSurrounding;
   @State timer!: Timer;
 
