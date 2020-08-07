@@ -107,9 +107,9 @@ import Team from './components/Team.vue';
   },
 })
 export default class extends Vue {
-  tempEnable = false;
   @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
   @State2Way('updateDisabledToggle', 'timerChangesDisabled') disableChanges!: boolean;
+  tempEnable = false;
 
   @Watch('disableChanges')
   onDisableChangesChange(val: boolean): void {
@@ -123,7 +123,7 @@ export default class extends Vue {
   }
 
   get teams(): RunDataTeam[] {
-    return (this.activeRun) ? this.activeRun.teams : [];
+    return this.activeRun?.teams || [];
   }
 
   mounted(): void {

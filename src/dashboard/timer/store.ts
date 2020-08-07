@@ -1,6 +1,6 @@
 import clone from 'clone';
 import type { ReplicantBrowser } from 'nodecg/types/browser';
-import type { Timer, TimerChangesDisabled } from 'schemas';
+import type { RunDataActiveRun, Timer, TimerChangesDisabled } from 'schemas';
 import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
 
@@ -8,10 +8,12 @@ Vue.use(Vuex);
 
 // Replicants and their types
 const reps: {
+  runDataActiveRun: ReplicantBrowser<RunDataActiveRun>;
   timer: ReplicantBrowser<Timer>;
   timerChangesDisabled: ReplicantBrowser<TimerChangesDisabled>;
   [k: string]: ReplicantBrowser<unknown>;
 } = {
+  runDataActiveRun: nodecg.Replicant('runDataActiveRun'),
   timer: nodecg.Replicant('timer'),
   timerChangesDisabled: nodecg.Replicant('timerChangesDisabled'),
 };
