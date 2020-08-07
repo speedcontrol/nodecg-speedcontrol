@@ -76,6 +76,7 @@ import { State } from 'vuex-class';
 import { Configschema } from 'configschema';
 import { OengusImportStatus } from 'schemas';
 import { Dialog, Alert } from 'types';
+import { getDialog } from '../_misc/helpers';
 
 @Component
 export default class extends Vue {
@@ -84,10 +85,9 @@ export default class extends Vue {
   useJapanese = (nodecg.bundleConfig as Configschema).oengus.useJapanese;
 
   importConfirm(): void {
-    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-    const frame = dialog.querySelector('iframe');
-    if (frame) {
-      (frame.contentWindow as Alert.Dialog).openDialog({
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'ImportConfirm',
         func: this.import,
       });

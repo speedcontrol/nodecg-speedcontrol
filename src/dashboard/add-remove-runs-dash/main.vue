@@ -34,6 +34,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { Timer } from 'schemas';
 import { Dialog, RunModification, Alert } from 'types';
+import { getDialog } from '../_misc/helpers';
 
 @Component
 export default class extends Vue {
@@ -44,19 +45,16 @@ export default class extends Vue {
   }
 
   openAddDialog(): void {
-    const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
-    const frame = dialog.querySelector('iframe');
-    if (frame) {
-      (frame.contentWindow as RunModification.Dialog)
-        .openDialog({ mode: 'New' });
+    const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+    if (dialog) {
+      dialog.openDialog({ mode: 'New' });
     }
   }
 
   removeAllRunsConfirm(): void {
-    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-    const frame = dialog.querySelector('iframe');
-    if (frame) {
-      (frame.contentWindow as Alert.Dialog).openDialog({
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'RemoveAllRunsConfirm',
         func: this.removeAllRuns,
       });

@@ -74,9 +74,10 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import { RunDataArray, RunDataActiveRun, RunDataActiveRunSurrounding, Timer } from 'schemas'; // eslint-disable-line object-curly-newline, max-len
+import { RunDataArray, RunDataActiveRun, RunDataActiveRunSurrounding, Timer } from 'schemas';
 import { RunData, Dialog, Alert } from 'types';
 import RunList from '../_misc/components/RunList.vue';
+import { getDialog } from '../_misc/helpers';
 
 @Component({
   components: {
@@ -113,10 +114,9 @@ export default class extends Vue {
   }
 
   returnToStartConfirm(): void {
-    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-    const frame = dialog.querySelector('iframe');
-    if (frame) {
-      (frame.contentWindow as Alert.Dialog).openDialog({
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'ReturnToStartConfirm',
         func: this.returnToStart,
       });
@@ -138,12 +138,9 @@ export default class extends Vue {
       try {
         const noTwitchGame = await nodecg.sendMessage('changeToNextRun');
         if (noTwitchGame) {
-          const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-          const frame = dialog.querySelector('iframe');
-          if (frame) {
-            (frame.contentWindow as Alert.Dialog).openDialog({
-              name: 'NoTwitchGame',
-            });
+          const dialog = getDialog('alert-dialog') as Alert.Dialog;
+          if (dialog) {
+            dialog.openDialog({ name: 'NoTwitchGame' });
           }
         }
       } catch (err) {

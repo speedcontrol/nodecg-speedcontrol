@@ -157,7 +157,8 @@ import { Dialog, Alert } from 'types';
 import RunDataOptions from './RunDataOptions';
 import Dropdown from './components/Dropdown.vue';
 import ConfigButton from './components/ConfigButton.vue';
-import { SaveOpts, AddCustomColumn, LoadOpts, ClearOpts, UpdateColumn } from './store'; // eslint-disable-line object-curly-newline, max-len
+import { SaveOpts, AddCustomColumn, LoadOpts, ClearOpts, UpdateColumn } from './store';
+import { getDialog } from '../_misc/helpers';
 
 @Component({
   components: {
@@ -263,10 +264,9 @@ export default class extends Vue {
   }
 
   importConfirm(): void {
-    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-    const frame = dialog.querySelector('iframe');
-    if (frame) {
-      (frame.contentWindow as Alert.Dialog).openDialog({
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'ImportConfirm',
         func: this.import,
       });

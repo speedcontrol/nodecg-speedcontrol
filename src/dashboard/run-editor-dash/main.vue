@@ -30,6 +30,7 @@ import { State } from 'vuex-class';
 import { RunDataActiveRun } from 'schemas';
 import { Dialog, RunModification } from 'types';
 import RunList from '../_misc/components/RunList.vue';
+import { getDialog } from '../_misc/helpers';
 
 @Component({
   components: {
@@ -41,10 +42,9 @@ export default class extends Vue {
 
   editActiveRun(): void {
     if (this.activeRun) {
-      const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
-      const frame = dialog.querySelector('iframe');
-      if (frame) {
-        (frame.contentWindow as RunModification.Dialog).openDialog({
+      const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+      if (dialog) {
+        dialog.openDialog({
           mode: 'EditActive',
           runData: this.activeRun,
         });

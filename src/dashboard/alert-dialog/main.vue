@@ -28,7 +28,7 @@ export default class extends Vue {
   callbackFunc: ((confirm: boolean) => void) | null = null;
 
   open(
-    opts: { name: string, data?: { [k: string ]: unknown }, func?: (confirm: boolean) => void },
+    opts: { name: Alert.Name, data?: { [k: string ]: unknown }, func?: (confirm: boolean) => void },
   ): void {
     // Waits for dialog to actually open before doing stuff.
     this.dialog.open();
@@ -63,7 +63,7 @@ export default class extends Vue {
     if (this.callbackFunc) {
       this.callbackFunc(confirm);
     }
-    this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle, max-len
+    this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle
     this.dialog.close();
     this.currentComponent = null;
     this.alertData = {};
@@ -84,9 +84,11 @@ export default class extends Vue {
     this.dialog = nodecg.getDialog('alert-dialog') as Dialog;
 
     // Attaching this function to the window for easy access from dashboard panels.
-    (window as Window as Alert.Dialog).openDialog = (
-      opts: { name: string, data?: { [k: string ]: unknown }, func?: (confirm: boolean) => void },
-    ): void => this.open(opts);
+    (window as Window as Alert.Dialog).openDialog = (opts: {
+      name: Alert.Name,
+      data?: { [k: string ]: unknown },
+      func?: (confirm: boolean) => void,
+    }): void => this.open(opts);
 
     // Small hack to make the NodeCG dialog look a little better for us.
     const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;

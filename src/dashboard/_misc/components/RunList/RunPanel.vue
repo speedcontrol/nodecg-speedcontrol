@@ -110,6 +110,7 @@ import { RunDataActiveRun, RunFinishTimes, Timer } from 'schemas';
 import { RunData, RunModification, Dialog, Alert } from 'types';
 import { Configschema } from 'configschema';
 import ModifyButton from './ModifyButton.vue';
+import { getDialog } from '../../helpers';
 
 @Component({
   components: {
@@ -146,12 +147,9 @@ export default class extends Vue {
     try {
       const noTwitchGame = await nodecg.sendMessage('changeActiveRun', this.runData.id);
       if (noTwitchGame) {
-        const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-        const frame = dialog.querySelector('iframe');
-        if (frame) {
-          (frame.contentWindow as Alert.Dialog).openDialog({
-            name: 'NoTwitchGame',
-          });
+        const dialog = getDialog('alert-dialog') as Alert.Dialog;
+        if (dialog) {
+          dialog.openDialog({ name: 'NoTwitchGame' });
         }
       }
     } catch (err) {
@@ -160,10 +158,9 @@ export default class extends Vue {
   }
 
   duplicateRun(): void {
-    const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
-    const frame = dialog.querySelector('iframe');
-    if (frame) {
-      (frame.contentWindow as RunModification.Dialog).openDialog({
+    const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         mode: 'Duplicate',
         runData: this.runData,
       });
@@ -171,10 +168,9 @@ export default class extends Vue {
   }
 
   addNewRunAfter(): void {
-    const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
-    const frame = dialog.querySelector('iframe');
-    if (frame) {
-      (frame.contentWindow as RunModification.Dialog).openDialog({
+    const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         mode: 'New',
         prevID: this.runData.id,
       });
@@ -182,10 +178,9 @@ export default class extends Vue {
   }
 
   editRun(): void {
-    const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
-    const frame = dialog.querySelector('iframe');
-    if (frame) {
-      (frame.contentWindow as RunModification.Dialog).openDialog({
+    const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         mode: 'EditOther',
         runData: this.runData,
       });
@@ -193,10 +188,9 @@ export default class extends Vue {
   }
 
   removeRunConfirm(): void {
-    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-    const frame = dialog.querySelector('iframe');
-    if (frame) {
-      (frame.contentWindow as Alert.Dialog).openDialog({
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'RemoveRunConfirm',
         data: { runData: this.runData },
         func: this.removeRun,

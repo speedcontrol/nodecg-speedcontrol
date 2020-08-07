@@ -143,7 +143,8 @@ import { RunData, RunModification, Dialog, Alert } from 'types';
 import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
 import ModifyButton from './components/ModifyButton.vue';
-import { SaveRunData, UpdateRunData, SetAsDuplicate, SetPreviousRunID, ResetRunData, AddNewTeam } from './store'; // eslint-disable-line object-curly-newline, max-len
+import { SaveRunData, UpdateRunData, SetAsDuplicate, SetPreviousRunID, ResetRunData, AddNewTeam } from './store'; // eslint-disable-line max-len
+import { getDialog } from '../_misc/helpers';
 
 @Component({
   components: {
@@ -198,12 +199,9 @@ export default class extends Vue {
       const noTwitchGame = await this.saveRunData();
       this.close(true);
       if (noTwitchGame) {
-        const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-        const frame = dialog.querySelector('iframe');
-        if (frame) {
-          (frame.contentWindow as Alert.Dialog).openDialog({
-            name: 'NoTwitchGame',
-          });
+        const dialog = getDialog('alert-dialog') as Alert.Dialog;
+        if (dialog) {
+          dialog.openDialog({ name: 'NoTwitchGame' });
         }
       }
     } catch (err) {

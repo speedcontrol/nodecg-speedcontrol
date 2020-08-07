@@ -169,7 +169,7 @@ import { debounce } from 'lodash';
 import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from 'schemas';
 import { Configschema } from 'configschema';
 import { Dialog, Alert } from 'types';
-import { padTimeNumber } from '../_misc/helpers';
+import { padTimeNumber, getDialog } from '../_misc/helpers';
 
 @Component
 export default class extends Vue {
@@ -254,12 +254,9 @@ export default class extends Vue {
         game: this.game,
       });
       if (noTwitchGame) {
-        const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-        const frame = dialog.querySelector('iframe');
-        if (frame) {
-          (frame.contentWindow as Alert.Dialog).openDialog({
-            name: 'NoTwitchGame',
-          });
+        const dialog = getDialog('alert-dialog') as Alert.Dialog;
+        if (dialog) {
+          dialog.openDialog({ name: 'NoTwitchGame' });
         }
       }
     } catch (err) {
@@ -286,10 +283,9 @@ export default class extends Vue {
   }
 
   logoutConfirm(): void {
-    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
-    const frame = dialog.querySelector('iframe');
-    if (frame) {
-      (frame.contentWindow as Alert.Dialog).openDialog({
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'TwitchLogoutConfirm',
         func: this.logout,
       });

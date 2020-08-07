@@ -1,6 +1,6 @@
 import clone from 'clone';
 import type { ReplicantBrowser } from 'nodecg/types/browser';
-import type { RunDataActiveRun, RunDataArray, RunFinishTimes, Timer, TwitchAPIData } from 'schemas'; // eslint-disable-line object-curly-newline, max-len
+import type { RunDataActiveRun, RunDataArray, RunFinishTimes, Timer, TwitchAPIData } from 'schemas';
 import type { RunData } from 'types';
 import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
