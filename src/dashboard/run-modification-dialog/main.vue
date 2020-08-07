@@ -139,18 +139,11 @@ import { State2Way } from 'vuex-class-state2way';
 import { TwitchAPIData } from 'schemas';
 import { Configschema } from 'configschema';
 import Draggable from 'vuedraggable';
-import { RunData } from 'types';
+import { RunData, RunModification, Dialog, Alert } from 'types';
 import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
 import ModifyButton from './components/ModifyButton.vue';
 import { SaveRunData, UpdateRunData, SetAsDuplicate, SetPreviousRunID, ResetRunData, AddNewTeam } from './store'; // eslint-disable-line object-curly-newline, max-len
-
-enum Mode {
-  New = 'New',
-  EditActive = 'EditActive',
-  EditOther = 'EditOther',
-  Duplicate = 'Duplicate',
-}
 
 @Component({
   components: {
@@ -168,17 +161,17 @@ export default class extends Vue {
   @Mutation addNewTeam!: AddNewTeam;
   @Action saveRunData!: SaveRunData;
   @State twitchAPIData!: TwitchAPIData;
-  @State2Way('updateMode', 'mode') mode!: Mode;
+  @State2Way('updateMode', 'mode') mode!: RunModification.Mode;
   @State2Way('updateTwitch', 'updateTwitch') updateTwitch!: boolean;
   @State2Way('updateRunData', 'runData') runData!: RunData;
-  dialog!: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  dialog!: Dialog;
   err: Error | null = null;
 
   get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
     return (nodecg.bundleConfig as Configschema).schedule.customData || [];
   }
 
-  open(opts: { mode: Mode; runData?: RunData; prevID?: string }): void {
+  open(opts: { mode: RunModification.Mode, runData?: RunData, prevID?: string }): void {
     // Waits for dialog to actually open before changing storage.
     this.dialog.open();
     document.addEventListener('dialog-opened', () => {
@@ -205,8 +198,8 @@ export default class extends Vue {
       const noTwitchGame = await this.saveRunData();
       this.close(true);
       if (noTwitchGame) {
-        const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-        alertDialog.querySelector('iframe').contentWindow.open({
+        const dialog = nodecg.getDialog('alert-dialog') as Dialog;
+        (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
           name: 'NoTwitchGame',
         });
       }
@@ -216,7 +209,7 @@ export default class extends Vue {
   }
 
   close(confirm: boolean): void {
-    this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle, max-len
+    this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle
     this.dialog.close();
   }
 
@@ -229,11 +222,12 @@ export default class extends Vue {
   }
 
   mounted(): void {
-    this.dialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+    this.dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
 
     // Attaching this function to the window for easy access from dashboard panels.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).open = (opts: { mode: Mode; runData?: RunData }): void => this.open(opts);
+    (window as Window as RunModification.Dialog).openDialog = (
+      opts: { mode: RunModification.Mode, runData?: RunData, prevID?: string },
+    ): void => this.open(opts);
 
     // Small hack to make the NodeCG dialog look a little better for us, not perfect yet.
     const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;
@@ -243,6 +237,8 @@ export default class extends Vue {
 </script>
 
 <style>
+  /* DOES THIS STYLE NEED TO BE UNSCOPED? */
+
   .list-move {
     transition: transform 0.2s;
   }

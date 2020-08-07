@@ -33,6 +33,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { Timer } from 'schemas';
+import { Dialog, RunModification, Alert } from 'types';
 
 @Component
 export default class extends Vue {
@@ -43,13 +44,14 @@ export default class extends Vue {
   }
 
   openAddDialog(): void {
-    const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-    runInfoDialog.querySelector('iframe').contentWindow.open({ mode: 'New' });
+    const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
+    (dialog.querySelector('iframe').contentWindow as RunModification.Dialog)
+      .openDialog({ mode: RunModification.Mode.New });
   }
 
   removeAllRunsConfirm(): void {
-    const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-    alertDialog.querySelector('iframe').contentWindow.open({
+    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
+    (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
       name: 'RemoveAllRunsConfirm',
       func: this.removeAllRuns,
     });

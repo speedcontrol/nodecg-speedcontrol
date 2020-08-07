@@ -75,7 +75,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { RunDataArray, RunDataActiveRun, RunDataActiveRunSurrounding, Timer } from 'schemas'; // eslint-disable-line object-curly-newline, max-len
-import { RunData } from 'types';
+import { RunData, Dialog, Alert } from 'types';
 import RunList from '../_misc/components/RunList.vue';
 
 @Component({
@@ -113,8 +113,8 @@ export default class extends Vue {
   }
 
   returnToStartConfirm(): void {
-    const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-    alertDialog.querySelector('iframe').contentWindow.open({
+    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
+    (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
       name: 'ReturnToStartConfirm',
       func: this.returnToStart,
     });
@@ -135,8 +135,8 @@ export default class extends Vue {
       try {
         const noTwitchGame = await nodecg.sendMessage('changeToNextRun');
         if (noTwitchGame) {
-          const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-          alertDialog.querySelector('iframe').contentWindow.open({
+          const dialog = nodecg.getDialog('alert-dialog') as Dialog;
+          (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
             name: 'NoTwitchGame',
           });
         }

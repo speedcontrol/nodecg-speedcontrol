@@ -72,10 +72,10 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { State, Mutation } from 'vuex-class';
-import { State2Way } from 'vuex-class-state2way';
+import { State } from 'vuex-class';
 import { Configschema } from 'configschema';
 import { OengusImportStatus } from 'schemas';
+import { Dialog, Alert } from 'types';
 
 @Component
 export default class extends Vue {
@@ -84,8 +84,8 @@ export default class extends Vue {
   useJapanese = (nodecg.bundleConfig as Configschema).oengus.useJapanese;
 
   importConfirm(): void {
-    const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-    alertDialog.querySelector('iframe').contentWindow.open({
+    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
+    (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
       name: 'ImportConfirm',
       func: this.import,
     });
@@ -114,7 +114,3 @@ export default class extends Vue {
   }
 }
 </script>
-
-<style scoped>
-  
-</style>

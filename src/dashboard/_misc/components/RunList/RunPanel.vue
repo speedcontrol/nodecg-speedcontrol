@@ -107,7 +107,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { RunDataActiveRun, RunFinishTimes, Timer } from 'schemas';
-import { RunData } from 'types';
+import { RunData, RunModification, Dialog, Alert } from 'types';
 import { Configschema } from 'configschema';
 import ModifyButton from './ModifyButton.vue';
 
@@ -146,43 +146,46 @@ export default class extends Vue {
     try {
       const noTwitchGame = await nodecg.sendMessage('changeActiveRun', this.runData.id);
       if (noTwitchGame) {
-        const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-        alertDialog.querySelector('iframe').contentWindow.open({
+        const dialog = nodecg.getDialog('alert-dialog') as Dialog;
+        (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
           name: 'NoTwitchGame',
         });
       }
     } catch (err) {
-      // run change unsuccessful
+      // catch
     }
   }
 
   duplicateRun(): void {
-    const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-    runInfoDialog.querySelector('iframe').contentWindow.open({
-      mode: 'Duplicate',
-      runData: this.runData,
-    });
+    const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
+    (dialog.querySelector('iframe').contentWindow as RunModification.Dialog)
+      .openDialog({
+        mode: RunModification.Mode.Duplicate,
+        runData: this.runData,
+      });
   }
 
   addNewRunAfter(): void {
-    const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-    runInfoDialog.querySelector('iframe').contentWindow.open({
-      mode: 'New',
-      prevID: this.runData.id,
-    });
+    const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
+    (dialog.querySelector('iframe').contentWindow as RunModification.Dialog)
+      .openDialog({
+        mode: RunModification.Mode.New,
+        prevID: this.runData.id,
+      });
   }
 
   editRun(): void {
-    const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-    runInfoDialog.querySelector('iframe').contentWindow.open({
-      mode: 'EditOther',
-      runData: this.runData,
-    });
+    const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
+    (dialog.querySelector('iframe').contentWindow as RunModification.Dialog)
+      .openDialog({
+        mode: RunModification.Mode.EditOther,
+        runData: this.runData,
+      });
   }
 
   removeRunConfirm(): void {
-    const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-    alertDialog.querySelector('iframe').contentWindow.open({
+    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
+    (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
       name: 'RemoveRunConfirm',
       data: { runData: this.runData },
       func: this.removeRun,
@@ -194,7 +197,7 @@ export default class extends Vue {
       try {
         await nodecg.sendMessage('removeRun', this.runData.id);
       } catch (err) {
-        // run change unsuccessful
+        // catch
       }
     }
   }

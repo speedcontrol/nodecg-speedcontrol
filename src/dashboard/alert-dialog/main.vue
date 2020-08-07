@@ -12,6 +12,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { VueConstructor } from 'vue';
+import { Dialog, Alert } from 'types';
 import ImportConfirm from './components/ImportConfirm.vue';
 import ReturnToStartConfirm from './components/ReturnToStartConfirm.vue';
 import RemoveAllRunsConfirm from './components/RemoveAllRunsConfirm.vue';
@@ -21,16 +22,14 @@ import NoTwitchGame from './components/NoTwitchGame.vue';
 
 @Component
 export default class extends Vue {
-  dialog!: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  dialog!: Dialog;
   currentComponent: VueConstructor | null = null;
   alertData: { [k: string ]: unknown } = {};
   callbackFunc: ((confirm?: boolean) => void) | null = null;
 
-  open(opts: {
-    name: string;
-    data?: { [k: string ]: unknown };
-    func?: (confirm?: boolean) => void;
-  }): void {
+  open(
+    opts: { name: string, data?: { [k: string ]: unknown }, func?: (confirm?: boolean) => void },
+  ): void {
     // Waits for dialog to actually open before doing stuff.
     this.dialog.open();
     document.addEventListener('dialog-opened', () => {
@@ -82,15 +81,12 @@ export default class extends Vue {
   }
 
   mounted(): void {
-    this.dialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
+    this.dialog = nodecg.getDialog('alert-dialog') as Dialog;
 
     // Attaching this function to the window for easy access from dashboard panels.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).open = (opts: {
-      name: string;
-      data?: { [k: string ]: unknown };
-      func?: (confirm?: boolean) => void;
-    }): void => this.open(opts);
+    (window as Window as Alert.Dialog).openDialog = (
+      opts: { name: string, data?: { [k: string ]: unknown }, func?: (confirm?: boolean) => void },
+    ): void => this.open(opts);
 
     // Small hack to make the NodeCG dialog look a little better for us.
     const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;

@@ -153,6 +153,7 @@ import { State2Way } from 'vuex-class-state2way';
 import { v4 as uuid } from 'uuid';
 import { Configschema } from 'configschema';
 import { HoraroImportStatus, HoraroImportSavedOpts } from 'schemas';
+import { Dialog, Alert } from 'types';
 import RunDataOptions from './RunDataOptions';
 import Dropdown from './components/Dropdown.vue';
 import ConfigButton from './components/ConfigButton.vue';
@@ -262,8 +263,8 @@ export default class extends Vue {
   }
 
   importConfirm(): void {
-    const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-    alertDialog.querySelector('iframe').contentWindow.open({
+    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
+    (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
       name: 'ImportConfirm',
       func: this.import,
     });

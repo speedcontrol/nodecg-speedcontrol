@@ -28,6 +28,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { RunDataActiveRun } from 'schemas';
+import { Dialog, RunModification } from 'types';
 import RunList from '../_misc/components/RunList.vue';
 
 @Component({
@@ -40,11 +41,12 @@ export default class extends Vue {
 
   editActiveRun(): void {
     if (this.activeRun) {
-      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      runInfoDialog.querySelector('iframe').contentWindow.open({
-        mode: 'EditActive',
-        runData: this.activeRun,
-      });
+      const dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
+      (dialog.querySelector('iframe').contentWindow as RunModification.Dialog)
+        .openDialog({
+          mode: RunModification.Mode.EditActive,
+          runData: this.activeRun,
+        });
     }
   }
 

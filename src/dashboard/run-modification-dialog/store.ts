@@ -1,20 +1,13 @@
 import clone from 'clone';
 import type { ReplicantBrowser } from 'nodecg/types/browser';
 import type { DefaultSetupTime, TwitchAPIData } from 'schemas';
-import { RunData, RunDataPlayer, RunDataTeam } from 'types';
+import { RunData, RunDataPlayer, RunDataTeam, RunModification } from 'types';
 import { v4 as uuid } from 'uuid';
 import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
 import { msToTimeStr } from '../_misc/helpers';
 
 Vue.use(Vuex);
-
-enum Mode {
-  New = 'New',
-  EditActive = 'EditActive',
-  EditOther = 'EditOther',
-  Duplicate = 'Duplicate',
-}
 
 const defaultRunData: RunData = {
   teams: [],
@@ -47,7 +40,7 @@ const reps: {
 
 // Types for mutations below
 export type UpdateRunData = (runData: RunData) => void;
-export type UpdateMode = (mode: Mode) => void;
+export type UpdateMode = (mode: RunModification.Mode) => void;
 export type UpdateTwitch = (toggle: boolean) => void;
 export type SetAsDuplicate = () => void;
 export type SetPreviousRunID = (id?: string) => void;
@@ -61,7 +54,7 @@ export type SaveRunData = () => Promise<boolean>;
 const store = new Vuex.Store({
   state: {
     runData: clone(defaultRunData),
-    mode: 'New' as Mode,
+    mode: 'New' as RunModification.Mode,
     prevID: undefined as string | undefined,
     updateTwitch: false,
     defaultSetupTime: 0 as DefaultSetupTime,
@@ -74,7 +67,7 @@ const store = new Vuex.Store({
       Vue.set(state, 'runData', clone(runData));
       Vue.set(state, 'updateTwitch', false);
     },
-    updateMode(state, mode: Mode): void {
+    updateMode(state, mode: RunModification.Mode): void {
       Vue.set(state, 'mode', mode);
     },
     updateTwitch(state, toggle: boolean): void {

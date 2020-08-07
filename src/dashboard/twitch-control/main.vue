@@ -168,6 +168,7 @@ import { State2Way } from 'vuex-class-state2way';
 import { debounce } from 'lodash';
 import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from 'schemas';
 import { Configschema } from 'configschema';
+import { Dialog, Alert } from 'types';
 import { padTimeNumber } from '../_misc/helpers';
 
 @Component
@@ -253,8 +254,8 @@ export default class extends Vue {
         game: this.game,
       });
       if (noTwitchGame) {
-        const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-        alertDialog.querySelector('iframe').contentWindow.open({
+        const dialog = nodecg.getDialog('alert-dialog') as Dialog;
+        (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
           name: 'NoTwitchGame',
         });
       }
@@ -282,8 +283,8 @@ export default class extends Vue {
   }
 
   logoutConfirm(): void {
-    const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-    alertDialog.querySelector('iframe').contentWindow.open({
+    const dialog = nodecg.getDialog('alert-dialog') as Dialog;
+    (dialog.querySelector('iframe').contentWindow as Alert.Dialog).openDialog({
       name: 'TwitchLogoutConfirm',
       func: this.logout,
     });
