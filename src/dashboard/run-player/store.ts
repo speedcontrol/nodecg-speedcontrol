@@ -35,9 +35,11 @@ const store = new Vuex.Store({
       Vue.set(state, name, val);
     },
     /* Mutations to replicants start */
+    // I don't think this is even used in run-player
+    // but needs to be kept because RunList uses it for run-editor?
     updateRunOrder(state, runs: RunData[]): void {
       if (typeof reps.runDataArray.value !== 'undefined') {
-        reps.runDataArray.value = runs;
+        reps.runDataArray.value = clone(runs);
       }
     },
     /* Mutations to replicants end */

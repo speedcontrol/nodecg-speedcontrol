@@ -20,7 +20,7 @@
     >
       {{ $t('editActive') }}
     </v-btn>
-    <run-list :editor="true" />
+    <run-list editor />
   </v-app>
 </template>
 

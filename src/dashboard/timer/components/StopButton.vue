@@ -36,23 +36,24 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { Timer } from 'schemas';
+import { RunDataTeam } from 'types';
 
 @Component
 export default class extends Vue {
-  @Prop({ type: Object, default: () => ({ id: undefined }) }) readonly info!: { id?: string };
+  @Prop({ type: Object }) readonly info!: RunDataTeam | undefined;
   @Prop(Boolean) readonly forfeit!: boolean;
   @State timer!: Timer;
 
   get isDisabled(): boolean {
     return (
-      this.info.id && !!this.timer.teamFinishTimes[this.info.id as string]
+      this.info?.id && !!this.timer.teamFinishTimes[this.info.id as string]
     ) || !['running', 'paused'].includes(this.timer.state);
   }
 
   async button(): Promise<void> {
     try {
       await nodecg.sendMessage('timerStop', {
-        id: this.info.id,
+        id: this.info?.id,
         forfeit: this.forfeit,
       });
     } catch (err) {

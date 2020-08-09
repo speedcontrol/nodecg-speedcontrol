@@ -19,7 +19,7 @@ const reps: {
 };
 
 // Types for mutations below
-export type UpdateTwitchSyncToggle = (sync: boolean) => void;
+export type UpdateSyncToggle = (sync: boolean) => void;
 
 const store = new Vuex.Store({
   state: {},
@@ -28,7 +28,7 @@ const store = new Vuex.Store({
       Vue.set(state, name, val);
     },
     /* Mutations to replicants start */
-    updateTwitchSyncToggle(state, sync: boolean): void {
+    updateSyncToggle(state, sync: boolean): void {
       if (typeof reps.twitchAPIData.value !== 'undefined') {
         reps.twitchAPIData.value.sync = sync;
       }

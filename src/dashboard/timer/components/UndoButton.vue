@@ -34,26 +34,27 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { State } from 'vuex-class';
 import { Timer } from 'schemas';
+import { RunDataTeam } from 'types';
 
 @Component
 export default class extends Vue {
-  @Prop({ type: Object, default: () => ({ id: undefined }) }) readonly info!: { id?: string };
+  @Prop({ type: Object }) readonly info!: RunDataTeam | undefined;
   @State timer!: Timer;
 
   get isDisabled(): boolean {
     return (
       // If no team information has been supplied.
-      !this.info.id && this.timer.state !== 'finished'
+      !this.info?.id && this.timer.state !== 'finished'
     ) || (
       // If team information is supplied, need to check if the team is finished.
-      !!this.info.id && (!this.timer.teamFinishTimes[this.info.id as string]
+      !!this.info?.id && (!this.timer.teamFinishTimes[this.info.id]
       || !['running', 'finished'].includes(this.timer.state))
     );
   }
 
   async button(): Promise<void> {
     try {
-      await nodecg.sendMessage('timerUndo', this.info.id);
+      await nodecg.sendMessage('timerUndo', this.info?.id);
     } catch (err) {
       // catch
     }

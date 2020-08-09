@@ -104,7 +104,7 @@
       <!-- Import Button, if importing -->
       <v-btn
         v-if="importStatus.importing"
-        :disabled="true"
+        disabled
         block
       >
         {{ $t('importProgress', { item: importStatus.item, total: importStatus.total }) }}
@@ -157,7 +157,7 @@ import { Dialog, Alert } from 'types';
 import RunDataOptions from './RunDataOptions';
 import Dropdown from './components/Dropdown.vue';
 import ConfigButton from './components/ConfigButton.vue';
-import { SaveOpts, AddCustomColumn, LoadOpts, ClearOpts, UpdateColumn } from './store';
+import { SaveOpts, AddCustomColumn, LoadOpts, ClearOpts, UpdateColumn, Opts } from './store';
 import { getDialog } from '../_misc/helpers';
 
 @Component({
@@ -167,22 +167,7 @@ import { getDialog } from '../_misc/helpers';
   },
 })
 export default class extends Vue {
-  @State opts!: {
-    columns: {
-      game: number | null,
-      gameTwitch: number | null,
-      category: number | null,
-      system: number | null,
-      region: number | null,
-      release: number | null,
-      player: number | null,
-      externalID: number | null,
-      custom: {
-        [k: string]: number | null,
-      },
-    },
-    split?: 0 | 1,
-  };
+  @State opts!: Opts;
   @State('horaroImportStatus') importStatus!: HoraroImportStatus;
   @State horaroImportSavedOpts!: HoraroImportSavedOpts;
   @State2Way('updateSplit', 'opts.split') splitOption!: number;
@@ -318,15 +303,15 @@ export default class extends Vue {
 }
 </script>
 
-<style>
+<style scoped>
   /* Tweaks to dropdowns to make them smaller. */
-  .Dropdown .v-input__slot {
+  .Dropdown >>> .v-input__slot {
     min-height: 0 !important;
   }
-  .Dropdown .v-label {
+  .Dropdown >>> .v-label {
     top: 4px !important;
   }
-  .Dropdown .v-input__append-inner {
+  .Dropdown >>> .v-input__append-inner {
     margin-top: 2px !important;
   }
 </style>

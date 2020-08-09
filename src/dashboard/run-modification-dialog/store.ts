@@ -87,9 +87,7 @@ const store = new Vuex.Store({
       Vue.set(state, 'runData', clone(defaultRunData));
       if (state.defaultSetupTime) { // Fill in default setup time if available.
         Vue.set(state.runData, 'setupTimeS', state.defaultSetupTime);
-        Vue.set(state.runData, 'setupTime', msToTimeStr(
-          state.defaultSetupTime * 1000,
-        ));
+        Vue.set(state.runData, 'setupTime', msToTimeStr(state.defaultSetupTime * 1000));
       }
       Vue.set(state.runData, 'id', uuid());
       Vue.set(state, 'updateTwitch', false);

@@ -74,7 +74,7 @@ import { AddNewPlayer, RemoveTeam } from '../store';
   },
 })
 export default class extends Vue {
-  @Prop({ type: Object, default: {} }) teamData!: RunDataTeam;
+  @Prop({ type: Object, required: true }) teamData!: RunDataTeam;
   @Mutation addNewPlayer!: AddNewPlayer;
   @Mutation removeTeam!: RemoveTeam;
 }

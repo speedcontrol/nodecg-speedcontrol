@@ -237,25 +237,19 @@ export default class extends Vue {
 }
 </script>
 
-<style>
-  /* DOES THIS STYLE NEED TO BE UNSCOPED? */
+<style scoped>
+  h1 {
+    margin-bottom: 10px;
+  }
 
   .list-move {
     transition: transform 0.2s;
   }
-  .list-enter, .list-leave-to
-  /* .logo-list-complete-leave-active below version 2.1.8 */ {
+  .list-enter, .list-leave-to {
     opacity: 0;
-    transition: transform 0.2s;
-    transition: opacity 0.2s;
+    transition: transform 0.2s, opacity 0.2s;
   }
   .list-leave-active {
     position: absolute;
-  }
-</style>
-
-<style scoped>
-  h1 {
-    margin-bottom: 10px;
   }
 </style>

@@ -15,7 +15,10 @@
       {{ $t('alertText') }}
       <div
         v-if="runStr"
-        style="margin-top: 10px; font-style: italic;"
+        :style="{
+          'margin-top': '10px',
+          'font-style': 'italic',
+        }"
       >
         {{ runStr }}
       </div>
@@ -38,7 +41,7 @@ import { RunData } from 'types';
 
 @Component
 export default class extends Vue {
-  @Prop({ type: Object, default: {} }) readonly alertData!: { runData?: RunData };
+  @Prop({ type: Object, required: true }) readonly alertData!: { runData?: RunData };
 
   get runStr(): string | undefined {
     if (this.alertData.runData

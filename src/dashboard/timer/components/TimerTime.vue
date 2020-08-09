@@ -45,10 +45,6 @@ export default class extends Vue {
   @State timer!: Timer;
   time = '00:00:00';
 
-  get state(): Timer['state'] {
-    return this.timer.state;
-  }
-
   get serverTime(): string {
     return this.timer.time;
   }

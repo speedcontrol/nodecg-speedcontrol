@@ -66,7 +66,7 @@ import { RemovePlayer } from '../store';
   },
 })
 export default class extends Vue {
-  @Prop({ type: Object, default: {} }) playerData!: RunDataPlayer;
+  @Prop({ type: Object, required: true }) playerData!: RunDataPlayer;
   @Mutation removePlayer!: RemovePlayer;
 
   get customData(): { name: string, key: string }[] {

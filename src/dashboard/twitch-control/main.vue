@@ -44,7 +44,9 @@
       <a
         :href="url"
         target="_blank"
-      ><img src="./twitch-login.png"></a>
+      >
+        <img src="./twitch-login.png">
+      </a>
       <br><em>{{ $t('twitchLogin') }}</em>
     </div>
     <!-- Enabled, authenticating server-side. -->
@@ -53,7 +55,14 @@
     </div>
     <!-- Ready server-side. -->
     <div v-else>
-      <div id="LogoutContainer">
+      <div
+        :style="{
+          width: '100%',
+          display: 'flex',
+          padding: 0,
+          'justify-content': 'flex-end',
+        }"
+      >
         <v-tooltip left>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -71,7 +80,14 @@
           <span>{{ $t('logout') }}</span>
         </v-tooltip>
       </div>
-      <div id="AutoSyncContainer">
+      <div
+        id="AutoSyncContainer"
+        :style="{
+          'display': 'flex',
+          'align-items': 'center',
+          padding: '10px',
+        }"
+      >
         <v-switch
           v-model="sync"
           inset
@@ -176,7 +192,7 @@ export default class extends Vue {
   @State('twitchAPIData') apiData!: TwitchAPIData;
   @State('twitchChannelInfo') channelInfo!: TwitchChannelInfo;
   @State('twitchCommercialTimer') timer!: TwitchCommercialTimer;
-  @State2Way('updateTwitchSyncToggle', 'twitchAPIData.sync') sync!: boolean;
+  @State2Way('updateSyncToggle', 'twitchAPIData.sync') sync!: boolean;
   focus = false;
   title = '';
   game = '';
@@ -321,18 +337,5 @@ export default class extends Vue {
   #AutoSyncContainer > .v-input {
     margin: 0;
     padding: 0;
-  }
-
-  #LogoutContainer {
-    width: 100%;
-    display: flex;
-    padding: 0;
-    justify-content: flex-end;
-  }
-
-  #AutoSyncContainer {
-    display: flex;
-    align-items: center;
-    padding: 10px;
   }
 </style>

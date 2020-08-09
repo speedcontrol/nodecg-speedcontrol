@@ -145,7 +145,7 @@ export default class extends Vue {
 
   async playRun(): Promise<void> {
     try {
-      const noTwitchGame = await nodecg.sendMessage('changeActiveRun', this.runData.id);
+      const noTwitchGame = await nodecg.sendMessage('changeActiveRun', this.runData.id); // TYPE!
       if (noTwitchGame) {
         const dialog = getDialog('alert-dialog') as Alert.Dialog;
         if (dialog) {

@@ -4,7 +4,9 @@
     :label="label"
     hide-details
     filled
-    :class="{ LeftBorder: leftBorder }"
+    :style="{
+      'border-left': leftBorder ? '1px solid white' : 'unset',
+    }"
     @input="$emit('input', $event);"
   />
 </template>
@@ -19,9 +21,3 @@ export default class extends Vue {
   @Prop(Boolean) leftBorder!: boolean;
 }
 </script>
-
-<style scoped>
- .LeftBorder {
-   border-left: 1px solid white;
- }
-</style>

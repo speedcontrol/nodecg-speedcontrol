@@ -17,14 +17,18 @@
       class="green darken-2"
       @click="openAddDialog"
     >
-      <v-icon>mdi-plus-box</v-icon>{{ $t('addNewRun') }}
+      <v-icon class="pr-2">
+        mdi-plus-box
+      </v-icon>{{ $t('addNewRun') }}
     </v-btn>
     <v-btn
-      class="red darken-2"
+      class="red darken-2 mt-3"
       :disabled="disableRemoveAll"
       @click="removeAllRunsConfirm"
     >
-      <v-icon>mdi-delete</v-icon>{{ $t('removeAllRuns') }}
+      <v-icon class="pr-2">
+        mdi-delete
+      </v-icon>{{ $t('removeAllRuns') }}
     </v-btn>
   </v-app>
 </template>
@@ -81,13 +85,3 @@ export default class extends Vue {
   }
 }
 </script>
-
-<style scoped>
-  .v-btn:not(:first-of-type) {
-    margin-top: 10px;
-  }
-
-  .v-icon {
-    padding-right: 5px;
-  }
-</style>

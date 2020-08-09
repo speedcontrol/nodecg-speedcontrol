@@ -21,6 +21,7 @@
   <v-app>
     <div>
       <v-btn
+        :style="{ 'margin-bottom': '5px' }"
         block
         :disabled="!activeRun || disableChange"
         @click="returnToStartConfirm"
@@ -31,6 +32,7 @@
     <div>
       <v-btn
         class="NextRunBtn"
+        :style="{ 'margin-bottom': '5px' }"
         width="100%"
         block
         :title="nextRunStr"
@@ -64,7 +66,7 @@
         dense
         type="info"
       >
-        {{ $t('cannotChange', { state: timerState }) }}
+        {{ $t('cannotChange', { state: timer.state }) }}
       </v-alert>
     </div>
     <run-list />
@@ -105,12 +107,8 @@ export default class extends Vue {
     return '?';
   }
 
-  get timerState(): string {
-    return this.timer.state;
-  }
-
   get disableChange(): boolean {
-    return ['running', 'paused'].includes(this.timerState);
+    return ['running', 'paused'].includes(this.timer.state);
   }
 
   returnToStartConfirm(): void {
@@ -161,13 +159,7 @@ export default class extends Vue {
 </script>
 
 <style scoped>
-  .v-btn {
-    margin-bottom: 5px;
-  }
-</style>
-
-<style>
-  .NextRunBtn > .v-btn__content {
+  .NextRunBtn >>> .v-btn__content {
     width: 100%;
   }
 </style>

@@ -12,7 +12,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { VueConstructor } from 'vue';
-import { Dialog, Alert } from 'types';
+import { Dialog, Alert, RunData } from 'types';
 import ImportConfirm from './components/ImportConfirm.vue';
 import ReturnToStartConfirm from './components/ReturnToStartConfirm.vue';
 import RemoveAllRunsConfirm from './components/RemoveAllRunsConfirm.vue';
@@ -24,11 +24,11 @@ import NoTwitchGame from './components/NoTwitchGame.vue';
 export default class extends Vue {
   dialog!: Dialog;
   currentComponent: VueConstructor | null = null;
-  alertData: { [k: string ]: unknown } = {};
+  alertData: { runData?: RunData } = {};
   callbackFunc: ((confirm: boolean) => void) | null = null;
 
   open(
-    opts: { name: Alert.Name, data?: { [k: string ]: unknown }, func?: (confirm: boolean) => void },
+    opts: { name: Alert.Name, data?: { runData?: RunData }, func?: (confirm: boolean) => void },
   ): void {
     // Waits for dialog to actually open before doing stuff.
     this.dialog.open();
@@ -71,12 +71,10 @@ export default class extends Vue {
   }
 
   confirm(): void {
-    // do confirm stuff here
     document.removeEventListener('dialog-dismissed', this.dismiss);
   }
 
   dismiss(): void {
-    // do dismiss stuff here
     document.removeEventListener('dialog-confirmed', this.confirm);
   }
 
@@ -86,7 +84,7 @@ export default class extends Vue {
     // Attaching this function to the window for easy access from dashboard panels.
     (window as Window as Alert.Dialog).openDialog = (opts: {
       name: Alert.Name,
-      data?: { [k: string ]: unknown },
+      data?: { runData?: RunData },
       func?: (confirm: boolean) => void,
     }): void => this.open(opts);
 

@@ -6,22 +6,24 @@ import Vuex, { Store } from 'vuex';
 
 Vue.use(Vuex);
 
-const defaultOpts: {
+export interface Opts {
   columns: {
-    game: number | null,
-    gameTwitch: number | null,
-    category: number | null,
-    system: number | null,
-    region: number | null,
-    release: number | null,
-    player: number | null,
-    externalID: number | null,
+    game: number | null;
+    gameTwitch: number | null;
+    category: number | null;
+    system: number | null;
+    region: number | null;
+    release: number | null;
+    player: number | null;
+    externalID: number | null;
     custom: {
-      [k: string]: number | null,
-    },
-  },
-  split: 0 | 1,
-} = {
+      [k: string]: number | null;
+    };
+  };
+  split: 0 | 1;
+}
+
+const defaultOpts: Opts = {
   columns: {
     game: null,
     gameTwitch: null,

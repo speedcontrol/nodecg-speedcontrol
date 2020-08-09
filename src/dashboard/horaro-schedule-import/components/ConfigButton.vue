@@ -7,7 +7,11 @@
       <v-btn
         :loading="disabled"
         :disabled="disabled"
-        :style="{ 'min-width': 0, padding: '0 10px', 'margin-left': '5px' }"
+        :style="{
+          'min-width': 0,
+          padding: '0 10px',
+          'margin-left': '5px',
+        }"
         @click="$emit('click')"
         v-on="on"
       >

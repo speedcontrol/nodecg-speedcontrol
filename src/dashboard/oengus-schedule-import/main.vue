@@ -53,7 +53,7 @@
       <!-- Import Button, if importing -->
       <v-btn
         v-if="importStatus.importing"
-        :disabled="true"
+        disabled
         block
       >
         {{ $t('importProgress', { item: importStatus.item, total: importStatus.total }) }}

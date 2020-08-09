@@ -1,5 +1,8 @@
 <template>
-  <div class="Team d-flex align-center">
+  <div
+    class="Team d-flex align-center"
+    :style="{ padding: '2px 0' }"
+  >
     <stop-button
       :info="info"
     />
@@ -80,10 +83,6 @@ export default class extends Vue {
 </script>
 
 <style scoped>
-  .Team {
-    padding: 2px 0;
-  }
-
   .Team > *:not(:last-child) {
     margin-right: 4px;
   }

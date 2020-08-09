@@ -53,7 +53,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { State, Mutation } from 'vuex-class';
-import { UpdateColumn } from '../store';
+import { UpdateColumn, Opts } from '../store';
 
 @Component
 export default class extends Vue {
@@ -65,23 +65,8 @@ export default class extends Vue {
       custom: false,
     },
   }) readonly option!: { name: string, key: string, custom: boolean };
-  @Prop({ type: Array, default: [] }) readonly columns!: string[];
-  @State opts!: {
-    columns: {
-      game: number | null,
-      gameTwitch: number | null,
-      category: number | null,
-      system: number | null,
-      region: number | null,
-      release: number | null,
-      player: number | null,
-      externalID: number | null,
-      custom: {
-        [k: string]: number | null,
-      },
-    },
-    split: 0 | 1,
-  };
+  @Prop({ type: Array, required: true }) readonly columns!: string[];
+  @State opts!: Opts;
   @Mutation updateColumn!: UpdateColumn;
 
   get dropdownOpts(): { value: number, text: string }[] {

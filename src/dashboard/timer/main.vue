@@ -17,11 +17,12 @@
 
 <template>
   <v-app>
-    <div :class="{ disabled: disableChanges }">
+    <div :class="{ Disabled: disableChanges }">
       <timer-time />
       <div
         id="Controls"
         class="d-flex justify-center"
+        :style="{ 'padding-top': '10px' }"
       >
         <start-button />
         <reset-button />
@@ -138,14 +139,11 @@ export default class extends Vue {
 </script>
 
 <style scoped>
-  .disabled {
+  .Disabled {
     pointer-events: none;
     opacity: 0.5;
   }
 
-  #Controls {
-    padding-top: 10px;
-  }
   #Controls > * {
     flex: 1;
   }

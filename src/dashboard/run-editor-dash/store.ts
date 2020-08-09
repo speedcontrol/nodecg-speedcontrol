@@ -35,7 +35,7 @@ const store = new Vuex.Store({
     /* Mutations to replicants start */
     updateRunOrder(state, runs: RunData[]): void {
       if (typeof reps.runDataArray.value !== 'undefined') {
-        reps.runDataArray.value = runs;
+        reps.runDataArray.value = clone(runs);
       }
     },
     /* Mutations to replicants end */
