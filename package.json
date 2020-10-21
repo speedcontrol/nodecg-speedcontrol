@@ -36,6 +36,7 @@
     "watch:extension": "tsc -b tsconfig.extension.json -w"
   },
   "dependencies": {
+    "@types/needle": "^2.0.4",
     "clone": "^2.1.2",
     "iso8601-duration": "^1.2.0",
     "livesplit-core": "^0.10.2",
@@ -55,7 +56,6 @@
     "@types/clone": "^0.1.30",
     "@types/lodash": "^4.14.158",
     "@types/markdown-it": "10.0.1",
-    "@types/needle": "^2.0.4",
     "@types/node": "^14.0.27",
     "@types/remove-markdown": "^0.1.1",
     "@types/uuid": "^8.0.0",
