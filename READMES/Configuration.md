@@ -16,7 +16,7 @@ Below is an example configuration file contents with everything that is availabl
 {
   "language": "en",
   "twitch": {
-    "enable": true,
+    "enabled": true,
     "clientID": "CLIENT_ID",
     "clientSecret": "CLIENT_SECRET",
     "redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
@@ -73,7 +73,7 @@ The currently available languages are:
 ```json
 {
   "twitch": {
-    "enable": true,
+    "enabled": true,
     "clientID": "CLIENT_ID",
     "clientSecret": "CLIENT_SECRET",
     "redirectURI": "http://localhost:9090/nodecg-speedcontrol/twitchauth",
@@ -89,7 +89,7 @@ The currently available languages are:
 }
 ```
 
-This is the part where the Twitch integration configuration is set up. Make sure `enable` is true (it defaults to `false`), and then you will need to [create a Twitch API app yourself from their developer site](https://dev.twitch.tv/console/apps/create) and put in the supplied client ID and client secret. The redirect URI should be the same as the one above unless you are **not** running your NodeCG server locally and/or you changed the port it uses.
+This is the part where the Twitch integration configuration is set up. Make sure `enabled` is true (it defaults to `false`), and then you will need to [create a Twitch API app yourself from their developer site](https://dev.twitch.tv/console/apps/create) and put in the supplied client ID and client secret. The redirect URI should be the same as the one above unless you are **not** running your NodeCG server locally and/or you changed the port it uses.
 
 - `streamTitle` is a string that specifies what the title will be updated to when a run is switched. There are some wildcards as seen above that will be replaced with the relevant data if they're specified. Leave it blank if you don't want to have the title updated.
 - `streamDefaultGame` is the game in the Twitch directory that will be used if the game name from your schedule cannot be found in the directory.
