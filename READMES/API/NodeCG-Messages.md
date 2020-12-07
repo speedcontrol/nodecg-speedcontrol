@@ -24,7 +24,7 @@
 
 # Messages Sent (*listenFor*)
 
-*[Link to NodeCG documentation for reference.](https://nodecg.com/NodeCG.html#listenFor)*
+*[Link to NodeCG documentation for reference.](https://www.nodecg.dev/docs/classes/listenFor)*
 
 ## twitchCommercialStarted
 
@@ -69,7 +69,7 @@ Emitted when the featured channels should be updated, either automatically or vi
 
 # Messages Received (*sendMessage/sendMessageToBundle*)
 
-*[Link to NodeCG documentation for reference.](https://nodecg.com/NodeCG.html#sendMessageToBundle)*
+*[Link to NodeCG documentation for reference.](https://www.nodecg.dev/docs/classes/sendMessageToBundle)*
 
 ## timerStart
 

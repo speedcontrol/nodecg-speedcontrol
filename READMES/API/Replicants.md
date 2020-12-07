@@ -1,6 +1,6 @@
 # API Documentation: Replicants
 
-*[Link to NodeCG documentation for reference.](https://nodecg.com/NodeCG.html#Replicant)*
+*[Link to NodeCG documentation for reference.](https://www.nodecg.dev/docs/classes/replicant)*
 
 - [runDataArray](#runDataArray)
 - [runDataActiveRun](#runDataActiveRun)
