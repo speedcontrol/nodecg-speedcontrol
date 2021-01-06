@@ -1,0 +1,38 @@
+
+.TimerInput[data-v-111c304f] input {
+  text-align: center;
+  font-size: 25px;
+}
+
+.v-tooltip{display:none}.v-tooltip--attached{display:inline}.v-tooltip__content{background:rgba(97,97,97,.9);color:#fff;border-radius:4px;font-size:14px;line-height:22px;display:inline-block;padding:5px 16px;position:absolute;text-transform:initial;width:auto;opacity:1;pointer-events:none}.v-tooltip__content--fixed{position:fixed}.v-tooltip__content[class*=-active]{transition-timing-function:cubic-bezier(0, 0, 0.2, 1)}.v-tooltip__content[class*=enter-active]{transition-duration:150ms}.v-tooltip__content[class*=leave-active]{transition-duration:75ms}
+
+.Team[data-v-4b431a7a] {
+  padding: 2px 0;
+}
+.Team > *[data-v-4b431a7a]:not(:last-child) {
+  margin-right: 4px;
+}
+.Team[data-v-4b431a7a] .v-btn {
+  padding: 0 5px;
+  min-width: 0;
+}
+
+
+.disabled[data-v-4c475550] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+#Controls[data-v-4c475550] {
+  padding-top: 10px;
+}
+#Controls > *[data-v-4c475550] {
+  flex: 1;
+}
+#Controls > *[data-v-4c475550]:not(:first-child) {
+  margin-left: 5px;
+}
+#Controls[data-v-4c475550] .v-btn {
+  min-width: 0;
+  width: 100%;
+}
+

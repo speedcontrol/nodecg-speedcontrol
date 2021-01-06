@@ -1,8 +1,8 @@
 # API Documentation
 
-Documented in these pages are ways you can interact with this bundle from within your own layout bundles. This documentation assumes you have knowledge about [NodeCG](https://nodecg.com/) bundle development.
+Documented in these pages are ways you can interact with this bundle from within your own layout bundles. This documentation assumes you have knowledge about [NodeCG](https://nodecg.dev/) bundle development.
 
-It is suggested you add this bundle to your `bundleDependencies` when making your NodeCG bundle, see [nodecg.bundleDependencies here](https://nodecg.com/tutorial-5_manifest.html); `"nodecg-speedcontrol": "^2.0.0"` or similar should be added there.
+It is suggested you add this bundle to your `bundleDependencies` when making your NodeCG bundle, see [nodecg.bundleDependencies here](https://www.nodecg.dev/docs/manifest); `"nodecg-speedcontrol": "^2.0.0"` or similar should be added there.
 
 **This bundle may contain more than what is documented herein. If it's not mentioned, assume it to be unsupported and that it may change in an update.**
 

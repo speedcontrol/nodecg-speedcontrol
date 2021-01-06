@@ -2,9 +2,9 @@
 
 ![Screenshot](READMES/img/README-screenshot.png)
 
-*This is a bundle for [NodeCG](https://nodecg.com/); if you do not understand what that is, we advise you read their website first for more information.*
+*This is a bundle for [NodeCG](https://nodecg.dev/); if you do not understand what that is, we advise you read their website first for more information.*
 
-nodecg-speedcontrol, usually known as just "Speedcontrol", is a bundle for the [NodeCG](https://nodecg.com/) broadcast graphics framework/application developed for automating tasks for speedrunning marathons, mainly changing information on overlays and updating the Twitch information.
+nodecg-speedcontrol, usually known as just "Speedcontrol", is a bundle for the [NodeCG](https://nodecg.dev/) broadcast graphics framework/application developed for automating tasks for speedrunning marathons, mainly changing information on overlays and updating the Twitch information.
 
 Some basic information:
 - Import schedules from [Horaro](https://horaro.org/) and [Oengus](https://oengus.io/) [work in progress].
@@ -20,7 +20,7 @@ This bundle doesn't come with any graphics, you will need to create them yoursel
 
 ## Installation
 
-You will need [Node.js](https://nodejs.org) (12.x LTS tested) and [git](https://git-scm.com/) installed to install NodeCG, then see the [NodeCG documentation](http://nodecg.com/) on how to install that. I also suggest installing `nodecg-cli`; information on that is also on the documentation just linked.
+You will need [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://git-scm.com/) installed to install NodeCG, then see the [NodeCG documentation](http://nodecg.dev/) on how to install that. I also suggest installing `nodecg-cli`; information on that is also on the documentation just linked.
 
 - `nodecg install speedcontrol/nodecg-speedcontrol` to install the latest version of nodecg-speedcontrol
 
