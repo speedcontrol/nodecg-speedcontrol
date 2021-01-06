@@ -34,10 +34,10 @@ async function logout(): Promise<void> {
  * Validate the currently stored token against the Twitch ID API.
  */
 async function validateToken(): Promise<{
-  client_id: string;
+  client_id: string; // eslint-disable-line camelcase
   login: string;
   scopes: string[];
-  user_id: string;
+  user_id: string; // eslint-disable-line camelcase
 }> {
   const resp = await needle(
     'get',
@@ -65,12 +65,12 @@ export async function refreshToken(): Promise<void> {
     const resp = await needle(
       'post',
       'https://id.twitch.tv/oauth2/token',
-      { /* eslint-disable @typescript-eslint/camelcase */
+      {
         grant_type: 'refresh_token',
         refresh_token: encodeURI(apiData.value.refreshToken as string),
         client_id: config.twitch.clientID,
         client_secret: config.twitch.clientSecret,
-      }, /* eslint-enable */
+      },
     );
     if (resp.statusCode !== 200) {
       throw new Error(JSON.stringify(resp.body));
@@ -88,7 +88,7 @@ export async function refreshToken(): Promise<void> {
 }
 
 /**
- * Make a request to Twitch API v5.
+ * Make a request to Twitch API.
  */
 async function request(
   method: NeedleHttpVerbs, endpoint: string, data: BodyData = null, newAPI = false,
@@ -334,7 +334,7 @@ if (config.twitch.enabled) {
     needle(
       'post',
       'https://id.twitch.tv/oauth2/token',
-      { /* eslint-disable @typescript-eslint/camelcase */
+      { /* eslint-disable @typescript-eslint/naming-convention */
         client_id: config.twitch.clientID,
         client_secret: config.twitch.clientSecret,
         code: req.query.code,

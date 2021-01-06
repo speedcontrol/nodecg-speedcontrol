@@ -35,7 +35,7 @@ async function get(endpoint: string): Promise<NeedleResponse> {
         },
       },
     );
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: parser exists but isn't in the typings
     if (resp.parser !== 'json') {
       throw new Error('Response was not JSON');
@@ -178,6 +178,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
           social: {
             twitch: runner.twitchName ?? undefined,
           },
+          customData: {},
         };
         if (!config.oengus.disableSpeedrunComLookup) {
           const data = await searchForUserDataMultiple(

@@ -7,30 +7,30 @@ interface RunDataOption {
   custom?: boolean;
 }
 
-export default [
+const options: RunDataOption[] = [
   {
-    name: i18n.t('game'),
+    name: i18n.t('game') as string,
     key: 'game',
     predict: [
       'game',
     ],
   },
   {
-    name: i18n.t('gameTwitch'),
+    name: i18n.t('gameTwitch') as string,
     key: 'gameTwitch',
     predict: [
       // none yet
     ],
   },
   {
-    name: i18n.t('category'),
+    name: i18n.t('category') as string,
     key: 'category',
     predict: [
       'category',
     ],
   },
   {
-    name: i18n.t('system'),
+    name: i18n.t('system') as string,
     key: 'system',
     predict: [
       'system',
@@ -38,21 +38,21 @@ export default [
     ],
   },
   {
-    name: i18n.t('region'),
+    name: i18n.t('region') as string,
     key: 'region',
     predict: [
       'region',
     ],
   },
   {
-    name: i18n.t('released'),
+    name: i18n.t('released') as string,
     key: 'release',
     predict: [
       'release',
     ],
   },
   {
-    name: i18n.t('players'),
+    name: i18n.t('players') as string,
     key: 'player',
     predict: [
       'player',
@@ -60,10 +60,12 @@ export default [
     ],
   },
   {
-    name: i18n.t('externalID'),
+    name: i18n.t('externalID') as string,
     key: 'externalID',
     predict: [
       'id',
     ],
   },
-] as RunDataOption[];
+];
+
+export default options;

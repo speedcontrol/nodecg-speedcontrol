@@ -104,7 +104,7 @@
       <!-- Import Button, if importing -->
       <v-btn
         v-if="importStatus.importing"
-        :disabled="true"
+        disabled
         block
       >
         {{ $t('importProgress', { item: importStatus.item, total: importStatus.total }) }}
@@ -147,159 +147,171 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component } from 'vue-property-decorator';
+import { State, Mutation } from 'vuex-class';
+import { State2Way } from 'vuex-class-state2way';
 import { v4 as uuid } from 'uuid';
-import { nodecg } from '../_misc/nodecg';
-import { store as repStore } from '../_misc/replicant-store';
-import store from './store';
+import { Configschema } from 'configschema';
+import { HoraroImportStatus, HoraroImportSavedOpts } from 'schemas';
+import { Dialog, Alert } from 'types';
 import RunDataOptions from './RunDataOptions';
 import Dropdown from './components/Dropdown.vue';
 import ConfigButton from './components/ConfigButton.vue';
-import { HoraroImportStatus } from '../../../schemas';
+import { SaveOpts, AddCustomColumn, LoadOpts, ClearOpts, UpdateColumn, Opts } from './store';
+import { getDialog } from '../_misc/helpers';
 
-export default Vue.extend({
+@Component({
   components: {
     Dropdown,
     ConfigButton,
   },
-  data() {
-    return {
-      dashID: uuid(), // Temp ID for this page load.
-      url: nodecg.bundleConfig.schedule.defaultURL,
-      loaded: false,
-      saved: false,
-      restored: false,
-      columns: [] as string[],
-      runDataOptions: RunDataOptions,
-      splitOptionsOpts: [
-        {
-          value: 0,
-          text: this.$t('splitOptVersus'),
-        },
-        {
-          value: 1,
-          text: this.$t('splitOptComma'),
-        },
-      ],
-    };
-  },
-  computed: {
-    importStatus(): HoraroImportStatus {
-      return repStore.state.horaroImportStatus;
+})
+export default class extends Vue {
+  @State opts!: Opts;
+  @State('horaroImportStatus') importStatus!: HoraroImportStatus;
+  @State horaroImportSavedOpts!: HoraroImportSavedOpts;
+  @State2Way('updateSplit', 'opts.split') splitOption!: number;
+  @Mutation updateColumn!: UpdateColumn;
+  @Mutation('saveOpts') saveOptsMutation!: SaveOpts;
+  @Mutation addCustomColumn!: AddCustomColumn;
+  @Mutation loadOpts!: LoadOpts;
+  @Mutation('clearOpts') clearOptsMutation!: ClearOpts;
+  dashID = uuid(); // Temp ID for this page load.
+  url = (nodecg.bundleConfig as Configschema).schedule.defaultURL;
+  loaded = false;
+  saved = false;
+  restored = false;
+  columns: string[] = [];
+  runDataOptions = RunDataOptions;
+  splitOptionsOpts = [
+    {
+      value: 0,
+      text: this.$t('splitOptVersus'),
     },
-    splitOption: {
-      get(): number {
-        return store.state.opts.split;
-      },
-      set(value: number): void {
-        store.commit('updateSplit', { value });
-      },
+    {
+      value: 1,
+      text: this.$t('splitOptComma'),
     },
-    customData(): { name: string; key: string }[] {
-      return nodecg.bundleConfig.schedule.customData || [];
-    },
-  },
-  created() {
-    this.addCustomDataDropdowns(); // Add dropdowns for custom data on page load.
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
-    }
-  },
-  methods: {
-    loadSchedule(): void {
-      nodecg.sendMessage('loadSchedule', {
+  ];
+
+  get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
+    return (nodecg.bundleConfig as Configschema).schedule.customData || [];
+  }
+
+  async loadSchedule(): Promise<void> {
+    try {
+      const data = await nodecg.sendMessage('loadSchedule', {
         url: this.url,
         dashID: this.dashID,
-      }).then((data) => {
-        this.loaded = true;
-        this.columns = data.schedule.columns;
-        if (repStore.state.horaroImportSavedOpts) {
-          store.commit('loadOpts');
-        } else {
-          this.predictColumns();
-        }
-      }).catch(() => {
-        this.loaded = false;
       });
-    },
-    addCustomDataDropdowns(): void {
-      this.runDataOptions = this.runDataOptions.concat(
-        this.customData.map((col) => {
-          store.commit('addCustomColumn', { name: col.key });
-          return {
-            name: col.name,
-            key: col.key,
-            custom: true,
-            predict: [
-              col.name.toLowerCase(),
-            ],
-          };
-        }),
+      this.loaded = true;
+      this.columns = data.schedule.columns;
+      if (this.horaroImportSavedOpts) {
+        this.loadOpts();
+      } else {
+        this.predictColumns();
+      }
+    } catch (err) {
+      this.loaded = false;
+    }
+  }
+
+  addCustomDataDropdowns(): void {
+    this.runDataOptions = this.runDataOptions.concat(
+      this.customData.map((col) => {
+        this.addCustomColumn(col.key);
+        return {
+          name: col.name,
+          key: col.key,
+          custom: true,
+          predict: [
+            col.name.toLowerCase(),
+          ],
+        };
+      }),
+    );
+  }
+
+  predictColumns(): void {
+    this.runDataOptions.forEach((option) => {
+      if (!option.predict.length) {
+        return; // Ignore if no way to predict.
+      }
+      const index = this.columns.findIndex(
+        (col) => option.predict.some((pred) => !!col.toLowerCase().includes(pred)),
       );
-    },
-    predictColumns(): void {
-      this.runDataOptions.forEach((option) => {
-        if (!option.predict.length) {
-          return; // Ignore if no way to predict.
-        }
-        const index = this.columns.findIndex(
-          (col) => option.predict.some((pred) => !!col.toLowerCase().includes(pred)),
-        );
-        store.commit('updateColumn', {
-          name: option.key,
-          value: (index >= 0) ? index : null,
-          custom: option.custom,
-        });
+      this.updateColumn({
+        name: option.key,
+        value: (index >= 0) ? index : null,
+        custom: option.custom || false,
       });
-    },
-    importConfirm(): void {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      alertDialog.querySelector('iframe').contentWindow.open({
+    });
+  }
+
+  importConfirm(): void {
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'ImportConfirm',
         func: this.import,
       });
-    },
-    import(confirm: boolean): void {
-      if (confirm) {
-        nodecg.sendMessage('importSchedule', {
-          opts: store.state.opts,
+    }
+  }
+
+  async import(confirm: boolean): Promise<void> {
+    if (confirm) {
+      try {
+        await nodecg.sendMessage('importSchedule', {
+          opts: this.opts,
           dashID: this.dashID,
-        }).then(() => {
-          this.loaded = false;
-        }).catch(() => {
-          this.loaded = false;
         });
+      } catch (err) {
+        // catch
       }
-    },
-    saveOpts(): void {
-      store.commit('saveOpts');
-      this.saved = true;
-      setTimeout(() => { this.saved = false; }, 1000);
-    },
-    clearOpts(): void {
-      store.commit('clearOpts');
-      this.customData.forEach((col) => {
-        store.commit('addCustomColumn', { name: col.key });
-      });
-      this.predictColumns();
-      this.restored = true;
-      setTimeout(() => { this.restored = false; }, 1000);
-    },
-  },
-});
+      this.loaded = false;
+    }
+  }
+
+  saveOpts(): void {
+    this.saveOptsMutation();
+    this.saved = true;
+    setTimeout(() => { this.saved = false; }, 1000);
+  }
+
+  clearOpts(): void {
+    this.clearOptsMutation();
+    this.customData.forEach((col) => {
+      this.addCustomColumn(col.key);
+    });
+    this.predictColumns();
+    this.restored = true;
+    setTimeout(() => { this.restored = false; }, 1000);
+  }
+
+  created(): void {
+    this.addCustomDataDropdowns(); // Add dropdowns for custom data on page load.
+  }
+
+  mounted(): void {
+    if (window.frameElement?.parentElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
+    }
+  }
+}
 </script>
 
-<style>
+<style scoped>
   /* Tweaks to dropdowns to make them smaller. */
-  .Dropdown .v-input__slot {
+  .Dropdown >>> .v-input__slot {
     min-height: 0 !important;
   }
-  .Dropdown .v-label {
+  .Dropdown >>> .v-label {
     top: 4px !important;
   }
-  .Dropdown .v-input__append-inner {
+  .Dropdown >>> .v-input__append-inner {
     margin-top: 2px !important;
   }
 </style>

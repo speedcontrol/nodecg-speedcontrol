@@ -22,23 +22,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
-export default Vue.extend({
-  name: 'ModifyButton',
-  props: {
-    icon: {
-      type: String,
-      default: '',
-    },
-    tooltip: {
-      type: String,
-      default: '',
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-});
+@Component
+export default class extends Vue {
+  @Prop({ type: String, required: true }) readonly icon!: string;
+  @Prop({ type: String, required: true }) readonly tooltip!: string;
+  @Prop(Boolean) readonly disabled!: boolean;
+}
 </script>

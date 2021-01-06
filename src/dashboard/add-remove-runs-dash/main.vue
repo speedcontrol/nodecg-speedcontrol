@@ -17,65 +17,71 @@
       class="green darken-2"
       @click="openAddDialog"
     >
-      <v-icon>mdi-plus-box</v-icon>{{ $t('addNewRun') }}
+      <v-icon class="pr-2">
+        mdi-plus-box
+      </v-icon>{{ $t('addNewRun') }}
     </v-btn>
     <v-btn
-      class="red darken-2"
-      :disabled="removeAllDisabled"
+      class="red darken-2 mt-3"
+      :disabled="disableRemoveAll"
       @click="removeAllRunsConfirm"
     >
-      <v-icon>mdi-delete</v-icon>{{ $t('removeAllRuns') }}
+      <v-icon class="pr-2">
+        mdi-delete
+      </v-icon>{{ $t('removeAllRuns') }}
     </v-btn>
   </v-app>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { nodecg } from '../_misc/nodecg';
-import { store } from '../_misc/replicant-store';
+import { Vue, Component } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { Timer } from 'schemas';
+import { Dialog, RunModification, Alert } from 'types';
+import { getDialog } from '../_misc/helpers';
 
-export default Vue.extend({
-  computed: {
-    removeAllDisabled(): boolean {
-      return ['running', 'paused'].includes(store.state.timer.state);
-    },
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+@Component
+export default class extends Vue {
+  @State timer!: Timer;
+
+  get disableRemoveAll(): boolean {
+    return ['running', 'paused'].includes(this.timer.state);
+  }
+
+  openAddDialog(): void {
+    const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+    if (dialog) {
+      dialog.openDialog({ mode: 'New' });
     }
-  },
-  methods: {
-    openAddDialog(): void {
-      const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      runInfoDialog.querySelector('iframe').contentWindow.open({ mode: 'New' });
-    },
-    removeAllRunsConfirm(): void {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      alertDialog.querySelector('iframe').contentWindow.open({
+  }
+
+  removeAllRunsConfirm(): void {
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'RemoveAllRunsConfirm',
         func: this.removeAllRuns,
       });
-    },
-    removeAllRuns(confirm: boolean): void {
-      if (confirm) {
-        nodecg.sendMessage('removeAllRuns').then(() => {
-          // successful
-        }).catch(() => {
-          // unsuccessful
-        });
+    }
+  }
+
+  async removeAllRuns(confirm: boolean): Promise<void> {
+    if (confirm) {
+      try {
+        await nodecg.sendMessage('removeAllRuns');
+      } catch (err) {
+        // unsuccessful
       }
-    },
-  },
-});
+    }
+  }
+
+  mounted(): void {
+    if (window.frameElement?.parentElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
+    }
+  }
+}
 </script>
-
-<style scoped>
-  .v-btn:not(:first-of-type) {
-    margin-top: 10px;
-  }
-
-  .v-icon {
-    padding-right: 5px;
-  }
-</style>

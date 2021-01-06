@@ -21,6 +21,7 @@
   <v-app>
     <div>
       <v-btn
+        :style="{ 'margin-bottom': '5px' }"
         block
         :disabled="!activeRun || disableChange"
         @click="returnToStartConfirm"
@@ -31,8 +32,10 @@
     <div>
       <v-btn
         class="NextRunBtn"
+        :style="{ 'margin-bottom': '5px' }"
         width="100%"
         block
+        :title="nextRunStr"
         :disabled="disableChange || !nextRun"
         @click="playNextRun"
       >
@@ -47,7 +50,7 @@
               </v-icon>
             </div>
             <div :style="{ overflow: 'hidden' }">
-              {{ nextRunGameName }}
+              {{ nextRunStr }}
             </div>
           </template>
           <div v-else-if="runDataArray.length">
@@ -63,7 +66,7 @@
         dense
         type="info"
       >
-        {{ $t('cannotChange', { state: timerState }) }}
+        {{ $t('cannotChange', { state: timer.state }) }}
       </v-alert>
     </div>
     <run-list />
@@ -71,90 +74,92 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import RunList from '../_misc/components/RunList/RunList.vue';
-import { store } from '../_misc/replicant-store';
-import { RunData, RunDataArray, RunDataActiveRun } from '../../../types';
-import { RunDataActiveRunSurrounding } from '../../../schemas';
+import { Vue, Component } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { RunDataArray, RunDataActiveRun, RunDataActiveRunSurrounding, Timer } from 'schemas';
+import { RunData, Dialog, Alert } from 'types';
+import RunList from '../_misc/components/RunList.vue';
+import { getDialog } from '../_misc/helpers';
 
-export default Vue.extend({
+@Component({
   components: {
     RunList,
   },
-  computed: {
-    runDataArray(): RunDataArray {
-      return store.state.runDataArray;
-    },
-    activeRun(): RunDataActiveRun {
-      return store.state.runDataActiveRun;
-    },
-    runDataActiveRunSurrounding(): RunDataActiveRunSurrounding {
-      return store.state.runDataActiveRunSurrounding;
-    },
-    nextRun(): RunData | undefined {
-      return this.runDataArray.find((run) => run.id === this.runDataActiveRunSurrounding.next);
-    },
-    nextRunGameName(): string {
-      if (this.nextRun && this.nextRun.game) {
-        return this.nextRun.game;
-      }
-      return '(The Run With No Name)';
-    },
-    timerState(): string {
-      return store.state.timer.state;
-    },
-    disableChange(): boolean {
-      return ['running', 'paused'].includes(this.timerState);
-    },
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+})
+export default class extends Vue {
+  @State runDataArray!: RunDataArray;
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
+  @State runDataActiveRunSurrounding!: RunDataActiveRunSurrounding;
+  @State timer!: Timer;
+
+  get nextRun(): RunData | undefined {
+    return this.runDataArray.find((run) => run.id === this.runDataActiveRunSurrounding.next);
+  }
+
+  get nextRunStr(): string {
+    if (this.nextRun) {
+      const arr = [
+        this.nextRun.game || '?',
+        this.nextRun.category,
+      ].filter(Boolean);
+      return arr.join(' - ');
     }
-  },
-  methods: {
-    returnToStartConfirm(): void {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      alertDialog.querySelector('iframe').contentWindow.open({
+    return '?';
+  }
+
+  get disableChange(): boolean {
+    return ['running', 'paused'].includes(this.timer.state);
+  }
+
+  returnToStartConfirm(): void {
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'ReturnToStartConfirm',
         func: this.returnToStart,
       });
-    },
-    returnToStart(confirm: boolean): void {
-      if (confirm) {
-        nodecg.sendMessage('returnToStart').then(() => {
-          // run removal successful
-        }).catch(() => {
-          // run removal unsuccessful
-        });
+    }
+  }
+
+  async returnToStart(confirm: boolean): Promise<void> {
+    if (confirm) {
+      try {
+        await nodecg.sendMessage('returnToStart');
+      } catch (err) {
+        // run removal unsuccessful
       }
-    },
-    playNextRun(): void {
-      if (this.nextRun) {
-        nodecg.sendMessage('changeToNextRun').then((noTwitchGame) => {
-          if (noTwitchGame) {
-            const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-            alertDialog.querySelector('iframe').contentWindow.open({
-              name: 'NoTwitchGame',
-            });
+    }
+  }
+
+  async playNextRun(): Promise<void> {
+    if (this.nextRun) {
+      try {
+        const noTwitchGame = await nodecg.sendMessage('changeToNextRun');
+        if (noTwitchGame) {
+          const dialog = getDialog('alert-dialog') as Alert.Dialog;
+          if (dialog) {
+            dialog.openDialog({ name: 'NoTwitchGame' });
           }
-        }).catch(() => {
-          // run change unsuccessful
-        });
+        }
+      } catch (err) {
+        // run change unsuccessful
       }
-    },
-  },
-});
+    }
+  }
+
+  mounted(): void {
+    if (window.frameElement?.parentElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
+    }
+  }
+}
 </script>
 
 <style scoped>
-  .v-btn {
-    margin-bottom: 5px;
-  }
-</style>
-
-<style>
-  .NextRunBtn > .v-btn__content {
+  .NextRunBtn >>> .v-btn__content {
     width: 100%;
   }
 </style>

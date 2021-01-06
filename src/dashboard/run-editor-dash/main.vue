@@ -20,41 +20,45 @@
     >
       {{ $t('editActive') }}
     </v-btn>
-    <run-list :editor="true" />
+    <run-list editor />
   </v-app>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { store } from '../_misc/replicant-store';
-import { nodecg } from '../_misc/nodecg';
-import RunList from '../_misc/components/RunList/RunList.vue';
-import { RunDataActiveRun } from '../../../types';
+import { Vue, Component } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { RunDataActiveRun } from 'schemas';
+import { Dialog, RunModification } from 'types';
+import RunList from '../_misc/components/RunList.vue';
+import { getDialog } from '../_misc/helpers';
 
-export default Vue.extend({
+@Component({
   components: {
     RunList,
   },
-  computed: {
-    activeRun(): RunDataActiveRun {
-      return store.state.runDataActiveRun;
-    },
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
-    }
-  },
-  methods: {
-    editActiveRun(): void {
-      if (this.activeRun) {
-        const runInfoDialog = nodecg.getDialog('run-modification-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-        runInfoDialog.querySelector('iframe').contentWindow.open({
+})
+export default class extends Vue {
+  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
+
+  editActiveRun(): void {
+    if (this.activeRun) {
+      const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+      if (dialog) {
+        dialog.openDialog({
           mode: 'EditActive',
           runData: this.activeRun,
         });
       }
-    },
-  },
-});
+    }
+  }
+
+  mounted(): void {
+    if (window.frameElement?.parentElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
+    }
+  }
+}
 </script>

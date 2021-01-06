@@ -9,7 +9,8 @@ const emitter = new EventEmitter();
  * check if it has been handled or not.
  * @param ack Acknowledgement function from sendMessage.
  */
-function wrapAck(ack: Function): Function {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function wrapAck(ack: any): any {
   let handled = false;
   const func = (...args: unknown[]): void => {
     if (handled) {

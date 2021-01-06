@@ -23,11 +23,11 @@ module.exports = {
     'airbnb-base',
     'plugin:vue/recommended',
     'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
   ],
   settings: {
+    'import/core-modules': ['nodecg/types/browser'],
     'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
     'import/resolver': {
       node: {
@@ -59,5 +59,7 @@ module.exports = {
       }
     ],
     'lines-between-class-members': 'off',
+    'class-methods-use-this': 'off',
+    'object-curly-newline': 'off',
   }
 };

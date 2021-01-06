@@ -103,7 +103,7 @@ A reference for the previous/current/next run's IDs, if available. These are rec
   - `timestamp` *[`number`]* A `Date.now()` timestamp of when the last tick update happened, used internally for time recovery if NodeCG is closed/quits unexpectedly.
   - `teamFinishTimes` *[`object`]* Keyed object for the time a team has finished; key is the team ID. This is used even during non-race runs, so if you need to know if one of those was forfeit you will need to check the finish time in here. Object is an identical copy to the `timer` replicant, except `teamFinishTimes` is removed, and `state` is different:
     - `"completed"` This team successfully finished the run
-    - `"forfeit"` This team forfeit the runnow if one of those was forfeit you still need to check the finish time here.
+    - `"forfeit"` This team forfeit the run
 ### Example code
 ```javascript
 const timer = nodecg.Replicant('timer', 'nodecg-speedcontrol');

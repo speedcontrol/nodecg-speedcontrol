@@ -14,18 +14,13 @@
     <div>
       {{ $t('alertText') }}
       <div
-        v-if="alertData.runData && alertData.runData.game && alertData.runData.category"
-        style="margin-top: 10px; font-style: italic;"
+        v-if="runStr"
+        :style="{
+          'margin-top': '10px',
+          'font-style': 'italic',
+        }"
       >
-        <span v-if="alertData.runData.game">
-          {{ alertData.runData.game }}
-        </span>
-        <span v-if="alertData.runData.game && alertData.runData.category">
-          -
-        </span>
-        <span v-if="alertData.runData.category">
-          {{ alertData.runData.category }}
-        </span>
+        {{ runStr }}
       </div>
     </div>
     <br>
@@ -41,16 +36,23 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { RunData } from 'types';
 
-export default Vue.extend({
-  props: {
-    alertData: {
-      type: Object,
-      default(): object {
-        return {};
-      },
-    },
-  },
-});
+@Component
+export default class extends Vue {
+  @Prop({ type: Object, required: true }) readonly alertData!: { runData?: RunData };
+
+  get runStr(): string | undefined {
+    if (this.alertData.runData
+      && (this.alertData.runData.game || this.alertData.runData.category)) {
+      const arr = [
+        this.alertData.runData.game || '?',
+        this.alertData.runData.category,
+      ].filter(Boolean);
+      return arr.join(' - ');
+    }
+    return undefined;
+  }
+}
 </script>

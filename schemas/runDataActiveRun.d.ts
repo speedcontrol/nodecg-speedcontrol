@@ -29,6 +29,9 @@ export type RunDataActiveRun = {
       social: {
         twitch?: string;
       };
+      customData: {
+        [k: string]: string;
+      };
     }[];
   }[];
   customData: {

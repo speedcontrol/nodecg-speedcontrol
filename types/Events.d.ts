@@ -1,6 +1,6 @@
-import { BodyData, NeedleHttpVerbs, NeedleResponse } from "needle";
-import { RunData } from "./RunData";
-import { CommercialDuration } from "./Twitch";
+import { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
+import { RunData } from './RunData';
+import { CommercialDuration } from './Twitch';
 
 export interface SendMessageArgsMap {
   // Timer
@@ -23,7 +23,12 @@ export interface SendMessageArgsMap {
   twitchCommercialStarted: { duration: CommercialDuration }
   twitchStartCommercial: { duration?: CommercialDuration }
   twitchUpdateChannelInfo: { status?: string; game?: string };
-  twitchAPIRequest: { method: NeedleHttpVerbs; endpoint: string; data?: BodyData; newAPI?: boolean };
+  twitchAPIRequest: {
+    method: NeedleHttpVerbs;
+    endpoint: string;
+    data?: BodyData;
+    newAPI?: boolean
+  };
 
   // Featured Channels
   updateFeaturedChannels: string[];
@@ -65,6 +70,7 @@ interface HandledSendMessageAck {
 }
 
 interface UnhandledSendMessageAck {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (error: Error | null, data?: any): void;
   handled: false;
 }

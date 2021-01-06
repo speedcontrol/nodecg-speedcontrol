@@ -34,42 +34,43 @@
       :label="$t('countryCode')"
       left-border
     />
+    <text-input
+      v-for="data in customData"
+      :key="data.key"
+      v-model="playerData.customData[data.key]"
+      :label="data.name"
+      left-border
+    />
     <modify-button
       :style="{ 'margin-left': '5px' }"
       icon="mdi-account-minus"
       :tooltip="$t('removePlayer')"
-      @click="removePlayer"
+      @click="removePlayer({ teamID: playerData.teamID, id: playerData.id })"
     />
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import store from '../store';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Mutation } from 'vuex-class';
+import { Configschema } from 'configschema';
+import { RunDataPlayer } from 'types';
 import TextInput from './TextInput.vue';
 import ModifyButton from './ModifyButton.vue';
+import { RemovePlayer } from '../store';
 
-export default Vue.extend({
-  name: 'Player',
+@Component({
   components: {
     TextInput,
     ModifyButton,
   },
-  props: {
-    playerData: {
-      type: Object,
-      default(): object {
-        return {};
-      },
-    },
-  },
-  methods: {
-    removePlayer(): void {
-      store.commit('removePlayer', {
-        teamID: this.playerData.teamID,
-        id: this.playerData.id,
-      });
-    },
-  },
-});
+})
+export default class extends Vue {
+  @Prop({ type: Object, required: true }) playerData!: RunDataPlayer;
+  @Mutation removePlayer!: RemovePlayer;
+
+  get customData(): { name: string, key: string }[] {
+    return (nodecg.bundleConfig as Configschema).customData?.player || [];
+  }
+}
 </script>

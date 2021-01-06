@@ -29,6 +29,9 @@ export type RunDataArray = {
       social: {
         twitch?: string;
       };
+      customData: {
+        [k: string]: string;
+      };
     }[];
   }[];
   customData: {

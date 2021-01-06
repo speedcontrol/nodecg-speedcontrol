@@ -44,7 +44,9 @@
       <a
         :href="url"
         target="_blank"
-      ><img src="./twitch-login.png"></a>
+      >
+        <img src="./twitch-login.png">
+      </a>
       <br><em>{{ $t('twitchLogin') }}</em>
     </div>
     <!-- Enabled, authenticating server-side. -->
@@ -53,7 +55,14 @@
     </div>
     <!-- Ready server-side. -->
     <div v-else>
-      <div id="LogoutContainer">
+      <div
+        :style="{
+          width: '100%',
+          display: 'flex',
+          padding: 0,
+          'justify-content': 'flex-end',
+        }"
+      >
         <v-tooltip left>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -71,7 +80,14 @@
           <span>{{ $t('logout') }}</span>
         </v-tooltip>
       </div>
-      <div id="AutoSyncContainer">
+      <div
+        id="AutoSyncContainer"
+        :style="{
+          'display': 'flex',
+          'align-items': 'center',
+          padding: '10px',
+        }"
+      >
         <v-switch
           v-model="sync"
           inset
@@ -162,182 +178,164 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Watch } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { State2Way } from 'vuex-class-state2way';
 import { debounce } from 'lodash';
-import { nodecg } from '../_misc/nodecg';
-import { Configschema } from '../../../configschema';
-import { store } from '../_misc/replicant-store';
-import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '../../../schemas';
-import { padTimeNumber } from '../_misc/helpers';
+import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from 'schemas';
+import { Configschema } from 'configschema';
+import { Dialog, Alert } from 'types';
+import { padTimeNumber, getDialog } from '../_misc/helpers';
 
-export default Vue.extend({
-  data() {
-    return {
-      focus: false,
-      title: '',
-      game: '',
-      users: '',
-    };
-  },
-  computed: {
-    config(): Configschema['twitch'] {
-      return nodecg.bundleConfig.twitch;
-    },
-    apiData(): TwitchAPIData {
-      return store.state.twitchAPIData;
-    },
-    channelInfo(): TwitchChannelInfo {
-      return store.state.twitchChannelInfo;
-    },
-    timer(): TwitchCommercialTimer {
-      return store.state.twitchCommercialTimer;
-    },
-    sync: {
-      get(): boolean {
-        return store.state.twitchAPIData.sync;
-      },
-      set(value: boolean): void {
-        store.commit('updateTwitchSyncToggle', { value });
-      },
-    },
-    url(): string {
-      const config = (nodecg.bundleConfig as Configschema).twitch;
-      const scopes = [
-        'channel_editor',
-        'user_read',
-        'chat:read',
-        'chat:edit',
-        'channel_commercial',
-      ];
-      if (config.additionalScopes) {
-        const addScopes = config.additionalScopes.filter((s) => !scopes.includes(s));
-        scopes.push(...addScopes);
-      }
-      return 'https://id.twitch.tv/oauth2/authorize'
-      + `?client_id=${this.config.clientID}`
-      + `&redirect_uri=${this.config.redirectURI}`
-      + '&response_type=code'
-      + `&scope=${scopes.join('+')}`
-      + '&force_verify=true';
-    },
-    commercialTimeRemaining(): string {
-      return this.formatSeconds(this.timer.secondsRemaining);
-    },
-  },
-  watch: {
-    apiData: {
-      handler(): void {
-        this.updateInputs();
-      },
-      immediate: true,
-    },
-    channelInfo: {
-      handler(): void {
-        this.updateInputs();
-      },
-      immediate: true,
-    },
-  },
-  created() {
-    this.blurInput = debounce(this.blurInput, 20 * 1000);
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+@Component
+export default class extends Vue {
+  @State('twitchAPIData') apiData!: TwitchAPIData;
+  @State('twitchChannelInfo') channelInfo!: TwitchChannelInfo;
+  @State('twitchCommercialTimer') timer!: TwitchCommercialTimer;
+  @State2Way('updateSyncToggle', 'twitchAPIData.sync') sync!: boolean;
+  focus = false;
+  title = '';
+  game = '';
+  users = '';
+
+  @Watch('apiData', { immediate: true })
+  onAPIDataChange(): void {
+    this.updateInputs();
+  }
+
+  @Watch('channelInfo', { immediate: true })
+  onChannelInfoChange(): void {
+    this.updateInputs();
+  }
+
+  get config(): Configschema['twitch'] {
+    return (nodecg.bundleConfig as Configschema).twitch;
+  }
+
+  get url(): string {
+    const scopes = [
+      'channel_editor',
+      'user_read',
+      'chat:read',
+      'chat:edit',
+      'channel_commercial',
+    ];
+    if (this.config.additionalScopes) {
+      const addScopes = this.config.additionalScopes.filter((s) => !scopes.includes(s));
+      scopes.push(...addScopes);
     }
-  },
-  methods: {
-    formatSeconds(sec: number): string {
-      const minutes = Math.floor(sec / 60);
-      const seconds = Math.floor(sec - minutes * 60);
-      return `${minutes}:${padTimeNumber(seconds)}`;
-    },
-    inputActivity(evt: Event): void {
-      if (['input', 'focus'].includes(evt.type)) {
-        this.focus = true;
-        this.blurInput(evt);
-      } else if (evt.type === 'blur') {
-        this.focus = false;
-      }
-    },
-    blurInput(evt: Event): void {
-      (evt.target as HTMLTextAreaElement).blur();
-    },
-    updateInputs(): void {
-      if (!this.focus) {
-        this.title = this.channelInfo.status;
-        this.game = this.channelInfo.game;
-        this.users = this.apiData.featuredChannels.join(', ');
-      }
-    },
-    updateChannelInfo(): void {
-      nodecg.sendMessage('twitchUpdateChannelInfo', {
+    return 'https://id.twitch.tv/oauth2/authorize'
+    + `?client_id=${this.config.clientID}`
+    + `&redirect_uri=${this.config.redirectURI}`
+    + '&response_type=code'
+    + `&scope=${scopes.join('+')}`
+    + '&force_verify=true';
+  }
+
+  get commercialTimeRemaining(): string {
+    return this.formatSeconds(this.timer.secondsRemaining);
+  }
+
+  formatSeconds(sec: number): string {
+    const minutes = Math.floor(sec / 60);
+    const seconds = Math.floor(sec - minutes * 60);
+    return `${minutes}:${padTimeNumber(seconds)}`;
+  }
+
+  inputActivity(evt: Event): void {
+    if (['input', 'focus'].includes(evt.type)) {
+      this.focus = true;
+      this.blurInput(evt);
+    } else if (evt.type === 'blur') {
+      this.focus = false;
+    }
+  }
+
+  blurInput(evt: Event): void {
+    (evt.target as HTMLTextAreaElement).blur();
+  }
+
+  updateInputs(): void {
+    if (!this.focus) {
+      this.title = this.channelInfo.status as string;
+      this.game = this.channelInfo.game as string;
+      this.users = this.apiData.featuredChannels.join(', ');
+    }
+  }
+
+  async updateChannelInfo(): Promise<void> {
+    try {
+      const noTwitchGame = await nodecg.sendMessage('twitchUpdateChannelInfo', {
         status: this.title,
         game: this.game,
-      }).then((noTwitchGame) => {
-        if (noTwitchGame) {
-          const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-          alertDialog.querySelector('iframe').contentWindow.open({
-            name: 'NoTwitchGame',
-          });
-        }
-      }).catch(() => {
-        // unsuccessful
       });
-      if (this.config.ffzIntegration) {
-        nodecg.sendMessage(
+      if (noTwitchGame) {
+        const dialog = getDialog('alert-dialog') as Alert.Dialog;
+        if (dialog) {
+          dialog.openDialog({ name: 'NoTwitchGame' });
+        }
+      }
+    } catch (err) {
+      // catch
+    }
+    if (this.config.ffzIntegration) {
+      try {
+        await nodecg.sendMessage(
           'updateFeaturedChannels',
           this.users.replace(/\s/g, '').split(',').filter(Boolean),
-        ).then(() => {
-          // successful
-        }).catch(() => {
-          // unsuccessful
-        });
+        );
+      } catch (err) {
+        // catch
       }
-    },
-    startCommercial(duration: number): void {
-      nodecg.sendMessage('twitchStartCommercial', { duration }).then(() => {
-        // successful
-      }).catch(() => {
-        // unsuccessful
-      });
-    },
-    logoutConfirm(): void {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      alertDialog.querySelector('iframe').contentWindow.open({
+    }
+  }
+
+  async startCommercial(duration: number): Promise<void> {
+    try {
+      await nodecg.sendMessage('twitchStartCommercial', { duration });
+    } catch (err) {
+      // catch
+    }
+  }
+
+  logoutConfirm(): void {
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'TwitchLogoutConfirm',
         func: this.logout,
       });
-    },
-    logout(confirm: boolean): void {
-      if (confirm) {
-        nodecg.sendMessage('twitchLogout').then(() => {
-          // successful
-        }).catch(() => {
-          // unsuccessful
-        });
+    }
+  }
+
+  async logout(confirm: boolean): Promise<void> {
+    if (confirm) {
+      try {
+        await nodecg.sendMessage('twitchLogout');
+      } catch (err) {
+        // catch
       }
-    },
-  },
-});
+    }
+  }
+
+  created(): void {
+    this.blurInput = debounce(this.blurInput, 20 * 1000);
+  }
+
+  mounted(): void {
+    if (window.frameElement?.parentElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
+    }
+  }
+}
 </script>
 
 <style scoped>
   #AutoSyncContainer > .v-input {
     margin: 0;
     padding: 0;
-  }
-
-  #LogoutContainer {
-    width: 100%;
-    display: flex;
-    padding: 0;
-    justify-content: flex-end;
-  }
-
-  #AutoSyncContainer {
-    display: flex;
-    align-items: center;
-    padding: 10px;
   }
 </style>

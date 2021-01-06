@@ -48,9 +48,13 @@ plugins = plugins.concat(
           template: './template.html',
         }),
     ),
-    /* new ForkTsCheckerWebpackPlugin({
-      vue: true,
-    }), */
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        extensions: {
+          vue: true,
+        },
+      },
+    }),
   ]
 );
 if (isProd) {
@@ -87,14 +91,24 @@ module.exports = {
         test: /\.css$/,
         use: [
           (isProd) ? miniCSSOpts : 'vue-style-loader',
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              esModule: false,
+            },
+          },
         ],
       },
       {
         test: /\.s(c|a)ss$/,
         use: [
           (isProd) ? miniCSSOpts : 'vue-style-loader',
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              esModule: false,
+            },
+          },
           {
             loader: 'sass-loader',
             options: {

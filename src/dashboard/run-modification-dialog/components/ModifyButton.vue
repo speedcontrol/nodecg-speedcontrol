@@ -17,19 +17,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
-export default Vue.extend({
-  name: 'ModifyButton',
-  props: {
-    icon: {
-      type: String,
-      default: '',
-    },
-    tooltip: {
-      type: String,
-      default: '',
-    },
-  },
-});
+@Component
+export default class extends Vue {
+  @Prop({ type: String, default: '' }) icon!: string;
+  @Prop({ type: String, default: '' }) tooltip!: string;
+}
 </script>

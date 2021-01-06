@@ -53,7 +53,7 @@
       <!-- Import Button, if importing -->
       <v-btn
         v-if="importStatus.importing"
-        :disabled="true"
+        disabled
         block
       >
         {{ $t('importProgress', { item: importStatus.item, total: importStatus.total }) }}
@@ -71,47 +71,49 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { Configschema } from 'configschema';
 import { OengusImportStatus } from 'schemas';
-import { store as repStore } from '../_misc/replicant-store';
+import { Dialog, Alert } from 'types';
+import { getDialog } from '../_misc/helpers';
 
-export default Vue.extend({
-  data() {
-    return {
-      marathonShort: nodecg.bundleConfig.oengus.defaultMarathon || '',
-      useJapanese: nodecg.bundleConfig.oengus.useJapanese,
-    };
-  },
-  computed: {
-    importStatus(): OengusImportStatus {
-      return repStore.state.oengusImportStatus;
-    },
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
-    }
-  },
-  methods: {
-    importConfirm(): void {
-      const alertDialog = nodecg.getDialog('alert-dialog') as any; // eslint-disable-line @typescript-eslint/no-explicit-any, max-len
-      alertDialog.querySelector('iframe').contentWindow.open({
+@Component
+export default class extends Vue {
+  @State('oengusImportStatus') importStatus!: OengusImportStatus;
+  marathonShort = (nodecg.bundleConfig as Configschema).oengus.defaultMarathon || '';
+  useJapanese = (nodecg.bundleConfig as Configschema).oengus.useJapanese;
+
+  importConfirm(): void {
+    const dialog = getDialog('alert-dialog') as Alert.Dialog;
+    if (dialog) {
+      dialog.openDialog({
         name: 'ImportConfirm',
         func: this.import,
       });
-    },
-    import(confirm: boolean): void {
-      if (confirm) {
-        nodecg.sendMessage('importOengusSchedule', {
+    }
+  }
+
+  async import(confirm: boolean): Promise<void> {
+    if (confirm) {
+      try {
+        await nodecg.sendMessage('importOengusSchedule', {
           marathonShort: this.marathonShort,
           useJapanese: this.useJapanese,
-        }).then(() => {
-          // successful
-        }).catch(() => {
-          // unsuccessful
         });
+      } catch (err) {
+        // catch
       }
-    },
-  },
-});
+    }
+  }
+
+  mounted(): void {
+    if (window.frameElement?.parentElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
+    }
+  }
+}
 </script>

@@ -9,7 +9,7 @@ import { msToTimeStr, processAck, timeStrToMS } from './util/helpers';
 import { get } from './util/nodecg';
 
 const nodecg = get();
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: persistenceInterval not typed yet
 const timerRep = nodecg.Replicant<Timer>('timer', { persistenceInterval: 1000 });
 const activeRun = nodecg.Replicant<RunDataActiveRun>('runDataActiveRun');
@@ -157,8 +157,8 @@ async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
       throw new Error('Timer changes are disabled');
     }
     // Error if timer is not running.
-    if (timerRep.value.state !== 'running') {
-      throw new Error('Timer is not running');
+    if (!['running', 'paused'].includes(timerRep.value.state)) {
+      throw new Error('Timer is not running/paused');
     }
     // Error if there's an active run but no UUID was sent.
     if (!id && activeRun.value && activeRun.value.teams.length) {
@@ -189,6 +189,9 @@ async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
     const teamsCount = (activeRun.value) ? activeRun.value.teams.length : 0;
     const teamsFinished = Object.keys(timerRep.value.teamFinishTimes).length;
     if (teamsFinished >= teamsCount) {
+      if (timerRep.value.state === 'paused') {
+        timer.resume();
+      }
       timer.split();
       timerRep.value.state = 'finished';
       if (activeRun.value) {
@@ -229,7 +232,12 @@ async function undoTimer(id?: string): Promise<void> {
 
     // Undo the split if needed.
     if (timerRep.value.state === 'finished') {
-      timer.undoSplit();
+      if (timer.currentPhase() === 0) {
+        timer.start();
+        setGameTime(timerRep.value.milliseconds);
+      } else {
+        timer.undoSplit();
+      }
       timerRep.value.state = 'running';
       if (activeRun.value && runFinishTimes.value[activeRun.value.id]) {
         delete runFinishTimes.value[activeRun.value.id];

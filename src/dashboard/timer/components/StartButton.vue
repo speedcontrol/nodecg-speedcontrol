@@ -42,33 +42,28 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { nodecg } from '../../_misc/nodecg';
-import { store } from '../../_misc/replicant-store';
+import { Vue, Component } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { Timer } from 'schemas';
 
-export default Vue.extend({
-  name: 'StartButton',
-  computed: {
-    state(): string {
-      return store.state.timer.state;
-    },
-  },
-  methods: {
-    button(): void {
+@Component
+export default class extends Vue {
+  @State timer!: Timer;
+
+  get state(): string {
+    return this.timer.state;
+  }
+
+  async button(): Promise<void> {
+    try {
       if (this.state === 'stopped' || this.state === 'paused') {
-        nodecg.sendMessage('timerStart').then(() => {
-          // successful
-        }).catch(() => {
-          // error
-        });
+        await nodecg.sendMessage('timerStart');
       } else if (this.state === 'running') {
-        nodecg.sendMessage('timerPause').then(() => {
-          // successful
-        }).catch(() => {
-          // error
-        });
+        await nodecg.sendMessage('timerPause');
       }
-    },
-  },
-});
+    } catch (err) {
+      // catch
+    }
+  }
+}
 </script>

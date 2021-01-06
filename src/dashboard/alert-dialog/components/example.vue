@@ -25,22 +25,22 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component } from 'vue-property-decorator';
 
-export default Vue.extend({
-  methods: {
-    confirm(): void {
-      // do stuff
-      const screwedUp = false;
-      if (screwedUp) {
-        return; // maybe they screwed something up and we wanna stop them
-      }
-      this.$emit('confirm');
-    },
-    dismiss(): void {
-      // do other stuff
-      this.$emit('dismiss');
-    },
-  },
-});
+@Component
+export default class extends Vue {
+  confirm(): void {
+    // do stuff
+    const screwedUp = false;
+    if (screwedUp) {
+      return; // maybe they screwed something up and we wanna stop them
+    }
+    this.$emit('confirm');
+  }
+
+  dismiss(): void {
+    // do other stuff
+    this.$emit('dismiss');
+  }
+}
 </script>

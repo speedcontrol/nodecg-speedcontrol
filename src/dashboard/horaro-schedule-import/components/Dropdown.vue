@@ -51,57 +51,50 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import store from '../store';
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { State, Mutation } from 'vuex-class';
+import { UpdateColumn, Opts } from '../store';
 
-export default Vue.extend({
-  props: {
-    option: {
-      type: Object,
-      default(): object {
-        return {
-          name: this.$t('game'),
-          key: 'game',
-          custom: false,
-        };
-      },
+@Component
+export default class extends Vue {
+  @Prop({
+    type: Object,
+    default: {
+      name: 'Game',
+      key: 'game',
+      custom: false,
     },
-    columns: {
-      type: Array,
-      default(): array {
-        return [];
+  }) readonly option!: { name: string, key: string, custom: boolean };
+  @Prop({ type: Array, required: true }) readonly columns!: string[];
+  @State opts!: Opts;
+  @Mutation updateColumn!: UpdateColumn;
+
+  get dropdownOpts(): { value: number, text: string }[] {
+    return [
+      {
+        value: -1,
+        text: this.$t('notApplicable') as string,
       },
-    },
-  },
-  computed: {
-    dropdownOpts(): array {
-      return [
-        {
-          value: -1,
-          text: this.$t('notApplicable'),
-        },
-      ].concat(
-        this.columns.map((value, index) => ({
-          value: index,
-          text: value,
-        })),
-      );
-    },
-    selected: {
-      get(): number {
-        if (this.option.custom) {
-          return store.state.opts.columns.custom[this.option.key];
-        }
-        return store.state.opts.columns[this.option.key];
-      },
-      set(value: number): void {
-        store.commit('updateColumn', {
-          name: this.option.key,
-          value,
-          custom: this.option.custom,
-        });
-      },
-    },
-  },
-});
+    ].concat(
+      this.columns.map((value, index) => ({
+        value: index,
+        text: value,
+      })),
+    );
+  }
+
+  get selected(): number | null {
+    if (this.option.custom) {
+      return this.opts.columns.custom[this.option.key];
+    }
+    return (this.opts.columns as unknown as { [k: string]: number | null })[this.option.key];
+  }
+  set selected(value: number | null) {
+    this.updateColumn({
+      name: this.option.key,
+      value,
+      custom: this.option.custom,
+    });
+  }
+}
 </script>

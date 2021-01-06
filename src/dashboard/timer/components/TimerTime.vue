@@ -36,60 +36,56 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { store } from '../../_misc/replicant-store';
+import { Vue, Component, Watch } from 'vue-property-decorator';
+import { State } from 'vuex-class';
+import { Timer } from 'schemas';
 
-export default Vue.extend({
-  name: 'TimerTime',
-  data() {
-    return {
-      time: '00:00:00',
-    };
-  },
-  computed: {
-    serverTime(): string {
-      return store.state.timer.time;
-    },
-    bgColour(): string {
-      switch (store.state.timer.state) {
-        case 'stopped':
-        case 'paused':
-        default:
-          return '#455A64';
-        case 'running':
-          return '';
-        case 'finished':
-          return '#388E3C';
+@Component
+export default class extends Vue {
+  @State timer!: Timer;
+  time = '00:00:00';
+
+  get serverTime(): string {
+    return this.timer.time;
+  }
+
+  get bgColour(): string {
+    switch (this.timer.state) {
+      case 'stopped':
+      case 'paused':
+      default:
+        return '#455A64';
+      case 'running':
+        return '';
+      case 'finished':
+        return '#388E3C';
+    }
+  }
+
+  get disableEditing(): boolean {
+    return ['running', 'finished'].includes(this.timer.state);
+  }
+
+  @Watch('serverTime', { immediate: true })
+  onServerTimeChange(val: string): void {
+    this.time = val;
+  }
+
+  async finishEdit(event: Event): Promise<void> {
+    if (this.time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
+      try {
+        await nodecg.sendMessage('timerEdit', this.time);
+      } catch (err) {
+        // catch
       }
-    },
-    disableEditing(): boolean {
-      return ['running', 'finished'].includes(store.state.timer.state);
-    },
-  },
-  watch: {
-    serverTime: {
-      handler(val): void {
-        this.time = val;
-      },
-      immediate: true,
-    },
-  },
-  methods: {
-    finishEdit(event: Event): void {
-      if (this.time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-        nodecg.sendMessage('timerEdit', this.time).then(() => {
-          // successful
-        }).catch(() => {
-          // error
-        });
-        (event.target as HTMLTextAreaElement).blur();
-      }
-    },
-    abandonEdit(): void {
-      this.time = this.serverTime;
-    },
-  },
-});
+      (event.target as HTMLTextAreaElement).blur();
+    }
+  }
+
+  abandonEdit(): void {
+    this.time = this.serverTime;
+  }
+}
 </script>
 
 <style scoped>

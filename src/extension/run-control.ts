@@ -14,7 +14,7 @@ const nodecg = get();
 const array = nodecg.Replicant<RunDataArray>('runDataArray');
 const activeRun = nodecg.Replicant<RunDataActiveRun>('runDataActiveRun');
 const activeRunSurr = nodecg.Replicant<RunDataActiveRunSurrounding>('runDataActiveRunSurrounding');
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: persistenceInterval not typed yet
 const timer = nodecg.Replicant<Timer>('timer', { persistenceInterval: 1000 });
 const twitchAPIData = nodecg.Replicant<TwitchAPIData>('twitchAPIData');
@@ -165,6 +165,7 @@ async function modifyRun(runData: RunData, prevID?: string, twitch = false): Pro
       teamData.players = teamData.players.map((player) => {
         const playerData = _.pickBy(player, _.identity) as RunDataPlayer;
         playerData.social = _.pickBy(playerData.social, _.identity);
+        playerData.customData = _.pickBy(playerData.customData, _.identity);
         return playerData;
       });
       return teamData;

@@ -44,42 +44,41 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component } from 'vue-property-decorator';
+import { State2Way } from 'vuex-class-state2way';
 import Draggable from 'vuedraggable';
-import { store } from '../_misc/replicant-store';
-import { RunDataTeam } from '../../../types';
+import { RunDataActiveRun } from 'schemas';
+import { RunDataTeam } from 'types';
 
-export default Vue.extend({
+@Component({
   components: {
     Draggable,
   },
-  computed: {
-    teams: {
-      get(): RunDataTeam[] {
-        return (store.state.runDataActiveRun) ? store.state.runDataActiveRun.teams : [];
-      },
-      set(value: RunDataTeam[]): void {
-        store.commit('updateActiveRunTeamOrder', { value });
-      },
-    },
-  },
-  mounted() {
-    if (window.frameElement) {
-      window.frameElement.parentElement.setAttribute('display-title', this.$t('panelTitle'));
+})
+export default class extends Vue {
+  @State2Way(
+    'updateTeamOrder',
+    (state: { runDataActiveRun?: RunDataActiveRun }) => state.runDataActiveRun?.teams || [],
+  ) teams!: RunDataTeam[];
+
+  mounted(): void {
+    if (window.frameElement?.parentElement) {
+      window.frameElement.parentElement.setAttribute(
+        'display-title',
+        this.$t('panelTitle') as string,
+      );
     }
-  },
-});
+  }
+}
 </script>
 
 <style scoped>
   .list-move {
     transition: transform 0.2s;
   }
-  .list-enter, .list-leave-to
-  /* .logo-list-complete-leave-active below version 2.1.8 */ {
+  .list-enter, .list-leave-to {
     opacity: 0;
-    transition: transform 0.2s;
-    transition: opacity 0.2s;
+    transition: transform 0.2s, opacity 0.2s;
   }
   .list-leave-active {
     position: absolute;
