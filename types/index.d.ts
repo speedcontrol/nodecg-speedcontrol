@@ -1,4 +1,5 @@
 export * from './Alert';
+export * from './CheckList';
 export * from './Dialog';
 export * from './Events';
 export * from './ExtensionReturn';

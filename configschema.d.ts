@@ -43,4 +43,9 @@ export interface Configschema {
       key: string;
     }[];
   } | null;
+  checklist: {
+    enabled: boolean;
+    items?: string[] | null;
+    forceCheckBeforeStartTimer: boolean;
+  };
 }

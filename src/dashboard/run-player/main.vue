@@ -125,6 +125,7 @@ export default class extends Vue {
     if (confirm) {
       try {
         await nodecg.sendMessage('returnToStart');
+        await nodecg.sendMessage('resetChecklist');
       } catch (err) {
         // run removal unsuccessful
       }
@@ -141,6 +142,7 @@ export default class extends Vue {
             dialog.openDialog({ name: 'NoTwitchGame' });
           }
         }
+        await nodecg.sendMessage('resetChecklist');
       } catch (err) {
         // run change unsuccessful
       }
