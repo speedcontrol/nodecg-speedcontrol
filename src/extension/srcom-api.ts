@@ -1,5 +1,6 @@
 import needle, { NeedleResponse } from 'needle';
 import { UserData } from '../../types';
+import { sleep } from './util/helpers';
 import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
@@ -77,6 +78,7 @@ export async function searchForUserData(query: string): Promise<UserData> {
     return userDataCache[query];
   }
   try {
+    await sleep(1000);
     const resp = await get(
       `/users?lookup=${encodeURIComponent(query)}&max=1`,
     );
