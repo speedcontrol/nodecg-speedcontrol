@@ -192,7 +192,8 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
               const tURL = (data.twitch && data.twitch.uri) ? data.twitch.uri : undefined;
               player.social.twitch = getTwitchUserFromURL(tURL);
             }
-            player.country = (data.location) ? data.location.country.code : undefined;
+            player.country = data.location?.country.code || undefined;
+            player.pronouns = data.pronouns || undefined;
           }
         }
         team.players.push(player);

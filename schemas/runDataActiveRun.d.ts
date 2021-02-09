@@ -26,6 +26,7 @@ export type RunDataActiveRun = {
       id: string;
       teamID: string;
       country?: string;
+      pronouns?: string;
       social: {
         twitch?: string;
       };

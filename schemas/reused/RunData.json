@@ -71,6 +71,9 @@
                 "country": {
                   "type": "string"
                 },
+                "pronouns": {
+                  "type": "string"
+                },
                 "social": {
                   "type": "object",
                   "additionalProperties": false,

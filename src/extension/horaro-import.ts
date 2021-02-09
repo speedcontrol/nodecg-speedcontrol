@@ -277,7 +277,8 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
                         ? sData.twitch.uri : undefined;
                       player.social.twitch = getTwitchUserFromURL(tURL);
                     }
-                    player.country = (sData.location) ? sData.location.country.code : undefined;
+                    player.country = sData.location?.country.code || undefined;
+                    player.pronouns = sData.pronouns || undefined;
                   }
                 }
                 return player;

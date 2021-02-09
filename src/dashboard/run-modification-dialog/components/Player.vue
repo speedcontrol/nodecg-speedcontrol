@@ -4,13 +4,15 @@
     "name": "Name",
     "twitch": "Twitch",
     "countryCode": "Country Code",
-    "removePlayer": "Remove Player"
+    "removePlayer": "Remove Player",
+    "pronouns": "Pronouns"
   },
   "ja": {
     "name": "プレイヤー名",
     "twitch": "Twitch ID",
     "countryCode": "国名コード",
-    "removePlayer": "プレイヤーの削除"
+    "removePlayer": "プレイヤーの削除",
+    "pronouns": "Pronouns"
   }
 }
 </i18n>
@@ -32,6 +34,11 @@
     <text-input
       v-model="playerData.country"
       :label="$t('countryCode')"
+      left-border
+    />
+    <text-input
+      v-model="playerData.pronouns"
+      :label="$t('pronouns')"
       left-border
     />
     <text-input
