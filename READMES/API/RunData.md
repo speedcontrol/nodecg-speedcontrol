@@ -26,12 +26,12 @@ Various places in this bundle store information in the format we refer to as the
       id: "f926048c-3527-4d2f-96f6-680b81bf06e6",
       players: [
         {
-          name: "ChriSoofy",
+          name: "pastahelmetclarinet",
           id: "26a6dc65-7f39-4f33-a263-56be74bed783",
           teamID: "f926048c-3527-4d2f-96f6-680b81bf06e6",
           country: "de",
           social: {
-            twitch: "chrisoofy"
+            twitch: "esamarathon"
           }
         }
       ]
@@ -41,12 +41,12 @@ Various places in this bundle store information in the format we refer to as the
       id: "18341eb2-eb45-4184-98f6-e74baafaf71a",
       players: [
         {
-          name: "Ellaapiie",
+          name: "badmintondoughnuts",
           id: "5faa92a1-c3d2-4f4b-8d40-ce5c2ea7a67e",
           teamID: "18341eb2-eb45-4184-98f6-e74baafaf71a",
           country: "nl",
           social: {
-            twitch: "ellaapiie"
+            twitch: "monstercat"
           }
         }
       ]
