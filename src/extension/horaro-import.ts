@@ -269,7 +269,10 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
                   customData: {},
                 };
                 if (!config.schedule.disableSpeedrunComLookup) {
-                  const sData = await searchForUserDataMultiple(twitchUsername, str);
+                  const sData = await searchForUserDataMultiple(
+                    { type: 'twitch', val: twitchUsername },
+                    { type: 'name', val: str },
+                  );
                   if (sData) {
                     // Always favour the supplied Twitch username from schedule if available.
                     if (!twitchUsername) {

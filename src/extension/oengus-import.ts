@@ -182,9 +182,9 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
         };
         if (!config.oengus.disableSpeedrunComLookup) {
           const data = await searchForUserDataMultiple(
-            runner.speedruncomName,
-            runner.twitchName,
-            runner.username,
+            { type: 'name', val: runner.speedruncomName },
+            { type: 'twitch', val: runner.twitchName },
+            { type: 'name', val: runner.username },
           );
           if (data) {
             // Always favour the supplied Twitch username from schedule if available.

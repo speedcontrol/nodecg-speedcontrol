@@ -67,48 +67,54 @@ export async function searchForTwitchGame(query: string, abbr = false): Promise<
 
 /**
  * Returns the user's data if available on speedrun.com.
- * @param query String you wish to try to find a user with.
+ * @param query Query you wish to try to find a user with, with parameter type and query value.
  */
-export async function searchForUserData(query: string): Promise<UserData> {
-  if (userDataCache[query]) {
+export async function searchForUserData(
+  { type, val }: { type: 'name' | 'twitch', val: string },
+): Promise<UserData> {
+  const cacheKey = `${type}_${val}`;
+  if (userDataCache[cacheKey]) {
     nodecg.log.debug(
-      `[speedrun.com] User data found in cache for "${query}":`,
-      JSON.stringify(userDataCache[query]),
+      `[speedrun.com] User data found in cache for "${type}/${val}":`,
+      JSON.stringify(userDataCache[cacheKey]),
     );
-    return userDataCache[query];
+    return userDataCache[cacheKey];
   }
   try {
     await sleep(1000);
     const resp = await get(
-      `/users?lookup=${encodeURIComponent(query)}&max=1`,
+      `/users?${type}=${encodeURIComponent(val)}&max=1`,
     );
     if (!resp.body.data.length) {
-      throw new Error(`No user matches for "${query}"`);
+      throw new Error(`No user matches for "${type}/${val}"`);
     }
-    [userDataCache[query]] = resp.body.data; // Simple temp cache storage.
+    [userDataCache[cacheKey]] = resp.body.data; // Simple temp cache storage.
     nodecg.log.debug(
-      `[speedrun.com] User data found for "${query}":`,
+      `[speedrun.com] User data found for "${type}/${val}":`,
       JSON.stringify(resp.body.data[0]),
     );
     return resp.body.data[0];
   } catch (err) {
-    nodecg.log.debug(`[speedrun.com] User data lookup failed for "${query}":`, err);
+    nodecg.log.debug(`[speedrun.com] User data lookup failed for "${type}/${val}":`, err);
     throw err;
   }
 }
 
 /**
- * Try to find user data using multiple strings, will loop through them until one is successful.
+ * Try to find user data using multiple query types, will loop through them until one is successful.
  * Does not return any errors, if those happen this will just treat it as unsuccessful.
- * @param queries List of queries to use, if any are falsey they will be skipped.
+ * @param queries List of queries to use, if the val property in one is falsey it will be skipped.
  */
-export async function searchForUserDataMultiple(...queries: (string | undefined | null)[]):
+export async function searchForUserDataMultiple(
+  ...queries: { type: 'name' | 'twitch', val: (string | undefined | null) }[]
+):
   Promise<UserData | undefined> {
   let userData;
   for (const query of queries) {
-    if (query) {
+    if (query.val) {
       try {
-        const data = await searchForUserData(query);
+        const { type, val } = query; // This is to help with Typing errors (for some reason).
+        const data = await searchForUserData({ type, val });
         userData = data;
         break;
       } catch (err) {
