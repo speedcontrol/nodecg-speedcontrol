@@ -1,5 +1,6 @@
 import { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
 import { RunData } from './RunData';
+import { UserData } from './Speedruncom';
 import { CommercialDuration } from './Twitch';
 
 export interface SendMessageArgsMap {
@@ -33,6 +34,9 @@ export interface SendMessageArgsMap {
   // Featured Channels
   updateFeaturedChannels: string[];
   repeaterFeaturedChannels: string[];
+
+  // Speedrun.com
+  srcomSearchForUserDataMultiple: { type: 'name' | 'twitch', val: (string | undefined | null) }[];
 }
 
 export interface SendMessageReturnMap {
@@ -61,6 +65,9 @@ export interface SendMessageReturnMap {
   // Featured Channels
   updateFeaturedChannels: void;
   repeaterFeaturedChannels: void;
+
+  // Speedrun.com
+  srcomSearchForUserDataMultiple: UserData | undefined;
 }
 
 export type SendMessageAck = HandledSendMessageAck | UnhandledSendMessageAck;

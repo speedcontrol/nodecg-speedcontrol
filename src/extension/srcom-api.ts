@@ -1,6 +1,7 @@
 import needle, { NeedleResponse } from 'needle';
 import { UserData } from '../../types';
-import { sleep } from './util/helpers';
+import * as events from './util/events';
+import { processAck, sleep } from './util/helpers';
 import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
@@ -124,3 +125,9 @@ export async function searchForUserDataMultiple(
   }
   return userData;
 }
+
+// Our messaging system.
+events.listenFor('srcomSearchForUserDataMultiple', async (data, ack) => {
+  const resp = await searchForUserDataMultiple(...data);
+  processAck(ack, null, resp);
+});
