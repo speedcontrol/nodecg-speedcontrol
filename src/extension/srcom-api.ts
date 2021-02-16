@@ -89,7 +89,15 @@ export async function searchForUserData(
     if (!resp.body.data.length) {
       throw new Error(`No user matches for "${type}/${val}"`);
     }
-    [userDataCache[cacheKey]] = resp.body.data; // Simple temp cache storage.
+    const data = resp.body.data[0] as UserData;
+    if (data?.pronouns) {
+      // Erase any pronouns that are custom strings that used to be allowed.
+      const split = (data?.pronouns || '').split(',').map((p) => p.trim().toLowerCase());
+      if (!split.includes('he/him') || !split.includes('she/her') || !split.includes('they/them')) {
+        data.pronouns = '';
+      }
+    }
+    userDataCache[cacheKey] = data; // Simple temp cache storage.
     nodecg.log.debug(
       `[speedrun.com] User data found for "${type}/${val}":`,
       JSON.stringify(resp.body.data[0]),
