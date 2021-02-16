@@ -92,8 +92,8 @@ export async function searchForUserData(
     const data = resp.body.data[0] as UserData;
     if (data?.pronouns) {
       // Erase any pronouns that are custom strings that used to be allowed.
-      const split = (data?.pronouns || '').split(',').map((p) => p.trim().toLowerCase());
-      if (!split.includes('he/him') || !split.includes('she/her') || !split.includes('they/them')) {
+      const split = data.pronouns.split(',').map((p) => p.trim().toLowerCase());
+      if (!split.includes('he/him') && !split.includes('she/her') && !split.includes('they/them')) {
         data.pronouns = '';
       }
     }
