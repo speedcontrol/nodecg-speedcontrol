@@ -99,6 +99,7 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 - [A Race Against Time 3](https://www.twitch.tv/araceagainsttime)
 - [Power Up With Pride](https://www.twitch.tv/powerupwithpride) since Winter Pride 2018
 - [Bingothon](https://bingothon.com/)
+- [BSG Marathon](https://twitch.tv/bsg_marathon) 1-15 and from @Home and forwards.
 
 
 ## Authors/Contributors
