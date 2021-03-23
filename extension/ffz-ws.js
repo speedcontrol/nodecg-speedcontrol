@@ -34,7 +34,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setChannels = void 0;
 const p_iteration_1 = require("p-iteration");
-const twitch_js_1 = __importDefault(require("twitch-js"));
+const tmi_js_1 = __importDefault(require("tmi.js"));
 const ws_1 = __importDefault(require("ws"));
 const twitch_api_1 = require("./twitch-api");
 const events = __importStar(require("./util/events"));
@@ -95,7 +95,7 @@ function sendAuth(auth) {
             try {
                 retry = false;
                 attempts += 1;
-                const client = new twitch_js_1.default.Client(opts);
+                const client = new tmi_js_1.default.Client(opts);
                 yield client.connect();
                 nodecg.log.debug('[FrankerFaceZ] Connected to Twitch chat to authenticate');
                 yield client.say('frankerfacezauthorizer', `AUTH ${auth}`);
