@@ -1,0 +1,12 @@
+
+.list-move[data-v-1c0a0ba4] {
+  transition: transform 0.2s;
+}
+.list-enter[data-v-1c0a0ba4], .list-leave-to[data-v-1c0a0ba4] {
+  opacity: 0;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.list-leave-active[data-v-1c0a0ba4] {
+  position: absolute;
+}
+

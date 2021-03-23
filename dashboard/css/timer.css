@@ -1,0 +1,31 @@
+
+.TimerInput[data-v-b773eb2a] input {
+  text-align: center;
+  font-size: 25px;
+}
+
+
+.Team > *[data-v-5d8b2794]:not(:last-child) {
+  margin-right: 4px;
+}
+.Team[data-v-5d8b2794] .v-btn {
+  padding: 0 5px;
+  min-width: 0;
+}
+
+
+.Disabled[data-v-70a7f1d7] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+#Controls > *[data-v-70a7f1d7] {
+  flex: 1;
+}
+#Controls > *[data-v-70a7f1d7]:not(:first-child) {
+  margin-left: 5px;
+}
+#Controls[data-v-70a7f1d7] .v-btn {
+  min-width: 0;
+  width: 100%;
+}
+
