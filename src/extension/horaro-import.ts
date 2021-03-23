@@ -269,7 +269,10 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
                   customData: {},
                 };
                 if (!config.schedule.disableSpeedrunComLookup) {
-                  const sData = await searchForUserDataMultiple(twitchUsername, str);
+                  const sData = await searchForUserDataMultiple(
+                    { type: 'twitch', val: twitchUsername },
+                    { type: 'name', val: str },
+                  );
                   if (sData) {
                     // Always favour the supplied Twitch username from schedule if available.
                     if (!twitchUsername) {
@@ -277,7 +280,8 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
                         ? sData.twitch.uri : undefined;
                       player.social.twitch = getTwitchUserFromURL(tURL);
                     }
-                    player.country = (sData.location) ? sData.location.country.code : undefined;
+                    player.country = sData.location?.country.code || undefined;
+                    player.pronouns = sData.pronouns || undefined;
                   }
                 }
                 return player;

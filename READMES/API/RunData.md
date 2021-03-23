@@ -26,12 +26,13 @@ Various places in this bundle store information in the format we refer to as the
       id: "f926048c-3527-4d2f-96f6-680b81bf06e6",
       players: [
         {
-          name: "ChriSoofy",
+          name: "pastahelmetclarinet",
           id: "26a6dc65-7f39-4f33-a263-56be74bed783",
           teamID: "f926048c-3527-4d2f-96f6-680b81bf06e6",
           country: "de",
+          pronouns: "He/Him",
           social: {
-            twitch: "chrisoofy"
+            twitch: "esamarathon"
           }
         }
       ]
@@ -41,12 +42,13 @@ Various places in this bundle store information in the format we refer to as the
       id: "18341eb2-eb45-4184-98f6-e74baafaf71a",
       players: [
         {
-          name: "Ellaapiie",
+          name: "badmintondoughnuts",
           id: "5faa92a1-c3d2-4f4b-8d40-ce5c2ea7a67e",
           teamID: "18341eb2-eb45-4184-98f6-e74baafaf71a",
           country: "nl",
+          pronouns: "She/Her",
           social: {
-            twitch: "ellaapiie"
+            twitch: "monstercat"
           }
         }
       ]
@@ -94,6 +96,7 @@ The `players` array in "`team` objects" will contain (if anything) "`player` obj
 - `name` *[`string`]* Name of the player.
 - `id` *[`string`]* Unique player ID.
 - `teamID` *[`string`]* Unique ID of the team this player is on.
-- `country` *[`string`]* country code of the country where this player is from, usually pulled from [speedrun.com](https://www.speedrun.com).
+- `country` *[`string`]* Country code of the country where this player is from, usually pulled from [speedrun.com](https://www.speedrun.com).
+- `pronouns` *[`string`]* List of the player's preferred pronouns, usually pulled from [speedrun.com](https://www.speedrun.com), and if so, can also be a comma separated list of each option they allow to be selected.
 - `social` *[`object`]* Contains information on this player's social media references.
   - `twitch` *[`string`]* Username of this player on [twitch.tv](https://www.twitch.tv).

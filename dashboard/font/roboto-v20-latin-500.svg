@@ -1,1 +1,0 @@
-module.exports = __webpack_public_path__ + "font/roboto-v20-latin-500.svg";

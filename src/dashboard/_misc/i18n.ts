@@ -7,6 +7,7 @@ Vue.use(VueI18n);
 export default new VueI18n({
   locale: (nodecg.bundleConfig as Configschema).language,
   fallbackLocale: 'en',
+  silentFallbackWarn: true,
   messages: {
     en: {
       game: 'Game',

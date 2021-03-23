@@ -1,5 +1,6 @@
 import { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
 import { RunData } from './RunData';
+import { UserData } from './Speedruncom';
 import { CommercialDuration } from './Twitch';
 
 export interface SendMessageArgsMap {
@@ -37,6 +38,9 @@ export interface SendMessageArgsMap {
   // Checklist
   toggleCheckbox: {name: string; checked: boolean};
   resetChecklist: void;
+
+  // Speedrun.com
+  srcomSearchForUserDataMultiple: { type: 'name' | 'twitch', val: (string | undefined | null) }[];
 }
 
 export interface SendMessageReturnMap {
@@ -69,6 +73,9 @@ export interface SendMessageReturnMap {
   // Checklist
   toggleCheckbox: void;
   resetChecklist: void;
+
+  // Speedrun.com
+  srcomSearchForUserDataMultiple: UserData | undefined;
 }
 
 export type SendMessageAck = HandledSendMessageAck | UnhandledSendMessageAck;

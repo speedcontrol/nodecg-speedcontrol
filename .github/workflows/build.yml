@@ -1,0 +1,112 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout NodeCG
+    - name: Checkout nodecg/nodecg
+      uses: actions/checkout@v2
+      with:
+        token: ${{ secrets['GH_PAT'] }}
+        repository: nodecg/nodecg
+        path: ./nodecg-temp
+    
+    # Copies checked out NodeCG into permanent folder
+    # If I didn't do this, some bundles seemed to not actually checkout successfully later
+    - name: Copy ./nodecg-temp > ./nodecg
+      run: cp -r ./nodecg-temp ./nodecg
+
+    # Checkout the main branch of this repository with full depth
+    - name: Checkout this repository
+      uses: actions/checkout@v2
+      with:
+        token: ${{ secrets['GH_PAT'] }}
+        ref: master
+        fetch-depth: 0
+        path: ./nodecg/bundles/nodecg-speedcontrol
+
+    # Set the local git user config to use the GitHub Actions bot account
+    - name: Set local git config user details
+      working-directory: ./nodecg/bundles/nodecg-speedcontrol
+      run: |
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+
+    # Recheckout both the main and build branches and merge the main into build
+    # This can "fail" if the build branch doesn't exist, but we should continue anyway
+    - name: (Re)checkout both branches and merge main into build
+      continue-on-error: true
+      working-directory: ./nodecg/bundles/nodecg-speedcontrol
+      run: |
+        git checkout master
+        git checkout build
+        git merge master
+
+    # Setup some Node stuff
+    - name: Node.js setup
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    # Set NPM cache options
+    - name: Set NPM cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    
+    # Update NPM to the latest version
+    - name: Update NPM installation
+      run: npm install -g npm@7.7.0
+
+    # Setup GitHub SSH key so we can npm install GitHub repositories (even needed for public ones)
+    - name: GitHub SSH setup
+      uses: webfactory/ssh-agent@master
+      with:
+        ssh-private-key: ${{ secrets['GH_SSH'] }}
+
+    # Install NodeCG NPM dependencies
+    - name: Install NodeCG NPM dependencies
+      working-directory: ./nodecg
+      run: npm install --production
+
+    # Install this bundle's NPM dependencies
+    - name: Install bundle NPM dependencies
+      working-directory: ./nodecg/bundles/nodecg-speedcontrol
+      run: npm ci
+
+    # Actually build everything
+    - name: Build
+      working-directory: ./nodecg/bundles/nodecg-speedcontrol
+      run: |
+        npm run clean
+        npm run build
+
+    # Commit newly built files
+    # This can "fail" if there are no newly changed/built files, but we should continue anyway
+    - name: Commit built files
+      id: commit
+      continue-on-error: true
+      working-directory: ./nodecg/bundles/nodecg-speedcontrol
+      run: |
+        git add -f dashboard extension
+        git commit -m "Built files" -a
+
+    # Pushes the built files to a specific branch
+    - name: Push built files to "build" branch
+      #if: ${{ steps.commit.outcome == 'success' }}
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets['GH_PAT'] }}
+        branch: build
+        directory: ./nodecg/bundles/nodecg-speedcontrol

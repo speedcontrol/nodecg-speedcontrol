@@ -99,6 +99,7 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 - [A Race Against Time 3](https://www.twitch.tv/araceagainsttime)
 - [Power Up With Pride](https://www.twitch.tv/powerupwithpride) since Winter Pride 2018
 - [Bingothon](https://bingothon.com/)
+- [BSG Marathon](https://twitch.tv/bsg_marathon) 1-15 and from @Home and forwards.
 
 
 ## Authors/Contributors
@@ -115,11 +116,18 @@ With help from:
 
 ## Contribution/Development
 
-The `master` branch will always be the most recent stable release, while all development work is done in the `dev` branch; if you want to use experimental unfinished features or contribute, use that branch, although it may require some manual build commands (`npm install` and `npm run build` should work fine).
+If you install from the latest release (for example, with `nodecg-cli` by doing `nodecg install speedcontrol/nodecg-speedcontrol`) you will get the latest stable build.
+
+If you wish to help with further development, the `master` branch is where all the development is done, although you will need to install all dependencies (`npm install`) and build (`npm run build`) to actually use the bundle, and see any changes you make.
+
+If you wish to test/use experimental unfinished features without needing to build yourself, there is a `build` branch which should usually mirror the `master` branch but has everything built already so you should only need to install production dependencies (`npm install --production`). You can also install it with `nodecg-cli` by doing `nodecg install speedcontrol/nodecg-speedcontrol#build`, which will do the last part for you.
+
+The `v1.x` branch is a legacy branch for that version; this exists for archival purposes, as the strucutre was highly different.
 
 If you need to report an issue, you can [do that on GitHub](https://github.com/speedcontrol/nodecg-speedcontrol/issues).
 
 Feel free to raise an issue/Pull Request if you have used our bundle(s) for a marathon and would like to be linked above.
+
 
 ### Localisation
 

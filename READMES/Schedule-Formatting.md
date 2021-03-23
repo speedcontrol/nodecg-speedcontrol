@@ -24,7 +24,8 @@ This part is a bit complicated, but hang tight, hopefully it will all make sense
 
 - **Separators**: If you have no co-op runs in your schedule, feel free to use a comma'd (`,`) list for your players, and select the `Comma (,) [No Teams]` option for *Split Players* when you import the schedule. If you *do* have co-op runs, you will need to separate your teams using `vs` or `vs.`, separate the players within those teams with commas (`,`) and select the `vs/vs. [Teams]` option for *Split Players* when you import the schedule.
 - **Links**: You can use Markdown links for the players that link to a social media page of theirs (usually Twitch), which will be used to help the import; if [speedrun.com](https://www.speedrun.com) lookup is enabled, this will be queried for information too.
-- **Country Code**: You cannot currently set this yourself on the import, but if you have [speedrun.com](https://www.speedrun.com) lookup enabled, it will attempt to get this for you.
+- **Twitch Channel**: If a player's name is also a link to their Twitch channel, that will be used to set the `social.twitch` property. Otherwise, if [speedrun.com](https://www.speedrun.com) lookup is enabled, this will be queried for it.
+- **Country Code/Preferred Pronouns**: You cannot currently set these yourself on the import, but if you have [speedrun.com](https://www.speedrun.com) lookup enabled, it will attempt to get these for you.
 - **Team Names**: Not used commonly, but still supported; you can give your teams names that are shown in the dashboard and you could use on a layout if you wanted to. To do this, you need to put `TEAM_NAME: ` before the players in the team, where `TEAM_NAME` is what you want to name that team.
 
 You can use a mix of no links/links and no team name/team name safely, if they are only needed for certain players/runs.
