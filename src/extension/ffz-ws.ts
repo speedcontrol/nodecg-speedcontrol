@@ -1,7 +1,7 @@
 /* eslint import/prefer-default-export: off */
 
 import { forEachSeries } from 'p-iteration';
-import TwitchJS from 'twitch-js';
+import TMI from 'tmi.js';
 import WebSocket from 'ws';
 import { TwitchAPIData } from '../../schemas';
 import { refreshToken } from './twitch-api';
@@ -66,7 +66,7 @@ async function sendAuth(auth: string): Promise<void> {
     try {
       retry = false;
       attempts += 1;
-      const client = new TwitchJS.Client(opts);
+      const client = new TMI.Client(opts);
       await client.connect();
       nodecg.log.debug('[FrankerFaceZ] Connected to Twitch chat to authenticate');
       await client.say('frankerfacezauthorizer', `AUTH ${auth}`);
