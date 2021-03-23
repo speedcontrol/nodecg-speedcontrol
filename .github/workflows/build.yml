@@ -75,8 +75,13 @@ jobs:
       with:
         ssh-private-key: ${{ secrets['GH_SSH'] }}
 
-    # Install NPM dependencies
-    - name: Install NPM dependencies
+    # Install NodeCG NPM dependencies
+    - name: Install NodeCG NPM dependencies
+      working-directory: ./nodecg
+      run: npm install --production
+
+    # Install this bundle's NPM dependencies
+    - name: Install bundle NPM dependencies
       working-directory: ./nodecg/bundles/nodecg-speedcontrol
       run: npm ci
 
