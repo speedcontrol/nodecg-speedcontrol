@@ -122,6 +122,8 @@ If you wish to help with further development, the `master` branch is where all t
 
 If you wish to test/use experimental unfinished features without needing to build yourself, there is a `build` branch which should usually mirror the `master` branch but has everything built already so you should only need to install production dependencies (`npm install --production`). You can also install it with `nodecg-cli` by doing `nodecg install speedcontrol/nodecg-speedcontrol#build`, which will do the last part for you.
 
+The `v1.x` branch is a legacy branch for that version; this exists for archival purposes, as the strucutre was highly different.
+
 If you need to report an issue, you can [do that on GitHub](https://github.com/speedcontrol/nodecg-speedcontrol/issues).
 
 Feel free to raise an issue/Pull Request if you have used our bundle(s) for a marathon and would like to be linked above.
