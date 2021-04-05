@@ -120,7 +120,7 @@ If you install from the latest release (for example, with `nodecg-cli` by doing 
 
 If you wish to help with further development, the `master` branch is where all the development is done, although you will need to install all dependencies (`npm install`) and build (`npm run build`) to actually use the bundle, and see any changes you make.
 
-If you wish to test/use experimental unfinished features without needing to build yourself, there is a `build` branch which should usually mirror the `master` branch but has everything built already so you should only need to install production dependencies (`npm install --production`). You can also install it with `nodecg-cli` by doing `nodecg install speedcontrol/nodecg-speedcontrol#build`, which will do the last part for you.
+If you wish to test/use experimental unfinished features without needing to build yourself, there is a `build` branch which should usually mirror the `master` branch but has everything built already so you should only need to install production dependencies (`npm install --production`).
 
 The `v1.x` branch is a legacy branch for that version; this exists for archival purposes, as the strucutre was highly different.
 
