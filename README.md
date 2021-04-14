@@ -83,6 +83,7 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 - [speedcontrol-srcomtracker](https://github.com/speedcontrol/speedcontrol-srcomtracker): Adds frequently updating donation total/goals/bidwars and messages for new donations for a marathon on [speedrun.com](https://www.speedrun.com) if they are enabled, that you can use in your layouts.
 - [speedcontrol-flagcarrier](https://github.com/speedcontrol/speedcontrol-flagcarrier): Adds a server and replicants that can receive requests from ESA's [FlagCarrier android app](https://play.google.com/store/apps/details?id=de.oromit.flagcarrier) so this information can be used in your layouts.
 - [speedcontrol-layouts](https://github.com/nicnacnic/speedcontrol-layouts): A base pack of layouts for anyone to customize. Includes Tiltify support for donation totals, incentives, and prizes, layout Photoshop files, and detailed documentation for all your customization needs.
+- [speedcontrol-tweetr](https://github.com/nicnacnic/speedcontrol-tweetr): Control Twitter right from your NodeCG dashboard!
 
 
 ## Where has this bundle been used before?
