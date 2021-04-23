@@ -264,6 +264,9 @@ export default class extends Vue {
   }
 
   async updateChannelInfo(): Promise<void> {
+    //temporary as this.users get refreshed inbetween updating twitch and ffz
+    var usersTmp = this.users;
+
     try {
       const noTwitchGame = await nodecg.sendMessage('twitchUpdateChannelInfo', {
         status: this.title,
@@ -282,7 +285,7 @@ export default class extends Vue {
       try {
         await nodecg.sendMessage(
           'updateFeaturedChannels',
-          this.users.replace(/\s/g, '').split(',').filter(Boolean),
+          usersTmp.replace(/\s/g, '').split(',').filter(Boolean)
         );
       } catch (err) {
         // catch
