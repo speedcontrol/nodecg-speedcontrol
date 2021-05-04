@@ -100,6 +100,8 @@ To easily install: `nodecg install speedcontrol/BUNDLE-NAME`
 - [Power Up With Pride](https://www.twitch.tv/powerupwithpride) since Winter Pride 2018
 - [Bingothon](https://bingothon.com/)
 - [BSG Marathon](https://twitch.tv/bsg_marathon) 1-15 and from @Home and forwards.
+- [No Glitches Allowed](https://twitch.tv/speedrunslive) since No Glitches Allowed 4
+- [Completithon](https://twitch.tv/completithon) since Completithon 2019
 
 
 ## Authors/Contributors
