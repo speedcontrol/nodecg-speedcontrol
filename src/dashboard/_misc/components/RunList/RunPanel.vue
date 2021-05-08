@@ -152,6 +152,8 @@ export default class extends Vue {
           dialog.openDialog({ name: 'NoTwitchGame' });
         }
       }
+
+      await nodecg.sendMessage('resetChecklist');
     } catch (err) {
       // catch
     }

@@ -1,3 +1,4 @@
+export * from './checklist';
 export * from './defaultSetupTime';
 export * from './horaroImportSavedOpts';
 export * from './horaroImportStatus';

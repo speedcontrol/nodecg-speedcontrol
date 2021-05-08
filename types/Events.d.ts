@@ -35,6 +35,10 @@ export interface SendMessageArgsMap {
   updateFeaturedChannels: string[];
   repeaterFeaturedChannels: string[];
 
+  // Checklist
+  toggleCheckbox: {name: string; checked: boolean};
+  resetChecklist: void;
+
   // Speedrun.com
   srcomSearchForUserDataMultiple: { type: 'name' | 'twitch', val: (string | undefined | null) }[];
 }
@@ -65,6 +69,10 @@ export interface SendMessageReturnMap {
   // Featured Channels
   updateFeaturedChannels: void;
   repeaterFeaturedChannels: void;
+
+  // Checklist
+  toggleCheckbox: void;
+  resetChecklist: void;
 
   // Speedrun.com
   srcomSearchForUserDataMultiple: UserData | undefined;

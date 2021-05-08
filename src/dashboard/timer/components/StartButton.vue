@@ -22,7 +22,7 @@
       <template v-slot:activator="{ on }">
         <span v-on="on">
           <v-btn
-            :disabled="state === 'finished'"
+            :disabled="state === 'finished' || (isEnabledForceCheck && !checklistComplete)"
             @click="button"
           >
             <v-icon v-if="state === 'running'">
@@ -42,16 +42,39 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import { State } from 'vuex-class';
-import { Timer } from 'schemas';
+import { Timer, Checklist } from 'schemas';
+import { Configschema } from 'configschema';
 
 @Component
 export default class extends Vue {
   @State timer!: Timer;
+  @State checklist!: Checklist;
+
+  checklistComplete = false;
 
   get state(): string {
     return this.timer.state;
+  }
+
+  get config(): Configschema['checklist'] {
+    return (nodecg.bundleConfig as Configschema).checklist;
+  }
+
+  get isEnabledForceCheck(): boolean {
+    return this.config.enabled
+    && this.checklist.length !== 0
+    && this.config.forceCheckBeforeStartTimer;
+  }
+
+  @Watch('checklist', { immediate: true })
+  onChecklistChange(val: Checklist): void {
+    this.updateChecklistComplete(val);
+  }
+
+  updateChecklistComplete(checklist: Checklist): void {
+    this.checklistComplete = checklist.every((checkbox) => checkbox.complete);
   }
 
   async button(): Promise<void> {
