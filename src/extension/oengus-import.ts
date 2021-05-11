@@ -90,8 +90,8 @@ function resetImportStatus(): void {
 async function importSchedule(marathonShort: string, useJapanese: boolean): Promise<void> {
   try {
     importStatus.value.importing = true;
-    const marathonResp = await get(`/marathon/${marathonShort}`);
-    const scheduleResp = await get(`/marathon/${marathonShort}/schedule`);
+    const marathonResp = await get(`/marathons/${marathonShort}`);
+    const scheduleResp = await get(`/marathons/${marathonShort}/schedule`);
     if (!isOengusMarathon(marathonResp.body)) {
       throw new Error('Did not receive marathon data correctly');
     }
