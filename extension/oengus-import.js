@@ -95,8 +95,8 @@ function importSchedule(marathonShort, useJapanese) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             importStatus.value.importing = true;
-            const marathonResp = yield get(`/marathon/${marathonShort}`);
-            const scheduleResp = yield get(`/marathon/${marathonShort}/schedule`);
+            const marathonResp = yield get(`/marathons/${marathonShort}`);
+            const scheduleResp = yield get(`/marathons/${marathonShort}/schedule`);
             if (!isOengusMarathon(marathonResp.body)) {
                 throw new Error('Did not receive marathon data correctly');
             }
