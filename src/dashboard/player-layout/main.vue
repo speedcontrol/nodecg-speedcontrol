@@ -45,10 +45,10 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { State2Way } from 'vuex-class-state2way';
 import Draggable from 'vuedraggable';
-import { RunDataActiveRun } from 'schemas';
-import { RunDataTeam } from 'types';
+import { RunDataActiveRun, RunDataTeam } from '@nodecg-speedcontrol/types';
+import { replicantNS } from '../_misc/replicant_store';
+import { storeModule } from './store';
 
 @Component({
   components: {
@@ -56,10 +56,14 @@ import { RunDataTeam } from 'types';
   },
 })
 export default class extends Vue {
-  @State2Way(
-    'updateTeamOrder',
-    (state: { runDataActiveRun?: RunDataActiveRun }) => state.runDataActiveRun?.teams || [],
-  ) teams!: RunDataTeam[];
+  @replicantNS.State((s) => s.reps.runDataActiveRun) readonly runDataActiveRun!: RunDataActiveRun;
+
+  get teams(): RunDataTeam[] {
+    return this.runDataActiveRun?.teams || [];
+  }
+  set teams(val: RunDataTeam[]) {
+    storeModule.updateTeamOrder(val);
+  }
 
   mounted(): void {
     if (window.frameElement?.parentElement) {

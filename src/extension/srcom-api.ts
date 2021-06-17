@@ -1,5 +1,5 @@
+import { UserData } from '@nodecg-speedcontrol/types';
 import needle, { NeedleResponse } from 'needle';
-import { UserData } from '../../types';
 import * as events from './util/events';
 import { processAck, sleep } from './util/helpers';
 import { get as ncgGet } from './util/nodecg';

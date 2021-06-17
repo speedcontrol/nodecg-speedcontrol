@@ -65,13 +65,12 @@
 
 <script lang="ts">
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import { State2Way } from 'vuex-class-state2way';
 import goTo from 'vuetify/es5/services/goto';
-import { RunDataActiveRun, TwitchAPIData, Timer, RunDataArray } from 'schemas';
-import { RunData } from 'types';
+import { TwitchAPIData, Timer, RunDataArray } from '@nodecg-speedcontrol/types/schemas';
+import { RunData, RunDataActiveRun } from '@nodecg-speedcontrol/types';
 import Draggable from 'vuedraggable';
 import RunPanel from './RunList/RunPanel.vue';
+import { replicantModule, replicantNS, ReplicantTypes } from '../replicant_store';
 
 @Component({
   components: {
@@ -81,12 +80,19 @@ import RunPanel from './RunList/RunPanel.vue';
 })
 export default class extends Vue {
   @Prop(Boolean) readonly editor!: boolean;
-  @State2Way('updateRunOrder', 'runDataArray') runDataArray!: RunDataArray;
-  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
-  @State twitchAPIData!: TwitchAPIData;
-  @State timer!: Timer;
+  @replicantNS.State((s) => s.reps.runDataActiveRun) readonly activeRun!: RunDataActiveRun;
+  @replicantNS.State((s) => s.reps.twitchAPIData) readonly twitchAPIData!: TwitchAPIData;
+  @replicantNS.State((s) => s.reps.timer) readonly timer!: Timer;
   searchTerm = '';
   hasNoTwitch = false;
+
+  get runDataArray(): RunDataArray {
+    return (replicantModule.reps as unknown as ReplicantTypes).runDataArray;
+  }
+  set runDataArray(val: RunDataArray) {
+    // This is specifically for the "run-editor-dash" panel!
+    this.$store.commit('updateRunOrder', val);
+  }
 
   get filteredRunDataArray(): RunData[] {
     return this.runDataArray.filter((run) => {

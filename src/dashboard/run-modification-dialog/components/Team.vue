@@ -24,7 +24,8 @@
         mdi-drag
       </v-icon>
       <text-input
-        v-model="teamData.name"
+        :value="teamData.name"
+        @input="updateTeamDataProp('name', $event)"
         :label="$t('teamName')"
       />
       <modify-button
@@ -57,13 +58,12 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Mutation } from 'vuex-class';
 import Draggable from 'vuedraggable';
-import { RunDataTeam } from 'types';
+import { RunDataTeam } from '@nodecg-speedcontrol/types';
 import Player from './Player.vue';
 import TextInput from './TextInput.vue';
 import ModifyButton from './ModifyButton.vue';
-import { AddNewPlayer, RemoveTeam } from '../store';
+import { storeModule } from '../store';
 
 @Component({
   components: {
@@ -75,7 +75,17 @@ import { AddNewPlayer, RemoveTeam } from '../store';
 })
 export default class extends Vue {
   @Prop({ type: Object, required: true }) teamData!: RunDataTeam;
-  @Mutation addNewPlayer!: AddNewPlayer;
-  @Mutation removeTeam!: RemoveTeam;
+
+  updateTeamDataProp(key: string, val: string): void {
+    storeModule.updateTeamDataProp({ id: this.teamData.id, key, val });
+  }
+
+  addNewPlayer(teamID: string): void {
+    storeModule.addNewPlayer(teamID);
+  }
+
+  removeTeam(teamID: string): void {
+    storeModule.removeTeam(teamID);
+  }
 }
 </script>

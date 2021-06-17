@@ -5,12 +5,6 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface TwitchAPIData {
-  state: "off" | "authenticating" | "on";
-  sync: boolean;
-  accessToken?: string;
-  refreshToken?: string;
-  channelName?: string;
-  channelID?: string;
-  featuredChannels: string[];
+export interface TwitchChannelInfo {
+	[k: string]: unknown;
 }

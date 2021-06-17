@@ -3,8 +3,8 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const LiveReloadPlugin = require('webpack-livereload-plugin');
+const TsConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const globby = require('globby');
 const path = require('path');
 
@@ -20,7 +20,6 @@ const entry = globby
 const miniCSSOpts = {
   loader: MiniCssExtractPlugin.loader,
   options: {
-    hmr: !isProd,
     publicPath: '../',
   },
 };
@@ -36,7 +35,6 @@ if (!isProd) {
 }
 plugins = plugins.concat(
   [
-    new HardSourceWebpackPlugin(),
     new VueLoaderPlugin(),
     new VuetifyLoaderPlugin(),
     ...Object.keys(entry).map(
@@ -45,7 +43,7 @@ plugins = plugins.concat(
           filename: `${entryName}.html`,
           chunks: [entryName],
           title: entryName,
-          template: './template.html',
+          template: 'template.html',
         }),
     ),
     new ForkTsCheckerWebpackPlugin({
@@ -61,6 +59,7 @@ if (isProd) {
   plugins.push(
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
+      ignoreOrder: true, // To ignore Vuetify issues, good idea or not?
     })
   );
 }
@@ -80,6 +79,11 @@ module.exports = {
     alias: {
       vue: 'vue/dist/vue.esm.js',
     },
+    plugins: [
+      new TsConfigPathsPlugin({
+        configFile: 'tsconfig.browser.json',
+      }),
+    ],
   },
   module: {
     rules: [
@@ -121,34 +125,31 @@ module.exports = {
         ],
       },
       {
-        test: /\.(woff(2)?|ttf|eot|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: 'font/[name].[ext]',
-          esModule: false,
+        test: /\.(woff(2)?|ttf|eot)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'font/[name][ext]',
         },
       },
       {
         test: /\.svg?$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'font/[name][ext]',
+        },
         include: [
           path.resolve(__dirname, `src/dashboard/_misc/fonts`),
         ],
-        loader: 'file-loader',
-        options: {
-          name: 'font/[name].[ext]',
-          esModule: false,
-        },
       },
       {
         test: /\.(png|svg)?$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'img/[name]-[contenthash][ext]',
+        },
         exclude: [
           path.resolve(__dirname, `src/dashboard/_misc/fonts`),
         ],
-        loader: 'file-loader',
-        options: {
-          name: 'img/[name]-[contenthash].[ext]',
-          esModule: false,
-        },
       },
       {
         test: /\.tsx?$/,
@@ -167,13 +168,14 @@ module.exports = {
   },
   plugins,
   optimization: (isProd) ? {
+    // v5 migration guide says to reconsider this, so maybe change in the future?
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
         common: {
           minChunks: 2,
         },
-        vendors: false,
+        defaultVendors: false,
         default: false,
       },
     },

@@ -37,12 +37,12 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import { Timer } from 'schemas';
+import { Timer } from '@nodecg-speedcontrol/types/schemas';
+import { replicantNS } from '@nodecg-speedcontrol/dashboard/_misc/replicant_store';
 
 @Component
 export default class extends Vue {
-  @State timer!: Timer;
+  @replicantNS.State((s) => s.reps.timer) readonly timer!: Timer;
   time = '00:00:00';
 
   get serverTime(): string {

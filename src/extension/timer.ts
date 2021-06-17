@@ -2,19 +2,12 @@
 
 import clone from 'clone';
 import livesplitCore from 'livesplit-core';
-import { RunFinishTimes, TimerChangesDisabled } from '../../schemas';
-import { RunDataActiveRun, Timer } from '../../types';
 import * as events from './util/events';
 import { msToTimeStr, processAck, timeStrToMS } from './util/helpers';
 import { get } from './util/nodecg';
+import { runDataActiveRun, runFinishTimes, timer as timerRep, timerChangesDisabled } from './util/replicants';
 
 const nodecg = get();
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: persistenceInterval not typed yet
-const timerRep = nodecg.Replicant<Timer>('timer', { persistenceInterval: 1000 });
-const activeRun = nodecg.Replicant<RunDataActiveRun>('runDataActiveRun');
-const runFinishTimes = nodecg.Replicant<RunFinishTimes>('runFinishTimes');
-const changesDisabled = nodecg.Replicant<TimerChangesDisabled>('timerChangesDisabled');
 let timer: livesplitCore.Timer;
 
 // Cross references for LiveSplit's TimerPhases.
@@ -71,7 +64,7 @@ function setGameTime(ms: number): void {
 async function startTimer(force?: boolean): Promise<void> {
   try {
     // Error if the timer is disabled.
-    if (!force && changesDisabled.value) {
+    if (!force && timerChangesDisabled.value) {
       throw new Error('Timer changes are disabled');
     }
     // Error if the timer is finished.
@@ -104,7 +97,7 @@ async function startTimer(force?: boolean): Promise<void> {
 async function pauseTimer(): Promise<void> {
   try {
     // Error if the timer is disabled.
-    if (changesDisabled.value) {
+    if (timerChangesDisabled.value) {
       throw new Error('Timer changes are disabled');
     }
     // Error if the timer isn't running.
@@ -128,7 +121,7 @@ async function pauseTimer(): Promise<void> {
 export async function resetTimer(force?: boolean): Promise<void> {
   try {
     // Error if the timer is disabled.
-    if (!force && changesDisabled.value) {
+    if (!force && timerChangesDisabled.value) {
       throw new Error('Timer changes are disabled');
     }
     // Error if the timer is stopped.
@@ -153,7 +146,7 @@ export async function resetTimer(force?: boolean): Promise<void> {
 async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
   try {
     // Error if the timer is disabled.
-    if (changesDisabled.value) {
+    if (timerChangesDisabled.value) {
       throw new Error('Timer changes are disabled');
     }
     // Error if timer is not running.
@@ -161,7 +154,7 @@ async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
       throw new Error('Timer is not running/paused');
     }
     // Error if there's an active run but no UUID was sent.
-    if (!id && activeRun.value && activeRun.value.teams.length) {
+    if (!id && runDataActiveRun.value && runDataActiveRun.value.teams.length) {
       throw new Error('A run is active that has teams but no team ID was supplied');
     }
     // Error if the team has already finished.
@@ -170,11 +163,14 @@ async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
     }
 
     // If we have a UUID and an active run, set that team as finished.
-    if (id && activeRun.value) {
-      const timerRepCopy = clone(timerRep.value);
+    if (id && runDataActiveRun.value) {
+      const timerRepCopy = {
+        ...clone(timerRep.value),
+        teamFinishTimes: undefined,
+        state: undefined,
+      };
       delete timerRepCopy.teamFinishTimes;
       delete timerRepCopy.state;
-
       timerRep.value.teamFinishTimes[id] = {
         ...timerRepCopy,
         ...{ state: (forfeit) ? 'forfeit' : 'completed' },
@@ -186,7 +182,7 @@ async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
     }
 
     // Stop the timer if all the teams have finished (or no teams exist).
-    const teamsCount = (activeRun.value) ? activeRun.value.teams.length : 0;
+    const teamsCount = (runDataActiveRun.value) ? runDataActiveRun.value.teams.length : 0;
     const teamsFinished = Object.keys(timerRep.value.teamFinishTimes).length;
     if (teamsFinished >= teamsCount) {
       if (timerRep.value.state === 'paused') {
@@ -194,8 +190,8 @@ async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
       }
       timer.split();
       timerRep.value.state = 'finished';
-      if (activeRun.value) {
-        runFinishTimes.value[activeRun.value.id] = clone(timerRep.value);
+      if (runDataActiveRun.value) {
+        runFinishTimes.value[runDataActiveRun.value.id] = clone(timerRep.value);
       }
       nodecg.log.debug('[Timer] Finished');
     }
@@ -212,7 +208,7 @@ async function stopTimer(id?: string, forfeit?: boolean): Promise<void> {
 async function undoTimer(id?: string): Promise<void> {
   try {
     // Error if the timer is disabled.
-    if (changesDisabled.value) {
+    if (timerChangesDisabled.value) {
       throw new Error('Timer changes are disabled');
     }
     // Error if timer is not finished or running.
@@ -220,12 +216,12 @@ async function undoTimer(id?: string): Promise<void> {
       throw new Error('Timer is not finished/running');
     }
     // Error if there's an active run but no UUID was sent.
-    if (!id && activeRun.value) {
+    if (!id && runDataActiveRun.value) {
       throw new Error('A run is active but no team ID was supplied');
     }
 
     // If we have a UUID and an active run, remove that team's finish time.
-    if (id && activeRun.value) {
+    if (id && runDataActiveRun.value) {
       delete timerRep.value.teamFinishTimes[id];
       nodecg.log.debug(`[Timer] Team ${id} finish time undone`);
     }
@@ -239,8 +235,8 @@ async function undoTimer(id?: string): Promise<void> {
         timer.undoSplit();
       }
       timerRep.value.state = 'running';
-      if (activeRun.value && runFinishTimes.value[activeRun.value.id]) {
-        delete runFinishTimes.value[activeRun.value.id];
+      if (runDataActiveRun.value && runFinishTimes.value[runDataActiveRun.value.id]) {
+        delete runFinishTimes.value[runDataActiveRun.value.id];
       }
       nodecg.log.debug('[Timer] Undone');
     }
@@ -257,7 +253,7 @@ async function undoTimer(id?: string): Promise<void> {
 async function editTimer(time: string): Promise<void> {
   try {
     // Error if the timer is disabled.
-    if (changesDisabled.value) {
+    if (timerChangesDisabled.value) {
       throw new Error('Timer changes are disabled');
     }
     // Error if the timer is not stopped/paused.

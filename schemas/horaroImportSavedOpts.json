@@ -42,13 +42,27 @@
             "player": {
               "$ref": "#/definitions/columnSetting"
             },
+            "externalID": {
+              "$ref": "#/definitions/columnSetting"
+            },
             "custom": {
               "type": "object",
               "additionalProperties": {
                 "$ref": "#/definitions/columnSetting"
               }
             }
-          }
+          },
+          "required": [
+            "game",
+            "gameTwitch",
+            "category",
+            "system",
+            "region",
+            "release",
+            "player",
+            "externalID",
+            "custom"
+          ]
         },
         "split": {
           "type": "number",
@@ -57,10 +71,15 @@
             1
           ]
         }
-      }
+      },
+      "required": [
+        "columns",
+        "split"
+      ]
     },
     {
       "type": "null"
     }
-  ]
+  ],
+  "default": null
 }

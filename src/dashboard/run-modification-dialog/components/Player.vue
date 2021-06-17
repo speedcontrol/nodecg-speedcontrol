@@ -23,28 +23,33 @@
       mdi-drag-vertical
     </v-icon>
     <text-input
-      v-model="playerData.name"
+      :value="playerData.name"
+      @input="updatePlayerDataProp('name', $event)"
       :label="$t('name')"
     />
     <text-input
-      v-model="playerData.social.twitch"
+      :value="playerData.social.twitch"
+      @input="updatePlayerDataProp('social.twitch', $event)"
       :label="$t('twitch')"
       left-border
     />
     <text-input
-      v-model="playerData.country"
+      :value="playerData.country"
+      @input="updatePlayerDataProp('country', $event)"
       :label="$t('countryCode')"
       left-border
     />
     <text-input
-      v-model="playerData.pronouns"
+      :value="playerData.pronouns"
+      @input="updatePlayerDataProp('pronouns', $event)"
       :label="$t('pronouns')"
       left-border
     />
     <text-input
       v-for="data in customData"
       :key="data.key"
-      v-model="playerData.customData[data.key]"
+      :value="playerData.customData[data.key]"
+      @input="updatePlayerDataProp(`customData.${data.key}`, $event)"
       :label="data.name"
       left-border
     />
@@ -59,12 +64,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Mutation } from 'vuex-class';
-import { Configschema } from 'configschema';
-import { RunDataPlayer } from 'types';
+import { Configschema } from '@nodecg-speedcontrol/types/schemas';
+import { RunDataPlayer } from '@nodecg-speedcontrol/types';
 import TextInput from './TextInput.vue';
 import ModifyButton from './ModifyButton.vue';
-import { RemovePlayer } from '../store';
+import { storeModule } from '../store';
 
 @Component({
   components: {
@@ -74,7 +78,26 @@ import { RemovePlayer } from '../store';
 })
 export default class extends Vue {
   @Prop({ type: Object, required: true }) playerData!: RunDataPlayer;
-  @Mutation removePlayer!: RemovePlayer;
+
+  updatePlayerDataProp(key: string, val: string): void {
+    if (key.split('.').length > 1) {
+      const newVal = {
+        ...this.playerData.customData,
+        [key.replace(`${key.split('.')[0]}.`, '')]: val,
+      };
+      storeModule.updatePlayerDataProp({
+        teamId: this.playerData.teamID, id: this.playerData.id, key: key.split('.')[0], val: newVal,
+      });
+    } else {
+      storeModule.updatePlayerDataProp({
+        teamId: this.playerData.teamID, id: this.playerData.id, key, val,
+      });
+    }
+  }
+
+  removePlayer({ teamID, id }: { teamID: string, id: string }): void {
+    storeModule.removePlayer({ teamID, id });
+  }
 
   get customData(): { name: string, key: string }[] {
     return (nodecg.bundleConfig as Configschema).customData?.player || [];

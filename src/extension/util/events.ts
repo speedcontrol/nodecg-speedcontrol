@@ -1,5 +1,5 @@
+import { SendMessageAck, SendMessageArgsMap, SendMessageReturnMap } from '@nodecg-speedcontrol/types';
 import { EventEmitter } from 'events';
-import { SendMessageAck, SendMessageArgsMap, SendMessageReturnMap } from '../../../types';
 import { get as nodecg } from './nodecg';
 
 const emitter = new EventEmitter();
@@ -38,7 +38,7 @@ export function sendMessage<K extends keyof SendMessageArgsMap>(
 ): Promise<SendMessageReturnMap[K]> {
   return new Promise((resolve, reject) => {
     nodecg().log.debug(`[Events] sendMessage triggered for "${name}":`, JSON.stringify(data));
-    emitter.emit(name, data, wrapAck((err: Error | null, data_?: SendMessageReturnMap[K]) => {
+    emitter.emit(name, data, wrapAck((err: Error | null, data_: SendMessageReturnMap[K]) => {
       if (err) {
         reject(err);
       } else {

@@ -1,25 +1,20 @@
+import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataPlayer, RunDataTeam } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
 import crypto from 'crypto';
 import MarkdownIt from 'markdown-it';
 import needle from 'needle';
 import { mapSeries } from 'p-iteration';
 import parseDuration from 'parse-duration';
 import removeMd from 'remove-markdown';
-import { DefaultSetupTime, HoraroImportStatus } from 'schemas';
-import { HoraroSchedule, ImportOptions, ImportOptionsSanitized, ParsedMarkdown, RunData, RunDataArray, RunDataPlayer, RunDataTeam } from 'types'; // eslint-disable-line object-curly-newline, max-len
 import { v4 as uuid } from 'uuid';
 import { searchForTwitchGame, searchForUserDataMultiple } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
 import { bundleConfig, checkGameAgainstIgnoreList, getTwitchUserFromURL, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
+import { defaultSetupTime, horaroImportStatus, runDataArray } from './util/replicants';
 
 const nodecg = get();
 const config = bundleConfig();
 const md = new MarkdownIt();
-const runDataArray = nodecg.Replicant<RunDataArray>('runDataArray');
-const importStatus = nodecg.Replicant<HoraroImportStatus>('horaroImportStatus', {
-  persistent: false,
-});
-const defaultSetupTime = nodecg.Replicant<DefaultSetupTime>('defaultSetupTime');
 const scheduleDataCache: { [k: string]: HoraroSchedule } = {};
 
 /**
@@ -62,9 +57,9 @@ function generateRunHash(colData: (string | null)[]): string {
  * Resets the replicant's values to default.
  */
 function resetImportStatus(): void {
-  importStatus.value.importing = false;
-  importStatus.value.item = 0;
-  importStatus.value.total = 0;
+  horaroImportStatus.value.importing = false;
+  horaroImportStatus.value.item = 0;
+  horaroImportStatus.value.total = 0;
   nodecg.log.debug('[Horaro Import] Import status restored to default');
 }
 
@@ -101,7 +96,7 @@ async function loadSchedule(url: string, dashID: string): Promise<HoraroSchedule
  */
 async function importSchedule(optsO: ImportOptions, dashID: string): Promise<void> {
   try {
-    importStatus.value.importing = true;
+    horaroImportStatus.value.importing = true;
     const data = scheduleDataCache[dashID];
     const runItems = data.schedule.items;
     const setupTime = data.schedule.setup_t;
@@ -132,8 +127,8 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
     const newRunDataArray = await mapSeries(runItems.filter((run) => (
       !checkGameAgainstIgnoreList(run.data[opts.columns.game])
     )), async (run, index, arr) => {
-      importStatus.value.item = index + 1;
-      importStatus.value.total = arr.length;
+      horaroImportStatus.value.item = index + 1;
+      horaroImportStatus.value.total = arr.length;
 
       // If a run with the same external ID exists already, use the same UUID.
       // This will only work for the first instance of an external ID; for hashes, this is usually
@@ -313,7 +308,7 @@ nodecg.listenFor('loadSchedule', (data, ack) => {
 
 nodecg.listenFor('importSchedule', async (data, ack) => {
   try {
-    if (importStatus.value.importing) {
+    if (horaroImportStatus.value.importing) {
       throw new Error('Already importing schedule');
     }
     nodecg.log.info('[Horaro Import] Started importing schedule');

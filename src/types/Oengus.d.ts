@@ -29,7 +29,7 @@ export enum OengusRunType {
   single = 'SINGLE',
   race = 'RACE',
   coop = 'COOP',
-  other = 'OTHER'
+  other = 'OTHER',
 }
 
 export interface OengusUser {
@@ -46,5 +46,5 @@ export interface OengusUser {
 }
 
 export enum OengusRole {
-  user = 'ROLE_USER'
+  user = 'ROLE_USER',
 }

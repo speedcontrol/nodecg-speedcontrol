@@ -75,11 +75,11 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import { RunDataArray, RunDataActiveRun, RunDataActiveRunSurrounding, Timer } from 'schemas';
-import { RunData, Dialog, Alert } from 'types';
+import { RunDataArray, RunDataActiveRun, RunDataActiveRunSurrounding, Timer } from '@nodecg-speedcontrol/types/schemas';
+import { RunData, Alert } from '@nodecg-speedcontrol/types';
 import RunList from '../_misc/components/RunList.vue';
 import { getDialog } from '../_misc/helpers';
+import { replicantNS } from '../_misc/replicant_store';
 
 @Component({
   components: {
@@ -87,10 +87,14 @@ import { getDialog } from '../_misc/helpers';
   },
 })
 export default class extends Vue {
-  @State runDataArray!: RunDataArray;
-  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
-  @State runDataActiveRunSurrounding!: RunDataActiveRunSurrounding;
-  @State timer!: Timer;
+  @replicantNS.State((s) => s.reps.runDataArray) readonly runDataArray!: RunDataArray;
+  @replicantNS.State(
+    (s) => s.reps.runDataActiveRun,
+  ) readonly activeRun!: RunDataActiveRun | undefined;
+  @replicantNS.State(
+    (s) => s.reps.runDataActiveRunSurrounding,
+  ) readonly runDataActiveRunSurrounding!: RunDataActiveRunSurrounding;
+  @replicantNS.State((s) => s.reps.timer) readonly timer!: Timer;
 
   get nextRun(): RunData | undefined {
     return this.runDataArray.find((run) => run.id === this.runDataActiveRunSurrounding.next);

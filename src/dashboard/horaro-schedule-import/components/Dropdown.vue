@@ -52,8 +52,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { State, Mutation } from 'vuex-class';
-import { UpdateColumn, Opts } from '../store';
+import { storeModule } from '../store';
 
 @Component
 export default class extends Vue {
@@ -66,8 +65,6 @@ export default class extends Vue {
     },
   }) readonly option!: { name: string, key: string, custom: boolean };
   @Prop({ type: Array, required: true }) readonly columns!: string[];
-  @State opts!: Opts;
-  @Mutation updateColumn!: UpdateColumn;
 
   get dropdownOpts(): { value: number, text: string }[] {
     return [
@@ -85,12 +82,12 @@ export default class extends Vue {
 
   get selected(): number | null {
     if (this.option.custom) {
-      return this.opts.columns.custom[this.option.key];
+      return storeModule.opts.columns.custom[this.option.key];
     }
-    return (this.opts.columns as unknown as { [k: string]: number | null })[this.option.key];
+    return (storeModule.opts.columns as unknown as { [k: string]: number | null })[this.option.key];
   }
   set selected(value: number | null) {
-    this.updateColumn({
+    storeModule.updateColumn({
       name: this.option.key,
       value,
       custom: this.option.custom,

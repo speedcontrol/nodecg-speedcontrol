@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { RunData } from 'types';
+import { RunData } from '@nodecg-speedcontrol/types';
 
 @Component
 export default class extends Vue {

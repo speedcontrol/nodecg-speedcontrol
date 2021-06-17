@@ -18,7 +18,7 @@ jobs:
         token: ${{ secrets['GITHUB_TOKEN'] }}
         repository: nodecg/nodecg
         path: ./nodecg-temp
-    
+
     # Copies checked out NodeCG into permanent folder
     # If I didn't do this, some bundles seemed to not actually checkout successfully later
     - name: Copy ./nodecg-temp > ./nodecg
@@ -64,10 +64,10 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-    
+
     # Update NPM to the latest version
     - name: Update NPM installation
-      run: npm install -g npm@7.7.0
+      run: npm install -g npm@7.17.0
 
     # Setup GitHub SSH key so we can npm install GitHub repositories (even needed for public ones)
     - name: GitHub SSH setup

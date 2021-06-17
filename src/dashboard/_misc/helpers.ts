@@ -1,4 +1,4 @@
-import type { Dialog } from 'types';
+import type { Dialog } from '@nodecg-speedcontrol/types';
 
 /**
  * Checks if number needs a 0 adding to the start and does so if needed.

@@ -26,11 +26,11 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import { RunDataActiveRun } from 'schemas';
-import { Dialog, RunModification } from 'types';
+import { RunDataActiveRun } from '@nodecg-speedcontrol/types/schemas';
+import { RunModification } from '@nodecg-speedcontrol/types';
 import RunList from '../_misc/components/RunList.vue';
 import { getDialog } from '../_misc/helpers';
+import { replicantNS } from '../_misc/replicant_store';
 
 @Component({
   components: {
@@ -38,7 +38,9 @@ import { getDialog } from '../_misc/helpers';
   },
 })
 export default class extends Vue {
-  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
+  @replicantNS.State(
+    (s) => s.reps.runDataActiveRun,
+  ) readonly activeRun!: RunDataActiveRun | undefined;
 
   editActiveRun(): void {
     if (this.activeRun) {

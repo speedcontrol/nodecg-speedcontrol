@@ -12,7 +12,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { VueConstructor } from 'vue';
-import { Dialog, Alert, RunData } from 'types';
+import { Dialog, Alert, RunData } from '@nodecg-speedcontrol/types';
 import ImportConfirm from './components/ImportConfirm.vue';
 import ReturnToStartConfirm from './components/ReturnToStartConfirm.vue';
 import RemoveAllRunsConfirm from './components/RemoveAllRunsConfirm.vue';
