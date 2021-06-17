@@ -23,14 +23,10 @@ const srcom_api_1 = require("./srcom-api");
 const twitch_api_1 = require("./twitch-api");
 const helpers_1 = require("./util/helpers"); // eslint-disable-line object-curly-newline, max-len
 const nodecg_1 = require("./util/nodecg");
+const replicants_1 = require("./util/replicants");
 const nodecg = nodecg_1.get();
 const config = helpers_1.bundleConfig();
 const md = new markdown_it_1.default();
-const runDataArray = nodecg.Replicant('runDataArray');
-const importStatus = nodecg.Replicant('horaroImportStatus', {
-    persistent: false,
-});
-const defaultSetupTime = nodecg.Replicant('defaultSetupTime');
 const scheduleDataCache = {};
 /**
  * Used to parse Markdown from schedules.
@@ -69,9 +65,9 @@ function generateRunHash(colData) {
  * Resets the replicant's values to default.
  */
 function resetImportStatus() {
-    importStatus.value.importing = false;
-    importStatus.value.item = 0;
-    importStatus.value.total = 0;
+    replicants_1.horaroImportStatus.value.importing = false;
+    replicants_1.horaroImportStatus.value.item = 0;
+    replicants_1.horaroImportStatus.value.total = 0;
     nodecg.log.debug('[Horaro Import] Import status restored to default');
 }
 /**
@@ -110,11 +106,11 @@ function loadSchedule(url, dashID) {
 function importSchedule(optsO, dashID) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            importStatus.value.importing = true;
+            replicants_1.horaroImportStatus.value.importing = true;
             const data = scheduleDataCache[dashID];
             const runItems = data.schedule.items;
             const setupTime = data.schedule.setup_t;
-            defaultSetupTime.value = setupTime;
+            replicants_1.defaultSetupTime.value = setupTime;
             // Sanitizing import option inputs with this "mess".
             const opts = {
                 columns: {
@@ -137,8 +133,8 @@ function importSchedule(optsO, dashID) {
             const externalIDsSeen = [];
             // Filtering out any games on the ignore list before processing them all.
             const newRunDataArray = yield p_iteration_1.mapSeries(runItems.filter((run) => (!helpers_1.checkGameAgainstIgnoreList(run.data[opts.columns.game]))), (run, index, arr) => __awaiter(this, void 0, void 0, function* () {
-                importStatus.value.item = index + 1;
-                importStatus.value.total = arr.length;
+                replicants_1.horaroImportStatus.value.item = index + 1;
+                replicants_1.horaroImportStatus.value.total = arr.length;
                 // If a run with the same external ID exists already, use the same UUID.
                 // This will only work for the first instance of an external ID; for hashes, this is usually
                 // only an issue if the same "run" happens twice in a schedule (for example a Setup block),
@@ -146,7 +142,7 @@ function importSchedule(optsO, dashID) {
                 const externalID = run.data[opts.columns.externalID] || generateRunHash(run.data);
                 let matchingOldRun;
                 if (!externalIDsSeen.includes(externalID)) {
-                    matchingOldRun = runDataArray.value.find((oldRun) => oldRun.externalID === externalID);
+                    matchingOldRun = replicants_1.runDataArray.value.find((oldRun) => oldRun.externalID === externalID);
                     externalIDsSeen.push(externalID);
                 }
                 const runData = {
@@ -224,7 +220,7 @@ function importSchedule(optsO, dashID) {
                     // Mapping team string into something more manageable.
                     const teamSplittingRegex = [
                         /\s+vs\.?\s+/,
-                        /\s*,\s*/,
+                        /\s*,\s*/, // Comma (,)
                     ];
                     const teamsRaw = yield p_iteration_1.mapSeries(playerList.split(teamSplittingRegex[opts.split]), (team) => {
                         const nameMatch = team.match(/^(.+)(?=:\s)/);
@@ -277,7 +273,7 @@ function importSchedule(optsO, dashID) {
                 nodecg.log.debug(`[Horaro Import] Successfully imported ${index + 1}/${runItems.length}`);
                 return runData;
             }));
-            runDataArray.value = newRunDataArray;
+            replicants_1.runDataArray.value = newRunDataArray;
             resetImportStatus();
         }
         catch (err) {
@@ -293,7 +289,7 @@ nodecg.listenFor('loadSchedule', (data, ack) => {
 });
 nodecg.listenFor('importSchedule', (data, ack) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (importStatus.value.importing) {
+        if (replicants_1.horaroImportStatus.value.importing) {
             throw new Error('Already importing schedule');
         }
         nodecg.log.info('[Horaro Import] Started importing schedule');

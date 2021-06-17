@@ -1,5 +1,9 @@
 "use strict";
-/* eslint global-require: off */
+/* eslint-disable global-require */
+// This must go first so we can use module aliases!
+/* eslint-disable import/first */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('module-alias').addAlias('@nodecg-speedcontrol', require('path').join(__dirname, '.'));
 const events_1 = require("./util/events");
 const nodecg_1 = require("./util/nodecg");
 module.exports = (nodecg) => {

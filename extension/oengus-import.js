@@ -20,13 +20,9 @@ const srcom_api_1 = require("./srcom-api");
 const twitch_api_1 = require("./twitch-api");
 const helpers_1 = require("./util/helpers"); // eslint-disable-line object-curly-newline, max-len
 const nodecg_1 = require("./util/nodecg");
+const replicants_1 = require("./util/replicants");
 const nodecg = nodecg_1.get();
 const config = helpers_1.bundleConfig();
-const importStatus = nodecg.Replicant('oengusImportStatus', {
-    persistent: false,
-});
-const runDataArray = nodecg.Replicant('runDataArray');
-const defaultSetupTime = nodecg.Replicant('defaultSetupTime');
 /**
  * Make a GET request to Oengus API.
  * @param endpoint Oengus API endpoint you want to access.
@@ -81,9 +77,9 @@ function isOengusSchedule(source) {
  * Resets the replicant's values to default.
  */
 function resetImportStatus() {
-    importStatus.value.importing = false;
-    importStatus.value.item = 0;
-    importStatus.value.total = 0;
+    replicants_1.oengusImportStatus.value.importing = false;
+    replicants_1.oengusImportStatus.value.item = 0;
+    replicants_1.oengusImportStatus.value.total = 0;
     nodecg.log.debug('[Oengus Import] Import status restored to default');
 }
 /**
@@ -94,7 +90,7 @@ function resetImportStatus() {
 function importSchedule(marathonShort, useJapanese) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            importStatus.value.importing = true;
+            replicants_1.oengusImportStatus.value.importing = true;
             const marathonResp = yield get(`/marathons/${marathonShort}`);
             const scheduleResp = yield get(`/marathons/${marathonShort}/schedule`);
             if (!isOengusMarathon(marathonResp.body)) {
@@ -103,17 +99,17 @@ function importSchedule(marathonShort, useJapanese) {
             if (!isOengusSchedule(scheduleResp.body)) {
                 throw new Error('Did not receive schedule data correctly');
             }
-            defaultSetupTime.value = iso8601_duration_1.toSeconds(iso8601_duration_1.parse(marathonResp.body.defaultSetupTime));
+            replicants_1.defaultSetupTime.value = iso8601_duration_1.toSeconds(iso8601_duration_1.parse(marathonResp.body.defaultSetupTime));
             const oengusLines = scheduleResp.body.lines;
             // This is updated for every run so we can calculate a scheduled time for each one.
             let scheduledTime = Math.floor(Date.parse(marathonResp.body.startDate) / 1000);
             // Filtering out any games on the ignore list before processing them all.
             const newRunDataArray = yield p_iteration_1.mapSeries(oengusLines.filter((line) => (!helpers_1.checkGameAgainstIgnoreList(line.gameName))), (line, index, arr) => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b, _c, _d;
-                importStatus.value.item = index + 1;
-                importStatus.value.total = arr.length;
+                replicants_1.oengusImportStatus.value.item = index + 1;
+                replicants_1.oengusImportStatus.value.total = arr.length;
                 // If Oengus ID matches run already imported, re-use our UUID.
-                const matchingOldRun = runDataArray.value
+                const matchingOldRun = replicants_1.runDataArray.value
                     .find((oldRun) => oldRun.externalID === line.id.toString());
                 const runData = {
                     teams: [],
@@ -196,7 +192,7 @@ function importSchedule(marathonShort, useJapanese) {
                 }));
                 return runData;
             }));
-            runDataArray.value = newRunDataArray;
+            replicants_1.runDataArray.value = newRunDataArray;
             resetImportStatus();
         }
         catch (err) {
@@ -207,7 +203,7 @@ function importSchedule(marathonShort, useJapanese) {
 }
 nodecg.listenFor('importOengusSchedule', (data, ack) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (importStatus.value.importing) {
+        if (replicants_1.oengusImportStatus.value.importing) {
             throw new Error('Already importing schedule');
         }
         nodecg.log.info('[Oengus Import] Started importing schedule');

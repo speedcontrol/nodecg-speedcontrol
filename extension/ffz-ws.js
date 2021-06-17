@@ -15,7 +15,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -40,9 +40,9 @@ const twitch_api_1 = require("./twitch-api");
 const events = __importStar(require("./util/events"));
 const helpers_1 = require("./util/helpers"); // eslint-disable-line object-curly-newline, max-len
 const nodecg_1 = require("./util/nodecg");
+const replicants_1 = require("./util/replicants");
 const nodecg = nodecg_1.get();
 const config = helpers_1.bundleConfig();
-const twitchAPIData = nodecg.Replicant('twitchAPIData');
 let ws;
 let msgNo = 1;
 let pingTO;
@@ -84,8 +84,8 @@ function sendAuth(auth) {
                 secure: true,
             },
             identity: {
-                username: twitchAPIData.value.channelName,
-                password: twitchAPIData.value.accessToken,
+                username: replicants_1.twitchAPIData.value.channelName,
+                password: replicants_1.twitchAPIData.value.accessToken,
             },
         };
         let retry = false;
@@ -104,7 +104,7 @@ function sendAuth(auth) {
             catch (err) {
                 if (err.includes('authentication failed') && attempts <= 1) {
                     yield helpers_1.to(twitch_api_1.refreshToken());
-                    opts.identity.password = twitchAPIData.value.accessToken; // Update auth in opts.
+                    opts.identity.password = replicants_1.twitchAPIData.value.accessToken; // Update auth in opts.
                     retry = true;
                 }
             }
@@ -133,7 +133,7 @@ function setChannels(names) {
                         + 'channelName is set in the configuration file');
                 }
                 const msg = yield sendMsg(`update_follow_buttons ${JSON.stringify([
-                    twitchAPIData.value.channelName,
+                    replicants_1.twitchAPIData.value.channelName,
                     toSend,
                 ])}`);
                 const clients = JSON.parse(msg.substr(3)).updated_clients;
@@ -223,9 +223,9 @@ function sendInitMsgs() {
     return __awaiter(this, void 0, void 0, function* () {
         const messagesToSend = [
             'hello ["nodecg-speedcontrol",false]',
-            `setuser "${twitchAPIData.value.channelName}"`,
-            `sub "room.${twitchAPIData.value.channelName}"`,
-            `sub "channel.${twitchAPIData.value.channelName}"`,
+            `setuser "${replicants_1.twitchAPIData.value.channelName}"`,
+            `sub "room.${replicants_1.twitchAPIData.value.channelName}"`,
+            `sub "channel.${replicants_1.twitchAPIData.value.channelName}"`,
             'ready 0',
         ];
         yield p_iteration_1.forEachSeries(messagesToSend, (msg) => __awaiter(this, void 0, void 0, function* () {
@@ -257,7 +257,7 @@ function connect() {
     ws.once('close', () => {
         clearTimeout(pingTO);
         // No reconnection if Twitch API is disconnected.
-        if (twitchAPIData.value.state === 'on') {
+        if (replicants_1.twitchAPIData.value.state === 'on') {
             nodecg.log.warn('[FrankerFaceZ] Connection closed, will reconnect in 10 seconds');
             setTimeout(connect, 10 * 1000);
         }
@@ -274,15 +274,15 @@ function connect() {
             // (including through this application).
             if (data.includes('follow_buttons')) {
                 nodecg.log.debug('[FrankerFaceZ] Received follow_buttons');
-                const channels = JSON.parse(data.substr(18))[twitchAPIData.value.channelName];
-                twitchAPIData.value.featuredChannels.splice(0, twitchAPIData.value.featuredChannels.length, ...channels);
+                const channels = JSON.parse(data.substr(18))[replicants_1.twitchAPIData.value.channelName];
+                replicants_1.twitchAPIData.value.featuredChannels.splice(0, replicants_1.twitchAPIData.value.featuredChannels.length, ...channels);
             }
         }
     });
 }
 if (config.twitch.enabled && config.twitch.ffzIntegration) {
     nodecg.log.info('[FrankerFaceZ] Integration enabled');
-    twitchAPIData.on('change', (newVal, oldVal) => {
+    replicants_1.twitchAPIData.on('change', (newVal, oldVal) => {
         if (newVal.state === 'on' && (!oldVal || oldVal.state !== 'on')) {
             connect();
         }

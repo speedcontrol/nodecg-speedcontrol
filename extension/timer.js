@@ -15,7 +15,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -38,13 +38,8 @@ const livesplit_core_1 = __importDefault(require("livesplit-core"));
 const events = __importStar(require("./util/events"));
 const helpers_1 = require("./util/helpers");
 const nodecg_1 = require("./util/nodecg");
+const replicants_1 = require("./util/replicants");
 const nodecg = nodecg_1.get();
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: persistenceInterval not typed yet
-const timerRep = nodecg.Replicant('timer', { persistenceInterval: 1000 });
-const activeRun = nodecg.Replicant('runDataActiveRun');
-const runFinishTimes = nodecg.Replicant('runFinishTimes');
-const changesDisabled = nodecg.Replicant('timerChangesDisabled');
 let timer;
 // Cross references for LiveSplit's TimerPhases.
 const LS_TIMER_PHASE = {
@@ -58,7 +53,7 @@ const LS_TIMER_PHASE = {
  * We *should* be able to just do timerRep.opts.defaultValue but it doesn't work :(
  */
 function resetTimerRepToDefault() {
-    timerRep.value = {
+    replicants_1.timer.value = {
         time: '00:00:00',
         state: 'stopped',
         milliseconds: 0,
@@ -72,8 +67,8 @@ function resetTimerRepToDefault() {
  * @param ms Milliseconds you want to set the timer replicant at.
  */
 function setTime(ms) {
-    timerRep.value.time = helpers_1.msToTimeStr(ms);
-    timerRep.value.milliseconds = ms;
+    replicants_1.timer.value.time = helpers_1.msToTimeStr(ms);
+    replicants_1.timer.value.milliseconds = ms;
     // nodecg.log.debug(`[Timer] Set to ${msToTimeStr(ms)}/${ms}`);
 }
 /**
@@ -82,7 +77,7 @@ function setTime(ms) {
  * @param ms Milliseconds you want to set the game time at.
  */
 function setGameTime(ms) {
-    if (timerRep.value.state === 'stopped') {
+    if (replicants_1.timer.value.state === 'stopped') {
         livesplit_core_1.default.TimeSpan.fromSeconds(0).with((t) => timer.setLoadingTimes(t));
         timer.initializeGameTime();
     }
@@ -97,15 +92,15 @@ function startTimer(force) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Error if the timer is disabled.
-            if (!force && changesDisabled.value) {
+            if (!force && replicants_1.timerChangesDisabled.value) {
                 throw new Error('Timer changes are disabled');
             }
             // Error if the timer is finished.
-            if (timerRep.value.state === 'finished') {
+            if (replicants_1.timer.value.state === 'finished') {
                 throw new Error('Timer is in the finished state');
             }
             // Error if the timer isn't stopped or paused (and we're not forcing it).
-            if (!force && !['stopped', 'paused'].includes(timerRep.value.state)) {
+            if (!force && !['stopped', 'paused'].includes(replicants_1.timer.value.state)) {
                 throw new Error('Timer is not stopped/paused');
             }
             if (timer.currentPhase() === LS_TIMER_PHASE.NotRunning) {
@@ -116,8 +111,8 @@ function startTimer(force) {
                 timer.resume();
                 nodecg.log.debug('[Timer] Resumed');
             }
-            setGameTime(timerRep.value.milliseconds);
-            timerRep.value.state = 'running';
+            setGameTime(replicants_1.timer.value.milliseconds);
+            replicants_1.timer.value.state = 'running';
         }
         catch (err) {
             nodecg.log.debug('[Timer] Cannot start/resume timer:', err);
@@ -132,15 +127,15 @@ function pauseTimer() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Error if the timer is disabled.
-            if (changesDisabled.value) {
+            if (replicants_1.timerChangesDisabled.value) {
                 throw new Error('Timer changes are disabled');
             }
             // Error if the timer isn't running.
-            if (timerRep.value.state !== 'running') {
+            if (replicants_1.timer.value.state !== 'running') {
                 throw new Error('Timer is not running');
             }
             timer.pause();
-            timerRep.value.state = 'paused';
+            replicants_1.timer.value.state = 'paused';
             nodecg.log.debug('[Timer] Paused');
         }
         catch (err) {
@@ -157,11 +152,11 @@ function resetTimer(force) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Error if the timer is disabled.
-            if (!force && changesDisabled.value) {
+            if (!force && replicants_1.timerChangesDisabled.value) {
                 throw new Error('Timer changes are disabled');
             }
             // Error if the timer is stopped.
-            if (timerRep.value.state === 'stopped') {
+            if (replicants_1.timer.value.state === 'stopped') {
                 throw new Error('Timer is stopped');
             }
             timer.reset(false);
@@ -184,40 +179,40 @@ function stopTimer(id, forfeit) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Error if the timer is disabled.
-            if (changesDisabled.value) {
+            if (replicants_1.timerChangesDisabled.value) {
                 throw new Error('Timer changes are disabled');
             }
             // Error if timer is not running.
-            if (!['running', 'paused'].includes(timerRep.value.state)) {
+            if (!['running', 'paused'].includes(replicants_1.timer.value.state)) {
                 throw new Error('Timer is not running/paused');
             }
             // Error if there's an active run but no UUID was sent.
-            if (!id && activeRun.value && activeRun.value.teams.length) {
+            if (!id && replicants_1.runDataActiveRun.value && replicants_1.runDataActiveRun.value.teams.length) {
                 throw new Error('A run is active that has teams but no team ID was supplied');
             }
             // Error if the team has already finished.
-            if (id && timerRep.value.teamFinishTimes[id]) {
+            if (id && replicants_1.timer.value.teamFinishTimes[id]) {
                 throw new Error('The specified team has already finished');
             }
             // If we have a UUID and an active run, set that team as finished.
-            if (id && activeRun.value) {
-                const timerRepCopy = clone_1.default(timerRep.value);
+            if (id && replicants_1.runDataActiveRun.value) {
+                const timerRepCopy = Object.assign(Object.assign({}, clone_1.default(replicants_1.timer.value)), { teamFinishTimes: undefined, state: undefined });
                 delete timerRepCopy.teamFinishTimes;
                 delete timerRepCopy.state;
-                timerRep.value.teamFinishTimes[id] = Object.assign(Object.assign({}, timerRepCopy), { state: (forfeit) ? 'forfeit' : 'completed' });
+                replicants_1.timer.value.teamFinishTimes[id] = Object.assign(Object.assign({}, timerRepCopy), { state: (forfeit) ? 'forfeit' : 'completed' });
                 nodecg.log.debug(`[Timer] Team ${id} finished at ${timerRepCopy.time}${(forfeit) ? ' (forfeit)' : ''}`);
             }
             // Stop the timer if all the teams have finished (or no teams exist).
-            const teamsCount = (activeRun.value) ? activeRun.value.teams.length : 0;
-            const teamsFinished = Object.keys(timerRep.value.teamFinishTimes).length;
+            const teamsCount = (replicants_1.runDataActiveRun.value) ? replicants_1.runDataActiveRun.value.teams.length : 0;
+            const teamsFinished = Object.keys(replicants_1.timer.value.teamFinishTimes).length;
             if (teamsFinished >= teamsCount) {
-                if (timerRep.value.state === 'paused') {
+                if (replicants_1.timer.value.state === 'paused') {
                     timer.resume();
                 }
                 timer.split();
-                timerRep.value.state = 'finished';
-                if (activeRun.value) {
-                    runFinishTimes.value[activeRun.value.id] = clone_1.default(timerRep.value);
+                replicants_1.timer.value.state = 'finished';
+                if (replicants_1.runDataActiveRun.value) {
+                    replicants_1.runFinishTimes.value[replicants_1.runDataActiveRun.value.id] = clone_1.default(replicants_1.timer.value);
                 }
                 nodecg.log.debug('[Timer] Finished');
             }
@@ -236,34 +231,34 @@ function undoTimer(id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Error if the timer is disabled.
-            if (changesDisabled.value) {
+            if (replicants_1.timerChangesDisabled.value) {
                 throw new Error('Timer changes are disabled');
             }
             // Error if timer is not finished or running.
-            if (!['finished', 'running'].includes(timerRep.value.state)) {
+            if (!['finished', 'running'].includes(replicants_1.timer.value.state)) {
                 throw new Error('Timer is not finished/running');
             }
             // Error if there's an active run but no UUID was sent.
-            if (!id && activeRun.value) {
+            if (!id && replicants_1.runDataActiveRun.value) {
                 throw new Error('A run is active but no team ID was supplied');
             }
             // If we have a UUID and an active run, remove that team's finish time.
-            if (id && activeRun.value) {
-                delete timerRep.value.teamFinishTimes[id];
+            if (id && replicants_1.runDataActiveRun.value) {
+                delete replicants_1.timer.value.teamFinishTimes[id];
                 nodecg.log.debug(`[Timer] Team ${id} finish time undone`);
             }
             // Undo the split if needed.
-            if (timerRep.value.state === 'finished') {
+            if (replicants_1.timer.value.state === 'finished') {
                 if (timer.currentPhase() === 0) {
                     timer.start();
-                    setGameTime(timerRep.value.milliseconds);
+                    setGameTime(replicants_1.timer.value.milliseconds);
                 }
                 else {
                     timer.undoSplit();
                 }
-                timerRep.value.state = 'running';
-                if (activeRun.value && runFinishTimes.value[activeRun.value.id]) {
-                    delete runFinishTimes.value[activeRun.value.id];
+                replicants_1.timer.value.state = 'running';
+                if (replicants_1.runDataActiveRun.value && replicants_1.runFinishTimes.value[replicants_1.runDataActiveRun.value.id]) {
+                    delete replicants_1.runFinishTimes.value[replicants_1.runDataActiveRun.value.id];
                 }
                 nodecg.log.debug('[Timer] Undone');
             }
@@ -282,11 +277,11 @@ function editTimer(time) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Error if the timer is disabled.
-            if (changesDisabled.value) {
+            if (replicants_1.timerChangesDisabled.value) {
                 throw new Error('Timer changes are disabled');
             }
             // Error if the timer is not stopped/paused.
-            if (!['stopped', 'paused'].includes(timerRep.value.state)) {
+            if (!['stopped', 'paused'].includes(replicants_1.timer.value.state)) {
                 throw new Error('Timer is not stopped/paused');
             }
             // Error if the string formatting is not correct.
@@ -307,12 +302,12 @@ function editTimer(time) {
  * This stuff runs every 1/10th a second to keep the time updated.
  */
 function tick() {
-    if (timerRep.value.state === 'running') {
+    if (replicants_1.timer.value.state === 'running') {
         // Calculates the milliseconds the timer has been running for and updates the replicant.
         const time = timer.currentTime().gameTime();
         const ms = Math.floor((time.totalSeconds()) * 1000);
         setTime(ms);
-        timerRep.value.timestamp = Date.now();
+        replicants_1.timer.value.timestamp = Date.now();
     }
 }
 // Sets up the timer with a single split.
@@ -320,9 +315,9 @@ const liveSplitRun = livesplit_core_1.default.Run.new();
 liveSplitRun.pushSegment(livesplit_core_1.default.Segment.new('finish'));
 timer = livesplit_core_1.default.Timer.new(liveSplitRun);
 // If the timer was running when last closed, tries to resume it at the correct time.
-if (timerRep.value.state === 'running') {
-    const missedTime = Date.now() - timerRep.value.timestamp;
-    const previousTime = timerRep.value.milliseconds;
+if (replicants_1.timer.value.state === 'running') {
+    const missedTime = Date.now() - replicants_1.timer.value.timestamp;
+    const previousTime = replicants_1.timer.value.milliseconds;
     const timeOffset = previousTime + missedTime;
     setTime(timeOffset);
     nodecg.log.info(`[Timer] Recovered ${(missedTime / 1000).toFixed(2)} seconds of lost time`);
