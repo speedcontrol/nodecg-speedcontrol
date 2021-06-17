@@ -2,11 +2,12 @@
 
 import Vue from 'vue';
 import i18n from '../_misc/i18n';
+import { setUpReplicants } from '../_misc/replicant_store';
 import vuetify from '../_misc/vuetify';
 import App from './main.vue';
-import waitForReplicants from './store';
+import store from './store';
 
-waitForReplicants().then((store) => {
+setUpReplicants(store).then(() => {
   new Vue({
     vuetify,
     i18n,

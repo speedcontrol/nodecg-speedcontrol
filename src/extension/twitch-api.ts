@@ -1,31 +1,28 @@
-import express from 'express';
+import { CommercialDuration } from '@nodecg-speedcontrol/types';
+import express from 'express'; // eslint-disable-line import/no-extraneous-dependencies
 import needle, { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
-import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from 'schemas';
-import { CommercialDuration } from 'types';
 import * as events from './util/events';
 import { bundleConfig, processAck, to } from './util/helpers';
 import { get } from './util/nodecg';
+import { twitchAPIData, twitchChannelInfo, twitchCommercialTimer } from './util/replicants';
 
 const nodecg = get();
 const config = bundleConfig();
 const app = express();
-const apiData = nodecg.Replicant<TwitchAPIData>('twitchAPIData');
-const channelInfo = nodecg.Replicant<TwitchChannelInfo>('twitchChannelInfo');
-const commercialTimer = nodecg.Replicant<TwitchCommercialTimer>('twitchCommercialTimer');
 let channelInfoTO: NodeJS.Timeout;
 
-apiData.value.state = 'off'; // Set this to "off" on every start.
-apiData.value.featuredChannels.length = 0; // Empty on every start.
+twitchAPIData.value.state = 'off'; // Set this to "off" on every start.
+twitchAPIData.value.featuredChannels.length = 0; // Empty on every start.
 
 /**
  * Logs out of the Twitch integration.
  */
 async function logout(): Promise<void> {
-  if (apiData.value.state === 'off') {
+  if (twitchAPIData.value.state === 'off') {
     throw new Error('Integration not ready');
   }
-  apiData.value = { state: 'off', sync: false, featuredChannels: [] };
-  channelInfo.value = {};
+  twitchAPIData.value = { state: 'off', sync: false, featuredChannels: [] };
+  twitchChannelInfo.value = {};
   clearTimeout(channelInfoTO);
   nodecg.log.info('[Twitch] Integration successfully logged out');
 }
@@ -45,7 +42,7 @@ async function validateToken(): Promise<{
     null,
     {
       headers: {
-        Authorization: `OAuth ${apiData.value.accessToken}`,
+        Authorization: `OAuth ${twitchAPIData.value.accessToken}`,
       },
     },
   );
@@ -67,7 +64,7 @@ export async function refreshToken(): Promise<void> {
       'https://id.twitch.tv/oauth2/token',
       {
         grant_type: 'refresh_token',
-        refresh_token: encodeURI(apiData.value.refreshToken as string),
+        refresh_token: encodeURI(twitchAPIData.value.refreshToken as string),
         client_id: config.twitch.clientID,
         client_secret: config.twitch.clientSecret,
       },
@@ -77,8 +74,8 @@ export async function refreshToken(): Promise<void> {
       // Do we need to retry here?
     }
     nodecg.log.info('[Twitch] Successfully refreshed access token');
-    apiData.value.accessToken = resp.body.access_token;
-    apiData.value.refreshToken = resp.body.refresh_token;
+    twitchAPIData.value.accessToken = resp.body.access_token;
+    twitchAPIData.value.refreshToken = resp.body.refresh_token;
   } catch (err) {
     nodecg.log.warn('[Twitch] Error refreshing access token, you need to relogin');
     nodecg.log.debug('[Twitch] Error refreshing access token:', err);
@@ -111,7 +108,7 @@ async function request(
           headers: {
             Accept: !newAPI ? 'application/vnd.twitchtv.v5+json' : '',
             'Content-Type': 'application/json',
-            Authorization: `${newAPI ? 'Bearer' : 'OAuth'} ${apiData.value.accessToken}`,
+            Authorization: `${newAPI ? 'Bearer' : 'OAuth'} ${twitchAPIData.value.accessToken}`,
             'Client-ID': config.twitch.clientID,
           },
         },
@@ -143,11 +140,11 @@ async function request(
  */
 async function refreshChannelInfo(): Promise<void> {
   try {
-    const resp = await request('get', `/channels/${apiData.value.channelID}`);
+    const resp = await request('get', `/channels/${twitchAPIData.value.channelID}`);
     if (resp.statusCode !== 200) {
       throw new Error(JSON.stringify(resp.body));
     }
-    channelInfo.value = resp.body;
+    twitchChannelInfo.value = resp.body;
     channelInfoTO = setTimeout(refreshChannelInfo, 60 * 1000);
   } catch (err) {
     // Try again after 10 seconds.
@@ -162,7 +159,7 @@ async function refreshChannelInfo(): Promise<void> {
  * @param query String you wish to try to find a game with.
  */
 async function searchForGame(query: string): Promise<string> {
-  if (apiData.value.state !== 'on') {
+  if (twitchAPIData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
   const resp = await request('get', `/search/games?query=${encodeURIComponent(query)}`);
@@ -192,7 +189,7 @@ export async function verifyTwitchDir(query: string): Promise<string | undefined
  * @param game Game to set.
  */
 export async function updateChannelInfo(status?: string, game?: string): Promise<boolean> {
-  if (apiData.value.state !== 'on') {
+  if (twitchAPIData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
   try {
@@ -200,7 +197,7 @@ export async function updateChannelInfo(status?: string, game?: string): Promise
     const [, dir] = (game) ? await to(verifyTwitchDir(game)) : [null, undefined];
     const resp = await request(
       'put',
-      `/channels/${apiData.value.channelID}`,
+      `/channels/${twitchAPIData.value.channelID}`,
       {
         channel: {
           status: (status) ? status.slice(0, 140) : undefined,
@@ -212,7 +209,7 @@ export async function updateChannelInfo(status?: string, game?: string): Promise
       throw new Error(JSON.stringify(resp.body));
     }
     nodecg.log.info('[Twitch] Successfully updated channel information');
-    channelInfo.value = resp.body;
+    twitchChannelInfo.value = resp.body;
     return !dir;
   } catch (err) {
     nodecg.log.warn('[Twitch] Error updating channel information');
@@ -227,13 +224,13 @@ export async function updateChannelInfo(status?: string, game?: string): Promise
  * We also do this during setup, in case there was one running when the app closed.
  */
 function updateCommercialTimer(): void {
-  const timer = commercialTimer.value;
+  const timer = twitchCommercialTimer.value;
   const remaining = timer.originalDuration - ((Date.now() - timer.timestamp) / 1000);
   if (remaining > 0) {
-    commercialTimer.value.secondsRemaining = Math.round(remaining);
+    twitchCommercialTimer.value.secondsRemaining = Math.round(remaining);
     setTimeout(updateCommercialTimer, 1000);
   } else {
-    commercialTimer.value.secondsRemaining = 0;
+    twitchCommercialTimer.value.secondsRemaining = 0;
   }
 }
 
@@ -241,8 +238,8 @@ function updateCommercialTimer(): void {
  * Attempts to start a commercial on the set channel.
  */
 async function startCommercial(duration?: CommercialDuration):
-  Promise<{ duration: CommercialDuration }> {
-  if (apiData.value.state !== 'on') {
+Promise<{ duration: CommercialDuration }> {
+  if (twitchAPIData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
   try {
@@ -251,7 +248,7 @@ async function startCommercial(duration?: CommercialDuration):
     nodecg.log.info('[Twitch] Requested a commercial to be started');
     const resp = await request(
       'post',
-      `/channels/${apiData.value.channelID}/commercial`,
+      `/channels/${twitchAPIData.value.channelID}/commercial`,
       {
         length: dur,
       },
@@ -261,9 +258,9 @@ async function startCommercial(duration?: CommercialDuration):
     }
 
     // Update commercial timer values, trigger check logic.
-    commercialTimer.value.originalDuration = dur;
-    commercialTimer.value.secondsRemaining = dur;
-    commercialTimer.value.timestamp = Date.now();
+    twitchCommercialTimer.value.originalDuration = dur;
+    twitchCommercialTimer.value.secondsRemaining = dur;
+    twitchCommercialTimer.value.timestamp = Date.now();
     updateCommercialTimer();
 
     nodecg.log.info(`[Twitch] Commercial started successfully (${dur} seconds)`);
@@ -291,18 +288,18 @@ async function setUp(): Promise<void> {
     if (!resp) {
       throw new Error('No response while validating token');
     }
-    apiData.value.channelID = resp.user_id;
-    apiData.value.channelName = resp.login;
+    twitchAPIData.value.channelID = resp.user_id;
+    twitchAPIData.value.channelName = resp.login;
   } else {
     const resp = await request('get', `/users?login=${config.twitch.channelName}`);
     if (!resp.body.users.length) {
       throw new Error('channelName specified in the configuration not found');
-    }
-    apiData.value.channelID = resp.body.users[0]._id; // eslint-disable-line no-underscore-dangle
-    apiData.value.channelName = resp.body.users[0].name;
+    } // eslint-disable-next-line no-underscore-dangle
+    twitchAPIData.value.channelID = resp.body.users[0]._id;
+    twitchAPIData.value.channelName = resp.body.users[0].name;
   }
   clearTimeout(channelInfoTO);
-  apiData.value.state = 'on';
+  twitchAPIData.value.state = 'on';
   refreshChannelInfo();
   updateCommercialTimer();
 }
@@ -318,8 +315,8 @@ if (config.twitch.enabled) {
   });
 
   // If we already have an access token stored, verify it.
-  if (apiData.value.accessToken) {
-    apiData.value.state = 'authenticating';
+  if (twitchAPIData.value.accessToken) {
+    twitchAPIData.value.state = 'authenticating';
     setUp().then(() => {
       nodecg.log.info('[Twitch] Integration ready');
     }).catch((err) => {
@@ -330,7 +327,7 @@ if (config.twitch.enabled) {
 
   // Route that receives Twitch's auth code when the user does the flow from the dashboard.
   app.get('/nodecg-speedcontrol/twitchauth', (req, res) => {
-    apiData.value.state = 'authenticating';
+    twitchAPIData.value.state = 'authenticating';
     needle(
       'post',
       'https://id.twitch.tv/oauth2/token',
@@ -342,8 +339,8 @@ if (config.twitch.enabled) {
         redirect_uri: config.twitch.redirectURI,
       }, /* eslint-enable */
     ).then((resp) => {
-      apiData.value.accessToken = resp.body.access_token;
-      apiData.value.refreshToken = resp.body.refresh_token;
+      twitchAPIData.value.accessToken = resp.body.access_token;
+      twitchAPIData.value.refreshToken = resp.body.refresh_token;
       setUp().then(() => {
         nodecg.log.info('[Twitch] Authentication successful');
         res.send('<b>Twitch authentication is now complete, '

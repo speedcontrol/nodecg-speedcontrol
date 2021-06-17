@@ -1,21 +1,16 @@
+import { OengusMarathon, OengusSchedule, RunData, RunDataPlayer, RunDataTeam } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
 import { Duration, parse as isoParse, toSeconds } from 'iso8601-duration';
 import needle, { NeedleResponse } from 'needle';
 import { mapSeries } from 'p-iteration';
-import { DefaultSetupTime, OengusImportStatus } from 'schemas';
-import { OengusMarathon, OengusSchedule, RunData, RunDataArray, RunDataPlayer, RunDataTeam } from 'types'; // eslint-disable-line object-curly-newline, max-len
 import { v4 as uuid } from 'uuid';
 import { searchForTwitchGame, searchForUserDataMultiple } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
 import { bundleConfig, checkGameAgainstIgnoreList, getTwitchUserFromURL, padTimeNumber, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get as ncgGet } from './util/nodecg';
+import { defaultSetupTime, oengusImportStatus, runDataArray } from './util/replicants';
 
 const nodecg = ncgGet();
 const config = bundleConfig();
-const importStatus = nodecg.Replicant<OengusImportStatus>('oengusImportStatus', {
-  persistent: false,
-});
-const runDataArray = nodecg.Replicant<RunDataArray>('runDataArray');
-const defaultSetupTime = nodecg.Replicant<DefaultSetupTime>('defaultSetupTime');
 
 /**
  * Make a GET request to Oengus API.
@@ -76,9 +71,9 @@ function isOengusSchedule(source: any): source is OengusSchedule {
  * Resets the replicant's values to default.
  */
 function resetImportStatus(): void {
-  importStatus.value.importing = false;
-  importStatus.value.item = 0;
-  importStatus.value.total = 0;
+  oengusImportStatus.value.importing = false;
+  oengusImportStatus.value.item = 0;
+  oengusImportStatus.value.total = 0;
   nodecg.log.debug('[Oengus Import] Import status restored to default');
 }
 
@@ -89,7 +84,7 @@ function resetImportStatus(): void {
  */
 async function importSchedule(marathonShort: string, useJapanese: boolean): Promise<void> {
   try {
-    importStatus.value.importing = true;
+    oengusImportStatus.value.importing = true;
     const marathonResp = await get(`/marathons/${marathonShort}`);
     const scheduleResp = await get(`/marathons/${marathonShort}/schedule`);
     if (!isOengusMarathon(marathonResp.body)) {
@@ -108,8 +103,8 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
     const newRunDataArray = await mapSeries(oengusLines.filter((line) => (
       !checkGameAgainstIgnoreList(line.gameName)
     )), async (line, index, arr) => {
-      importStatus.value.item = index + 1;
-      importStatus.value.total = arr.length;
+      oengusImportStatus.value.item = index + 1;
+      oengusImportStatus.value.total = arr.length;
 
       // If Oengus ID matches run already imported, re-use our UUID.
       const matchingOldRun = runDataArray.value
@@ -211,7 +206,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
 
 nodecg.listenFor('importOengusSchedule', async (data, ack) => {
   try {
-    if (importStatus.value.importing) {
+    if (oengusImportStatus.value.importing) {
       throw new Error('Already importing schedule');
     }
     nodecg.log.info('[Oengus Import] Started importing schedule');

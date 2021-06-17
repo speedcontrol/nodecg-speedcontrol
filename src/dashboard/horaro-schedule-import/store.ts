@@ -1,8 +1,9 @@
+import { HoraroImportSavedOpts } from '@nodecg-speedcontrol/types/schemas';
+import { replicantModule, ReplicantModule, ReplicantTypes } from '@nodecg-speedcontrol/_misc/replicant_store';
 import clone from 'clone';
-import type { ReplicantBrowser } from 'nodecg/types/browser';
-import type { HoraroImportSavedOpts, HoraroImportStatus, RunDataActiveRun } from 'schemas';
 import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
+import { getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 
 Vue.use(Vuex);
 
@@ -38,77 +39,59 @@ const defaultOpts: Opts = {
   split: 0,
 };
 
-// Replicants and their types
-const reps: {
-  runDataActiveRun: ReplicantBrowser<RunDataActiveRun>;
-  horaroImportStatus: ReplicantBrowser<HoraroImportStatus>;
-  horaroImportSavedOpts: ReplicantBrowser<HoraroImportSavedOpts>;
-  [k: string]: ReplicantBrowser<unknown>;
-} = {
-  runDataActiveRun: nodecg.Replicant('runDataActiveRun'),
-  horaroImportStatus: nodecg.Replicant('horaroImportStatus'),
-  horaroImportSavedOpts: nodecg.Replicant('horaroImportSavedOpts'),
-};
+@Module({ name: 'OurModule' })
+class OurModule extends VuexModule {
+  public opts = clone(defaultOpts);
 
-// Types for mutations below
-export type SaveOpts = () => void;
-export type UpdateColumn = (opts: { name: string, value: number | null, custom: boolean }) => void;
-export type UpdateSplit = (split: number) => void;
-export type AddCustomColumn = (name: string) => void;
-export type LoadOpts = () => void;
-export type ClearOpts = () => void;
+  // Helper getter to return all replicants.
+  get reps(): ReplicantTypes {
+    return this.context.rootState.ReplicantModule.reps;
+  }
 
-const store = new Vuex.Store({
-  state: {
-    opts: clone(defaultOpts),
-  } as {
-    opts: typeof defaultOpts,
-    horaroImportSavedOpts: HoraroImportSavedOpts,
-  },
-  mutations: {
-    setState(state, { name, val }): void {
-      Vue.set(state, name, val);
-    },
-    /* Mutations to replicants start */
-    saveOpts(state): void {
-      if (typeof reps.horaroImportSavedOpts.value !== 'undefined') {
-        reps.horaroImportSavedOpts.value = clone(state.opts);
-      }
-    },
-    /* Mutations to replicants end */
-    updateColumn(
-      state,
-      { name, value, custom }: { name: string, value: number | null, custom: boolean },
-    ): void {
-      if (custom) {
-        Vue.set(state.opts.columns.custom, name, value);
-      } else {
-        Vue.set(state.opts.columns, name, value);
-      }
-    },
-    updateSplit(state, split: number): void {
-      Vue.set(state.opts, 'split', split);
-    },
-    addCustomColumn(state, name: string): void {
-      Vue.set(state.opts.columns.custom, name, null);
-    },
-    loadOpts(state): void {
-      Vue.set(state, 'opts', clone(state.horaroImportSavedOpts));
-    },
-    clearOpts(state): void {
-      Vue.set(state, 'opts', clone(defaultOpts));
-      store.commit('saveOpts');
-    },
-  },
+  @Mutation
+  saveOpts(): void {
+    replicantModule.setReplicant<HoraroImportSavedOpts>({
+      name: 'horaroImportSavedOpts', val: clone(this.opts),
+    });
+  }
+
+  @Mutation
+  updateColumn(
+    { name, value, custom }: { name: string, value: number | null, custom: boolean },
+  ): void {
+    if (custom) {
+      Vue.set(this.opts.columns.custom, name, value);
+    } else {
+      Vue.set(this.opts.columns, name, value);
+    }
+  }
+
+  @Mutation
+  updateSplit(split: number): void {
+    Vue.set(this.opts, 'split', split);
+  }
+
+  @Mutation
+  addCustomColumn(name: string): void {
+    Vue.set(this.opts.columns.custom, name, null);
+  }
+
+  @Mutation
+  loadOpts(): void {
+    const reps = replicantModule.reps as unknown as ReplicantTypes;
+    Vue.set(this, 'opts', clone(reps.horaroImportSavedOpts));
+  }
+
+  @Mutation
+  clearOpts(): void {
+    Vue.set(this, 'opts', clone(defaultOpts));
+  }
+}
+
+const store = new Store({
+  strict: process.env.NODE_ENV !== 'production',
+  state: {},
+  modules: { ReplicantModule, OurModule },
 });
-
-Object.keys(reps).forEach((key) => {
-  reps[key].on('change', (val) => {
-    store.commit('setState', { name: key, val: clone(val) });
-  });
-});
-
-export default async (): Promise<Store<Record<string, unknown>>> => {
-  await NodeCG.waitForReplicants(...Object.keys(reps).map((key) => reps[key]));
-  return store;
-};
+export default store;
+export const storeModule = getModule(OurModule, store);

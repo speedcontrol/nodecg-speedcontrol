@@ -6,18 +6,19 @@
  */
 
 export type HoraroImportSavedOpts = {
-  columns?: {
-    game?: ColumnSetting;
-    gameTwitch?: ColumnSetting;
-    category?: ColumnSetting;
-    system?: ColumnSetting;
-    region?: ColumnSetting;
-    release?: ColumnSetting;
-    player?: ColumnSetting;
-    custom?: {
-      [k: string]: ColumnSetting;
-    };
-  };
-  split?: 0 | 1;
+	columns: {
+		game: ColumnSetting;
+		gameTwitch: ColumnSetting;
+		category: ColumnSetting;
+		system: ColumnSetting;
+		region: ColumnSetting;
+		release: ColumnSetting;
+		player: ColumnSetting;
+		externalID: ColumnSetting;
+		custom: {
+			[k: string]: ColumnSetting;
+		};
+	};
+	split: 0 | 1;
 } | null;
 export type ColumnSetting = number | null;

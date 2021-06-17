@@ -1,7 +1,6 @@
+import { RunData, RunDataActiveRun, RunDataPlayer, RunDataTeam } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
 import clone from 'clone';
 import _ from 'lodash';
-import { RunDataActiveRunSurrounding, TwitchAPIData } from '../../schemas';
-import { RunData, RunDataActiveRun, RunDataArray, RunDataPlayer, RunDataTeam, Timer } from '../../types'; // eslint-disable-line object-curly-newline, max-len
 import { setChannels } from './ffz-ws';
 import { searchForTwitchGame } from './srcom-api';
 import { resetTimer } from './timer';
@@ -9,15 +8,9 @@ import { updateChannelInfo, verifyTwitchDir } from './twitch-api';
 import * as events from './util/events';
 import { bundleConfig, findRunIndexFromId, formPlayerNamesStr, getTwitchChannels, msToTimeStr, processAck, timeStrToMS, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
+import { runDataActiveRun, runDataActiveRunSurrounding, runDataArray, timer, twitchAPIData } from './util/replicants';
 
 const nodecg = get();
-const array = nodecg.Replicant<RunDataArray>('runDataArray');
-const activeRun = nodecg.Replicant<RunDataActiveRun>('runDataActiveRun');
-const activeRunSurr = nodecg.Replicant<RunDataActiveRunSurrounding>('runDataActiveRunSurrounding');
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: persistenceInterval not typed yet
-const timer = nodecg.Replicant<Timer>('timer', { persistenceInterval: 1000 });
-const twitchAPIData = nodecg.Replicant<TwitchAPIData>('twitchAPIData');
 
 /**
  * Used to update the replicant that stores ID references to previous/current/next runs.
@@ -27,31 +20,31 @@ function changeSurroundingRuns(): void {
   let current: RunData | undefined;
   let next: RunData | undefined;
 
-  if (!activeRun.value) {
+  if (!runDataActiveRun.value) {
     // No current run set, we must be at the start, only set that one.
-    [next] = array.value;
+    [next] = runDataArray.value;
   } else {
-    current = activeRun.value; // Current will always be the active one.
+    current = runDataActiveRun.value; // Current will always be the active one.
 
     // Try to find currently set runs in the run data array.
     const currentIndex = findRunIndexFromId(current.id);
-    const previousIndex = findRunIndexFromId(activeRunSurr.value.previous);
-    const nextIndex = findRunIndexFromId(activeRunSurr.value.next);
+    const previousIndex = findRunIndexFromId(runDataActiveRunSurrounding.value.previous);
+    const nextIndex = findRunIndexFromId(runDataActiveRunSurrounding.value.next);
 
     if (currentIndex >= 0) { // Found current run in array.
       if (currentIndex > 0) {
-        [previous,, next] = array.value.slice(currentIndex - 1);
+        [previous,, next] = runDataArray.value.slice(currentIndex - 1);
       } else { // We're at the start and can't splice -1.
-        [, next] = array.value.slice(0);
+        [, next] = runDataArray.value.slice(0);
       }
     } else if (previousIndex >= 0) { // Found previous run in array, use for reference.
-      [previous,, next] = array.value.slice(previousIndex);
+      [previous,, next] = runDataArray.value.slice(previousIndex);
     } else if (nextIndex >= 0) { // Found next run in array, use for reference.
-      [previous,, next] = array.value.slice(nextIndex - 2);
+      [previous,, next] = runDataArray.value.slice(nextIndex - 2);
     }
   }
 
-  activeRunSurr.value = {
+  runDataActiveRunSurrounding.value = {
     previous: (previous) ? previous.id : undefined,
     current: (current) ? current.id : undefined,
     next: (next) ? next.id : undefined,
@@ -110,12 +103,12 @@ async function changeActiveRun(id?: string): Promise<boolean> {
     if (!id) {
       throw new Error('No run ID was supplied');
     }
-    const runData = array.value.find((run) => run.id === id);
+    const runData = runDataArray.value.find((run) => run.id === id);
     if (!runData) {
       throw new Error(`Run with ID ${id} was not found`);
     } else {
       const noTwitchGame = await updateTwitchInformation(runData);
-      activeRun.value = clone(runData);
+      runDataActiveRun.value = clone(runData);
       to(resetTimer(true));
       nodecg.log.debug(`[Run Control] Active run changed to ${id}`);
       return noTwitchGame;
@@ -135,11 +128,11 @@ async function removeRun(id?: string): Promise<void> {
     if (!id) {
       throw new Error('No run ID was supplied');
     }
-    const runIndex = array.value.findIndex((run) => run.id === id);
+    const runIndex = runDataArray.value.findIndex((run) => run.id === id);
     if (runIndex < 0) {
       throw new Error(`Run with ID ${id} was not found`);
     } else {
-      array.value.splice(runIndex, 1);
+      runDataArray.value.splice(runIndex, 1);
       nodecg.log.debug(`[Run Control] Successfully removed run ${id}`);
       return;
     }
@@ -214,13 +207,13 @@ async function modifyRun(runData: RunData, prevID?: string, twitch = false): Pro
 
     const index = findRunIndexFromId(data.id);
     if (index >= 0) { // Run already exists, edit it.
-      if (activeRun.value && data.id === activeRun.value.id) {
-        activeRun.value = clone(data);
+      if (runDataActiveRun.value && data.id === runDataActiveRun.value.id) {
+        runDataActiveRun.value = clone(data);
       }
-      array.value[index] = clone(data);
+      runDataArray.value[index] = clone(data);
     } else { // Run is new, add it.
       const prevIndex = findRunIndexFromId(prevID);
-      array.value.splice(prevIndex + 1 || array.value.length, 0, clone(data));
+      runDataArray.value.splice(prevIndex + 1 || runDataArray.value.length, 0, clone(data));
     }
 
     const noTwitchGame = (twitch) ? await updateTwitchInformation(runData) : false;
@@ -239,7 +232,7 @@ async function removeActiveRun(): Promise<void> {
     if (['running', 'paused'].includes(timer.value.state)) {
       throw new Error('Timer is running/paused');
     }
-    activeRun.value = undefined;
+    (runDataActiveRun.value as RunDataActiveRun) = undefined;
     to(resetTimer(true));
     nodecg.log.debug('[Run Control] Successfully removed active run');
   } catch (err) {
@@ -255,7 +248,7 @@ async function removeAllRuns(): Promise<void> {
     if (['running', 'paused'].includes(timer.value.state)) {
       throw new Error('Timer is running/paused');
     }
-    array.value.length = 0;
+    runDataArray.value.length = 0;
     removeActiveRun();
     to(resetTimer(true));
     nodecg.log.debug('[Run Control] Successfully removed all runs');
@@ -282,7 +275,7 @@ nodecg.listenFor('modifyRun', (data, ack) => {
     .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('changeToNextRun', (data, ack) => {
-  changeActiveRun(activeRunSurr.value.next)
+  changeActiveRun(runDataActiveRunSurrounding.value.next)
     .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
     .catch((err) => processAck(ack, err));
 });
@@ -319,7 +312,7 @@ events.listenFor('modifyRun', (data, ack) => {
     .catch((err) => processAck(ack, err));
 });
 events.listenFor('changeToNextRun', (data, ack) => {
-  changeActiveRun(activeRunSurr.value.next)
+  changeActiveRun(runDataActiveRunSurrounding.value.next)
     .then((noTwitchGame) => {
       processAck(ack, null, noTwitchGame);
       if (noTwitchGame) {
@@ -339,5 +332,5 @@ events.listenFor('removeAllRuns', (data, ack) => {
     .catch((err) => processAck(ack, err));
 });
 
-activeRun.on('change', changeSurroundingRuns);
-array.on('change', changeSurroundingRuns);
+runDataActiveRun.on('change', changeSurroundingRuns);
+runDataArray.on('change', changeSurroundingRuns);

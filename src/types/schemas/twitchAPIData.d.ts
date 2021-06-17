@@ -5,8 +5,12 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface TwitchCommercialTimer {
-  secondsRemaining: number;
-  originalDuration: number;
-  timestamp: number;
+export interface TwitchAPIData {
+	state: 'off' | 'authenticating' | 'on';
+	sync: boolean;
+	accessToken?: string;
+	refreshToken?: string;
+	channelName?: string;
+	channelID?: string;
+	featuredChannels: string[];
 }

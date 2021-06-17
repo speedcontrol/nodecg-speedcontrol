@@ -1,4 +1,4 @@
-import { Configschema } from 'configschema';
+import { Configschema } from '@nodecg-speedcontrol/types/schemas';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 

@@ -1,7 +1,7 @@
+import { RunData, RunDataArray, SendMessageAck } from '@nodecg-speedcontrol/types';
+import { Configschema } from '@nodecg-speedcontrol/types/schemas';
 import _ from 'lodash';
-import { ListenForCb } from 'nodecg/types/lib/nodecg-instance'; // eslint-disable-line import/no-unresolved, max-len
-import { Configschema } from '../../../configschema';
-import { RunData, RunDataArray, SendMessageAck } from '../../../types';
+import type { ListenForCb } from 'nodecg/types/lib/nodecg-instance';
 import { get } from './nodecg';
 
 const nodecg = get();

@@ -5,8 +5,8 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface HoraroImportStatus {
-  importing?: boolean;
-  item?: number;
-  total?: number;
+export interface TwitchCommercialTimer {
+	secondsRemaining: number;
+	originalDuration: number;
+	timestamp: number;
 }

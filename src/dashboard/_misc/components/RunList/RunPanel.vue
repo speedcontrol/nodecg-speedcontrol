@@ -105,12 +105,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import { RunDataActiveRun, RunFinishTimes, Timer } from 'schemas';
-import { RunData, RunModification, Dialog, Alert } from 'types';
-import { Configschema } from 'configschema';
+import { RunFinishTimes, Timer, Configschema } from '@nodecg-speedcontrol/types/schemas';
+import { RunData, RunModification, Alert, RunDataActiveRun } from '@nodecg-speedcontrol/types';
 import ModifyButton from './ModifyButton.vue';
 import { getDialog } from '../../helpers';
+import { replicantNS } from '../../replicant_store';
 
 @Component({
   components: {
@@ -122,8 +121,8 @@ export default class extends Vue {
   @Prop(Boolean) readonly editor!: boolean;
   @Prop(Boolean) readonly disableChange!: boolean;
   @Prop(Boolean) readonly moveDisabled!: boolean;
-  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
-  @State runFinishTimes!: RunFinishTimes;
+  @replicantNS.State((s) => s.reps.runDataActiveRun) readonly activeRun!: RunDataActiveRun;
+  @replicantNS.State((s) => s.reps.runFinishTimes) readonly runFinishTimes!: RunFinishTimes;
 
   get playerStr(): string {
     return this.runData.teams.map((team) => (

@@ -35,14 +35,14 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import { Timer } from 'schemas';
-import { Dialog, RunModification, Alert } from 'types';
+import { Timer } from '@nodecg-speedcontrol/types/schemas';
+import { RunModification, Alert } from '@nodecg-speedcontrol/types';
 import { getDialog } from '../_misc/helpers';
+import { replicantNS } from '../_misc/replicant_store';
 
 @Component
 export default class extends Vue {
-  @State timer!: Timer;
+  @replicantNS.State((s) => s.reps.timer) readonly timer!: Timer;
 
   get disableRemoveAll(): boolean {
     return ['running', 'paused'].includes(this.timer.state);

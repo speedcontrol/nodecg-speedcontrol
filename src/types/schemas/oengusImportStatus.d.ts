@@ -5,8 +5,8 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface RunDataActiveRunSurrounding {
-  previous?: string;
-  current?: string;
-  next?: string;
+export interface OengusImportStatus {
+	importing?: boolean;
+	item?: number;
+	total?: number;
 }

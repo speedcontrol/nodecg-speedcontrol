@@ -34,15 +34,15 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import { Timer } from 'schemas';
-import { RunDataTeam } from 'types';
+import { Timer } from '@nodecg-speedcontrol/types/schemas';
+import { RunDataTeam } from '@nodecg-speedcontrol/types';
+import { replicantNS } from '@nodecg-speedcontrol/dashboard/_misc/replicant_store';
 
 @Component
 export default class extends Vue {
   @Prop({ type: Object }) readonly info!: RunDataTeam | undefined;
   @Prop(Boolean) readonly forfeit!: boolean;
-  @State timer!: Timer;
+  @replicantNS.State((s) => s.reps.timer) readonly timer!: Timer;
 
   get isDisabled(): boolean {
     return (

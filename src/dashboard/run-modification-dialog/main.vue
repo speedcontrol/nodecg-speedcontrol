@@ -33,43 +33,51 @@
       <!-- Normal Inputs -->
       <div class="d-flex">
         <text-input
-          v-model="runData.game"
+          :value="runData.game"
+          @input="updateRunDataProp('game', $event)"
           :label="$t('game')"
         />
         <text-input
-          v-model="runData.category"
+          :value="runData.category"
+          @input="updateRunDataProp('category', $event)"
           :label="$t('category')"
           left-border
         />
       </div>
       <div class="d-flex">
         <text-input
-          v-model="runData.region"
+          :value="runData.region"
+          @input="updateRunDataProp('region', $event)"
           :label="$t('region')"
         />
         <text-input
-          v-model="runData.release"
+          :value="runData.release"
+          @input="updateRunDataProp('release', $event)"
           :label="$t('released')"
           left-border
         />
         <text-input
-          v-model="runData.gameTwitch"
+          :value="runData.gameTwitch"
+          @input="updateRunDataProp('gameTwitch', $event)"
           :label="$t('gameTwitch')"
           left-border
         />
       </div>
       <div class="d-flex">
         <text-input
-          v-model="runData.system"
+          :value="runData.system"
+          @input="updateRunDataProp('system', $event)"
           :label="$t('system')"
         />
         <text-input
-          v-model="runData.estimate"
+          :value="runData.estimate"
+          @input="updateRunDataProp('estimate', $event)"
           :label="$t('estimate')"
           left-border
         />
         <text-input
-          v-model="runData.setupTime"
+          :value="runData.setupTime"
+          @input="updateRunDataProp('setupTime', $event)"
           :label="$t('setupTime')"
           left-border
         />
@@ -79,7 +87,8 @@
         <text-input
           v-for="data in customData"
           :key="data.key"
-          v-model="runData.customData[data.key]"
+          :value="runData.customData[data.key]"
+          @input="updateRunDataProp(`customData.${data.key}`, $event)"
           :label="data.name"
         />
       </div>
@@ -134,17 +143,15 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { State, Mutation, Action } from 'vuex-class';
-import { State2Way } from 'vuex-class-state2way';
-import { TwitchAPIData } from 'schemas';
-import { Configschema } from 'configschema';
+import { TwitchAPIData, Configschema } from '@nodecg-speedcontrol/types/schemas';
 import Draggable from 'vuedraggable';
-import { RunData, RunModification, Dialog, Alert } from 'types';
+import { RunData, RunModification, Dialog, Alert } from '@nodecg-speedcontrol/types';
 import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
 import ModifyButton from './components/ModifyButton.vue';
-import { SaveRunData, UpdateRunData, SetAsDuplicate, SetPreviousRunID, ResetRunData, AddNewTeam } from './store'; // eslint-disable-line max-len
 import { getDialog } from '../_misc/helpers';
+import { replicantNS } from '../_misc/replicant_store';
+import { storeModule } from './store';
 
 @Component({
   components: {
@@ -155,18 +162,20 @@ import { getDialog } from '../_misc/helpers';
   },
 })
 export default class extends Vue {
-  @Mutation updateRunData!: UpdateRunData;
-  @Mutation setAsDuplicate!: SetAsDuplicate;
-  @Mutation setPreviousRunID!: SetPreviousRunID;
-  @Mutation resetRunData!: ResetRunData;
-  @Mutation addNewTeam!: AddNewTeam;
-  @Action saveRunData!: SaveRunData;
-  @State twitchAPIData!: TwitchAPIData;
-  @State2Way('updateMode', 'mode') mode!: RunModification.Mode;
-  @State2Way('updateTwitch', 'updateTwitch') updateTwitch!: boolean;
-  @State2Way('updateRunData', 'runData') runData!: RunData;
+  @replicantNS.State((s) => s.reps.twitchAPIData) readonly twitchAPIData!: TwitchAPIData;
   dialog!: Dialog;
   err: Error | null = null;
+
+  get mode(): RunModification.Mode { return storeModule.mode; }
+  set mode(val: RunModification.Mode) { storeModule.updateMode(val); }
+
+  get updateTwitch(): boolean { return storeModule.updateTwitchBool; }
+  set updateTwitch(val: boolean) { storeModule.updateTwitch(val); }
+
+  get runData(): RunData { return storeModule.runData; }
+  set runData(val: RunData) { storeModule.updateRunData(val); }
+
+  addNewTeam(): void { storeModule.addNewTeam(); }
 
   get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
     return (nodecg.bundleConfig as Configschema).schedule.customData || [];
@@ -179,24 +188,33 @@ export default class extends Vue {
       this.mode = opts.mode;
       this.err = null;
       if (opts.runData) {
-        this.updateRunData(opts.runData);
+        storeModule.updateRunData(opts.runData);
         if (opts.mode === 'Duplicate') {
-          this.setAsDuplicate();
+          storeModule.setAsDuplicate();
         }
       } else if (opts.mode === 'New') {
-        this.setPreviousRunID(opts.prevID);
-        this.resetRunData();
-        this.addNewTeam();
+        storeModule.setPreviousRunID(opts.prevID);
+        storeModule.resetRunData();
+        storeModule.addNewTeam();
       }
     }, { once: true });
     document.addEventListener('dialog-confirmed', this.confirm, { once: true });
     document.addEventListener('dialog-dismissed', this.dismiss, { once: true });
   }
 
+  updateRunDataProp(key: string, val: string): void {
+    if (key.startsWith('customData.')) {
+      const newVal = { ...this.runData.customData, [key.replace('customData.', '')]: val };
+      storeModule.updateRunDataProp({ key: 'customData', val: newVal });
+    } else {
+      storeModule.updateRunDataProp({ key, val });
+    }
+  }
+
   async attemptSave(): Promise<void> {
     this.err = null;
     try {
-      const noTwitchGame = await this.saveRunData();
+      const noTwitchGame = await storeModule.saveRunData();
       this.close(true);
       if (noTwitchGame) {
         const dialog = getDialog('alert-dialog') as Alert.Dialog;

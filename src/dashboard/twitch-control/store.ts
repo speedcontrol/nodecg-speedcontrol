@@ -1,49 +1,23 @@
-import clone from 'clone';
-import type { ReplicantBrowser } from 'nodecg/types/browser';
-import type { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from 'schemas';
+import { TwitchAPIData } from '@nodecg-speedcontrol/types/schemas';
+import { replicantModule, ReplicantModule } from '@nodecg-speedcontrol/_misc/replicant_store';
 import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
+import { getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 
 Vue.use(Vuex);
 
-// Replicants and their types
-const reps: {
-  twitchAPIData: ReplicantBrowser<TwitchAPIData>;
-  twitchChannelInfo: ReplicantBrowser<TwitchChannelInfo>;
-  twitchCommercialTimer: ReplicantBrowser<TwitchCommercialTimer>;
-  [k: string]: ReplicantBrowser<unknown>;
-} = {
-  twitchAPIData: nodecg.Replicant('twitchAPIData'),
-  twitchChannelInfo: nodecg.Replicant('twitchChannelInfo'),
-  twitchCommercialTimer: nodecg.Replicant('twitchCommercialTimer'),
-};
+@Module({ name: 'OurModule' })
+class OurModule extends VuexModule {
+  @Mutation
+  updateSyncToggle(sync: boolean): void {
+    replicantModule.setReplicant<TwitchAPIData>({ name: 'twitchAPIData', val: { sync } });
+  }
+}
 
-// Types for mutations below
-export type UpdateSyncToggle = (sync: boolean) => void;
-
-const store = new Vuex.Store({
+const store = new Store({
+  strict: process.env.NODE_ENV !== 'production',
   state: {},
-  mutations: {
-    setState(state, { name, val }): void {
-      Vue.set(state, name, val);
-    },
-    /* Mutations to replicants start */
-    updateSyncToggle(state, sync: boolean): void {
-      if (typeof reps.twitchAPIData.value !== 'undefined') {
-        reps.twitchAPIData.value.sync = sync;
-      }
-    },
-    /* Mutations to replicants end */
-  },
+  modules: { ReplicantModule, OurModule },
 });
-
-Object.keys(reps).forEach((key) => {
-  reps[key].on('change', (val) => {
-    store.commit('setState', { name: key, val: clone(val) });
-  });
-});
-
-export default async (): Promise<Store<Record<string, unknown>>> => {
-  await NodeCG.waitForReplicants(...Object.keys(reps).map((key) => reps[key]));
-  return store;
-};
+export default store;
+export const storeModule = getModule(OurModule, store);

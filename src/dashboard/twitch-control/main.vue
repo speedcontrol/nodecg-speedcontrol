@@ -179,20 +179,18 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import { State2Way } from 'vuex-class-state2way';
 import { debounce } from 'lodash';
-import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from 'schemas';
-import { Configschema } from 'configschema';
-import { Dialog, Alert } from 'types';
+import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer, Configschema } from '@nodecg-speedcontrol/types/schemas';
+import { Alert } from '@nodecg-speedcontrol/types';
 import { padTimeNumber, getDialog } from '../_misc/helpers';
+import { replicantNS } from '../_misc/replicant_store';
+import { storeModule } from './store';
 
 @Component
 export default class extends Vue {
-  @State('twitchAPIData') apiData!: TwitchAPIData;
-  @State('twitchChannelInfo') channelInfo!: TwitchChannelInfo;
-  @State('twitchCommercialTimer') timer!: TwitchCommercialTimer;
-  @State2Way('updateSyncToggle', 'twitchAPIData.sync') sync!: boolean;
+  @replicantNS.State((s) => s.reps.twitchAPIData) readonly apiData!: TwitchAPIData;
+  @replicantNS.State((s) => s.reps.twitchChannelInfo) readonly channelInfo!: TwitchChannelInfo;
+  @replicantNS.State((s) => s.reps.twitchCommercialTimer) readonly timer!: TwitchCommercialTimer;
   focus = false;
   title = '';
   game = '';
@@ -206,6 +204,13 @@ export default class extends Vue {
   @Watch('channelInfo', { immediate: true })
   onChannelInfoChange(): void {
     this.updateInputs();
+  }
+
+  get sync(): boolean {
+    return this.apiData.sync;
+  }
+  set sync(val: boolean) {
+    storeModule.updateSyncToggle(val);
   }
 
   get config(): Configschema['twitch'] {
@@ -264,8 +269,8 @@ export default class extends Vue {
   }
 
   async updateChannelInfo(): Promise<void> {
-    //temporary as this.users get refreshed inbetween updating twitch and ffz
-    var usersTmp = this.users;
+    // temporary as this.users get refreshed inbetween updating twitch and ffz
+    const usersTmp = this.users;
 
     try {
       const noTwitchGame = await nodecg.sendMessage('twitchUpdateChannelInfo', {
@@ -285,7 +290,7 @@ export default class extends Vue {
       try {
         await nodecg.sendMessage(
           'updateFeaturedChannels',
-          usersTmp.replace(/\s/g, '').split(',').filter(Boolean)
+          usersTmp.replace(/\s/g, '').split(',').filter(Boolean),
         );
       } catch (err) {
         // catch

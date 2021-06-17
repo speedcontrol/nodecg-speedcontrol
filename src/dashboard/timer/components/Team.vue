@@ -41,9 +41,9 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import { Timer } from 'schemas';
-import { RunDataTeam } from 'types';
+import { replicantNS } from '@nodecg-speedcontrol/dashboard/_misc/replicant_store';
+import { Timer } from '@nodecg-speedcontrol/types/schemas';
+import { RunDataTeam } from '@nodecg-speedcontrol/types';
 import StopButton from './StopButton.vue';
 import UndoButton from './UndoButton.vue';
 
@@ -56,7 +56,7 @@ import UndoButton from './UndoButton.vue';
 export default class extends Vue {
   @Prop(Object) readonly info!: RunDataTeam;
   @Prop({ type: Number, default: 0 }) readonly index!: number;
-  @State timer!: Timer;
+  @replicantNS.State((s) => s.reps.timer) readonly timer!: Timer;
 
   get state(): string | undefined {
     if (this.timer.teamFinishTimes[this.info.id]) {

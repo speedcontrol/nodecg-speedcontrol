@@ -148,17 +148,15 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { State, Mutation } from 'vuex-class';
-import { State2Way } from 'vuex-class-state2way';
 import { v4 as uuid } from 'uuid';
-import { Configschema } from 'configschema';
-import { HoraroImportStatus, HoraroImportSavedOpts } from 'schemas';
-import { Dialog, Alert } from 'types';
+import { HoraroImportStatus, HoraroImportSavedOpts, Configschema } from '@nodecg-speedcontrol/types/schemas';
+import { Alert } from '@nodecg-speedcontrol/types';
 import RunDataOptions from './RunDataOptions';
 import Dropdown from './components/Dropdown.vue';
 import ConfigButton from './components/ConfigButton.vue';
-import { SaveOpts, AddCustomColumn, LoadOpts, ClearOpts, UpdateColumn, Opts } from './store';
 import { getDialog } from '../_misc/helpers';
+import { storeModule } from './store';
+import { replicantNS } from '../_misc/replicant_store';
 
 @Component({
   components: {
@@ -167,15 +165,10 @@ import { getDialog } from '../_misc/helpers';
   },
 })
 export default class extends Vue {
-  @State opts!: Opts;
-  @State('horaroImportStatus') importStatus!: HoraroImportStatus;
-  @State horaroImportSavedOpts!: HoraroImportSavedOpts;
-  @State2Way('updateSplit', 'opts.split') splitOption!: number;
-  @Mutation updateColumn!: UpdateColumn;
-  @Mutation('saveOpts') saveOptsMutation!: SaveOpts;
-  @Mutation addCustomColumn!: AddCustomColumn;
-  @Mutation loadOpts!: LoadOpts;
-  @Mutation('clearOpts') clearOptsMutation!: ClearOpts;
+  @replicantNS.State((s) => s.reps.horaroImportStatus) readonly importStatus!: HoraroImportStatus;
+  @replicantNS.State(
+    (s) => s.reps.horaroImportSavedOpts,
+  ) readonly horaroImportSavedOpts!: HoraroImportSavedOpts;
   dashID = uuid(); // Temp ID for this page load.
   url = (nodecg.bundleConfig as Configschema).schedule.defaultURL;
   loaded = false;
@@ -194,6 +187,13 @@ export default class extends Vue {
     },
   ];
 
+  get splitOption(): number {
+    return storeModule.opts.split;
+  }
+  set splitOption(val: number) {
+    storeModule.updateSplit(val);
+  }
+
   get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
     return (nodecg.bundleConfig as Configschema).schedule.customData || [];
   }
@@ -207,7 +207,7 @@ export default class extends Vue {
       this.loaded = true;
       this.columns = data.schedule.columns;
       if (this.horaroImportSavedOpts) {
-        this.loadOpts();
+        storeModule.loadOpts();
       } else {
         this.predictColumns();
       }
@@ -219,7 +219,7 @@ export default class extends Vue {
   addCustomDataDropdowns(): void {
     this.runDataOptions = this.runDataOptions.concat(
       this.customData.map((col) => {
-        this.addCustomColumn(col.key);
+        storeModule.addCustomColumn(col.key);
         return {
           name: col.name,
           key: col.key,
@@ -240,7 +240,7 @@ export default class extends Vue {
       const index = this.columns.findIndex(
         (col) => option.predict.some((pred) => !!col.toLowerCase().includes(pred)),
       );
-      this.updateColumn({
+      storeModule.updateColumn({
         name: option.key,
         value: (index >= 0) ? index : null,
         custom: option.custom || false,
@@ -262,7 +262,7 @@ export default class extends Vue {
     if (confirm) {
       try {
         await nodecg.sendMessage('importSchedule', {
-          opts: this.opts,
+          opts: storeModule.opts,
           dashID: this.dashID,
         });
       } catch (err) {
@@ -273,17 +273,18 @@ export default class extends Vue {
   }
 
   saveOpts(): void {
-    this.saveOptsMutation();
+    storeModule.saveOpts();
     this.saved = true;
     setTimeout(() => { this.saved = false; }, 1000);
   }
 
   clearOpts(): void {
-    this.clearOptsMutation();
+    storeModule.clearOpts();
     this.customData.forEach((col) => {
-      this.addCustomColumn(col.key);
+      storeModule.addCustomColumn(col.key);
     });
     this.predictColumns();
+    storeModule.saveOpts();
     this.restored = true;
     setTimeout(() => { this.restored = false; }, 1000);
   }

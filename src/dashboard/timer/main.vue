@@ -86,16 +86,16 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
-import { State } from 'vuex-class';
-import { State2Way } from 'vuex-class-state2way';
-import { RunDataActiveRun } from 'schemas';
-import { RunDataTeam } from 'types';
+import { TimerChangesDisabled } from '@nodecg-speedcontrol/types/schemas';
+import { RunDataTeam, RunDataActiveRun } from '@nodecg-speedcontrol/types';
 import TimerTime from './components/TimerTime.vue';
 import StartButton from './components/StartButton.vue';
 import ResetButton from './components/ResetButton.vue';
 import StopButton from './components/StopButton.vue';
 import UndoButton from './components/UndoButton.vue';
 import Team from './components/Team.vue';
+import { replicantNS } from '../_misc/replicant_store';
+import { storeModule } from './store';
 
 @Component({
   components: {
@@ -108,8 +108,10 @@ import Team from './components/Team.vue';
   },
 })
 export default class extends Vue {
-  @State('runDataActiveRun') activeRun!: RunDataActiveRun | undefined;
-  @State2Way('updateDisabledToggle', 'timerChangesDisabled') disableChanges!: boolean;
+  @replicantNS.State((s) => s.reps.runDataActiveRun) readonly activeRun!: RunDataActiveRun;
+  @replicantNS.State(
+    (s) => s.reps.timerChangesDisabled,
+  ) readonly timerChangesDisabled!: TimerChangesDisabled;
   tempEnable = false;
 
   @Watch('disableChanges')
@@ -121,6 +123,13 @@ export default class extends Vue {
   @Watch('activeRun')
   onActiveRunChange(): void {
     this.tempEnable = false;
+  }
+
+  get disableChanges(): boolean {
+    return this.timerChangesDisabled;
+  }
+  set disableChanges(val: boolean) {
+    storeModule.updateDisabledToggle(val);
   }
 
   get teams(): RunDataTeam[] {
