@@ -83,14 +83,14 @@ interface UnhandledSendMessageAck {
 }
 
 export type SendMessage = <
-  K extends keyof SendMessageArgsMap
+  K extends keyof SendMessageArgsMap,
 >(
   name: K,
   data?: SendMessageArgsMap[K],
 ) => Promise<SendMessageReturnMap[K]>;
 
 export type ListenFor = <
-  K extends keyof SendMessageArgsMap
+  K extends keyof SendMessageArgsMap,
 >(
   name: K,
   callback: (data: SendMessageArgsMap[K], ack: SendMessageAck) => void,
