@@ -1,6 +1,6 @@
 # API Documentation: runData Object Structure
 
-*Types available in [./types/RunData.d.ts](../../types/RunData.d.ts)*
+*Types available in [./src/types/RunData.d.ts](../../src/types/RunData.d.ts)*
 
 Various places in this bundle store information in the format we refer to as the "`runData` object".
 
@@ -33,6 +33,9 @@ Various places in this bundle store information in the format we refer to as the
           pronouns: "He/Him",
           social: {
             twitch: "esamarathon"
+          },
+          customData: {
+            otherData: "Some String"
           }
         }
       ]
@@ -49,6 +52,9 @@ Various places in this bundle store information in the format we refer to as the
           pronouns: "She/Her",
           social: {
             twitch: "monstercat"
+          },
+          customData: {
+            otherData: "Some String"
           }
         }
       ]
@@ -100,3 +106,4 @@ The `players` array in "`team` objects" will contain (if anything) "`player` obj
 - `pronouns` *[`string`]* List of the player's preferred pronouns, usually pulled from [speedrun.com](https://www.speedrun.com), and if so, can also be a comma separated list of each option they allow to be selected.
 - `social` *[`object`]* Contains information on this player's social media references.
   - `twitch` *[`string`]* Username of this player on [twitch.tv](https://www.twitch.tv).
+- `customData` *[`object`]* Contains keyed strings, with the key(s) from your configuration for *player based* custom data; this will always be an object even if no data is contained within it.

@@ -23,7 +23,7 @@ speedcontrol.sendMessage('changeActiveRun', 'f926048c-3527-4d2f-96f6-680b81bf06e
 
 These are also available typed if you use TypeScript.
 
-*Types available in [./types/ExtensionReturn.d.ts](../../types/ExtensionReturn.d.ts) and [./types/Events.d.ts](../../types/Events.d.ts)*
+*Types available in [./src/types/ExtensionReturn.d.ts](../../src/types/ExtensionReturn.d.ts) and [./types/Events.d.ts](../../src/types/Events.d.ts)*
 
 You can use the `ExtensionReturn` interface to properly type what the extension returns, although due to an issue with NodeCG's own typings (correct as of `1.6.0`), you must convert the expression to `unknown` first:
 ```typescript
