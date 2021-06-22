@@ -35,6 +35,7 @@ const options: RunDataOption[] = [
     predict: [
       'system',
       'platform',
+      'console',
     ],
   },
   {

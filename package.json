@@ -1,6 +1,6 @@
 {
   "name": "nodecg-speedcontrol",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "NodeCG bundle to help facilitate the running of speedrunning marathons, including overlays.",
   "homepage": "https://github.com/speedcontrol/nodecg-speedcontrol#readme",
   "bugs": {
@@ -97,7 +97,7 @@
     "vue-style-loader": "^4.1.3",
     "vue-template-compiler": "^2.6.14",
     "vuedraggable": "^2.24.3",
-    "vuetify": "^2.5.3",
+    "vuetify": "^2.5.4",
     "vuetify-loader": "^1.7.2",
     "vuex": "^3.6.2",
     "vuex-class": "^0.3.2",

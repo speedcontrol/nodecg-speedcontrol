@@ -47,6 +47,14 @@ Below is an example configuration file contents with everything that is availabl
     "defaultMarathon": "SHORTNAME",
     "useJapanese": false,
     "disableSpeedrunComLookup": false
+  },
+  "customData": {
+    "player": [
+      {
+        "name": "Other Data",
+        "key": "otherData"
+      }
+    ]
   }
 }
 ```
@@ -136,7 +144,7 @@ There is also another optional parameter, `additionalScopes`, which is an array 
 - `defaultURL` is a URL to the schedule on Horaro that will be pre-filled on the dashboard; usually you will only be using your setup for 1 marathon so this means you don't need to keep entering it every time you want to do a (re)import.
 - `ignoreGamesWhileImporting` is an array of strings of games on your schedule that will be ignored on import; for example you may have setup blocks you don't want importing. This does partial matches ("Setup Block" will be matched by "Setup").
 - `disableSpeedrunComLookup` is a boolean (defaults to `false`) that can be enabled, which will skip the speedrun.com look-ups during schedule import; by default the import will try to find the player's Twitch username, country and preferred pronouns from speedrun.com, but if you do not need this you can disable it to speed up the import.
-- `customData` (*for advanced users*) is an array of objects; this is for adding custom data to the run data on import. Once set here, you will be able to select an appropriate column on import for where this data is stored in your schedule. All of this is stored within an objected called `customData` within the run's data object.
+- `customData` (*for advanced users*) is an array of objects; this is for adding custom data to the run data on import. Once set here, you will be able to select an appropriate column on import for where this data is stored in your schedule. All of this is stored within an object called `customData` within the run's data object.
   - `name` is the formatted name that will appear in the Speedcontrol UI.
   - `key` is the key that will be used in the `customData` in the run data.
   - `ignoreMarkdown` is a boolean (defaults to `false`) which if true, will tell the Horaro import to not attempt to strip any markdown in the column's data for that run.
@@ -157,3 +165,27 @@ There is also another optional parameter, `additionalScopes`, which is an array 
 - `defaultMarathon` is the marathon's shortname on Oengus that will be pre-filled on the dashboard; this is the part of the URL *after* `oengus.io/marathon/`.
 - `useJapanese` is a boolean (defaults to `false`) which if true, will tell the import to use the Japanese names of players on import instead of the international ones. This setting can also be toggled from the dashboard itself.
 - `disableSpeedrunComLookup` is a boolean (defaults to `false`) that can be enabled, which will skip the speedrun.com look-ups during schedule import; by default the import will try to find the player's Twitch username (if not already linked via Oengus) and country from speedrun.com, but if you do not need this you can disable it to speed up the import.
+
+
+### Custom Data
+
+```json
+{
+  "customData": {
+    "player": [
+      {
+        "name": "Other Data",
+        "key": "otherData"
+      }
+    ]
+  }
+}
+```
+
+*For advanced users!*
+
+This is the part where you configure "custom data" that will also be able to be added/edited alongside any data the bundle can already handle. Currently, this part of the configuration is only used for custom *player* data; custom *run* data is still handled in the Horaro configuration ([see above](#horaro-schedule)).
+
+- `player` is where the custom *player* data is configured; this is an array of objects. Anything configured here has the chance to appear within an object called `customData` within the player's data object *inside* of the run data object. This is not automatically imported from anywhere as of yet and can only be added/edited via the dashboard.
+  - `name` is the formatted name that will appear in the Speedcontrol UI.
+  - `key` is the key that will be used in the `customData` in the player data.
