@@ -65,7 +65,6 @@
 
 <script lang="ts">
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator';
-import goTo from 'vuetify/es5/services/goto';
 import { TwitchAPIData, Timer, RunDataArray } from '@nodecg-speedcontrol/types/schemas';
 import { RunData, RunDataActiveRun } from '@nodecg-speedcontrol/types';
 import Draggable from 'vuedraggable';
@@ -117,9 +116,9 @@ export default class extends Vue {
 
   scroll(val?: RunDataActiveRun): void {
     if (val) {
-      goTo(`#run-${val.id}`, { offset: 25, container: '.RunList' });
+      this.$vuetify.goTo(`#run-${val.id}`, { offset: 25, container: '.RunList' });
     } else {
-      goTo(0, { container: '.RunList' });
+      this.$vuetify.goTo(0, { container: '.RunList' });
     }
   }
 
