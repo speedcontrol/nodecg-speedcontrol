@@ -34,7 +34,7 @@
     </v-select>
     <!-- Help Tooltip for External ID -->
     <template v-if="option.key === 'externalID'">
-      <v-tooltip top>
+      <v-tooltip left>
         <template v-slot:activator="{ on }">
           <v-icon
             small
