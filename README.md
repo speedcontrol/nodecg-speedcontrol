@@ -28,7 +28,7 @@ This bundle can run without any extra configuration, but it's needed to use all 
 
 ### tl;dr installation
 
-Install [Node.js](https://nodejs.org) (10.x LTS tested) and [git](https://git-scm.com/), then make a folder anywhere and open a command prompt/shell/bash window, then run these commands in order:
+Install [Node.js](https://nodejs.org) (14.x LTS tested) and [git](https://git-scm.com/), then make a folder anywhere and open a command prompt/shell/bash window, then run these commands in order:
 
 ```
 npm install nodecg-cli -g
