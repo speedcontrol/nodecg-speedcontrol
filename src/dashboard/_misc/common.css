@@ -1,20 +1,11 @@
-/* Remove NodeCG's default margin added to the body.
-This is because otherwise v-tooltip position is broken since Vuetify v2.5.2 with it. */
-body {
-  margin: 0;
-}
-
 /* So the <v-app> always has a transparent background,
 otherwise it looks odd in the NodeCG dashboard panels. */
 .v-application {
   background-color: transparent !important;
 }
 
+/* So the <v-app> doesn't take up 100% height which breaks
+in the NodeCG dashboard panels anyway. */
 .v-application--wrap {
-  /* So the <v-app> doesn't take up 100% height which breaks
-  in the NodeCG dashboard panels anyway. */
   min-height: 0 !important;
-
-  /* Re-add the margin from above to this wrapper instead. */
-  margin: 15px;
 }
