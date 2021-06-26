@@ -23,6 +23,7 @@ export interface OengusLine {
   categoryId: number | null;
   type: OengusRunType;
   runners: OengusUser[];
+  customDataDTO: string | null;
 }
 
 export enum OengusRunType {
