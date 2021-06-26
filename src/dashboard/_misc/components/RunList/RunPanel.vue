@@ -136,7 +136,8 @@ export default class extends Vue {
   }
 
   customDataName(key: string): string {
-    const customData = (nodecg.bundleConfig as Configschema).schedule.customData || [];
+    const cfg = nodecg.bundleConfig as Configschema;
+    const customData = cfg.schedule?.customData || cfg.customData?.run || [];
     return customData.find(
       (custom) => custom.key === key,
     )?.name || `? (${key})`;

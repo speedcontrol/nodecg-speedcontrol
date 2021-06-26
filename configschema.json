@@ -1,5 +1,72 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
+  "definitions": {
+    "customDataRun": {
+      "oneOf": [
+        {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "ignoreMarkdown": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "name",
+              "key"
+            ]
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "horaro": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultURL": {
+          "type": "string",
+          "default": "https://horaro.org/event/schedule"
+        },
+        "ignoreGamesWhileImporting": {
+          "oneOf": [
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "disableSpeedrunComLookup": {
+          "type": "boolean",
+          "default": false
+        },
+        "customData": {
+          "$ref": "#/definitions/customDataRun"
+        }
+      },
+      "required": [
+        "defaultURL",
+        "disableSpeedrunComLookup"
+      ]
+    }
+  },
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -88,66 +155,17 @@
       ]
     },
     "schedule": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "defaultURL": {
-          "type": "string",
-          "default": "https://horaro.org/event/schedule"
+      "oneOf": [
+        {
+          "$ref": "#/definitions/horaro"
         },
-        "ignoreGamesWhileImporting": {
-          "oneOf": [
-            {
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                "type": "string"
-              }
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "disableSpeedrunComLookup": {
-          "type": "boolean",
-          "default": false
-        },
-        "customData": {
-          "oneOf": [
-            {
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "key": {
-                    "type": "string"
-                  },
-                  "ignoreMarkdown": {
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "name",
-                  "key"
-                ]
-              }
-            },
-            {
-              "type": "null"
-            }
-          ]
+        {
+          "type": "null"
         }
-      },
-      "required": [
-        "defaultURL",
-        "disableSpeedrunComLookup"
       ]
+    },
+    "horaro": {
+      "$ref": "#/definitions/horaro"
     },
     "oengus": {
       "type": "object",
@@ -178,6 +196,9 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "run": {
+              "$ref": "#/definitions/customDataRun"
+            },
             "player": {
               "oneOf": [
                 {
@@ -199,6 +220,9 @@
                       "key"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -213,7 +237,7 @@
   "required": [
     "language",
     "twitch",
-    "schedule",
+    "horaro",
     "oengus"
   ]
 }

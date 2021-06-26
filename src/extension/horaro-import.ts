@@ -159,7 +159,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       const game = parseMarkdown(run.data[opts.columns.game]);
       let gameTwitch = parseMarkdown(run.data[opts.columns.gameTwitch]).str;
       let srcomGameTwitch;
-      if (!config.schedule.disableSpeedrunComLookup && !gameTwitch) {
+      if (!(config.schedule || config.horaro).disableSpeedrunComLookup && !gameTwitch) {
         if (game.url && game.url.includes('speedrun.com')) {
           const gameAbbr = game.url
             .split('speedrun.com/')[game.url.split('speedrun.com/').length - 1]
@@ -203,10 +203,13 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
 
       // Custom Data
       Object.keys(opts.columns.custom).forEach((col) => {
-        if (!config.schedule.customData) {
+        const customDataConfig = config.customData?.run
+          || config.schedule?.customData
+          || config.horaro.customData;
+        if (!customDataConfig) {
           return;
         }
-        const colSetting = config.schedule.customData.find((setting) => setting.key === col);
+        const colSetting = customDataConfig.find((setting) => setting.key === col);
         if (!colSetting) {
           return;
         }
@@ -263,7 +266,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
                   },
                   customData: {},
                 };
-                if (!config.schedule.disableSpeedrunComLookup) {
+                if (!(config.schedule || config.horaro).disableSpeedrunComLookup) {
                   const sData = await searchForUserDataMultiple(
                     { type: 'twitch', val: twitchUsername },
                     { type: 'name', val: str },

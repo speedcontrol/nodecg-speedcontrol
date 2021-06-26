@@ -170,7 +170,8 @@ export default class extends Vue {
     (s) => s.reps.horaroImportSavedOpts,
   ) readonly horaroImportSavedOpts!: HoraroImportSavedOpts;
   dashID = uuid(); // Temp ID for this page load.
-  url = (nodecg.bundleConfig as Configschema).schedule.defaultURL;
+  cfg = nodecg.bundleConfig as Configschema;
+  url = (this.cfg.schedule || this.cfg.horaro).defaultURL;
   loaded = false;
   saved = false;
   restored = false;
@@ -195,7 +196,8 @@ export default class extends Vue {
   }
 
   get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
-    return (nodecg.bundleConfig as Configschema).schedule.customData || [];
+    const cfg = nodecg.bundleConfig as Configschema;
+    return cfg.schedule?.customData || cfg.customData?.run || [];
   }
 
   async loadSchedule(): Promise<void> {

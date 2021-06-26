@@ -178,7 +178,8 @@ export default class extends Vue {
   addNewTeam(): void { storeModule.addNewTeam(); }
 
   get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
-    return (nodecg.bundleConfig as Configschema).schedule.customData || [];
+    const cfg = nodecg.bundleConfig as Configschema;
+    return cfg.schedule?.customData || cfg.customData?.run || [];
   }
 
   open(opts: { mode: RunModification.Mode, runData?: RunData, prevID?: string }): void {

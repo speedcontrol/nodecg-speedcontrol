@@ -136,7 +136,7 @@ export function checkGameAgainstIgnoreList(game: string | null): boolean {
   if (!game) {
     return false;
   }
-  const list = bundleConfig().schedule.ignoreGamesWhileImporting || [];
+  const list = (bundleConfig().schedule || bundleConfig().horaro).ignoreGamesWhileImporting || [];
   return !!list.find((str) => !!str.toLowerCase().match(
     new RegExp(`\\b${_.escapeRegExp(game.toLowerCase())}\\b`),
   ));

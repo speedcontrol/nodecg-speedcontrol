@@ -5,6 +5,14 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+export type CustomDataRun =
+	| {
+			name: string;
+			key: string;
+			ignoreMarkdown?: boolean;
+	  }[]
+	| null;
+
 export interface Configschema {
 	language: 'en' | 'ja';
 	twitch: {
@@ -20,27 +28,26 @@ export interface Configschema {
 		ffzUseRepeater?: boolean;
 		ffzBlacklist?: string[] | null;
 	};
-	schedule: {
-		defaultURL: string;
-		ignoreGamesWhileImporting?: string[] | null;
-		disableSpeedrunComLookup: boolean;
-		customData?:
-			| {
-					name: string;
-					key: string;
-					ignoreMarkdown?: boolean;
-			  }[]
-			| null;
-	};
+	schedule?: Horaro | null;
+	horaro: Horaro;
 	oengus: {
 		defaultMarathon: string;
 		useJapanese: boolean;
 		disableSpeedrunComLookup: boolean;
 	};
 	customData?: {
-		player?: {
-			name: string;
-			key: string;
-		}[];
+		run?: CustomDataRun;
+		player?:
+			| {
+					name: string;
+					key: string;
+			  }[]
+			| null;
 	} | null;
+}
+export interface Horaro {
+	defaultURL: string;
+	ignoreGamesWhileImporting?: string[] | null;
+	disableSpeedrunComLookup: boolean;
+	customData?: CustomDataRun;
 }
