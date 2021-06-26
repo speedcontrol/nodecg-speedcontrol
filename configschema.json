@@ -182,6 +182,16 @@
         "disableSpeedrunComLookup": {
           "type": "boolean",
           "default": false
+        },
+        "useSandbox": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [

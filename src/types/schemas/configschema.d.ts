@@ -34,6 +34,7 @@ export interface Configschema {
 		defaultMarathon: string;
 		useJapanese: boolean;
 		disableSpeedrunComLookup: boolean;
+		useSandbox?: boolean | null;
 	};
 	customData?: {
 		run?: CustomDataRun;
