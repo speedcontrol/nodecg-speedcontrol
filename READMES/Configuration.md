@@ -39,6 +39,9 @@ Below is an example configuration file contents with everything that is availabl
   "oengus": {
     "defaultMarathon": "SHORTNAME",
     "useJapanese": false,
+    "ignoreGamesWhileImporting": [
+      "Setup"
+    ],
     "disableSpeedrunComLookup": false,
     "useSandbox": false
   },
@@ -147,6 +150,9 @@ There is also another optional parameter, `additionalScopes`, which is an array 
   "oengus": {
     "defaultMarathon": "SHORTNAME",
     "useJapanese": false,
+    "ignoreGamesWhileImporting": [
+      "Setup"
+    ],
     "disableSpeedrunComLookup": false,
     "useSandbox": false
   }
@@ -155,6 +161,7 @@ There is also another optional parameter, `additionalScopes`, which is an array 
 
 - `defaultMarathon` is the marathon's shortname on Oengus that will be pre-filled on the dashboard; this is the part of the URL *after* `oengus.io/marathon/`.
 - `useJapanese` is a boolean (defaults to `false`) which if true, will tell the import to use the Japanese names of players on import instead of the international ones. This setting can also be toggled from the dashboard itself.
+- `ignoreGamesWhileImporting` is an array of strings of games on your schedule that will be ignored on import. This does partial matches ("Setup Block" will be matched by "Setup"). Currently this does not check specific setup blocks created in Oengus.
 - `disableSpeedrunComLookup` is a boolean (defaults to `false`) that can be enabled, which will skip the speedrun.com look-ups during schedule import; by default the import will try to find the player's Twitch username (if not already linked via Oengus) and country from speedrun.com, but if you do not need this you can disable it to speed up the import.
 - `useSandbox` will make all lookups use the [sandbox version of Oengus](https://sandbox.oengus.io/) instead of the live version; useful for testing.
 

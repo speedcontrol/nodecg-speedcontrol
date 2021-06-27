@@ -1,6 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "definitions": {
+    "ignoreGamesWhileImporting": {
+      "oneOf": [
+        {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "customDataRun": {
       "oneOf": [
         {
@@ -40,18 +54,7 @@
           "default": "https://horaro.org/event/schedule"
         },
         "ignoreGamesWhileImporting": {
-          "oneOf": [
-            {
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                "type": "string"
-              }
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "#/definitions/ignoreGamesWhileImporting"
         },
         "disableSpeedrunComLookup": {
           "type": "boolean",
@@ -178,6 +181,9 @@
         "useJapanese": {
           "type": "boolean",
           "default": false
+        },
+        "ignoreGamesWhileImporting": {
+          "$ref": "#/definitions/ignoreGamesWhileImporting"
         },
         "disableSpeedrunComLookup": {
           "type": "boolean",

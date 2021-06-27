@@ -125,7 +125,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
     const externalIDsSeen: string[] = [];
     // Filtering out any games on the ignore list before processing them all.
     const newRunDataArray = await mapSeries(runItems.filter((run) => (
-      !checkGameAgainstIgnoreList(run.data[opts.columns.game])
+      !checkGameAgainstIgnoreList(run.data[opts.columns.game], 'horaro')
     )), async (run, index, arr) => {
       horaroImportStatus.value.item = index + 1;
       horaroImportStatus.value.total = arr.length;

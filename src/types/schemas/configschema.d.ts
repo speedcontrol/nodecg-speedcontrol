@@ -5,6 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+export type IgnoreGamesWhileImporting = string[] | null;
 export type CustomDataRun =
 	| {
 			name: string;
@@ -33,6 +34,7 @@ export interface Configschema {
 	oengus: {
 		defaultMarathon: string;
 		useJapanese: boolean;
+		ignoreGamesWhileImporting?: IgnoreGamesWhileImporting;
 		disableSpeedrunComLookup: boolean;
 		useSandbox?: boolean | null;
 	};
@@ -48,7 +50,7 @@ export interface Configschema {
 }
 export interface Horaro {
 	defaultURL: string;
-	ignoreGamesWhileImporting?: string[] | null;
+	ignoreGamesWhileImporting?: IgnoreGamesWhileImporting;
 	disableSpeedrunComLookup: boolean;
 	customData?: CustomDataRun;
 }

@@ -102,7 +102,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
 
     // Filtering out any games on the ignore list before processing them all.
     const newRunDataArray = await mapSeries(oengusLines.filter((line) => (
-      !checkGameAgainstIgnoreList(line.gameName)
+      !checkGameAgainstIgnoreList(line.gameName, 'oengus')
     )), async (line, index, arr) => {
       oengusImportStatus.value.item = index + 1;
       oengusImportStatus.value.total = arr.length;
