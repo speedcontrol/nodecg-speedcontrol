@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const iso8601_duration_1 = require("iso8601-duration");
+const lodash_1 = require("lodash");
 const needle_1 = __importDefault(require("needle"));
 const p_iteration_1 = require("p-iteration");
 const uuid_1 = require("uuid");
@@ -31,7 +32,7 @@ function get(endpoint) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             nodecg.log.debug(`[Oengus Import] API request processing on ${endpoint}`);
-            const resp = yield needle_1.default('get', `https://oengus.io/api${endpoint}`, null, {
+            const resp = yield needle_1.default('get', `https://${config.oengus.useSandbox ? 'sandbox.' : ''}oengus.io/api${endpoint}`, null, {
                 headers: {
                     'User-Agent': 'nodecg-speedcontrol',
                     Accept: 'application/json',
@@ -92,7 +93,7 @@ function importSchedule(marathonShort, useJapanese) {
         try {
             replicants_1.oengusImportStatus.value.importing = true;
             const marathonResp = yield get(`/marathons/${marathonShort}`);
-            const scheduleResp = yield get(`/marathons/${marathonShort}/schedule`);
+            const scheduleResp = yield get(`/marathons/${marathonShort}/schedule?withCustomData=true`);
             if (!isOengusMarathon(marathonResp.body)) {
                 throw new Error('Did not receive marathon data correctly');
             }
@@ -104,7 +105,7 @@ function importSchedule(marathonShort, useJapanese) {
             // This is updated for every run so we can calculate a scheduled time for each one.
             let scheduledTime = Math.floor(Date.parse(marathonResp.body.startDate) / 1000);
             // Filtering out any games on the ignore list before processing them all.
-            const newRunDataArray = yield p_iteration_1.mapSeries(oengusLines.filter((line) => (!helpers_1.checkGameAgainstIgnoreList(line.gameName))), (line, index, arr) => __awaiter(this, void 0, void 0, function* () {
+            const newRunDataArray = yield p_iteration_1.mapSeries(oengusLines.filter((line) => (!helpers_1.checkGameAgainstIgnoreList(line.gameName, 'oengus'))), (line, index, arr) => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b, _c, _d;
                 replicants_1.oengusImportStatus.value.item = index + 1;
                 replicants_1.oengusImportStatus.value.total = arr.length;
@@ -153,6 +154,24 @@ function importSchedule(marathonShort, useJapanese) {
                         }
                     }
                     runData.gameTwitch = gameTwitch;
+                }
+                // Custom Data
+                if (line.customDataDTO) {
+                    let parsed;
+                    try {
+                        parsed = JSON.parse(line.customDataDTO);
+                    }
+                    catch (err) { /* err */ }
+                    if (parsed && lodash_1.isObject(parsed)) {
+                        Object.entries(parsed).forEach(([k, v]) => {
+                            if (!v)
+                                return;
+                            if (typeof v === 'string')
+                                runData.customData[k] = v;
+                            else
+                                runData.customData[k] = JSON.stringify(v);
+                        });
+                    }
                 }
                 // Add the scheduled time then update the value above for the next run.
                 runData.scheduled = new Date(scheduledTime * 1000).toISOString();

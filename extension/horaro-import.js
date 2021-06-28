@@ -132,7 +132,7 @@ function importSchedule(optsO, dashID) {
             });
             const externalIDsSeen = [];
             // Filtering out any games on the ignore list before processing them all.
-            const newRunDataArray = yield p_iteration_1.mapSeries(runItems.filter((run) => (!helpers_1.checkGameAgainstIgnoreList(run.data[opts.columns.game]))), (run, index, arr) => __awaiter(this, void 0, void 0, function* () {
+            const newRunDataArray = yield p_iteration_1.mapSeries(runItems.filter((run) => (!helpers_1.checkGameAgainstIgnoreList(run.data[opts.columns.game], 'horaro'))), (run, index, arr) => __awaiter(this, void 0, void 0, function* () {
                 replicants_1.horaroImportStatus.value.item = index + 1;
                 replicants_1.horaroImportStatus.value.total = arr.length;
                 // If a run with the same external ID exists already, use the same UUID.
@@ -161,7 +161,7 @@ function importSchedule(optsO, dashID) {
                 const game = parseMarkdown(run.data[opts.columns.game]);
                 let gameTwitch = parseMarkdown(run.data[opts.columns.gameTwitch]).str;
                 let srcomGameTwitch;
-                if (!config.schedule.disableSpeedrunComLookup && !gameTwitch) {
+                if (!(config.schedule || config.horaro).disableSpeedrunComLookup && !gameTwitch) {
                     if (game.url && game.url.includes('speedrun.com')) {
                         const gameAbbr = game.url
                             .split('speedrun.com/')[game.url.split('speedrun.com/').length - 1]
@@ -201,10 +201,14 @@ function importSchedule(optsO, dashID) {
                 runData.setupTimeS = runSetupTime / 1000;
                 // Custom Data
                 Object.keys(opts.columns.custom).forEach((col) => {
-                    if (!config.schedule.customData) {
+                    var _a, _b;
+                    const customDataConfig = ((_a = config.customData) === null || _a === void 0 ? void 0 : _a.run)
+                        || ((_b = config.schedule) === null || _b === void 0 ? void 0 : _b.customData)
+                        || config.horaro.customData;
+                    if (!customDataConfig) {
                         return;
                     }
-                    const colSetting = config.schedule.customData.find((setting) => setting.key === col);
+                    const colSetting = customDataConfig.find((setting) => setting.key === col);
                     if (!colSetting) {
                         return;
                     }
@@ -252,7 +256,7 @@ function importSchedule(optsO, dashID) {
                                 },
                                 customData: {},
                             };
-                            if (!config.schedule.disableSpeedrunComLookup) {
+                            if (!(config.schedule || config.horaro).disableSpeedrunComLookup) {
                                 const sData = yield srcom_api_1.searchForUserDataMultiple({ type: 'twitch', val: twitchUsername }, { type: 'name', val: str });
                                 if (sData) {
                                     // Always favour the supplied Twitch username from schedule if available.

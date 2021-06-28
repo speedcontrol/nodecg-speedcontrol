@@ -318,14 +318,16 @@
 
 
 
+
+
 /* Tweaks to dropdowns to make them smaller. */
-.Dropdown[data-v-11fb74d0] .v-input__slot {
+.Dropdown[data-v-6efd4289] .v-input__slot {
   min-height: 0 !important;
 }
-.Dropdown[data-v-11fb74d0] .v-label {
+.Dropdown[data-v-6efd4289] .v-label {
   top: 4px !important;
 }
-.Dropdown[data-v-11fb74d0] .v-input__append-inner {
+.Dropdown[data-v-6efd4289] .v-input__append-inner {
   margin-top: 2px !important;
 }
 

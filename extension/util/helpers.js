@@ -134,12 +134,16 @@ exports.randomInt = randomInt;
 /**
  * Checks if the game name appears in the ignore list in the configuration.
  * @param game Game string (or null) to check against.
+ * @param service Service we are checking against (just changes where to check in the config).
  */
-function checkGameAgainstIgnoreList(game) {
+function checkGameAgainstIgnoreList(game, service = 'horaro') {
     if (!game) {
         return false;
     }
-    const list = bundleConfig().schedule.ignoreGamesWhileImporting || [];
+    const list = service === 'horaro'
+        ? (bundleConfig().horaro || bundleConfig().schedule).ignoreGamesWhileImporting || []
+        : bundleConfig().oengus.ignoreGamesWhileImporting
+            || (bundleConfig().horaro || bundleConfig().schedule).ignoreGamesWhileImporting || [];
     return !!list.find((str) => !!str.toLowerCase().match(new RegExp(`\\b${lodash_1.default.escapeRegExp(game.toLowerCase())}\\b`)));
 }
 exports.checkGameAgainstIgnoreList = checkGameAgainstIgnoreList;
