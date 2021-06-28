@@ -83,13 +83,14 @@
         />
       </div>
       <!-- Custom Data Inputs -->
-      <div>
+      <div class="d-flex">
         <text-input
-          v-for="data in customData"
+          v-for="(data, i) in customData"
           :key="data.key"
           :value="runData.customData[data.key]"
           @input="updateRunDataProp(`customData.${data.key}`, $event)"
           :label="data.name"
+          :left-border="i > 0"
         />
       </div>
     </div>
@@ -146,6 +147,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import { TwitchAPIData, Configschema } from '@nodecg-speedcontrol/types/schemas';
 import Draggable from 'vuedraggable';
 import { RunData, RunModification, Dialog, Alert } from '@nodecg-speedcontrol/types';
+import clone from 'clone';
 import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
 import ModifyButton from './components/ModifyButton.vue';
@@ -178,7 +180,14 @@ export default class extends Vue {
   addNewTeam(): void { storeModule.addNewTeam(); }
 
   get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
-    return (nodecg.bundleConfig as Configschema).schedule.customData || [];
+    const cfg = nodecg.bundleConfig as Configschema;
+    const customData = clone(cfg.schedule?.customData || cfg.customData?.run || []);
+    Object.keys(this.runData.customData).forEach((key) => {
+      if (!customData.find(({ key: k }) => k === key)) {
+        customData.push({ name: `(?) ${key}`, key });
+      }
+    });
+    return customData;
   }
 
   open(opts: { mode: RunModification.Mode, runData?: RunData, prevID?: string }): void {

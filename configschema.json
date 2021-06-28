@@ -1,5 +1,75 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
+  "definitions": {
+    "ignoreGamesWhileImporting": {
+      "oneOf": [
+        {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "customDataRun": {
+      "oneOf": [
+        {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "ignoreMarkdown": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "name",
+              "key"
+            ]
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "horaro": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultURL": {
+          "type": "string",
+          "default": "https://horaro.org/event/schedule"
+        },
+        "ignoreGamesWhileImporting": {
+          "$ref": "#/definitions/ignoreGamesWhileImporting"
+        },
+        "disableSpeedrunComLookup": {
+          "type": "boolean",
+          "default": false
+        },
+        "customData": {
+          "$ref": "#/definitions/customDataRun"
+        }
+      },
+      "required": [
+        "defaultURL",
+        "disableSpeedrunComLookup"
+      ]
+    }
+  },
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -88,66 +158,17 @@
       ]
     },
     "schedule": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "defaultURL": {
-          "type": "string",
-          "default": "https://horaro.org/event/schedule"
+      "oneOf": [
+        {
+          "$ref": "#/definitions/horaro"
         },
-        "ignoreGamesWhileImporting": {
-          "oneOf": [
-            {
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                "type": "string"
-              }
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "disableSpeedrunComLookup": {
-          "type": "boolean",
-          "default": false
-        },
-        "customData": {
-          "oneOf": [
-            {
-              "type": "array",
-              "uniqueItems": true,
-              "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "key": {
-                    "type": "string"
-                  },
-                  "ignoreMarkdown": {
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "name",
-                  "key"
-                ]
-              }
-            },
-            {
-              "type": "null"
-            }
-          ]
+        {
+          "type": "null"
         }
-      },
-      "required": [
-        "defaultURL",
-        "disableSpeedrunComLookup"
       ]
+    },
+    "horaro": {
+      "$ref": "#/definitions/horaro"
     },
     "oengus": {
       "type": "object",
@@ -161,9 +182,22 @@
           "type": "boolean",
           "default": false
         },
+        "ignoreGamesWhileImporting": {
+          "$ref": "#/definitions/ignoreGamesWhileImporting"
+        },
         "disableSpeedrunComLookup": {
           "type": "boolean",
           "default": false
+        },
+        "useSandbox": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -178,6 +212,9 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "run": {
+              "$ref": "#/definitions/customDataRun"
+            },
             "player": {
               "oneOf": [
                 {
@@ -199,6 +236,9 @@
                       "key"
                     ]
                   }
+                },
+                {
+                  "type": "null"
                 }
               ]
             }
@@ -213,7 +253,7 @@
   "required": [
     "language",
     "twitch",
-    "schedule",
+    "horaro",
     "oengus"
   ]
 }

@@ -1,5 +1,6 @@
 import { OengusMarathon, OengusSchedule, RunData, RunDataPlayer, RunDataTeam } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
 import { Duration, parse as isoParse, toSeconds } from 'iso8601-duration';
+import { isObject } from 'lodash';
 import needle, { NeedleResponse } from 'needle';
 import { mapSeries } from 'p-iteration';
 import { v4 as uuid } from 'uuid';
@@ -21,7 +22,7 @@ async function get(endpoint: string): Promise<NeedleResponse> {
     nodecg.log.debug(`[Oengus Import] API request processing on ${endpoint}`);
     const resp = await needle(
       'get',
-      `https://oengus.io/api${endpoint}`,
+      `https://${config.oengus.useSandbox ? 'sandbox.' : ''}oengus.io/api${endpoint}`,
       null,
       {
         headers: {
@@ -86,7 +87,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
   try {
     oengusImportStatus.value.importing = true;
     const marathonResp = await get(`/marathons/${marathonShort}`);
-    const scheduleResp = await get(`/marathons/${marathonShort}/schedule`);
+    const scheduleResp = await get(`/marathons/${marathonShort}/schedule?withCustomData=true`);
     if (!isOengusMarathon(marathonResp.body)) {
       throw new Error('Did not receive marathon data correctly');
     }
@@ -101,7 +102,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
 
     // Filtering out any games on the ignore list before processing them all.
     const newRunDataArray = await mapSeries(oengusLines.filter((line) => (
-      !checkGameAgainstIgnoreList(line.gameName)
+      !checkGameAgainstIgnoreList(line.gameName, 'oengus')
     )), async (line, index, arr) => {
       oengusImportStatus.value.item = index + 1;
       oengusImportStatus.value.total = arr.length;
@@ -152,6 +153,18 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
           }
         }
         runData.gameTwitch = gameTwitch;
+      }
+
+      // Custom Data
+      if (line.customDataDTO) {
+        let parsed; try { parsed = JSON.parse(line.customDataDTO); } catch (err) { /* err */ }
+        if (parsed && isObject(parsed)) {
+          Object.entries(parsed).forEach(([k, v]) => {
+            if (!v) return;
+            if (typeof v === 'string') runData.customData[k] = v;
+            else runData.customData[k] = JSON.stringify(v);
+          });
+        }
       }
 
       // Add the scheduled time then update the value above for the next run.

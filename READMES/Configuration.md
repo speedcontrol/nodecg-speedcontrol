@@ -29,26 +29,30 @@ Below is an example configuration file contents with everything that is availabl
     "ffzIntegration": false,
     "ffzUseRepeater": false
   },
-  "schedule": {
+  "horaro": {
     "defaultURL": "https://horaro.org/event/schedule",
     "ignoreGamesWhileImporting": [
       "Setup"
     ],
     "disableSpeedrunComLookup": false,
-    "customData": [
+  },
+  "oengus": {
+    "defaultMarathon": "SHORTNAME",
+    "useJapanese": false,
+    "ignoreGamesWhileImporting": [
+      "Setup"
+    ],
+    "disableSpeedrunComLookup": false,
+    "useSandbox": false
+  },
+  "customData": {
+    "run": [
       {
         "name": "Game (Short)",
         "key": "gameShort",
         "ignoreMarkdown": false
       }
-    ]
-  },
-  "oengus": {
-    "defaultMarathon": "SHORTNAME",
-    "useJapanese": false,
-    "disableSpeedrunComLookup": false
-  },
-  "customData": {
+    ],
     "player": [
       {
         "name": "Other Data",
@@ -124,19 +128,12 @@ There is also another optional parameter, `additionalScopes`, which is an array 
 
 ```json
 {
-  "schedule": {
+  "horaro": {
     "defaultURL": "https://horaro.org/event/schedule",
     "ignoreGamesWhileImporting": [
       "Setup"
     ],
-    "disableSpeedrunComLookup": false,
-    "customData": [
-      {
-        "name": "Game (Short)",
-        "key": "gameShort",
-        "ignoreMarkdown": false
-      }
-    ]
+    "disableSpeedrunComLookup": false
   }
 }
 ```
@@ -144,10 +141,6 @@ There is also another optional parameter, `additionalScopes`, which is an array 
 - `defaultURL` is a URL to the schedule on Horaro that will be pre-filled on the dashboard; usually you will only be using your setup for 1 marathon so this means you don't need to keep entering it every time you want to do a (re)import.
 - `ignoreGamesWhileImporting` is an array of strings of games on your schedule that will be ignored on import; for example you may have setup blocks you don't want importing. This does partial matches ("Setup Block" will be matched by "Setup").
 - `disableSpeedrunComLookup` is a boolean (defaults to `false`) that can be enabled, which will skip the speedrun.com look-ups during schedule import; by default the import will try to find the player's Twitch username, country and preferred pronouns from speedrun.com, but if you do not need this you can disable it to speed up the import.
-- `customData` (*for advanced users*) is an array of objects; this is for adding custom data to the run data on import. Once set here, you will be able to select an appropriate column on import for where this data is stored in your schedule. All of this is stored within an object called `customData` within the run's data object.
-  - `name` is the formatted name that will appear in the Speedcontrol UI.
-  - `key` is the key that will be used in the `customData` in the run data.
-  - `ignoreMarkdown` is a boolean (defaults to `false`) which if true, will tell the Horaro import to not attempt to strip any markdown in the column's data for that run.
 
 
 ### Oengus Schedule
@@ -157,14 +150,20 @@ There is also another optional parameter, `additionalScopes`, which is an array 
   "oengus": {
     "defaultMarathon": "SHORTNAME",
     "useJapanese": false,
-    "disableSpeedrunComLookup": false
+    "ignoreGamesWhileImporting": [
+      "Setup"
+    ],
+    "disableSpeedrunComLookup": false,
+    "useSandbox": false
   }
 }
 ```
 
 - `defaultMarathon` is the marathon's shortname on Oengus that will be pre-filled on the dashboard; this is the part of the URL *after* `oengus.io/marathon/`.
 - `useJapanese` is a boolean (defaults to `false`) which if true, will tell the import to use the Japanese names of players on import instead of the international ones. This setting can also be toggled from the dashboard itself.
+- `ignoreGamesWhileImporting` is an array of strings of games on your schedule that will be ignored on import. This does partial matches ("Setup Block" will be matched by "Setup"). Currently this does not check specific setup blocks created in Oengus.
 - `disableSpeedrunComLookup` is a boolean (defaults to `false`) that can be enabled, which will skip the speedrun.com look-ups during schedule import; by default the import will try to find the player's Twitch username (if not already linked via Oengus) and country from speedrun.com, but if you do not need this you can disable it to speed up the import.
+- `useSandbox` will make all lookups use the [sandbox version of Oengus](https://sandbox.oengus.io/) instead of the live version; useful for testing.
 
 
 ### Custom Data
@@ -172,6 +171,13 @@ There is also another optional parameter, `additionalScopes`, which is an array 
 ```json
 {
   "customData": {
+    "run": [
+      {
+        "name": "Game (Short)",
+        "key": "gameShort",
+        "ignoreMarkdown": false
+      }
+    ],
     "player": [
       {
         "name": "Other Data",
@@ -184,8 +190,12 @@ There is also another optional parameter, `additionalScopes`, which is an array 
 
 *For advanced users!*
 
-This is the part where you configure "custom data" that will also be able to be added/edited alongside any data the bundle can already handle. Currently, this part of the configuration is only used for custom *player* data; custom *run* data is still handled in the Horaro configuration ([see above](#horaro-schedule)).
+This is the part where you configure "custom data" that will also be able to be added/edited alongside any data the bundle can already handle.
 
+- `run` is where the custom *run* data is configured; this is an array of objects. Anything configured here has the chance to appear within an object called `customData` within the run's data object. This will allow you to add a custom column when importing from a Horaro schedule and also edit/add these custom data values from the relevant dialog.
+  - `name` is the formatted name that will appear in the Speedcontrol UI.
+  - `key` is the key that will be used in the `customData` in the run data.
+  - `ignoreMarkdown` is a boolean (defaults to `false`) which if true, will tell the Horaro import to not attempt to strip any markdown in the column's data for that run.
 - `player` is where the custom *player* data is configured; this is an array of objects. Anything configured here has the chance to appear within an object called `customData` within the player's data object *inside* of the run data object. This is not automatically imported from anywhere as of yet and can only be added/edited via the dashboard.
   - `name` is the formatted name that will appear in the Speedcontrol UI.
   - `key` is the key that will be used in the `customData` in the player data.
