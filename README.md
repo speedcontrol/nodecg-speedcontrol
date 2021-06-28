@@ -7,8 +7,8 @@
 nodecg-speedcontrol, usually known as just "Speedcontrol", is a bundle for the [NodeCG](https://nodecg.dev/) broadcast graphics framework/application developed for automating tasks for speedrunning marathons, mainly changing information on overlays and updating the Twitch information.
 
 Some basic information:
-- Import schedules from [Horaro](https://horaro.org/) and [Oengus](https://oengus.io/) [work in progress].
-- By default, can store information on the run and the players, but can also be customised to store more if needed by advanced users.
+- Import schedules from [Horaro](https://horaro.org/) and [Oengus](https://oengus.io/).
+- By default, can store information on the run and the players, and can also be customised to store more than the default if needed by advanced users.
 - Automatically change Twitch title and/or game directory if needed.
 - Automatically feature the current player(s) on the [FrankerFaceZ](https://www.frankerfacez.com/) featured channels function below the stream.
 - Has an inbuilt timer (powered by [livesplit-core](https://github.com/LiveSplit/livesplit-core)); no need to have a seperate application open.
@@ -44,7 +44,7 @@ nodecg start
 
 Once installed, go to `https://localhost:9090` (unless you have overridden the defaults in the NodeCG config) to access the dashboard.
 
-To import a schedule, go to the *Run Modifications* workspace along the top, and look for the *Horaro Schedule Import* panel. Paste in a Horaro schedule URL into the text box (it will be automatically pre-filled if you set `schedule.defaultURL` in this bundles config) and click *Load Schedule Data*.
+To import a schedule, go to the *Run Modifications* workspace along the top, and look for the *Horaro Schedule Import* panel. Paste in a Horaro schedule URL into the text box (it will be automatically pre-filled if you set `schedule.defaultURL` in this bundle's config) and click *Load Schedule Data*.
 
 ![Schedule Import Before](READMES/img/schedule-import-1.png)
 
@@ -76,10 +76,10 @@ Once you have done the above, make sure to turn the auto-sync on in the panel, o
 
 ## Extra Support Bundles
 
-Alongside the main bundle, there are some extra bundles that we maintain that you may also want to use for speedrunning marathons. See their GitHub pages for more detailed information on how to use them. Be warned they are somewhat undocumented as of now.
+Alongside the main bundle, there are some extra bundles that either we or third parties maintain that you may also want to use for speedrunning marathons. See their GitHub pages for more detailed information on how to use them. Be warned that some may be somewhat undocumented as of now.
 
 To easily install: `nodecg install BUNDLE`, where `BUNDLE` is the full name below.
-- [speedcontrol/speedcontrol-tiltify](https://github.com/speedcontrol/speedcontrol-tiltify): Adds a frequently updating donation total amount for a Tiltify campaign you can use in layouts.
+- [speedcontrol/speedcontrol-tiltify](https://github.com/speedcontrol/speedcontrol-tiltify): Adds a frequently updating donation total amount for a Tiltify campaign you can use in your layouts.
 - [speedcontrol/speedcontrol-srcomtracker](https://github.com/speedcontrol/speedcontrol-srcomtracker): Adds frequently updating donation total/goals/bidwars and messages for new donations for a marathon on [speedrun.com](https://www.speedrun.com) if they are enabled, that you can use in your layouts.
 - [speedcontrol/speedcontrol-flagcarrier](https://github.com/speedcontrol/speedcontrol-flagcarrier): Adds a server and replicants that can receive requests from ESA's [FlagCarrier android app](https://play.google.com/store/apps/details?id=de.oromit.flagcarrier) so this information can be used in your layouts.
 - [nicnacnic/speedcontrol-layouts](https://github.com/nicnacnic/speedcontrol-layouts): A base pack of layouts for anyone to customize. Includes Tiltify support for donation totals, incentives, and prizes, layout Photoshop files, and detailed documentation for all your customization needs.
@@ -91,7 +91,7 @@ To easily install: `nodecg install BUNDLE`, where `BUNDLE` is the full name belo
 *(This is not an exhaustive list.)*
 
 - All [European Speedrunner Assembly](https://www.esamarathon.com/) marathons since Pre-ESA Marathon 2016, including the ESA ran Dreamhack speedrunning events in Sweden
-- All on-site based [United Kingdom Speedrunner Gathering](https://www.speedrun.com/uksg) marathons since Fall 2018.
+- Most [United Kingdom Speedrunner Gathering](https://www.speedrun.com/uksg) marathons since Fall 2018.
 - All [GTA Marathons](https://www.twitch.tv/gtamarathon) since GTA Marathon 2016
 - All [SpeedSouls Charity Marathons](https://www.twitch.tv/speedsouls)
 - [Themeathon Pre-Marathon 2018](https://www.twitch.tv/themeathon)
@@ -110,7 +110,7 @@ To easily install: `nodecg install BUNDLE`, where `BUNDLE` is the full name belo
 
 Originally developed by Charleon, now mainly developed by zoton2.
 
-With help from:
+With help and contributions from:
 - btrim
 - Zephyyrr
 - Planks
@@ -125,6 +125,8 @@ If you install from the latest release (for example, with `nodecg-cli` by doing 
 If you wish to help with further development, the `master` branch is where all the development is done, although you will need to install all dependencies (`npm install`) and build (`npm run build`) to actually use the bundle, and see any changes you make.
 
 If you wish to test/use experimental unfinished features without needing to build yourself, there is a `build` branch which should usually mirror the `master` branch but has everything built already so you should only need to install production dependencies (`npm install --production`).
+
+The `dev` branch is a legacy branch; it used to be used for current development but that has now all moved to the `master` branch.
 
 The `v1.x` branch is a legacy branch for that version; this exists for archival purposes, as the strucutre was highly different.
 
