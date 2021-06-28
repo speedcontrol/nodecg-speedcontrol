@@ -2,6 +2,9 @@
 
 *[Link to NodeCG documentation for reference.](https://www.nodecg.dev/docs/classes/replicant)*
 
+
+## Table of Contents
+
 - [runDataArray](#runDataArray)
 - [runDataActiveRun](#runDataActiveRun)
 - [runDataActiveRunSurrounding](#runDataActiveRunSurrounding)

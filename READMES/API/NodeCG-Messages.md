@@ -1,5 +1,7 @@
 # API Documentation: NodeCG Messaging System
 
+## Table of Contents
+
 - [Messages Sent (*listenFor*)](#Messages-Sent-listenFor)
   - [twitchCommercialStarted](#twitchCommercialStarted)
   - [repeaterFeaturedChannels](#repeaterFeaturedChannels)
