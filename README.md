@@ -18,6 +18,18 @@ Some basic information:
 This bundle doesn't come with any graphics, you will need to create them yourself in another bundle. If you have no experience in developing, you can check out [speedcontrol-simpletext](https://github.com/speedcontrol/speedcontrol-simpletext) for an simple example bundle, or check out the [API documentation](READMES/API.md) if you're are more advanced user.
 
 
+## Table of Contents
+
+- [Installation](#installation)
+  - [tl;dr installation](#installation-tldr)
+- [Basic Usage](#basic-usage)
+- [Extra Support Bundles](#extra-support-bundles)
+- [Where has this bundle been used before?](#previous-usage)
+- [Authors/Contributors](#authors-contributors)
+- [Contribution/Development](#contribution-development)
+  - [Localisation](#localisation)
+
+
 ## Installation
 
 You will need [Node.js](https://nodejs.org) (14.x LTS tested) and [git](https://git-scm.com/) installed to install NodeCG, then see the [NodeCG documentation](http://nodecg.dev/) on how to install that. I also suggest installing `nodecg-cli`; information on that is also on the documentation just linked.
@@ -26,6 +38,8 @@ You will need [Node.js](https://nodejs.org) (14.x LTS tested) and [git](https://
 
 This bundle can run without any extra configuration, but it's needed to use all of the functionality, and if you want to switch to a different localisation. Please see the [Configuration documentation](READMES/Configuration.md) for more information. You may also want to read the [Schedule Formatting documentation](READMES/Schedule-Formatting.md) for advice on formatting your Horaro schedules before importing, if you choose to import via this method.
 
+
+<a id="installation-tldr"></a>
 ### tl;dr installation
 
 Install [Node.js](https://nodejs.org) (14.x LTS tested) and [git](https://git-scm.com/), then make a folder anywhere and open a command prompt/shell/bash window, then run these commands in order:
@@ -86,6 +100,7 @@ To easily install: `nodecg install BUNDLE`, where `BUNDLE` is the full name belo
 - [nicnacnic/speedcontrol-tweetr](https://github.com/nicnacnic/speedcontrol-tweetr): Control Twitter right from your NodeCG dashboard!
 
 
+<a id="previous-usage"></a>
 ## Where has this bundle been used before?
 
 *(This is not an exhaustive list.)*
@@ -106,6 +121,7 @@ To easily install: `nodecg install BUNDLE`, where `BUNDLE` is the full name belo
 - [Completithon](https://twitch.tv/completithon) since Completithon 2019
 
 
+<a id="authors-contributors"></a>
 ## Authors/Contributors
 
 Originally developed by Charleon, now mainly developed by zoton2.
@@ -118,6 +134,7 @@ With help and contributions from:
 - yagamuu *(Japanese Localisation)*
 
 
+<a name="contribution-development"></a>
 ## Contribution/Development
 
 If you install from the latest release (for example, with `nodecg-cli` by doing `nodecg install speedcontrol/nodecg-speedcontrol`) you will get the latest stable build.

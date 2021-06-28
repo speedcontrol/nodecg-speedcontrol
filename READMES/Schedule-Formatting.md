@@ -1,5 +1,10 @@
 # Schedule Formatting
 
+Speedcontrol supports importing schedules from both [Horaro](https://horaro.org/) and [Oengus](https://oengus.io/). Oengus schedules are very easy to import, due to how the service is designed, but Horaro schedules need a little more work, although how you format them is still is somewhat flexible.
+
+Below is some more information if you have issues.
+
+
 ## Table of Contents
 
 - [General Information](#general-information)
@@ -11,13 +16,6 @@
   - [Schedule Examples](#horaro-schedule-examples)
 - [Oengus](#oengus)
   - [Custom Data](#oengus-custom-data)
-
-
-## General Information
-
-Speedcontrol supports importing schedules from both [Horaro](https://horaro.org/) and [Oengus](https://oengus.io/). Oengus schedules are very easy to import, due to how the service is designed, but Horaro schedules need a little more work, although how you format them is still is somewhat flexible.
-
-Below is some more information if you have issues.
 
 
 ## Horaro

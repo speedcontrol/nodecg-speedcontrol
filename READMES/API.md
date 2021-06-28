@@ -6,7 +6,8 @@ It is suggested you add this bundle to your `bundleDependencies` when making you
 
 **This bundle may contain more than what is documented herein. If it's not mentioned, assume it to be unsupported and that it may change in an update.**
 
-## Contents
+
+## Table of Contents
 - [runData Object Structure](./API/RunData.md)
 - [Replicants](./API/Replicants.md)
 - [NodeCG Messaging System](./API/NodeCG-Messages.md)
