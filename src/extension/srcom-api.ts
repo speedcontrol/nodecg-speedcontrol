@@ -84,13 +84,16 @@ export async function searchForUserData(
   try {
     await sleep(1000);
     const resp = await get(
-      `/users?${type}=${encodeURIComponent(val)}&max=1`,
+      `/users?${type}=${encodeURIComponent(val)}&max=10`,
     );
-    if (!resp.body.data.length) {
+    const results = resp.body.data as UserData[];
+    const exact = results
+      .find((user) => user.names.international.toLowerCase() === val.toLowerCase());
+    const data: UserData | undefined = exact || results[0];
+    if (!data) {
       throw new Error(`No user matches for "${type}/${val}"`);
     }
-    const data = resp.body.data[0] as UserData;
-    if (data?.pronouns) {
+    if (data.pronouns) {
       // Erase any pronouns that are custom strings that used to be allowed.
       const split = data.pronouns.split(',').map((p) => p.trim().toLowerCase());
       if (!split.includes('he/him') && !split.includes('she/her') && !split.includes('they/them')) {
