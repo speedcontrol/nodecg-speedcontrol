@@ -270,6 +270,8 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
                   const sData = await searchForUserDataMultiple(
                     { type: 'twitch', val: twitchUsername },
                     { type: 'name', val: str },
+                    { type: 'twitch', val: str },
+                    { type: 'twitter', val: str },
                   );
                   if (sData) {
                     // Always favour the supplied Twitch username from schedule if available.

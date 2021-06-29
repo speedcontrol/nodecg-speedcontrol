@@ -71,7 +71,7 @@ export async function searchForTwitchGame(query: string, abbr = false): Promise<
  * @param query Query you wish to try to find a user with, with parameter type and query value.
  */
 export async function searchForUserData(
-  { type, val }: { type: 'name' | 'twitch', val: string },
+  { type, val }: { type: 'name' | 'twitch' | 'twitter', val: string },
 ): Promise<UserData> {
   const cacheKey = `${type}_${val}`;
   if (userDataCache[cacheKey]) {
@@ -115,7 +115,7 @@ export async function searchForUserData(
  * @param queries List of queries to use, if the val property in one is falsey it will be skipped.
  */
 export async function searchForUserDataMultiple(
-  ...queries: { type: 'name' | 'twitch', val: (string | undefined | null) }[]
+  ...queries: { type: 'name' | 'twitch' | 'twitter', val: (string | undefined | null) }[]
 ):
   Promise<UserData | undefined> {
   let userData;
