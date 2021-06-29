@@ -109,12 +109,30 @@ function searchForUserData({ type, val }) {
         }
         try {
             yield helpers_1.sleep(1000);
-            const resp = yield get(`/users?${type}=${encodeURIComponent(val)}&max=1`);
-            if (!resp.body.data.length) {
+            const resp = yield get(`/users?${type}=${encodeURIComponent(val)}&max=10`);
+            const results = resp.body.data;
+            const exact = results.find((user) => {
+                const exactToCheck = (() => {
+                    var _a, _b;
+                    switch (type) {
+                        case 'name':
+                        default:
+                            return user.names.international;
+                        case 'twitch':
+                            return helpers_1.getTwitchUserFromURL((_a = user.twitch) === null || _a === void 0 ? void 0 : _a.uri);
+                        case 'twitter':
+                            return helpers_1.getTwitterUserFromURL((_b = user.twitter) === null || _b === void 0 ? void 0 : _b.uri);
+                    }
+                })();
+                return exactToCheck
+                    ? user.names.international.toLowerCase() === exactToCheck.toLowerCase()
+                    : undefined;
+            });
+            const data = exact || results[0];
+            if (!data) {
                 throw new Error(`No user matches for "${type}/${val}"`);
             }
-            const data = resp.body.data[0];
-            if (data === null || data === void 0 ? void 0 : data.pronouns) {
+            if (data.pronouns) {
                 // Erase any pronouns that are custom strings that used to be allowed.
                 const split = data.pronouns.split(',').map((p) => p.trim().toLowerCase());
                 if (!split.includes('he/him') && !split.includes('she/her') && !split.includes('they/them')) {

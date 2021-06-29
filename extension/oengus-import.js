@@ -38,13 +38,13 @@ function get(endpoint) {
                     Accept: 'application/json',
                 },
             });
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore: parser exists but isn't in the typings
-            if (resp.parser !== 'json') {
-                throw new Error('Response was not JSON');
+            if (resp.statusCode !== 200) {
+                throw new Error(`Status Code: ${resp.statusCode} - Body: ${JSON.stringify(resp.body)}`);
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore: parser exists but isn't in the typings
             }
-            else if (resp.statusCode !== 200) {
-                throw new Error(JSON.stringify(resp.body));
+            else if (resp.parser !== 'json') {
+                throw new Error('Response was not JSON');
             }
             nodecg.log.debug(`[Oengus Import] API request successful on ${endpoint}`);
             return resp;
@@ -195,7 +195,7 @@ function importSchedule(marathonShort, useJapanese) {
                         customData: {},
                     };
                     if (!config.oengus.disableSpeedrunComLookup) {
-                        const data = yield srcom_api_1.searchForUserDataMultiple({ type: 'name', val: runner.speedruncomName }, { type: 'twitch', val: runner.twitchName }, { type: 'name', val: runner.username });
+                        const data = yield srcom_api_1.searchForUserDataMultiple({ type: 'name', val: runner.speedruncomName }, { type: 'twitch', val: runner.twitchName }, { type: 'twitter', val: runner.twitterName }, { type: 'name', val: runner.username });
                         if (data) {
                             // Always favour the supplied Twitch username from schedule if available.
                             if (!runner.twitchName) {

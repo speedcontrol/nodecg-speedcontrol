@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTwitchUserFromURL = exports.checkGameAgainstIgnoreList = exports.randomInt = exports.to = exports.processAck = exports.bundleConfig = exports.findRunIndexFromId = exports.sleep = exports.msToTimeStr = exports.timeStrToMS = exports.padTimeNumber = exports.getTwitchChannels = exports.formPlayerNamesStr = void 0;
+exports.getTwitterUserFromURL = exports.getTwitchUserFromURL = exports.checkGameAgainstIgnoreList = exports.randomInt = exports.to = exports.processAck = exports.bundleConfig = exports.findRunIndexFromId = exports.sleep = exports.msToTimeStr = exports.timeStrToMS = exports.padTimeNumber = exports.getTwitchChannels = exports.formPlayerNamesStr = void 0;
 const lodash_1 = __importDefault(require("lodash"));
 const nodecg_1 = require("./nodecg");
 const nodecg = nodecg_1.get();
@@ -156,3 +156,12 @@ function getTwitchUserFromURL(url) {
         ? sanitised.split('/')[sanitised.split('/').length - 1] : undefined;
 }
 exports.getTwitchUserFromURL = getTwitchUserFromURL;
+/**
+ * Will attempt to extract the Twitter username from a Twitter URL if possible.
+ */
+function getTwitterUserFromURL(url) {
+    const sanitised = (url === null || url === void 0 ? void 0 : url.endsWith('/')) ? url.substring(0, url.length - 1) : url;
+    return sanitised && sanitised.includes('twitter.com')
+        ? sanitised.split('/')[sanitised.split('/').length - 1] : undefined;
+}
+exports.getTwitterUserFromURL = getTwitterUserFromURL;

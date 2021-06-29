@@ -257,7 +257,7 @@ function importSchedule(optsO, dashID) {
                                 customData: {},
                             };
                             if (!(config.schedule || config.horaro).disableSpeedrunComLookup) {
-                                const sData = yield srcom_api_1.searchForUserDataMultiple({ type: 'twitch', val: twitchUsername }, { type: 'name', val: str });
+                                const sData = yield srcom_api_1.searchForUserDataMultiple({ type: 'twitch', val: twitchUsername }, { type: 'name', val: str }, { type: 'twitch', val: str }, { type: 'twitter', val: str });
                                 if (sData) {
                                     // Always favour the supplied Twitch username from schedule if available.
                                     if (!twitchUsername) {
