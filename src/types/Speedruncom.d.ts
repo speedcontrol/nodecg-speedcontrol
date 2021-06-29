@@ -12,4 +12,7 @@ export interface UserData {
   twitch: {
     uri: string;
   } | null;
+  twitter: {
+    uri: string;
+  } | null;
 }
