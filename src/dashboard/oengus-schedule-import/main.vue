@@ -31,6 +31,7 @@
       :label="$t('shortname')"
       placeholder="id"
       prefix="/marathon/"
+      :disabled="importStatus.importing"
     />
     <div class="mt-2">
       <template v-if="!importStatus.importing">

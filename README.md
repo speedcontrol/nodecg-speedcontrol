@@ -23,6 +23,11 @@ This bundle doesn't come with any graphics, you will need to create them yoursel
 - [Installation](#installation)
   - [tl;dr installation](#installation-tldr)
 - [Basic Usage](#basic-usage)
+  - [Importing a Schedule](#importing-a-schedule)
+    - [Oengus](#oengus)
+    - [Horaro](#horaro)
+  - [Selecting Runs/Using the Timer](#selecting-runs-timer)
+  - [Twitch Control Login](#twitch-control-login)
 - [Extra Support Bundles](#extra-support-bundles)
 - [Where has this bundle been used before?](#previous-usage)
 - [Authors/Contributors](#authors-contributors)
@@ -54,22 +59,39 @@ nodecg start
 
 ## Basic Usage
 
-***Currently this basic guide assumes you are importing from a Horaro schedule; importing from Oengus is very simple anyway and the other parts of this guide still apply.***
-
 Once installed, go to `https://localhost:9090` (unless you have overridden the defaults in the NodeCG config) to access the dashboard.
 
-To import a schedule, go to the *Run Modifications* workspace along the top, and look for the *Horaro Schedule Import* panel. Paste in a Horaro schedule URL into the text box (it will be automatically pre-filled if you set `schedule.defaultURL` in this bundle's config) and click *Load Schedule Data*.
+### Importing a Schedule
 
-![Schedule Import Before](READMES/img/schedule-import-1.png)
+To import a schedule, start by going to the *Run Modifications* workspace along the top.
 
-Next you will see a list of dropdowns. These are used to select which columns in your schedule relate to which information in the run data. The import tries to automatically select the appropriate columns, but if something is wrong you can change it here. Also available here is an option on how the players in the *Players* column should be split; see the [Schedule Formatting documentation](READMES/Schedule-Formatting.md) for more information on what these options mean and how the *Players* column data should be formatted.
-Once you have everything selected correctly, click on the *Import* button.
+#### Oengus
 
-![Schedule Import Settings](READMES/img/schedule-import-2.png)
+If you are importing a schedule from Oengus, this part is pretty simple. Paste in the shortname of the marathon (the part at the end of the Oengus URL) into the box (it will be automatically pre-filled if you set `oengus.defaultMarathon` in this bundle's config), toggle "Use Japanese names?" if needed (will be automatically pre-set if you set `oengus.useJapanese` in the bundle's config) and click *Import Schedule Data* button. There will be an alert dialog to confirm you want to proceed as well.
+
+![Oengus Schedule Import Before](READMES/img/oengus-schedule-import-1.png)
 
 The schedule will begin importing. If you have the speedrun.com lookup enabled (by default it's enabled) this import may take a while, so be patient. Once the import is done, this panel will turn back to how it was before, and the runs will be listed in the *Run Player* and *Run Editor* panels.
 
-![Schedule Importing](READMES/img/schedule-import-3.png)
+![Oengus Schedule Importing](READMES/img/oengus-schedule-import-2.png)
+
+#### Horaro
+
+To import a schedule, go to the *Run Modifications* workspace along the top, and look for the *Horaro Schedule Import* panel. Paste in a Horaro schedule URL into the text box (it will be automatically pre-filled if you set `horaro.defaultURL` in this bundle's config) and click *Load Schedule Data*.
+
+![Horaro Schedule Import Before](READMES/img/horaro-schedule-import-1.png)
+
+Next you will see a list of dropdowns. These are used to select which columns in your schedule relate to which information in the run data. The import tries to automatically select the appropriate columns, but if something is wrong you can change it here. Also available here is an option on how the players in the *Players* column should be split; see the [Schedule Formatting documentation](READMES/Schedule-Formatting.md) for more information on what these options mean and how the *Players* column data should be formatted.
+Once you have everything selected correctly, click on the *Import* button. There will be an alert dialog to confirm you want to proceed as well.
+
+![Horaro Schedule Import Settings](READMES/img/horaro-schedule-import-2.png)
+
+The schedule will begin importing. If you have the speedrun.com lookup enabled (by default it's enabled) this import may take a while, so be patient. Once the import is done, this panel will turn back to how it was before, and the runs will be listed in the *Run Player* and *Run Editor* panels.
+
+![Horaro Schedule Importing](READMES/img/horaro-schedule-import-3.png)
+
+<a id="selecting-runs-timer"></a>
+### Selecting Runs/Using the Timer
 
 To start "playing" runs, go back to the *Main Workspace* and find the *Run Player* panel, and click on the big "▶ [GAME]" button at the top.
 
@@ -78,6 +100,8 @@ To start "playing" runs, go back to the *Main Workspace* and find the *Run Playe
 Next to the above panel should be the *Run Timer* panel. This should be very self explanitory; use the play button to start the timer, use the tick button to stop it or use the cross button if the player has to forfeit the run. You can also reset it if needed, pause it, undo a stop if done accidentally and also click inside the timer box, type and press enter to edit the time if needed for any reason. The timer changes slightly for races, but is easy to figure out as each team gains their own set of stop/forfeit/undo buttons.
 
 ![Run Timer Stopped](READMES/img/run-timer-stopped.png)
+
+### Twitch Control Login
 
 If you have enabled the Twitch integration in this bundle's config, there will be a panel in *Main Workspace* called *Twitch Control*, which will have a button to set up the connection with Twitch. Use this to connect the application to your Twitch account.
 
@@ -134,7 +158,7 @@ With help and contributions from:
 - yagamuu *(Japanese Localisation)*
 
 
-<a name="contribution-development"></a>
+<a id="contribution-development"></a>
 ## Contribution/Development
 
 If you install from the latest release (for example, with `nodecg-cli` by doing `nodecg install speedcontrol/nodecg-speedcontrol`) you will get the latest stable build.
@@ -154,4 +178,4 @@ Feel free to raise an issue/Pull Request if you have used our bundle(s) for a ma
 
 ### Localisation
 
-This bundle supports additional languages using [Vue I18n](https://kazupon.github.io/vue-i18n/). If you wish to add support for another language, you must add the language code in `configschema.json`, under `language` > `enum`, and then also run `npm run typeschemas` to regenerate the `configschema.d.ts` file. You can then specify this language in the bundle's configuration file. Then, in the `src\dashboard\_misc\i18n.ts` file, add an additional object inside of the `messages` object inside the `VueI18n` instance for your newly added language. There are some reused pieces of text in this file that should be translated, but the rest are stored in the Single File Components (SFC) inside of the `src\dashboard` folder and subfolders, within the `<i18n>` blocks inside of those (in JSON format). If a piece of text is not translated yet, it will fall back to English (`en`).
+This bundle supports additional languages using [Vue I18n](https://kazupon.github.io/vue-i18n/). If you wish to add support for another language, you must add the language code in `configschema.json`, under `language` > `enum`, and then also run `npm run schema-types` to regenerate the `src\types\schemas\configschema.d.ts` file. You can then specify this language in the bundle's configuration file. Then, in the `src\dashboard\_misc\i18n.ts` file, add an additional object inside of the `messages` object inside the `VueI18n` instance for your newly added language. There are some reused pieces of text in this file that should be translated, but the rest are stored in the Single File Components (SFC) inside of the `src\dashboard` folder and subfolders, within the `<i18n>` blocks inside of those (in JSON format). If a piece of text is not translated yet, it will fall back to English (`en`).

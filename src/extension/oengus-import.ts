@@ -31,12 +31,12 @@ async function get(endpoint: string): Promise<NeedleResponse> {
         },
       },
     );
+    if (resp.statusCode !== 200) {
+      throw new Error(`Status Code: ${resp.statusCode} - Body: ${JSON.stringify(resp.body)}`);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: parser exists but isn't in the typings
-    if (resp.parser !== 'json') {
+    } else if (resp.parser !== 'json') {
       throw new Error('Response was not JSON');
-    } else if (resp.statusCode !== 200) {
-      throw new Error(JSON.stringify(resp.body));
     }
     nodecg.log.debug(`[Oengus Import] API request successful on ${endpoint}`);
     return resp;
@@ -192,6 +192,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
           const data = await searchForUserDataMultiple(
             { type: 'name', val: runner.speedruncomName },
             { type: 'twitch', val: runner.twitchName },
+            { type: 'twitter', val: runner.twitterName },
             { type: 'name', val: runner.username },
           );
           if (data) {

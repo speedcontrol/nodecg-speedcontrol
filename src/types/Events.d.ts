@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 import { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
 import { RunData } from './RunData';
 import { UserData } from './Speedruncom';
@@ -36,7 +38,7 @@ export interface SendMessageArgsMap {
   repeaterFeaturedChannels: string[];
 
   // Speedrun.com
-  srcomSearchForUserDataMultiple: { type: 'name' | 'twitch', val: (string | undefined | null) }[];
+  srcomSearchForUserDataMultiple: { type: 'name' | 'twitch' | 'twitter', val: (string | undefined | null) }[];
 }
 
 export interface SendMessageReturnMap {

@@ -157,3 +157,12 @@ export function getTwitchUserFromURL(url?: string): string | undefined {
   return sanitised && sanitised.includes('twitch.tv')
     ? sanitised.split('/')[sanitised.split('/').length - 1] : undefined;
 }
+
+/**
+ * Will attempt to extract the Twitter username from a Twitter URL if possible.
+ */
+export function getTwitterUserFromURL(url?: string): string | undefined {
+  const sanitised = url?.endsWith('/') ? url.substring(0, url.length - 1) : url;
+  return sanitised && sanitised.includes('twitter.com')
+    ? sanitised.split('/')[sanitised.split('/').length - 1] : undefined;
+}

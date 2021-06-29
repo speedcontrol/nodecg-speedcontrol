@@ -1,7 +1,7 @@
 import { UserData } from '@nodecg-speedcontrol/types';
 import needle, { NeedleResponse } from 'needle';
 import * as events from './util/events';
-import { processAck, sleep } from './util/helpers';
+import { getTwitchUserFromURL, getTwitterUserFromURL, processAck, sleep } from './util/helpers';
 import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
@@ -71,7 +71,7 @@ export async function searchForTwitchGame(query: string, abbr = false): Promise<
  * @param query Query you wish to try to find a user with, with parameter type and query value.
  */
 export async function searchForUserData(
-  { type, val }: { type: 'name' | 'twitch', val: string },
+  { type, val }: { type: 'name' | 'twitch' | 'twitter', val: string },
 ): Promise<UserData> {
   const cacheKey = `${type}_${val}`;
   if (userDataCache[cacheKey]) {
@@ -84,13 +84,30 @@ export async function searchForUserData(
   try {
     await sleep(1000);
     const resp = await get(
-      `/users?${type}=${encodeURIComponent(val)}&max=1`,
+      `/users?${type}=${encodeURIComponent(val)}&max=10`,
     );
-    if (!resp.body.data.length) {
+    const results = resp.body.data as UserData[];
+    const exact = results.find((user) => {
+      const exactToCheck = (() => {
+        switch (type) {
+          case 'name':
+          default:
+            return user.names.international;
+          case 'twitch':
+            return getTwitchUserFromURL(user.twitch?.uri);
+          case 'twitter':
+            return getTwitterUserFromURL(user.twitter?.uri);
+        }
+      })();
+      return exactToCheck
+        ? user.names.international.toLowerCase() === exactToCheck.toLowerCase()
+        : undefined;
+    });
+    const data: UserData | undefined = exact || results[0];
+    if (!data) {
       throw new Error(`No user matches for "${type}/${val}"`);
     }
-    const data = resp.body.data[0] as UserData;
-    if (data?.pronouns) {
+    if (data.pronouns) {
       // Erase any pronouns that are custom strings that used to be allowed.
       const split = data.pronouns.split(',').map((p) => p.trim().toLowerCase());
       if (!split.includes('he/him') && !split.includes('she/her') && !split.includes('they/them')) {
@@ -115,7 +132,7 @@ export async function searchForUserData(
  * @param queries List of queries to use, if the val property in one is falsey it will be skipped.
  */
 export async function searchForUserDataMultiple(
-  ...queries: { type: 'name' | 'twitch', val: (string | undefined | null) }[]
+  ...queries: { type: 'name' | 'twitch' | 'twitter', val: (string | undefined | null) }[]
 ):
   Promise<UserData | undefined> {
   let userData;
