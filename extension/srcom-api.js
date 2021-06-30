@@ -45,8 +45,12 @@ const userDataCache = {};
 function get(endpoint) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            // Slightly modified URL if using (unsupported) AJAX search.
+            const url = endpoint.startsWith('/ajax_search.php')
+                ? `https://www.speedrun.com${endpoint}`
+                : `https://www.speedrun.com/api/v1${endpoint}`;
             nodecg.log.debug(`[speedrun.com] API request processing on ${endpoint}`);
-            const resp = yield needle_1.default('get', `https://www.speedrun.com/api/v1${endpoint}`, null, {
+            const resp = yield needle_1.default('get', url, null, {
                 headers: {
                     'User-Agent': 'nodecg-speedcontrol',
                     Accept: 'application/json',
@@ -78,16 +82,48 @@ function get(endpoint) {
 function searchForTwitchGame(query, abbr = false) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const endpoint = (abbr) ? 'abbreviation' : 'name';
-            const resp = yield get(`/games?${endpoint}=${encodeURIComponent(query)}&max=1`);
-            if (!resp.body.data.length) {
+            let result;
+            // Abbreviation is easy to find, plug in and receive result.
+            if (abbr) {
+                const resp = yield get(`/games?abbreviation=${encodeURIComponent(query)}&max=1`);
+                [result] = resp.body.data;
+                // Using a name is slightly more complicated to find an accurate result.
+            }
+            else {
+                // First, try searching the regular API's top 10 and see if there's an exact match at all.
+                const resp1 = yield get(`/games?name=${encodeURIComponent(query)}&max=10`);
+                const results1 = resp1.body.data;
+                let exact1 = results1
+                    .find((game) => game.names.international.toLowerCase() === query.toLowerCase());
+                // If no exact match, use unsupported API to see if that has one.
+                if (!exact1) {
+                    try {
+                        const resp2 = yield get(`/ajax_search.php?term=${encodeURIComponent(query)}`);
+                        const results2 = resp2.body
+                            .filter((r) => r.category === 'Games');
+                        const exact2 = results2.find((game) => game.label.toLowerCase() === query.toLowerCase());
+                        // If it does have an exact match, look that one up on the regular API.
+                        if (exact2) {
+                            const resp3 = yield get(`/games?abbreviation=${encodeURIComponent(exact2.url)}&max=1`);
+                            exact1 = resp3.body.data[0] || undefined;
+                        }
+                    }
+                    catch (err) {
+                        // Ignoring any errors in this query as endpoint is unsupported!
+                    }
+                }
+                // Either store whatever exact we found, or fall back to the first result if available.
+                result = exact1 || results1[0];
+            }
+            // If we found something, check if a Twitch game is set and return if possible.
+            if (!result) {
                 throw new Error('No game matches');
             }
-            else if (!resp.body.data[0].names.twitch) {
+            else if (!result.names.twitch) {
                 throw new Error('Game was found but has no Twitch game set');
             }
-            nodecg.log.debug(`[speedrun.com] Twitch game name found for "${query}":`, resp.body.data[0].names.twitch);
-            return resp.body.data[0].names.twitch;
+            nodecg.log.debug(`[speedrun.com] Twitch game name found for "${query}":`, result.names.twitch);
+            return result.names.twitch;
         }
         catch (err) {
             nodecg.log.debug(`[speedrun.com] Twitch game name lookup failed for "${query}":`, err);
