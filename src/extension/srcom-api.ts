@@ -1,11 +1,11 @@
-import { UserData } from '@nodecg-speedcontrol/types';
+import { Speedruncom } from '@nodecg-speedcontrol/types';
 import needle, { NeedleResponse } from 'needle';
 import * as events from './util/events';
 import { getTwitchUserFromURL, getTwitterUserFromURL, processAck, sleep } from './util/helpers';
 import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
-const userDataCache: { [k: string]: UserData } = {};
+const userDataCache: { [k: string]: Speedruncom.UserData } = {};
 
 /**
  * Make a GET request to speedrun.com API.
@@ -13,10 +13,14 @@ const userDataCache: { [k: string]: UserData } = {};
  */
 async function get(endpoint: string): Promise<NeedleResponse> {
   try {
+    // Slightly modified URL if using (unsupported) AJAX search.
+    const url = endpoint.startsWith('/ajax_search.php')
+      ? `https://www.speedrun.com${endpoint}`
+      : `https://www.speedrun.com/api/v1${endpoint}`;
     nodecg.log.debug(`[speedrun.com] API request processing on ${endpoint}`);
     const resp = await needle(
       'get',
-      `https://www.speedrun.com/api/v1${endpoint}`,
+      url,
       null,
       {
         headers: {
@@ -48,18 +52,50 @@ async function get(endpoint: string): Promise<NeedleResponse> {
  */
 export async function searchForTwitchGame(query: string, abbr = false): Promise<string> {
   try {
-    const endpoint = (abbr) ? 'abbreviation' : 'name';
-    const resp = await get(`/games?${endpoint}=${encodeURIComponent(query)}&max=1`);
-    if (!resp.body.data.length) {
+    let result: Speedruncom.GameData | undefined;
+
+    // Abbreviation is easy to find, plug in and receive result.
+    if (abbr) {
+      const resp = await get(`/games?abbreviation=${encodeURIComponent(query)}&max=1`);
+      [result] = resp.body.data;
+    // Using a name is slightly more complicated to find an accurate result.
+    } else {
+      // First, try searching the regular API's top 10 and see if there's an exact match at all.
+      const resp1 = await get(`/games?name=${encodeURIComponent(query)}&max=10`);
+      const results1 = resp1.body.data as Speedruncom.GameData[];
+      let exact1 = results1
+        .find((game) => game.names.international.toLowerCase() === query.toLowerCase());
+      // If no exact match, use unsupported API to see if that has one.
+      if (!exact1) {
+        try {
+          const resp2 = await get(`/ajax_search.php?term=${encodeURIComponent(query)}`);
+          const results2 = (resp2.body as Speedruncom.AjaxSearch[])
+            .filter((r) => r.category === 'Games');
+          const exact2 = results2.find((game) => game.label.toLowerCase() === query.toLowerCase());
+          // If it does have an exact match, look that one up on the regular API.
+          if (exact2) {
+            const resp3 = await get(`/games?abbreviation=${encodeURIComponent(exact2.url)}&max=1`);
+            exact1 = resp3.body.data[0] as Speedruncom.GameData || undefined;
+          }
+        } catch (err) {
+          // Ignoring any errors in this query as endpoint is unsupported!
+        }
+      }
+      // Either store whatever exact we found, or fall back to the first result if available.
+      result = exact1 || results1[0];
+    }
+
+    // If we found something, check if a Twitch game is set and return if possible.
+    if (!result) {
       throw new Error('No game matches');
-    } else if (!resp.body.data[0].names.twitch) {
+    } else if (!result.names.twitch) {
       throw new Error('Game was found but has no Twitch game set');
     }
     nodecg.log.debug(
       `[speedrun.com] Twitch game name found for "${query}":`,
-      resp.body.data[0].names.twitch,
+      result.names.twitch,
     );
-    return resp.body.data[0].names.twitch;
+    return result.names.twitch;
   } catch (err) {
     nodecg.log.debug(`[speedrun.com] Twitch game name lookup failed for "${query}":`, err);
     throw err;
@@ -72,7 +108,7 @@ export async function searchForTwitchGame(query: string, abbr = false): Promise<
  */
 export async function searchForUserData(
   { type, val }: { type: 'name' | 'twitch' | 'twitter', val: string },
-): Promise<UserData> {
+): Promise<Speedruncom.UserData> {
   const cacheKey = `${type}_${val}`;
   if (userDataCache[cacheKey]) {
     nodecg.log.debug(
@@ -86,7 +122,7 @@ export async function searchForUserData(
     const resp = await get(
       `/users?${type}=${encodeURIComponent(val)}&max=10`,
     );
-    const results = resp.body.data as UserData[];
+    const results = resp.body.data as Speedruncom.UserData[];
     const exact = results.find((user) => {
       const exactToCheck = (() => {
         switch (type) {
@@ -103,7 +139,7 @@ export async function searchForUserData(
         ? user.names.international.toLowerCase() === exactToCheck.toLowerCase()
         : undefined;
     });
-    const data: UserData | undefined = exact || results[0];
+    const data: Speedruncom.UserData | undefined = exact || results[0];
     if (!data) {
       throw new Error(`No user matches for "${type}/${val}"`);
     }
@@ -134,7 +170,7 @@ export async function searchForUserData(
 export async function searchForUserDataMultiple(
   ...queries: { type: 'name' | 'twitch' | 'twitter', val: (string | undefined | null) }[]
 ):
-  Promise<UserData | undefined> {
+  Promise<Speedruncom.UserData | undefined> {
   let userData;
   for (const query of queries) {
     if (query.val) {
