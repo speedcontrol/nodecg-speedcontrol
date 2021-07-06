@@ -154,6 +154,7 @@ async function refreshChannelInfo(): Promise<void> {
   }
 }
 
+// TODO: add delay to this?
 /**
  * Returns the correct name of a game in the Twitch directory based on a search.
  * @param query String you wish to try to find a game with.
@@ -243,8 +244,7 @@ Promise<{ duration: CommercialDuration }> {
     throw new Error('Integration not ready');
   }
   try {
-    const dur = duration && typeof duration === 'number'
-      && [30, 60, 90, 120, 150, 180].includes(duration) ? duration : 180;
+    const dur = duration && typeof duration === 'number' ? duration : 180;
     nodecg.log.info('[Twitch] Requested a commercial to be started');
     const resp = await request(
       'post',
