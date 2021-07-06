@@ -1,1 +1,2 @@
-export type CommercialDuration = 30 | 60 | 90 | 120 | 150 | 180;
+// export type CommercialDuration = 30 | 60 | 90 | 120 | 150 | 180;
+export type CommercialDuration = number;
