@@ -170,6 +170,7 @@ function refreshChannelInfo() {
         }
     });
 }
+// TODO: add delay to this?
 /**
  * Returns the correct name of a game in the Twitch directory based on a search.
  * @param query String you wish to try to find a game with.
@@ -262,8 +263,7 @@ function startCommercial(duration) {
             throw new Error('Integration not ready');
         }
         try {
-            const dur = duration && typeof duration === 'number'
-                && [30, 60, 90, 120, 150, 180].includes(duration) ? duration : 180;
+            const dur = duration && typeof duration === 'number' ? duration : 180;
             nodecg.log.info('[Twitch] Requested a commercial to be started');
             const resp = yield request('post', `/channels/${replicants_1.twitchAPIData.value.channelID}/commercial`, {
                 length: dur,
