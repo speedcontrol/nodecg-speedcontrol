@@ -18,6 +18,7 @@ export type RunDataActiveRun = {
 	setupTimeS?: number;
 	scheduled?: string;
 	scheduledS?: number;
+	relay?: boolean;
 	teams: {
 		name?: string;
 		id: string;
