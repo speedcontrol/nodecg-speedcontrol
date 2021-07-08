@@ -201,11 +201,12 @@ function modifyRun(runData, prevID, twitch = false) {
                 throw new Error('Player(s) are missing name(s)');
             }
             // If set as relay, set any missing indexes if needed. If the opposite, delete them.
-            if (runData.relay)
-                data.teams = data.teams.map((team) => (Object.assign({ relayIndex: 0 }, team)));
+            if (runData.relay) {
+                data.teams = data.teams.map((team) => { var _a; return (Object.assign({ relayPlayerID: (_a = team.players[0]) === null || _a === void 0 ? void 0 : _a.id }, team)); });
+            }
             else {
                 for (const team of data.teams) {
-                    delete team.relayIndex;
+                    delete team.relayPlayerID;
                 }
             }
             // Verify and convert estimate.
@@ -259,27 +260,34 @@ function modifyRun(runData, prevID, twitch = false) {
     });
 }
 /**
- * Modifies the relay index of a team inside of a run.
+ * Modifies the relay player ID of a team inside of a run.
  * @param runID ID of the run you wish to modify.
  * @param teamID ID of the team inside of the run you wish to modify.
- * @param relayIndex The index of the player in the team you wish to set as playing.
+ * @param playerID ID of the player you wish to set as the one currently playing.
  */
-function modifyRelayIndex(runID, teamID, relayIndex) {
+function modifyRelayPlayerID(runID, teamID, playerID) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const run = clone_1.default(replicants_1.runDataArray.value.find((r) => r.id === runID));
             if (!run) {
                 throw new Error(`Run with ID ${runID} was not found`);
             }
+            if (!run.relay) {
+                throw new Error(`Run with ID ${runID} is not set as a relay`);
+            }
             const teamIndex = run.teams.findIndex((t) => t.id === teamID);
             if (teamIndex < 0) {
-                throw new Error(`Team with ID ${runID} was not found inside run with ID ${runID}`);
+                throw new Error(`Team with ID ${runID} was not found`);
             }
-            run.teams[teamIndex].relayIndex = relayIndex;
+            const player = run.teams[teamIndex].players.find((p) => p.id === playerID);
+            if (!player) {
+                throw new Error(`Player with ID ${playerID} was not found`);
+            }
+            run.teams[teamIndex].relayPlayerID = player.id;
             yield modifyRun(run);
         }
         catch (err) {
-            nodecg.log.debug('[Run Control] Could not successfully modify relay index:', err);
+            nodecg.log.debug('[Run Control] Could not successfully modify relay player ID:', err);
             throw err;
         }
     });
@@ -338,8 +346,8 @@ nodecg.listenFor('modifyRun', (data, ack) => {
         .then((noTwitchGame) => helpers_1.processAck(ack, null, noTwitchGame))
         .catch((err) => helpers_1.processAck(ack, err));
 });
-nodecg.listenFor('modifyRelayIndex', (data, ack) => {
-    modifyRelayIndex(data.runID, data.teamID, data.relayIndex)
+nodecg.listenFor('modifyRelayPlayerID', (data, ack) => {
+    modifyRelayPlayerID(data.runID, data.teamID, data.playerID)
         .then(() => helpers_1.processAck(ack, null))
         .catch((err) => helpers_1.processAck(ack, err));
 });
@@ -379,8 +387,8 @@ events.listenFor('modifyRun', (data, ack) => {
         .then((noTwitchGame) => helpers_1.processAck(ack, null, noTwitchGame))
         .catch((err) => helpers_1.processAck(ack, err));
 });
-events.listenFor('modifyRelayIndex', (data, ack) => {
-    modifyRelayIndex(data.runID, data.teamID, data.relayIndex)
+events.listenFor('modifyRelayPlayerID', (data, ack) => {
+    modifyRelayPlayerID(data.runID, data.teamID, data.playerID)
         .then(() => helpers_1.processAck(ack, null))
         .catch((err) => helpers_1.processAck(ack, err));
 });
