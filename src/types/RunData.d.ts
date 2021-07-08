@@ -11,6 +11,7 @@ export interface RunData {
   setupTimeS?: number;
   scheduled?: string;
   scheduledS?: number;
+  relay?: boolean;
   teams: RunDataTeam[];
   customData: {
     [key: string]: string;
@@ -22,6 +23,7 @@ export interface RunData {
 export interface RunDataTeam {
   name?: string;
   id: string;
+  relayIndex?: number;
   players: RunDataPlayer[];
 }
 

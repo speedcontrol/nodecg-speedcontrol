@@ -93,6 +93,13 @@
           :left-border="i > 0"
         />
       </div>
+      <v-checkbox
+        class="ma-3 pa-0"
+        hide-details
+        :label="$t('relay')"
+        :value="runData.relay"
+        @change="updateRunDataProp('relay', $event || undefined)"
+      />
     </div>
     <div>
       <!-- Teams -->
@@ -211,7 +218,7 @@ export default class extends Vue {
     document.addEventListener('dialog-dismissed', this.dismiss, { once: true });
   }
 
-  updateRunDataProp(key: string, val: string): void {
+  updateRunDataProp(key: string, val: string | boolean): void {
     if (key.startsWith('customData.')) {
       const newVal = { ...this.runData.customData, [key.replace('customData.', '')]: val };
       storeModule.updateRunDataProp({ key: 'customData', val: newVal });

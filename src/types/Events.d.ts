@@ -2,7 +2,7 @@
 
 import { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
 import { RunData } from './RunData';
-import { UserData } from './Speedruncom';
+import { Speedruncom } from './Speedruncom';
 import { CommercialDuration } from './Twitch';
 
 export interface SendMessageArgsMap {
@@ -17,7 +17,8 @@ export interface SendMessageArgsMap {
   // Run Control
   changeToNextRun: void;
   changeActiveRun: string;
-  modifyRun: { runData: RunData; prevID?: string; updateTwitch?: boolean }
+  modifyRun: { runData: RunData; prevID?: string; updateTwitch?: boolean };
+  modifyRelayIndex: { runID: string; teamID: string; relayIndex: number };
   removeRun: string;
   returnToStart: void;
   removeAllRuns: void;
@@ -54,6 +55,7 @@ export interface SendMessageReturnMap {
   changeToNextRun: boolean;
   changeActiveRun: boolean;
   modifyRun: boolean;
+  modifyRelayIndex: void;
   removeRun: void;
   returnToStart: void;
   removeAllRuns: void;
@@ -69,7 +71,7 @@ export interface SendMessageReturnMap {
   repeaterFeaturedChannels: void;
 
   // Speedrun.com
-  srcomSearchForUserDataMultiple: UserData | undefined;
+  srcomSearchForUserDataMultiple: Speedruncom.UserData | undefined;
 }
 
 export type SendMessageAck = HandledSendMessageAck | UnhandledSendMessageAck;

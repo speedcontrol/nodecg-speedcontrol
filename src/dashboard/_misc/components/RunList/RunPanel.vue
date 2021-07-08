@@ -54,6 +54,10 @@
         <span class="font-weight-bold">{{ $t('released') }}:</span>
         <span>{{ runData.release }}</span>
       </div>
+      <div v-if="runData.relay">
+        <span class="font-weight-bold">{{ $t('relay') }}:</span>
+        <span>✅</span>
+      </div>
       <div v-if="runFinishTime">
         <span class="font-weight-bold">{{ $t('finalTime') }}:</span>
         <span>{{ runFinishTime.time }}</span>

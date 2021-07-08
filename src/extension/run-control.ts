@@ -177,6 +177,14 @@ async function modifyRun(runData: RunData, prevID?: string, twitch = false): Pro
       throw new Error('Player(s) are missing name(s)');
     }
 
+    // If set as relay, set any missing indexes if needed. If the opposite, delete them.
+    if (runData.relay) data.teams = data.teams.map((team) => ({ relayIndex: 0, ...team }));
+    else {
+      for (const team of data.teams) {
+        delete team.relayIndex;
+      }
+    }
+
     // Verify and convert estimate.
     if (data.estimate) {
       if (data.estimate.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
@@ -220,6 +228,30 @@ async function modifyRun(runData: RunData, prevID?: string, twitch = false): Pro
     return noTwitchGame;
   } catch (err) {
     nodecg.log.debug('[Run Control] Could not successfully modify run:', err);
+    throw err;
+  }
+}
+
+/**
+ * Modifies the relay index of a team inside of a run.
+ * @param runID ID of the run you wish to modify.
+ * @param teamID ID of the team inside of the run you wish to modify.
+ * @param relayIndex The index of the player in the team you wish to set as playing.
+ */
+async function modifyRelayIndex(runID: string, teamID: string, relayIndex: number): Promise<void> {
+  try {
+    const run = clone(runDataArray.value.find((r) => r.id === runID));
+    if (!run) {
+      throw new Error(`Run with ID ${runID} was not found`);
+    }
+    const teamIndex = run.teams.findIndex((t) => t.id === teamID);
+    if (teamIndex < 0) {
+      throw new Error(`Team with ID ${runID} was not found inside run with ID ${runID}`);
+    }
+    run.teams[teamIndex].relayIndex = relayIndex;
+    await modifyRun(run);
+  } catch (err) {
+    nodecg.log.debug('[Run Control] Could not successfully modify relay index:', err);
     throw err;
   }
 }
@@ -274,6 +306,11 @@ nodecg.listenFor('modifyRun', (data, ack) => {
     .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
     .catch((err) => processAck(ack, err));
 });
+nodecg.listenFor('modifyRelayIndex', (data, ack) => {
+  modifyRelayIndex(data.runID, data.teamID, data.relayIndex)
+    .then(() => processAck(ack, null))
+    .catch((err) => processAck(ack, err));
+});
 nodecg.listenFor('changeToNextRun', (data, ack) => {
   changeActiveRun(runDataActiveRunSurrounding.value.next)
     .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
@@ -309,6 +346,11 @@ events.listenFor('removeRun', (id, ack) => {
 events.listenFor('modifyRun', (data, ack) => {
   modifyRun(data.runData, data.prevID, data.updateTwitch)
     .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
+    .catch((err) => processAck(ack, err));
+});
+events.listenFor('modifyRelayIndex', (data, ack) => {
+  modifyRelayIndex(data.runID, data.teamID, data.relayIndex)
+    .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
 events.listenFor('changeToNextRun', (data, ack) => {
