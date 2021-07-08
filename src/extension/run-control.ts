@@ -245,6 +245,9 @@ async function modifyRelayPlayerID(runID: string, teamID: string, playerID: stri
     if (!run) {
       throw new Error(`Run with ID ${runID} was not found`);
     }
+    if (!run.relay) {
+      throw new Error(`Run with ID ${runID} is not set as a relay`);
+    }
     const teamIndex = run.teams.findIndex((t) => t.id === teamID);
     if (teamIndex < 0) {
       throw new Error(`Team with ID ${runID} was not found`);
