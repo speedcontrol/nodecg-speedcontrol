@@ -55,8 +55,8 @@
           "id": {
             "type": "string"
           },
-          "relayIndex": {
-            "type": "number"
+          "relayPlayerID": {
+            "type": "string"
           },
           "players": {
             "type": "array",

@@ -32,13 +32,16 @@ export default class extends Vue {
   @Prop({ type: Number, required: true }) readonly index!: number;
 
   get relayIndex(): number {
-    return this.team.relayIndex ?? 0;
+    return this.team.players.findIndex((p) => p.id === this.team.relayPlayerID) ?? 0;
   }
   set relayIndex(val: number) {
-    nodecg.sendMessage(
-      'modifyRelayIndex',
-      { runID: this.run.id, teamID: this.team.id, relayIndex: val },
-    );
+    const player = this.team.players[val];
+    if (player) {
+      nodecg.sendMessage(
+        'modifyRelayPlayerID',
+        { runID: this.run.id, teamID: this.team.id, playerID: player.id },
+      );
+    }
   }
 }
 </script>
