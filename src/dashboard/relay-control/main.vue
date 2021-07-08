@@ -2,11 +2,13 @@
 {
   "en": {
     "panelTitle": "Relay Control",
+    "noRun": "There is currently no active run available.",
     "noTeams": "The currently active run does not have any teams.",
     "notRelay": "The currently active run is not set as a relay."
   },
   "ja": {
     "panelTitle": "Relay Control",
+    "noRun": "There is currently no active run available.",
     "noTeams": "The currently active run does not have any teams.",
     "notRelay": "The currently active run is not set as a relay."
   }
@@ -15,7 +17,16 @@
 
 <template>
   <v-app>
-    <div v-if="runDataActiveRun.relay && runDataActiveRun.teams.length">
+    <div v-if="!runDataActiveRun">
+      {{ $t('noRun') }}
+    </div>
+    <div v-else-if="!runDataActiveRun.teams.length">
+      {{ $t('noTeams') }}
+    </div>
+    <div v-else-if="!runDataActiveRun.relay">
+      {{ $t('notRelay') }}
+    </div>
+    <div v-else>
       <team
         v-for="(team, i) in runDataActiveRun.teams"
         :key="team.id"
@@ -24,12 +35,6 @@
         :team="team"
         :index="i"
       />
-    </div>
-    <div v-else-if="!runDataActiveRun.teams.length">
-      {{ $t('noTeams') }}
-    </div>
-    <div v-else>
-      {{ $t('notRelay') }}
     </div>
   </v-app>
 </template>

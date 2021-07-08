@@ -22,7 +22,7 @@ export type RunDataArray = {
 	teams: {
 		name?: string;
 		id: string;
-		relayIndex?: number;
+		relayPlayerID?: string;
 		players: {
 			name: string;
 			id: string;
