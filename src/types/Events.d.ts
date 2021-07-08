@@ -17,7 +17,8 @@ export interface SendMessageArgsMap {
   // Run Control
   changeToNextRun: void;
   changeActiveRun: string;
-  modifyRun: { runData: RunData; prevID?: string; updateTwitch?: boolean }
+  modifyRun: { runData: RunData; prevID?: string; updateTwitch?: boolean };
+  modifyRelayIndex: { runID: string; teamID: string; relayIndex: number };
   removeRun: string;
   returnToStart: void;
   removeAllRuns: void;
@@ -54,6 +55,7 @@ export interface SendMessageReturnMap {
   changeToNextRun: boolean;
   changeActiveRun: boolean;
   modifyRun: boolean;
+  modifyRelayIndex: void;
   removeRun: void;
   returnToStart: void;
   removeAllRuns: void;

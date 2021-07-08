@@ -55,6 +55,9 @@
           "id": {
             "type": "string"
           },
+          "relayIndex": {
+            "type": "number"
+          },
           "players": {
             "type": "array",
             "default": [],
