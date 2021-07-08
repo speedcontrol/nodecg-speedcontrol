@@ -2,7 +2,7 @@
 
 import { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
 import { RunData } from './RunData';
-import { UserData } from './Speedruncom';
+import { Speedruncom } from './Speedruncom';
 import { CommercialDuration } from './Twitch';
 
 export interface SendMessageArgsMap {
@@ -69,7 +69,7 @@ export interface SendMessageReturnMap {
   repeaterFeaturedChannels: void;
 
   // Speedrun.com
-  srcomSearchForUserDataMultiple: UserData | undefined;
+  srcomSearchForUserDataMultiple: Speedruncom.UserData | undefined;
 }
 
 export type SendMessageAck = HandledSendMessageAck | UnhandledSendMessageAck;
