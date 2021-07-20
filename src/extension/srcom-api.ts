@@ -136,7 +136,7 @@ export async function searchForUserData(
         }
       })();
       return exactToCheck
-        ? user.names.international.toLowerCase() === exactToCheck.toLowerCase()
+        ? val.toLowerCase() === exactToCheck.toLowerCase()
         : undefined;
     });
     const data: Speedruncom.UserData | undefined = exact || results[0];
@@ -153,9 +153,9 @@ export async function searchForUserData(
     userDataCache[cacheKey] = data; // Simple temp cache storage.
     nodecg.log.debug(
       `[speedrun.com] User data found for "${type}/${val}":`,
-      JSON.stringify(resp.body.data[0]),
+      JSON.stringify(data),
     );
-    return resp.body.data[0];
+    return data;
   } catch (err) {
     nodecg.log.debug(`[speedrun.com] User data lookup failed for "${type}/${val}":`, err);
     throw err;
