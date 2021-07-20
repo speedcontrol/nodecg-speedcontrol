@@ -161,7 +161,7 @@ function searchForUserData({ type, val }) {
                     }
                 })();
                 return exactToCheck
-                    ? user.names.international.toLowerCase() === exactToCheck.toLowerCase()
+                    ? val.toLowerCase() === exactToCheck.toLowerCase()
                     : undefined;
             });
             const data = exact || results[0];
@@ -176,8 +176,8 @@ function searchForUserData({ type, val }) {
                 }
             }
             userDataCache[cacheKey] = data; // Simple temp cache storage.
-            nodecg.log.debug(`[speedrun.com] User data found for "${type}/${val}":`, JSON.stringify(resp.body.data[0]));
-            return resp.body.data[0];
+            nodecg.log.debug(`[speedrun.com] User data found for "${type}/${val}":`, JSON.stringify(data));
+            return data;
         }
         catch (err) {
             nodecg.log.debug(`[speedrun.com] User data lookup failed for "${type}/${val}":`, err);
