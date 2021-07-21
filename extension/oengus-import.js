@@ -195,7 +195,7 @@ function importSchedule(marathonShort, useJapanese) {
                         customData: {},
                     };
                     if (!config.oengus.disableSpeedrunComLookup) {
-                        const data = yield srcom_api_1.searchForUserDataMultiple({ type: 'name', val: runner.speedruncomName }, { type: 'twitch', val: runner.twitchName }, { type: 'twitter', val: runner.twitterName }, { type: 'name', val: runner.username });
+                        const data = yield srcom_api_1.searchForUserDataMultiple({ type: 'srcom', val: runner.speedruncomName }, { type: 'twitch', val: runner.twitchName }, { type: 'twitter', val: runner.twitterName }, { type: 'name', val: runner.username });
                         if (data) {
                             // Always favour the supplied Twitch username from schedule if available.
                             if (!runner.twitchName) {

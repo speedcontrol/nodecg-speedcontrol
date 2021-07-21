@@ -55,6 +55,7 @@ function get(endpoint) {
                     'User-Agent': 'nodecg-speedcontrol',
                     Accept: 'application/json',
                 },
+                follow_max: 1,
             });
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore: parser exists but isn't in the typings
@@ -145,26 +146,33 @@ function searchForUserData({ type, val }) {
         }
         try {
             yield helpers_1.sleep(1000);
-            const resp = yield get(`/users?${type}=${encodeURIComponent(val)}&max=10`);
-            const results = resp.body.data;
-            const exact = results.find((user) => {
-                const exactToCheck = (() => {
-                    var _a, _b;
-                    switch (type) {
-                        case 'name':
-                        default:
-                            return user.names.international;
-                        case 'twitch':
-                            return helpers_1.getTwitchUserFromURL((_a = user.twitch) === null || _a === void 0 ? void 0 : _a.uri);
-                        case 'twitter':
-                            return helpers_1.getTwitterUserFromURL((_b = user.twitter) === null || _b === void 0 ? void 0 : _b.uri);
-                    }
-                })();
-                return exactToCheck
-                    ? val.toLowerCase() === exactToCheck.toLowerCase()
-                    : undefined;
-            });
-            const data = exact || results[0];
+            let data;
+            if (type === 'srcom') {
+                const resp = yield get(`/users/${encodeURIComponent(val)}`);
+                data = resp.body.data;
+            }
+            else {
+                const resp = yield get(`/users?${type}=${encodeURIComponent(val)}&max=10`);
+                const results = resp.body.data;
+                const exact = results.find((user) => {
+                    const exactToCheck = (() => {
+                        var _a, _b;
+                        switch (type) {
+                            case 'name':
+                            default:
+                                return user.names.international;
+                            case 'twitch':
+                                return helpers_1.getTwitchUserFromURL((_a = user.twitch) === null || _a === void 0 ? void 0 : _a.uri);
+                            case 'twitter':
+                                return helpers_1.getTwitterUserFromURL((_b = user.twitter) === null || _b === void 0 ? void 0 : _b.uri);
+                        }
+                    })();
+                    return exactToCheck
+                        ? val.toLowerCase() === exactToCheck.toLowerCase()
+                        : undefined;
+                });
+                data = exact || results[0];
+            }
             if (!data) {
                 throw new Error(`No user matches for "${type}/${val}"`);
             }

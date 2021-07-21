@@ -43,7 +43,10 @@ const config = helpers_1.bundleConfig();
 const app = express_1.default();
 let channelInfoTO;
 replicants_1.twitchAPIData.value.state = 'off'; // Set this to "off" on every start.
-replicants_1.twitchAPIData.value.featuredChannels.length = 0; // Empty on every start.
+if (!config.twitch.ffzUseRepeater) {
+    // Empty on every start if not using the repeater setting.
+    replicants_1.twitchAPIData.value.featuredChannels.length = 0;
+}
 /**
  * Logs out of the Twitch integration.
  */

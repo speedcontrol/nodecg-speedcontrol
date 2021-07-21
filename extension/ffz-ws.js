@@ -149,6 +149,7 @@ function setChannels(names) {
             helpers_1.to(events.sendMessage('repeaterFeaturedChannels', toSend));
             nodecg.sendMessage('repeaterFeaturedChannels', toSend);
             nodecg.log.info('[FrankerFaceZ] Featured channels being sent to repeater code');
+            replicants_1.twitchAPIData.value.featuredChannels = toSend;
         }
     });
 }
@@ -282,15 +283,18 @@ function connect() {
 }
 if (config.twitch.enabled && config.twitch.ffzIntegration) {
     nodecg.log.info('[FrankerFaceZ] Integration enabled');
-    replicants_1.twitchAPIData.on('change', (newVal, oldVal) => {
-        if (newVal.state === 'on' && (!oldVal || oldVal.state !== 'on')) {
-            connect();
-        }
-        else if (ws && oldVal && oldVal.state === 'on' && newVal.state !== 'on') {
-            nodecg.log.info('[FrankerFaceZ] Connection closed');
-            ws.close();
-        }
-    });
+    // Only connect to FFZ's server if not using repeater.
+    if (!config.twitch.ffzUseRepeater) {
+        replicants_1.twitchAPIData.on('change', (newVal, oldVal) => {
+            if (newVal.state === 'on' && (!oldVal || oldVal.state !== 'on')) {
+                connect();
+            }
+            else if (ws && oldVal && oldVal.state === 'on' && newVal.state !== 'on') {
+                nodecg.log.info('[FrankerFaceZ] Connection closed');
+                ws.close();
+            }
+        });
+    }
 }
 // NodeCG messaging system.
 nodecg.listenFor('updateFeaturedChannels', (names, ack) => {
