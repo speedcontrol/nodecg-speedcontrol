@@ -39,7 +39,7 @@ export interface SendMessageArgsMap {
   repeaterFeaturedChannels: string[];
 
   // Speedrun.com
-  srcomSearchForUserDataMultiple: { type: 'name' | 'twitch' | 'twitter', val: (string | undefined | null) }[];
+  srcomSearchForUserDataMultiple: { type: 'name' | 'srcom' | 'twitch' | 'twitter', val: (string | undefined | null) }[];
 }
 
 export interface SendMessageReturnMap {

@@ -12,7 +12,10 @@ const app = express();
 let channelInfoTO: NodeJS.Timeout;
 
 twitchAPIData.value.state = 'off'; // Set this to "off" on every start.
-twitchAPIData.value.featuredChannels.length = 0; // Empty on every start.
+if (!config.twitch.ffzUseRepeater) {
+  // Empty on every start if not using the repeater setting.
+  twitchAPIData.value.featuredChannels.length = 0;
+}
 
 /**
  * Logs out of the Twitch integration.

@@ -27,6 +27,7 @@ async function get(endpoint: string): Promise<NeedleResponse> {
           'User-Agent': 'nodecg-speedcontrol',
           Accept: 'application/json',
         },
+        follow_max: 1,
       },
     );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -107,7 +108,7 @@ export async function searchForTwitchGame(query: string, abbr = false): Promise<
  * @param query Query you wish to try to find a user with, with parameter type and query value.
  */
 export async function searchForUserData(
-  { type, val }: { type: 'name' | 'twitch' | 'twitter', val: string },
+  { type, val }: { type: 'name' | 'srcom' | 'twitch' | 'twitter', val: string },
 ): Promise<Speedruncom.UserData> {
   const cacheKey = `${type}_${val}`;
   if (userDataCache[cacheKey]) {
@@ -119,27 +120,35 @@ export async function searchForUserData(
   }
   try {
     await sleep(1000);
-    const resp = await get(
-      `/users?${type}=${encodeURIComponent(val)}&max=10`,
-    );
-    const results = resp.body.data as Speedruncom.UserData[];
-    const exact = results.find((user) => {
-      const exactToCheck = (() => {
-        switch (type) {
-          case 'name':
-          default:
-            return user.names.international;
-          case 'twitch':
-            return getTwitchUserFromURL(user.twitch?.uri);
-          case 'twitter':
-            return getTwitterUserFromURL(user.twitter?.uri);
-        }
-      })();
-      return exactToCheck
-        ? val.toLowerCase() === exactToCheck.toLowerCase()
-        : undefined;
-    });
-    const data: Speedruncom.UserData | undefined = exact || results[0];
+    let data: Speedruncom.UserData | undefined;
+    if (type === 'srcom') {
+      const resp = await get(
+        `/users/${encodeURIComponent(val)}`,
+      );
+      data = resp.body.data;
+    } else {
+      const resp = await get(
+        `/users?${type}=${encodeURIComponent(val)}&max=10`,
+      );
+      const results = resp.body.data as Speedruncom.UserData[];
+      const exact = results.find((user) => {
+        const exactToCheck = (() => {
+          switch (type) {
+            case 'name':
+            default:
+              return user.names.international;
+            case 'twitch':
+              return getTwitchUserFromURL(user.twitch?.uri);
+            case 'twitter':
+              return getTwitterUserFromURL(user.twitter?.uri);
+          }
+        })();
+        return exactToCheck
+          ? val.toLowerCase() === exactToCheck.toLowerCase()
+          : undefined;
+      });
+      data = exact || results[0];
+    }
     if (!data) {
       throw new Error(`No user matches for "${type}/${val}"`);
     }
@@ -168,7 +177,7 @@ export async function searchForUserData(
  * @param queries List of queries to use, if the val property in one is falsey it will be skipped.
  */
 export async function searchForUserDataMultiple(
-  ...queries: { type: 'name' | 'twitch' | 'twitter', val: (string | undefined | null) }[]
+  ...queries: { type: 'name' | 'srcom' | 'twitch' | 'twitter', val: (string | undefined | null) }[]
 ):
   Promise<Speedruncom.UserData | undefined> {
   let userData;
