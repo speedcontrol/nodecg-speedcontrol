@@ -190,7 +190,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
         };
         if (!config.oengus.disableSpeedrunComLookup) {
           const data = await searchForUserDataMultiple(
-            { type: 'name', val: runner.speedruncomName },
+            { type: 'srcom', val: runner.speedruncomName },
             { type: 'twitch', val: runner.twitchName },
             { type: 'twitter', val: runner.twitterName },
             { type: 'name', val: runner.username },
