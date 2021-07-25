@@ -82,7 +82,7 @@ export default class extends Vue {
   updatePlayerDataProp(key: string, val: string): void {
     if (key.split('.').length > 1) {
       const newVal = {
-        ...this.playerData.customData,
+        ...(this.playerData)[key.split('.')[0] as 'customData' | 'social'],
         [key.replace(`${key.split('.')[0]}.`, '')]: val,
       };
       storeModule.updatePlayerDataProp({
