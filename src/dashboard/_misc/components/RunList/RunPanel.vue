@@ -16,6 +16,7 @@
 <template>
   <v-expansion-panel
     :class="{ 'grey darken-2': !editor && activeRun && activeRun.id === runData.id }"
+    :style="{ 'overflow-x': 'hidden' }"
   >
     <v-expansion-panel-header>
       <span>
@@ -29,7 +30,7 @@
         {{ runData.game }}
       </span>
     </v-expansion-panel-header>
-    <v-expansion-panel-content class="body-2">
+    <v-expansion-panel-content class="body-2" :style="{ 'overflow-wrap': 'break-word' }">
       <div v-if="playerStr">
         <span class="font-weight-bold">{{ $t('players') }}:</span>
         <span>{{ playerStr }}</span>
