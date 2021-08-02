@@ -39,11 +39,19 @@ export interface OengusUser {
   usernameJapanese: string | null;
   enabled: boolean;
   roles: OengusRole[];
-  twitterName: string | null;
-  twitchName: string | null;
-  speedruncomName: string | null;
+  twitterName?: string | null; // deprecated
+  twitchName?: string | null; // deprecated
+  speedruncomName?: string | null; // deprecated
+  connections?: OengusUserConnections[];
   atLeastOneAccountSynchronized: boolean;
   emailPresentForExistingUser: boolean;
+}
+
+export interface OengusUserConnections {
+  id: number;
+  platform: 'DISCORD' | 'SPEEDRUNCOM' | 'TWITCH' | 'TWITTER';
+  username: string;
+  usernameValidForPlatform: boolean;
 }
 
 export enum OengusRole {
