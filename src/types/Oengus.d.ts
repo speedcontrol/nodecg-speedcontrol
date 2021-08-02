@@ -38,13 +38,12 @@ export interface OengusUser {
   username: string;
   usernameJapanese: string | null;
   enabled: boolean;
-  roles: OengusRole[];
   twitterName?: string | null; // deprecated
   twitchName?: string | null; // deprecated
   speedruncomName?: string | null; // deprecated
-  connections?: OengusUserConnections[];
-  atLeastOneAccountSynchronized: boolean;
-  emailPresentForExistingUser: boolean;
+  connections?: OengusUserConnections[]; // to be introduced
+  pronouns?: string[]; // to be introduced
+  country?: string | null; // to be introduced
 }
 
 export interface OengusUserConnections {

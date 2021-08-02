@@ -119,9 +119,9 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
       };
 
       // General Run Data
-      runData.game = line.gameName ?? undefined;
-      runData.system = line.console ?? undefined;
-      runData.category = line.categoryName ?? undefined;
+      runData.game = line.gameName || undefined;
+      runData.system = line.console || undefined;
+      runData.category = line.categoryName || undefined;
       const parsedEstimate = isoParse(line.estimate);
       runData.estimate = formatDuration(parsedEstimate);
       runData.estimateS = toSeconds(parsedEstimate);
@@ -186,8 +186,10 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
           id: uuid(),
           teamID: team.id,
           social: {
-            twitch: playerTwitch ?? undefined,
+            twitch: playerTwitch || undefined,
           },
+          country: runner.country || undefined, // Needs checking for format!
+          pronouns: runner.pronouns?.join(', ') || undefined,
           customData: {},
         };
         if (!config.oengus.disableSpeedrunComLookup) {
@@ -202,13 +204,14 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
             { type: 'name', val: runner.username },
           );
           if (data) {
-            // Always favour the supplied Twitch username from schedule if available.
+            // Always favour the supplied Twitch username/country/pronouns
+            // from Oengus if available.
             if (!playerTwitch) {
-              const tURL = (data.twitch && data.twitch.uri) ? data.twitch.uri : undefined;
+              const tURL = data.twitch?.uri || undefined;
               player.social.twitch = getTwitchUserFromURL(tURL);
             }
-            player.country = data.location?.country.code || undefined;
-            player.pronouns = data.pronouns || undefined;
+            if (!runner.country) player.country = data.location?.country.code || undefined;
+            if (!runner.pronouns?.length) player.pronouns = data.pronouns || undefined;
           }
         }
         team.players.push(player);
