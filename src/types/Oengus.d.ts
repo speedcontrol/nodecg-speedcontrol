@@ -42,7 +42,7 @@ export interface OengusUser {
   twitchName?: string | null; // deprecated
   speedruncomName?: string | null; // deprecated
   connections?: OengusUserConnections[]; // to be introduced
-  pronouns?: string[] | null; // to be introduced
+  pronouns?: string | string[] | null; // to be introduced
   country?: string | null; // to be introduced
 }
 
