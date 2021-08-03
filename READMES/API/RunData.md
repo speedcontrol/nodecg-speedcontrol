@@ -103,7 +103,7 @@ The `players` array in "`team` objects" will contain (if anything) "`player` obj
 - `id` *[`string`]* Unique player ID.
 - `teamID` *[`string`]* Unique ID of the team this player is on.
 - `country` *[`string`]* Country code of the country where this player is from, usually pulled from [speedrun.com](https://www.speedrun.com).
-- `pronouns` *[`string`]* List of the player's preferred pronouns, usually pulled from [speedrun.com](https://www.speedrun.com), and if so, can also be a comma separated list of each option they allow to be selected.
+- `pronouns` *[`string`]* List of the player's pronouns, usually pulled from [speedrun.com](https://www.speedrun.com), and if so, can also be a comma separated list of each option they allow to be selected.
 - `social` *[`object`]* Contains information on this player's social media references.
   - `twitch` *[`string`]* Username of this player on [twitch.tv](https://www.twitch.tv).
 - `customData` *[`object`]* Contains keyed strings, with the key(s) from your configuration for *player based* custom data; this will always be an object even if no data is contained within it.

@@ -180,6 +180,9 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
         };
         const playerTwitch = runner.connections
           ?.find((c) => c.platform === 'TWITCH')?.username || runner.twitchName;
+        const playerPronouns = typeof runner.pronouns === 'string'
+          ? runner.pronouns.split(',')
+          : runner.pronouns;
         const player: RunDataPlayer = {
           name: (useJapanese && runner.usernameJapanese)
             ? runner.usernameJapanese : runner.username,
@@ -189,7 +192,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
             twitch: playerTwitch || undefined,
           },
           country: runner.country || undefined, // Needs checking for format!
-          pronouns: runner.pronouns?.join(', ') || undefined,
+          pronouns: playerPronouns?.join(', ') || undefined,
           customData: {},
         };
         if (!config.oengus.disableSpeedrunComLookup) {
