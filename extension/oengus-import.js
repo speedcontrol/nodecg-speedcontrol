@@ -179,12 +179,15 @@ function importSchedule(marathonShort, useJapanese) {
                 scheduledTime += runData.estimateS + runData.setupTimeS;
                 // Team Data
                 runData.teams = yield p_iteration_1.mapSeries(line.runners, (runner) => __awaiter(this, void 0, void 0, function* () {
-                    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+                    var _b, _c, _d, _e, _f, _g, _h, _j, _k;
                     const team = {
                         id: uuid_1.v4(),
                         players: [],
                     };
                     const playerTwitch = ((_c = (_b = runner.connections) === null || _b === void 0 ? void 0 : _b.find((c) => c.platform === 'TWITCH')) === null || _c === void 0 ? void 0 : _c.username) || runner.twitchName;
+                    const playerPronouns = typeof runner.pronouns === 'string'
+                        ? runner.pronouns.split(',')
+                        : runner.pronouns;
                     const player = {
                         name: (useJapanese && runner.usernameJapanese)
                             ? runner.usernameJapanese : runner.username,
@@ -194,23 +197,23 @@ function importSchedule(marathonShort, useJapanese) {
                             twitch: playerTwitch || undefined,
                         },
                         country: runner.country || undefined,
-                        pronouns: ((_d = runner.pronouns) === null || _d === void 0 ? void 0 : _d.join(', ')) || undefined,
+                        pronouns: (playerPronouns === null || playerPronouns === void 0 ? void 0 : playerPronouns.join(', ')) || undefined,
                         customData: {},
                     };
                     if (!config.oengus.disableSpeedrunComLookup) {
-                        const playerTwitter = ((_f = (_e = runner.connections) === null || _e === void 0 ? void 0 : _e.find((c) => c.platform === 'TWITTER')) === null || _f === void 0 ? void 0 : _f.username) || runner.twitterName;
-                        const playerSrcom = ((_h = (_g = runner.connections) === null || _g === void 0 ? void 0 : _g.find((c) => c.platform === 'SPEEDRUNCOM')) === null || _h === void 0 ? void 0 : _h.username) || runner.speedruncomName;
+                        const playerTwitter = ((_e = (_d = runner.connections) === null || _d === void 0 ? void 0 : _d.find((c) => c.platform === 'TWITTER')) === null || _e === void 0 ? void 0 : _e.username) || runner.twitterName;
+                        const playerSrcom = ((_g = (_f = runner.connections) === null || _f === void 0 ? void 0 : _f.find((c) => c.platform === 'SPEEDRUNCOM')) === null || _g === void 0 ? void 0 : _g.username) || runner.speedruncomName;
                         const data = yield srcom_api_1.searchForUserDataMultiple({ type: 'srcom', val: playerSrcom }, { type: 'twitch', val: playerTwitch }, { type: 'twitter', val: playerTwitter }, { type: 'name', val: runner.username });
                         if (data) {
                             // Always favour the supplied Twitch username/country/pronouns
                             // from Oengus if available.
                             if (!playerTwitch) {
-                                const tURL = ((_j = data.twitch) === null || _j === void 0 ? void 0 : _j.uri) || undefined;
+                                const tURL = ((_h = data.twitch) === null || _h === void 0 ? void 0 : _h.uri) || undefined;
                                 player.social.twitch = helpers_1.getTwitchUserFromURL(tURL);
                             }
                             if (!runner.country)
-                                player.country = ((_k = data.location) === null || _k === void 0 ? void 0 : _k.country.code) || undefined;
-                            if (!((_l = runner.pronouns) === null || _l === void 0 ? void 0 : _l.length))
+                                player.country = ((_j = data.location) === null || _j === void 0 ? void 0 : _j.country.code) || undefined;
+                            if (!((_k = runner.pronouns) === null || _k === void 0 ? void 0 : _k.length))
                                 player.pronouns = data.pronouns || undefined;
                         }
                     }
