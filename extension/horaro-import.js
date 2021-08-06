@@ -133,6 +133,7 @@ function importSchedule(optsO, dashID) {
             const externalIDsSeen = [];
             // Filtering out any games on the ignore list before processing them all.
             const newRunDataArray = yield p_iteration_1.mapSeries(runItems.filter((run) => (!helpers_1.checkGameAgainstIgnoreList(run.data[opts.columns.game], 'horaro'))), (run, index, arr) => __awaiter(this, void 0, void 0, function* () {
+                var _a;
                 replicants_1.horaroImportStatus.value.item = index + 1;
                 replicants_1.horaroImportStatus.value.total = arr.length;
                 // If a run with the same external ID exists already, use the same UUID.
@@ -176,7 +177,7 @@ function importSchedule(optsO, dashID) {
                 // Verify some game directory supplied exists on Twitch.
                 for (const str of [gameTwitch, srcomGameTwitch, game.str]) {
                     if (str) {
-                        [, gameTwitch] = yield helpers_1.to(twitch_api_1.verifyTwitchDir(str));
+                        gameTwitch = (_a = (yield helpers_1.to(twitch_api_1.verifyTwitchDir(str)))[1]) === null || _a === void 0 ? void 0 : _a.name;
                         if (gameTwitch) {
                             break; // If a directory was successfully found, stop loop early.
                         }
@@ -244,7 +245,7 @@ function importSchedule(optsO, dashID) {
                         };
                         // Mapping player information into needed format.
                         team.players = yield p_iteration_1.mapSeries(rawTeam.players, (rawPlayer) => __awaiter(this, void 0, void 0, function* () {
-                            var _a;
+                            var _b;
                             const { str, url } = parseMarkdown(rawPlayer);
                             const twitchUsername = helpers_1.getTwitchUserFromURL(url);
                             const player = {
@@ -265,7 +266,7 @@ function importSchedule(optsO, dashID) {
                                             ? sData.twitch.uri : undefined;
                                         player.social.twitch = helpers_1.getTwitchUserFromURL(tURL);
                                     }
-                                    player.country = ((_a = sData.location) === null || _a === void 0 ? void 0 : _a.country.code) || undefined;
+                                    player.country = ((_b = sData.location) === null || _b === void 0 ? void 0 : _b.country.code) || undefined;
                                     player.pronouns = sData.pronouns || undefined;
                                 }
                             }

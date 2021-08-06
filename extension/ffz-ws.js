@@ -90,7 +90,6 @@ function sendAuth(auth) {
         };
         let retry = false;
         let attempts = 0;
-        /* eslint-disable no-await-in-loop */
         do {
             try {
                 retry = false;

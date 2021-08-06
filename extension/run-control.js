@@ -86,6 +86,7 @@ function changeSurroundingRuns() {
  * @param runData Run Data object.
  */
 function updateTwitchInformation(runData) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         if (!replicants_1.twitchAPIData.value.sync) {
             return false;
@@ -102,7 +103,7 @@ function updateTwitchInformation(runData) {
             gameTwitch = srcomGameTwitch || runData.game;
         }
         if (gameTwitch) { // Verify game directory supplied exists on Twitch.
-            [, gameTwitch] = yield helpers_1.to(twitch_api_1.verifyTwitchDir(gameTwitch));
+            gameTwitch = (_a = (yield helpers_1.to(twitch_api_1.verifyTwitchDir(gameTwitch)))[1]) === null || _a === void 0 ? void 0 : _a.name;
         }
         helpers_1.to(twitch_api_1.updateChannelInfo(status, gameTwitch || helpers_1.bundleConfig().twitch.streamDefaultGame));
         // Construct/send featured channels if enabled.

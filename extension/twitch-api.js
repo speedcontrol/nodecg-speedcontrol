@@ -62,7 +62,7 @@ function logout() {
     });
 }
 /**
- * Validate the currently stored token against the Twitch ID API.
+ * Validate the currently stored token against the Twitch API.
  */
 function validateToken() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -122,7 +122,6 @@ function request(method, endpoint, data = null, newAPI = false) {
             do {
                 retry = false;
                 attempts += 1;
-                // eslint-disable-next-line no-await-in-loop
                 resp = yield needle_1.default(method, `https://api.twitch.tv${ep}`, data, {
                     headers: {
                         Accept: !newAPI ? 'application/vnd.twitchtv.v5+json' : '',
@@ -134,11 +133,11 @@ function request(method, endpoint, data = null, newAPI = false) {
                 if (resp.statusCode === 401 && attempts <= 1) {
                     nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request `
                         + `resulted in ${resp.statusCode} on ${ep}:`, JSON.stringify(resp.body));
-                    yield refreshToken(); // eslint-disable-line no-await-in-loop
+                    yield refreshToken();
                     retry = true;
                     // Can a 401 mean something else?
                 }
-                else if (resp.statusCode !== 200) {
+                else if (![200, 204].includes(resp.statusCode)) {
                     throw new Error(JSON.stringify(resp.body));
                     // Do we need to retry here?
                 }
@@ -158,11 +157,14 @@ function request(method, endpoint, data = null, newAPI = false) {
 function refreshChannelInfo() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const resp = yield request('get', `/channels/${replicants_1.twitchAPIData.value.channelID}`);
+            const resp = yield request('get', `/channels?broadcaster_id=${replicants_1.twitchAPIData.value.channelID}`, null, true);
             if (resp.statusCode !== 200) {
                 throw new Error(JSON.stringify(resp.body));
             }
-            replicants_1.twitchChannelInfo.value = resp.body;
+            if (!resp.body.data.length) {
+                throw new Error('channel with specified ID could not be found');
+            }
+            [replicants_1.twitchChannelInfo.value] = resp.body.data;
             channelInfoTO = setTimeout(refreshChannelInfo, 60 * 1000);
         }
         catch (err) {
@@ -182,16 +184,16 @@ function searchForGame(query) {
         if (replicants_1.twitchAPIData.value.state !== 'on') {
             throw new Error('Integration not ready');
         }
-        const resp = yield request('get', `/search/games?query=${encodeURIComponent(query)}`);
+        const resp = yield request('get', `/search/categories?query=${encodeURIComponent(query)}`, null, true);
         if (resp.statusCode !== 200) {
             throw new Error(JSON.stringify(resp.body));
         }
-        else if (!resp.body.games || !resp.body.games.length) {
+        else if (!resp.body.data || !resp.body.data.length) {
             throw new Error(`No game matches for "${query}"`);
         }
-        const results = resp.body.games;
+        const results = resp.body.data;
         const exact = results.find((game) => game.name.toLowerCase() === query.toLowerCase());
-        return (exact) ? exact.name : results[0].name;
+        return exact || results[0];
     });
 }
 /**
@@ -211,26 +213,33 @@ exports.verifyTwitchDir = verifyTwitchDir;
  * @param status Title to set.
  * @param game Game to set.
  */
-function updateChannelInfo(status, game) {
+function updateChannelInfo(title, game) {
     return __awaiter(this, void 0, void 0, function* () {
         if (replicants_1.twitchAPIData.value.state !== 'on') {
             throw new Error('Integration not ready');
         }
         try {
             nodecg.log.info('[Twitch] Attempting to update channel information');
-            const [, dir] = (game) ? yield helpers_1.to(verifyTwitchDir(game)) : [null, undefined];
-            const resp = yield request('put', `/channels/${replicants_1.twitchAPIData.value.channelID}`, {
-                channel: {
-                    status: (status) ? status.slice(0, 140) : undefined,
-                    game: dir || helpers_1.bundleConfig().twitch.streamDefaultGame,
-                },
-            });
-            if (resp.statusCode !== 200) {
+            let noTwitchGame = false;
+            let [, dir] = (game) ? yield helpers_1.to(verifyTwitchDir(game)) : [null, undefined];
+            if (!dir && game) {
+                // If no category found, find entry for default category.
+                noTwitchGame = true;
+                [, dir] = yield helpers_1.to(verifyTwitchDir(helpers_1.bundleConfig().twitch.streamDefaultGame));
+            }
+            const resp = yield request('patch', `/channels?broadcaster_id=${replicants_1.twitchAPIData.value.channelID}`, {
+                title: title === null || title === void 0 ? void 0 : title.slice(0, 140),
+                game_id: (dir === null || dir === void 0 ? void 0 : dir.id) || '',
+            }, true);
+            if (resp.statusCode !== 204) {
                 throw new Error(JSON.stringify(resp.body));
             }
             nodecg.log.info('[Twitch] Successfully updated channel information');
-            replicants_1.twitchChannelInfo.value = resp.body;
-            return !dir;
+            // "New" API doesn't return anything so update the data with what we've got.
+            replicants_1.twitchChannelInfo.value.title = (title === null || title === void 0 ? void 0 : title.slice(0, 140)) || '';
+            replicants_1.twitchChannelInfo.value.game_id = (dir === null || dir === void 0 ? void 0 : dir.id) || '';
+            replicants_1.twitchChannelInfo.value.game_name = (dir === null || dir === void 0 ? void 0 : dir.name) || '';
+            return noTwitchGame;
         }
         catch (err) {
             nodecg.log.warn('[Twitch] Error updating channel information');
@@ -267,9 +276,10 @@ function startCommercial(duration) {
         try {
             const dur = duration && typeof duration === 'number' ? duration : 180;
             nodecg.log.info('[Twitch] Requested a commercial to be started');
-            const resp = yield request('post', `/channels/${replicants_1.twitchAPIData.value.channelID}/commercial`, {
+            const resp = yield request('post', '/channels/commercial', {
+                broadcaster_id: replicants_1.twitchAPIData.value.channelID,
                 length: dur,
-            });
+            }, true);
             if (resp.statusCode !== 200) {
                 throw new Error(JSON.stringify(resp.body));
             }
@@ -295,7 +305,9 @@ function startCommercial(duration) {
  * Setup done on both server boot (if token available) and initial auth flow.
  */
 function setUp() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
+        let userResp;
         if (!config.twitch.channelName) {
             let [err, resp] = yield helpers_1.to(validateToken());
             if (err) {
@@ -307,17 +319,19 @@ function setUp() {
             }
             replicants_1.twitchAPIData.value.channelID = resp.user_id;
             replicants_1.twitchAPIData.value.channelName = resp.login;
+            userResp = yield request('get', `/users?id=${resp.user_id}`, null, true);
         }
         else {
-            const resp = yield request('get', `/users?login=${config.twitch.channelName}`);
-            if (!resp.body.users.length) {
+            userResp = yield request('get', `/users?login=${config.twitch.channelName}`, null, true);
+            if (!userResp.body.data.length) {
                 throw new Error('channelName specified in the configuration not found');
-            } // eslint-disable-next-line no-underscore-dangle
-            replicants_1.twitchAPIData.value.channelID = resp.body.users[0]._id;
-            replicants_1.twitchAPIData.value.channelName = resp.body.users[0].name;
+            }
+            replicants_1.twitchAPIData.value.channelID = userResp.body.data[0].id;
+            replicants_1.twitchAPIData.value.channelName = userResp.body.data[0].login;
         }
         clearTimeout(channelInfoTO);
         replicants_1.twitchAPIData.value.state = 'on';
+        replicants_1.twitchAPIData.value.broadcasterType = (_a = userResp.body.data[0]) === null || _a === void 0 ? void 0 : _a.broadcaster_type;
         refreshChannelInfo();
         updateCommercialTimer();
     });
