@@ -28,6 +28,9 @@
     "channelID": {
       "type": "string"
     },
+    "broadcasterType": {
+      "type": "string"
+    },
     "featuredChannels": {
       "type": "array",
       "items": {

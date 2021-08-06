@@ -31,7 +31,7 @@ async function logout(): Promise<void> {
 }
 
 /**
- * Validate the currently stored token against the Twitch ID API.
+ * Validate the currently stored token against the Twitch API.
  */
 async function validateToken(): Promise<{
   client_id: string; // eslint-disable-line camelcase
@@ -102,7 +102,6 @@ async function request(
     do {
       retry = false;
       attempts += 1;
-      // eslint-disable-next-line no-await-in-loop
       resp = await needle(
         method,
         `https://api.twitch.tv${ep}`,
@@ -122,10 +121,10 @@ async function request(
           + `resulted in ${resp.statusCode} on ${ep}:`,
           JSON.stringify(resp.body),
         );
-        await refreshToken(); // eslint-disable-line no-await-in-loop
+        await refreshToken();
         retry = true;
         // Can a 401 mean something else?
-      } else if (resp.statusCode !== 200) {
+      } else if (![200, 204].includes(resp.statusCode as number)) {
         throw new Error(JSON.stringify(resp.body));
         // Do we need to retry here?
       }
@@ -143,11 +142,19 @@ async function request(
  */
 async function refreshChannelInfo(): Promise<void> {
   try {
-    const resp = await request('get', `/channels/${twitchAPIData.value.channelID}`);
+    const resp = await request(
+      'get',
+      `/channels?broadcaster_id=${twitchAPIData.value.channelID}`,
+      null,
+      true,
+    );
     if (resp.statusCode !== 200) {
       throw new Error(JSON.stringify(resp.body));
     }
-    twitchChannelInfo.value = resp.body;
+    if (!resp.body.data.length) {
+      throw new Error('channel with specified ID could not be found');
+    }
+    [twitchChannelInfo.value] = resp.body.data;
     channelInfoTO = setTimeout(refreshChannelInfo, 60 * 1000);
   } catch (err) {
     // Try again after 10 seconds.
@@ -161,19 +168,24 @@ async function refreshChannelInfo(): Promise<void> {
  * Returns the correct name of a game in the Twitch directory based on a search.
  * @param query String you wish to try to find a game with.
  */
-async function searchForGame(query: string): Promise<string> {
+async function searchForGame(query: string): Promise<{ id: string, name: string }> {
   if (twitchAPIData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
-  const resp = await request('get', `/search/games?query=${encodeURIComponent(query)}`);
+  const resp = await request(
+    'get',
+    `/search/categories?query=${encodeURIComponent(query)}`,
+    null,
+    true,
+  );
   if (resp.statusCode !== 200) {
     throw new Error(JSON.stringify(resp.body));
-  } else if (!resp.body.games || !resp.body.games.length) {
+  } else if (!resp.body.data || !resp.body.data.length) {
     throw new Error(`No game matches for "${query}"`);
   }
-  const results = resp.body.games as { name: string }[];
+  const results = resp.body.data as { id: string, name: string }[];
   const exact = results.find((game) => game.name.toLowerCase() === query.toLowerCase());
-  return (exact) ? exact.name : results[0].name;
+  return exact || results[0];
 }
 
 /**
@@ -181,7 +193,8 @@ async function searchForGame(query: string): Promise<string> {
  * Will return undefined if it cannot.
  * @param query String to use to find/verify the directory.
  */
-export async function verifyTwitchDir(query: string): Promise<string | undefined> {
+export async function verifyTwitchDir(query: string): Promise<
+{ id: string, name: string } | undefined> {
   const [, game] = await to(searchForGame(query));
   return game;
 }
@@ -191,29 +204,37 @@ export async function verifyTwitchDir(query: string): Promise<string | undefined
  * @param status Title to set.
  * @param game Game to set.
  */
-export async function updateChannelInfo(status?: string, game?: string): Promise<boolean> {
+export async function updateChannelInfo(title?: string, game?: string): Promise<boolean> {
   if (twitchAPIData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
   try {
     nodecg.log.info('[Twitch] Attempting to update channel information');
-    const [, dir] = (game) ? await to(verifyTwitchDir(game)) : [null, undefined];
+    let noTwitchGame = false;
+    let [, dir] = (game) ? await to(verifyTwitchDir(game)) : [null, undefined];
+    if (!dir && game) {
+      // If no category found, find entry for default category.
+      noTwitchGame = true;
+      [, dir] = await to(verifyTwitchDir(bundleConfig().twitch.streamDefaultGame));
+    }
     const resp = await request(
-      'put',
-      `/channels/${twitchAPIData.value.channelID}`,
+      'patch',
+      `/channels?broadcaster_id=${twitchAPIData.value.channelID}`,
       {
-        channel: {
-          status: (status) ? status.slice(0, 140) : undefined,
-          game: dir || bundleConfig().twitch.streamDefaultGame,
-        },
+        title: title?.slice(0, 140),
+        game_id: dir?.id || '',
       },
+      true,
     );
-    if (resp.statusCode !== 200) {
+    if (resp.statusCode !== 204) {
       throw new Error(JSON.stringify(resp.body));
     }
     nodecg.log.info('[Twitch] Successfully updated channel information');
-    twitchChannelInfo.value = resp.body;
-    return !dir;
+    // "New" API doesn't return anything so update the data with what we've got.
+    twitchChannelInfo.value.title = title?.slice(0, 140) || '';
+    twitchChannelInfo.value.game_id = dir?.id || '';
+    twitchChannelInfo.value.game_name = dir?.name || '';
+    return noTwitchGame;
   } catch (err) {
     nodecg.log.warn('[Twitch] Error updating channel information');
     nodecg.log.debug('[Twitch] Error updating channel information:', err);
@@ -250,10 +271,12 @@ Promise<{ duration: CommercialDuration }> {
     nodecg.log.info('[Twitch] Requested a commercial to be started');
     const resp = await request(
       'post',
-      `/channels/${twitchAPIData.value.channelID}/commercial`,
+      '/channels/commercial',
       {
+        broadcaster_id: twitchAPIData.value.channelID,
         length: dur,
       },
+      true,
     );
     if (resp.statusCode !== 200) {
       throw new Error(JSON.stringify(resp.body));
@@ -281,6 +304,7 @@ Promise<{ duration: CommercialDuration }> {
  * Setup done on both server boot (if token available) and initial auth flow.
  */
 async function setUp(): Promise<void> {
+  let userResp: NeedleResponse | undefined;
   if (!config.twitch.channelName) {
     let [err, resp] = await to(validateToken());
     if (err) {
@@ -292,16 +316,18 @@ async function setUp(): Promise<void> {
     }
     twitchAPIData.value.channelID = resp.user_id;
     twitchAPIData.value.channelName = resp.login;
+    userResp = await request('get', `/users?id=${resp.user_id}`, null, true);
   } else {
-    const resp = await request('get', `/users?login=${config.twitch.channelName}`);
-    if (!resp.body.users.length) {
+    userResp = await request('get', `/users?login=${config.twitch.channelName}`, null, true);
+    if (!userResp.body.data.length) {
       throw new Error('channelName specified in the configuration not found');
-    } // eslint-disable-next-line no-underscore-dangle
-    twitchAPIData.value.channelID = resp.body.users[0]._id;
-    twitchAPIData.value.channelName = resp.body.users[0].name;
+    }
+    twitchAPIData.value.channelID = userResp.body.data[0].id;
+    twitchAPIData.value.channelName = userResp.body.data[0].login;
   }
   clearTimeout(channelInfoTO);
   twitchAPIData.value.state = 'on';
+  twitchAPIData.value.broadcasterType = userResp.body.data[0]?.broadcaster_type;
   refreshChannelInfo();
   updateCommercialTimer();
 }

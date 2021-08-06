@@ -75,7 +75,7 @@ async function updateTwitchInformation(runData: RunData): Promise<boolean> {
     gameTwitch = srcomGameTwitch || runData.game;
   }
   if (gameTwitch) { // Verify game directory supplied exists on Twitch.
-    [, gameTwitch] = await to(verifyTwitchDir(gameTwitch));
+    gameTwitch = (await to(verifyTwitchDir(gameTwitch)))[1]?.name;
   }
 
   to(updateChannelInfo(
