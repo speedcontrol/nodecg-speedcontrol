@@ -174,7 +174,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       // Verify some game directory supplied exists on Twitch.
       for (const str of [gameTwitch, srcomGameTwitch, game.str]) {
         if (str) {
-          [, gameTwitch] = await to(verifyTwitchDir(str));
+          gameTwitch = (await to(verifyTwitchDir(str)))[1]?.name;
           if (gameTwitch) {
             break; // If a directory was successfully found, stop loop early.
           }

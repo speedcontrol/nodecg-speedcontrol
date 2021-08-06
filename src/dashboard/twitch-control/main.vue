@@ -138,7 +138,7 @@
       >
         {{ $t('update') }}
       </v-btn>
-      <template v-if="['affiliate', 'partner'].includes(channelInfo.broadcaster_type)">
+      <template v-if="['affiliate', 'partner'].includes(apiData.broadcasterType)">
         <div
           v-if="timer.secondsRemaining <= 0"
           class="d-flex justify-center align-center mt-2"
@@ -219,10 +219,14 @@ export default class extends Vue {
 
   get url(): string {
     const scopes = [
-      'channel_editor',
-      'user_read',
+      'channel:edit:commercial',
+      'channel:manage:broadcast',
       'chat:read',
       'chat:edit',
+
+      // Older, deprecated.
+      'channel_editor',
+      'user_read',
       'channel_commercial',
     ];
     if (this.config.additionalScopes) {
@@ -262,8 +266,8 @@ export default class extends Vue {
 
   updateInputs(): void {
     if (!this.focus) {
-      this.title = this.channelInfo.status as string;
-      this.game = this.channelInfo.game as string;
+      this.title = this.channelInfo.title as string;
+      this.game = this.channelInfo.game_name as string;
       this.users = this.apiData.featuredChannels.join(', ');
     }
   }
