@@ -489,7 +489,7 @@ Used to update the Twitch status (title) and/or game (directory), if the integra
 *Notes about this message:*
  - *Internally we use the [needle](https://github.com/tomas/needle) package, so their documentation may be of help for this message.*
  - *This can be used via the NodeCG messaging system, although if used in an extension you should use [our messaging service](./Our-Messages.md) so you can actually get a proper response.*
- - *Yoy may need to add an `additionalScope` to the [relevant configuration](../Configuration.md#Twitch); the example below requires the `channel:manage:broadcast` scope, for example.*
+ - *You may need to add an `additionalScope` to the [relevant configuration](../Configuration.md#Twitch).*
 
 ### Parameters
 - *[`object`]*
