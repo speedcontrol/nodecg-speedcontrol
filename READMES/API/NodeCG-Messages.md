@@ -15,6 +15,7 @@
   - [changeToNextRun](#changeToNextRun)
   - [changeActiveRun](#changeActiveRun)
   - [modifyRun](#modifyRun)
+  - [modifyRelayPlayerID](#modifyRelayPlayerID)
   - [removeRun](#removeRun)
   - [returnToStart](#returnToStart)
   - [removeAllRuns](#removeAllRuns)
@@ -334,6 +335,46 @@ false
 ```
 
 Will either edit a run (if `runData` has an ID we already have added) or add a new run to the `runDataArray` replicant. If the run is also the active run, this will be updated as well.
+
+
+## modifyRelayPlayerID
+
+### Parameters
+- *[`object`]*
+  - `runID` *[`string`]* ID of the run you wish to switch the active relay player for.
+  - `teamID` *[`string`]* ID of the team you wish to switch the active relay player for.
+  - `playerID` *[`string`]* ID of the player you wish to switch the active relay player to.
+### *No data returned*
+### Example code (extension/no acknowledgement)
+```javascript
+nodecg.sendMessageToBundle('modifyRelayPlayerID', 'nodecg-speedcontrol', {
+  runID: 'f926048c-3527-4d2f-96f6-680b81bf06e6',
+  teamID: 'f926048c-3527-4d2f-96f6-680b81bf06e6',
+  playerID: '26a6dc65-7f39-4f33-a263-56be74bed783'
+});
+```
+### Example code (callback)
+```javascript
+nodecg.sendMessageToBundle('modifyRelayPlayerID', 'nodecg-speedcontrol', {
+  runID: 'f926048c-3527-4d2f-96f6-680b81bf06e6',
+  teamID: 'f926048c-3527-4d2f-96f6-680b81bf06e6',
+  playerID: '26a6dc65-7f39-4f33-a263-56be74bed783'
+}, (err) => {
+  ...
+});
+```
+### Example code (promise)
+```javascript
+nodecg.sendMessageToBundle('modifyRelayPlayerID', 'nodecg-speedcontrol', {
+  runID: 'f926048c-3527-4d2f-96f6-680b81bf06e6',
+  teamID: 'f926048c-3527-4d2f-96f6-680b81bf06e6',
+  playerID: '26a6dc65-7f39-4f33-a263-56be74bed783'
+})
+  .then(() => { ... })
+  .catch((err) => { ... });
+```
+
+Will change the currently active relay player for the specified team inside the specified run. Only applicable if the run is marked as a relay.
 
 
 ## removeRun

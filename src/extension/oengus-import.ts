@@ -191,7 +191,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
           social: {
             twitch: playerTwitch || undefined,
           },
-          country: runner.country || undefined, // Needs checking for format!
+          country: runner.country?.toLowerCase() || undefined,
           pronouns: playerPronouns?.join(', ') || undefined,
           customData: {},
         };
@@ -214,7 +214,9 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
               player.social.twitch = getTwitchUserFromURL(tURL);
             }
             if (!runner.country) player.country = data.location?.country.code || undefined;
-            if (!runner.pronouns?.length) player.pronouns = data.pronouns || undefined;
+            if (!runner.pronouns?.length) {
+              player.pronouns = data.pronouns?.toLowerCase() || undefined;
+            }
           }
         }
         team.players.push(player);
