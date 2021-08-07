@@ -179,7 +179,7 @@ function importSchedule(marathonShort, useJapanese) {
                 scheduledTime += runData.estimateS + runData.setupTimeS;
                 // Team Data
                 runData.teams = yield p_iteration_1.mapSeries(line.runners, (runner) => __awaiter(this, void 0, void 0, function* () {
-                    var _c, _d, _e, _f, _g, _h, _j, _k, _l;
+                    var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
                     const team = {
                         id: uuid_1.v4(),
                         players: [],
@@ -196,25 +196,26 @@ function importSchedule(marathonShort, useJapanese) {
                         social: {
                             twitch: playerTwitch || undefined,
                         },
-                        country: runner.country || undefined,
+                        country: ((_e = runner.country) === null || _e === void 0 ? void 0 : _e.toLowerCase()) || undefined,
                         pronouns: (playerPronouns === null || playerPronouns === void 0 ? void 0 : playerPronouns.join(', ')) || undefined,
                         customData: {},
                     };
                     if (!config.oengus.disableSpeedrunComLookup) {
-                        const playerTwitter = ((_f = (_e = runner.connections) === null || _e === void 0 ? void 0 : _e.find((c) => c.platform === 'TWITTER')) === null || _f === void 0 ? void 0 : _f.username) || runner.twitterName;
-                        const playerSrcom = ((_h = (_g = runner.connections) === null || _g === void 0 ? void 0 : _g.find((c) => c.platform === 'SPEEDRUNCOM')) === null || _h === void 0 ? void 0 : _h.username) || runner.speedruncomName;
+                        const playerTwitter = ((_g = (_f = runner.connections) === null || _f === void 0 ? void 0 : _f.find((c) => c.platform === 'TWITTER')) === null || _g === void 0 ? void 0 : _g.username) || runner.twitterName;
+                        const playerSrcom = ((_j = (_h = runner.connections) === null || _h === void 0 ? void 0 : _h.find((c) => c.platform === 'SPEEDRUNCOM')) === null || _j === void 0 ? void 0 : _j.username) || runner.speedruncomName;
                         const data = yield srcom_api_1.searchForUserDataMultiple({ type: 'srcom', val: playerSrcom }, { type: 'twitch', val: playerTwitch }, { type: 'twitter', val: playerTwitter }, { type: 'name', val: runner.username });
                         if (data) {
                             // Always favour the supplied Twitch username/country/pronouns
                             // from Oengus if available.
                             if (!playerTwitch) {
-                                const tURL = ((_j = data.twitch) === null || _j === void 0 ? void 0 : _j.uri) || undefined;
+                                const tURL = ((_k = data.twitch) === null || _k === void 0 ? void 0 : _k.uri) || undefined;
                                 player.social.twitch = helpers_1.getTwitchUserFromURL(tURL);
                             }
                             if (!runner.country)
-                                player.country = ((_k = data.location) === null || _k === void 0 ? void 0 : _k.country.code) || undefined;
-                            if (!((_l = runner.pronouns) === null || _l === void 0 ? void 0 : _l.length))
-                                player.pronouns = data.pronouns || undefined;
+                                player.country = ((_l = data.location) === null || _l === void 0 ? void 0 : _l.country.code) || undefined;
+                            if (!((_m = runner.pronouns) === null || _m === void 0 ? void 0 : _m.length)) {
+                                player.pronouns = ((_o = data.pronouns) === null || _o === void 0 ? void 0 : _o.toLowerCase()) || undefined;
+                            }
                         }
                     }
                     team.players.push(player);

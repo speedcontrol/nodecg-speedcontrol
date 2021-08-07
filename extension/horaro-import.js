@@ -245,7 +245,7 @@ function importSchedule(optsO, dashID) {
                         };
                         // Mapping player information into needed format.
                         team.players = yield p_iteration_1.mapSeries(rawTeam.players, (rawPlayer) => __awaiter(this, void 0, void 0, function* () {
-                            var _b;
+                            var _b, _c;
                             const { str, url } = parseMarkdown(rawPlayer);
                             const twitchUsername = helpers_1.getTwitchUserFromURL(url);
                             const player = {
@@ -267,7 +267,7 @@ function importSchedule(optsO, dashID) {
                                         player.social.twitch = helpers_1.getTwitchUserFromURL(tURL);
                                     }
                                     player.country = ((_b = sData.location) === null || _b === void 0 ? void 0 : _b.country.code) || undefined;
-                                    player.pronouns = sData.pronouns || undefined;
+                                    player.pronouns = ((_c = sData.pronouns) === null || _c === void 0 ? void 0 : _c.toLowerCase()) || undefined;
                                 }
                             }
                             return player;
