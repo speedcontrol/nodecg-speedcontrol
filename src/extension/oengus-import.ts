@@ -131,6 +131,7 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
       if (line.setupBlock) {
         // Game name set to "Setup" if the line is a setup block.
         runData.game = line.setupBlockText || 'Setup';
+        runData.gameTwitch = 'Just Chatting';
         // Estimate for a setup block will be the setup time instead.
         runData.estimate = runData.setupTime;
         runData.estimateS = runData.setupTimeS;
