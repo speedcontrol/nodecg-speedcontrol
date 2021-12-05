@@ -28,6 +28,7 @@ jobs:
       with:
         token: ${{ secrets['GITHUB_TOKEN'] }}
         repository: nodecg/nodecg
+        ref: 'v1.8.1'
         path: ./nodecg-temp
 
     # Copies checked out NodeCG into permanent folder
@@ -79,12 +80,6 @@ jobs:
     # Update NPM to the latest version
     - name: Update NPM installation
       run: npm install -g npm@latest
-
-    # Setup GitHub SSH key so we can npm install GitHub repositories (even needed for public ones)
-    - name: GitHub SSH setup
-      uses: webfactory/ssh-agent@master
-      with:
-        ssh-private-key: ${{ secrets['GH_SSH'] }}
 
     # Install NodeCG NPM dependencies
     - name: Install NodeCG NPM dependencies
