@@ -143,6 +143,7 @@ To easily install: `nodecg install BUNDLE`, where `BUNDLE` is the full name belo
 - [BSG Marathon](https://twitch.tv/bsg_marathon) 1-15 and from @Home and forwards.
 - [No Glitches Allowed](https://twitch.tv/speedrunslive) since No Glitches Allowed 4
 - [Completithon](https://twitch.tv/completithon) since Completithon 2019
+- [MDSR Summer '21](https://twitch.tv/ModernDOOMSpeedrunning)
 
 
 <a id="authors-contributors"></a>
