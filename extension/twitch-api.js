@@ -38,9 +38,9 @@ const events = __importStar(require("./util/events"));
 const helpers_1 = require("./util/helpers");
 const nodecg_1 = require("./util/nodecg");
 const replicants_1 = require("./util/replicants");
-const nodecg = nodecg_1.get();
-const config = helpers_1.bundleConfig();
-const app = express_1.default();
+const nodecg = (0, nodecg_1.get)();
+const config = (0, helpers_1.bundleConfig)();
+const app = (0, express_1.default)();
 let channelInfoTO;
 replicants_1.twitchAPIData.value.state = 'off'; // Set this to "off" on every start.
 if (!config.twitch.ffzUseRepeater) {
@@ -66,7 +66,7 @@ function logout() {
  */
 function validateToken() {
     return __awaiter(this, void 0, void 0, function* () {
-        const resp = yield needle_1.default('get', 'https://id.twitch.tv/oauth2/validate', null, {
+        const resp = yield (0, needle_1.default)('get', 'https://id.twitch.tv/oauth2/validate', null, {
             headers: {
                 Authorization: `OAuth ${replicants_1.twitchAPIData.value.accessToken}`,
             },
@@ -85,7 +85,7 @@ function refreshToken() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             nodecg.log.info('[Twitch] Attempting to refresh access token');
-            const resp = yield needle_1.default('post', 'https://id.twitch.tv/oauth2/token', {
+            const resp = yield (0, needle_1.default)('post', 'https://id.twitch.tv/oauth2/token', {
                 grant_type: 'refresh_token',
                 refresh_token: encodeURI(replicants_1.twitchAPIData.value.refreshToken),
                 client_id: config.twitch.clientID,
@@ -102,7 +102,7 @@ function refreshToken() {
         catch (err) {
             nodecg.log.warn('[Twitch] Error refreshing access token, you need to relogin');
             nodecg.log.debug('[Twitch] Error refreshing access token:', err);
-            yield helpers_1.to(logout());
+            yield (0, helpers_1.to)(logout());
             throw err;
         }
     });
@@ -122,7 +122,7 @@ function request(method, endpoint, data = null, newAPI = false) {
             do {
                 retry = false;
                 attempts += 1;
-                resp = yield needle_1.default(method, `https://api.twitch.tv${ep}`, data, {
+                resp = yield (0, needle_1.default)(method, `https://api.twitch.tv${ep}`, data, {
                     headers: {
                         Accept: !newAPI ? 'application/vnd.twitchtv.v5+json' : '',
                         'Content-Type': 'application/json',
@@ -175,6 +175,7 @@ function refreshChannelInfo() {
         }
     });
 }
+// TODO: Add delay to this?
 /**
  * Returns the correct name of a game in the Twitch directory based on a search.
  * @param query String you wish to try to find a game with.
@@ -203,7 +204,7 @@ function searchForGame(query) {
  */
 function verifyTwitchDir(query) {
     return __awaiter(this, void 0, void 0, function* () {
-        const [, game] = yield helpers_1.to(searchForGame(query));
+        const [, game] = yield (0, helpers_1.to)(searchForGame(query));
         return game;
     });
 }
@@ -221,11 +222,11 @@ function updateChannelInfo(title, game) {
         try {
             nodecg.log.info('[Twitch] Attempting to update channel information');
             let noTwitchGame = false;
-            let [, dir] = (game) ? yield helpers_1.to(verifyTwitchDir(game)) : [null, undefined];
+            let [, dir] = (game) ? yield (0, helpers_1.to)(verifyTwitchDir(game)) : [null, undefined];
             if (!dir && game) {
                 // If no category found, find entry for default category.
                 noTwitchGame = true;
-                [, dir] = yield helpers_1.to(verifyTwitchDir(helpers_1.bundleConfig().twitch.streamDefaultGame));
+                [, dir] = yield (0, helpers_1.to)(verifyTwitchDir((0, helpers_1.bundleConfig)().twitch.streamDefaultGame));
             }
             const resp = yield request('patch', `/channels?broadcaster_id=${replicants_1.twitchAPIData.value.channelID}`, {
                 title: title === null || title === void 0 ? void 0 : title.slice(0, 140),
@@ -291,7 +292,7 @@ function startCommercial(duration) {
             nodecg.log.info(`[Twitch] Commercial started successfully (${dur} seconds)`);
             nodecg.sendMessage('twitchCommercialStarted', { duration: dur });
             nodecg.sendMessage('twitchAdStarted', { duration: dur }); // Legacy
-            helpers_1.to(events.sendMessage('twitchCommercialStarted', { duration: dur }));
+            (0, helpers_1.to)(events.sendMessage('twitchCommercialStarted', { duration: dur }));
             return { duration: dur };
         }
         catch (err) {
@@ -309,10 +310,10 @@ function setUp() {
     return __awaiter(this, void 0, void 0, function* () {
         let userResp;
         if (!config.twitch.channelName) {
-            let [err, resp] = yield helpers_1.to(validateToken());
+            let [err, resp] = yield (0, helpers_1.to)(validateToken());
             if (err) {
                 yield refreshToken();
-                [err, resp] = yield helpers_1.to(validateToken());
+                [err, resp] = yield (0, helpers_1.to)(validateToken());
             }
             if (!resp) {
                 throw new Error('No response while validating token');
@@ -341,8 +342,8 @@ if (config.twitch.enabled) {
     // Listen for logout command from button on dashboard.
     nodecg.listenFor('twitchLogout', (data, ack) => {
         logout()
-            .then(() => helpers_1.processAck(ack, null))
-            .catch((err) => helpers_1.processAck(ack, err));
+            .then(() => (0, helpers_1.processAck)(ack, null))
+            .catch((err) => (0, helpers_1.processAck)(ack, err));
     });
     // If we already have an access token stored, verify it.
     if (replicants_1.twitchAPIData.value.accessToken) {
@@ -351,13 +352,13 @@ if (config.twitch.enabled) {
             nodecg.log.info('[Twitch] Integration ready');
         }).catch((err) => {
             nodecg.log.warn('[Twitch] Issue activating integration: ', err);
-            helpers_1.to(logout());
+            (0, helpers_1.to)(logout());
         });
     }
     // Route that receives Twitch's auth code when the user does the flow from the dashboard.
     app.get('/nodecg-speedcontrol/twitchauth', (req, res) => {
         replicants_1.twitchAPIData.value.state = 'authenticating';
-        needle_1.default('post', 'https://id.twitch.tv/oauth2/token', {
+        (0, needle_1.default)('post', 'https://id.twitch.tv/oauth2/token', {
             client_id: config.twitch.clientID,
             client_secret: config.twitch.clientSecret,
             code: req.query.code,
@@ -375,7 +376,7 @@ if (config.twitch.enabled) {
             });
         }).catch(() => {
             nodecg.log.warn('[Twitch] Issue with authentication');
-            helpers_1.to(logout());
+            (0, helpers_1.to)(logout());
             res.send('<b>Error while processing the Twitch authentication, please try again.</b>');
         });
     });
@@ -384,42 +385,42 @@ if (config.twitch.enabled) {
 // NodeCG messaging system.
 nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     updateChannelInfo(data.status, data.game)
-        .then((noTwitchGame) => helpers_1.processAck(ack, null, noTwitchGame))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then((noTwitchGame) => (0, helpers_1.processAck)(ack, null, noTwitchGame))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('twitchStartCommercial', (data, ack) => {
     startCommercial(data.duration)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('playTwitchAd', (data, ack) => {
     startCommercial(data.duration)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('twitchAPIRequest', (data, ack) => {
     request(data.method, data.endpoint, data.data, data.newAPI)
-        .then((resp) => helpers_1.processAck(ack, null, resp))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then((resp) => (0, helpers_1.processAck)(ack, null, resp))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 // Our messaging system.
 events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     updateChannelInfo(data.status, data.game)
         .then((noTwitchGame) => {
-        helpers_1.processAck(ack, null, noTwitchGame);
+        (0, helpers_1.processAck)(ack, null, noTwitchGame);
         if (noTwitchGame) {
             nodecg.sendMessage('triggerAlert', 'NoTwitchGame');
         }
     })
-        .catch((err) => helpers_1.processAck(ack, err));
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('twitchStartCommercial', (data, ack) => {
     startCommercial(data.duration)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('twitchAPIRequest', (data, ack) => {
     request(data.method, data.endpoint, data.data, data.newAPI)
-        .then((resp) => helpers_1.processAck(ack, null, resp))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then((resp) => (0, helpers_1.processAck)(ack, null, resp))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });

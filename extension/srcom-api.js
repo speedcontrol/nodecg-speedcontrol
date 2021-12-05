@@ -36,7 +36,7 @@ const needle_1 = __importDefault(require("needle"));
 const events = __importStar(require("./util/events"));
 const helpers_1 = require("./util/helpers");
 const nodecg_1 = require("./util/nodecg");
-const nodecg = nodecg_1.get();
+const nodecg = (0, nodecg_1.get)();
 const userDataCache = {};
 /**
  * Make a GET request to speedrun.com API.
@@ -50,7 +50,7 @@ function get(endpoint) {
                 ? `https://www.speedrun.com${endpoint}`
                 : `https://www.speedrun.com/api/v1${endpoint}`;
             nodecg.log.debug(`[speedrun.com] API request processing on ${endpoint}`);
-            const resp = yield needle_1.default('get', url, null, {
+            const resp = yield (0, needle_1.default)('get', url, null, {
                 headers: {
                     'User-Agent': 'nodecg-speedcontrol',
                     Accept: 'application/json',
@@ -145,7 +145,7 @@ function searchForUserData({ type, val }) {
             return userDataCache[cacheKey];
         }
         try {
-            yield helpers_1.sleep(1000);
+            yield (0, helpers_1.sleep)(1000);
             let data;
             if (type === 'srcom') {
                 const resp = yield get(`/users/${encodeURIComponent(val)}`);
@@ -162,9 +162,9 @@ function searchForUserData({ type, val }) {
                             default:
                                 return user.names.international;
                             case 'twitch':
-                                return helpers_1.getTwitchUserFromURL((_a = user.twitch) === null || _a === void 0 ? void 0 : _a.uri);
+                                return (0, helpers_1.getTwitchUserFromURL)((_a = user.twitch) === null || _a === void 0 ? void 0 : _a.uri);
                             case 'twitter':
-                                return helpers_1.getTwitterUserFromURL((_b = user.twitter) === null || _b === void 0 ? void 0 : _b.uri);
+                                return (0, helpers_1.getTwitterUserFromURL)((_b = user.twitter) === null || _b === void 0 ? void 0 : _b.uri);
                         }
                     })();
                     return exactToCheck
@@ -222,5 +222,5 @@ exports.searchForUserDataMultiple = searchForUserDataMultiple;
 // Our messaging system.
 events.listenFor('srcomSearchForUserDataMultiple', (data, ack) => __awaiter(void 0, void 0, void 0, function* () {
     const resp = yield searchForUserDataMultiple(...data);
-    helpers_1.processAck(ack, null, resp);
+    (0, helpers_1.processAck)(ack, null, resp);
 }));

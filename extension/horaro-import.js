@@ -24,8 +24,8 @@ const twitch_api_1 = require("./twitch-api");
 const helpers_1 = require("./util/helpers"); // eslint-disable-line object-curly-newline, max-len
 const nodecg_1 = require("./util/nodecg");
 const replicants_1 = require("./util/replicants");
-const nodecg = nodecg_1.get();
-const config = helpers_1.bundleConfig();
+const nodecg = (0, nodecg_1.get)();
+const config = (0, helpers_1.bundleConfig)();
 const md = new markdown_it_1.default();
 const scheduleDataCache = {};
 /**
@@ -46,7 +46,7 @@ function parseMarkdown(str) {
                     && child.attrs[0] && child.attrs[0][0] === 'href'));
             }
             results.url = (url && url.attrs) ? url.attrs[0][1] : undefined;
-            results.str = remove_markdown_1.default(str);
+            results.str = (0, remove_markdown_1.default)(str);
         }
         catch (err) {
             // return nothing
@@ -84,7 +84,7 @@ function loadSchedule(url, dashID) {
                 const keyMatch = url.match(/(?<=(\?key=))(.*?)$/)[0];
                 jsonURL = `${urlMatch}.json?key=${keyMatch}`;
             }
-            const resp = yield needle_1.default('get', encodeURI(jsonURL));
+            const resp = yield (0, needle_1.default)('get', encodeURI(jsonURL));
             if (resp.statusCode !== 200) {
                 throw new Error(`HTTP status code was ${resp.statusCode}`);
             }
@@ -132,7 +132,7 @@ function importSchedule(optsO, dashID) {
             });
             const externalIDsSeen = [];
             // Filtering out any games on the ignore list before processing them all.
-            const newRunDataArray = yield p_iteration_1.mapSeries(runItems.filter((run) => (!helpers_1.checkGameAgainstIgnoreList(run.data[opts.columns.game], 'horaro'))), (run, index, arr) => __awaiter(this, void 0, void 0, function* () {
+            const newRunDataArray = yield (0, p_iteration_1.mapSeries)(runItems.filter((run) => (!(0, helpers_1.checkGameAgainstIgnoreList)(run.data[opts.columns.game], 'horaro'))), (run, index, arr) => __awaiter(this, void 0, void 0, function* () {
                 var _a;
                 replicants_1.horaroImportStatus.value.item = index + 1;
                 replicants_1.horaroImportStatus.value.total = arr.length;
@@ -149,7 +149,7 @@ function importSchedule(optsO, dashID) {
                 const runData = {
                     teams: [],
                     customData: {},
-                    id: (matchingOldRun === null || matchingOldRun === void 0 ? void 0 : matchingOldRun.id) || uuid_1.v4(),
+                    id: (matchingOldRun === null || matchingOldRun === void 0 ? void 0 : matchingOldRun.id) || (0, uuid_1.v4)(),
                     externalID,
                 };
                 // General Run Data
@@ -161,6 +161,7 @@ function importSchedule(optsO, dashID) {
                 // Attempts to find the correct Twitch game directory.
                 const game = parseMarkdown(run.data[opts.columns.game]);
                 let gameTwitch = parseMarkdown(run.data[opts.columns.gameTwitch]).str;
+                // TODO: Don't even try to look up Twitch directory if we can't verify it!
                 let srcomGameTwitch;
                 if (!(config.schedule || config.horaro).disableSpeedrunComLookup && !gameTwitch) {
                     if (game.url && game.url.includes('speedrun.com')) {
@@ -168,16 +169,16 @@ function importSchedule(optsO, dashID) {
                             .split('speedrun.com/')[game.url.split('speedrun.com/').length - 1]
                             .split('/')[0]
                             .split('#')[0];
-                        [, srcomGameTwitch] = yield helpers_1.to(srcom_api_1.searchForTwitchGame(gameAbbr, true));
+                        [, srcomGameTwitch] = yield (0, helpers_1.to)((0, srcom_api_1.searchForTwitchGame)(gameAbbr, true));
                     }
                     if (!srcomGameTwitch && game.str) {
-                        [, srcomGameTwitch] = yield helpers_1.to(srcom_api_1.searchForTwitchGame(game.str));
+                        [, srcomGameTwitch] = yield (0, helpers_1.to)((0, srcom_api_1.searchForTwitchGame)(game.str));
                     }
                 }
                 // Verify some game directory supplied exists on Twitch.
                 for (const str of [gameTwitch, srcomGameTwitch, game.str]) {
                     if (str) {
-                        gameTwitch = (_a = (yield helpers_1.to(twitch_api_1.verifyTwitchDir(str)))[1]) === null || _a === void 0 ? void 0 : _a.name;
+                        gameTwitch = (_a = (yield (0, helpers_1.to)((0, twitch_api_1.verifyTwitchDir)(str)))[1]) === null || _a === void 0 ? void 0 : _a.name;
                         if (gameTwitch) {
                             break; // If a directory was successfully found, stop loop early.
                         }
@@ -189,16 +190,16 @@ function importSchedule(optsO, dashID) {
                 runData.scheduled = run.scheduled;
                 // Estimate
                 runData.estimateS = run.length_t;
-                runData.estimate = helpers_1.msToTimeStr(run.length_t * 1000);
+                runData.estimate = (0, helpers_1.msToTimeStr)(run.length_t * 1000);
                 // Setup Time
                 let runSetupTime = setupTime * 1000;
                 if (run.options && run.options.setup) {
-                    const duration = parse_duration_1.default(run.options.setup);
+                    const duration = (0, parse_duration_1.default)(run.options.setup);
                     if (duration > 0) {
                         runSetupTime = duration;
                     }
                 }
-                runData.setupTime = helpers_1.msToTimeStr(runSetupTime);
+                runData.setupTime = (0, helpers_1.msToTimeStr)(runSetupTime);
                 runData.setupTimeS = runSetupTime / 1000;
                 // Custom Data
                 Object.keys(opts.columns.custom).forEach((col) => {
@@ -227,7 +228,7 @@ function importSchedule(optsO, dashID) {
                         /\s+vs\.?\s+/,
                         /\s*,\s*/, // Comma (,)
                     ];
-                    const teamsRaw = yield p_iteration_1.mapSeries(playerList.split(teamSplittingRegex[opts.split]), (team) => {
+                    const teamsRaw = yield (0, p_iteration_1.mapSeries)(playerList.split(teamSplittingRegex[opts.split]), (team) => {
                         const nameMatch = team.match(/^(.+)(?=:\s)/);
                         return {
                             name: (nameMatch) ? nameMatch[0] : undefined,
@@ -237,20 +238,20 @@ function importSchedule(optsO, dashID) {
                         };
                     });
                     // Mapping team information from above into needed format.
-                    runData.teams = yield p_iteration_1.mapSeries(teamsRaw, (rawTeam) => __awaiter(this, void 0, void 0, function* () {
+                    runData.teams = yield (0, p_iteration_1.mapSeries)(teamsRaw, (rawTeam) => __awaiter(this, void 0, void 0, function* () {
                         const team = {
-                            id: uuid_1.v4(),
+                            id: (0, uuid_1.v4)(),
                             name: parseMarkdown(rawTeam.name).str,
                             players: [],
                         };
                         // Mapping player information into needed format.
-                        team.players = yield p_iteration_1.mapSeries(rawTeam.players, (rawPlayer) => __awaiter(this, void 0, void 0, function* () {
+                        team.players = yield (0, p_iteration_1.mapSeries)(rawTeam.players, (rawPlayer) => __awaiter(this, void 0, void 0, function* () {
                             var _b, _c;
                             const { str, url } = parseMarkdown(rawPlayer);
-                            const twitchUsername = helpers_1.getTwitchUserFromURL(url);
+                            const twitchUsername = (0, helpers_1.getTwitchUserFromURL)(url);
                             const player = {
                                 name: str || '',
-                                id: uuid_1.v4(),
+                                id: (0, uuid_1.v4)(),
                                 teamID: team.id,
                                 social: {
                                     twitch: twitchUsername,
@@ -258,13 +259,13 @@ function importSchedule(optsO, dashID) {
                                 customData: {},
                             };
                             if (!(config.schedule || config.horaro).disableSpeedrunComLookup) {
-                                const sData = yield srcom_api_1.searchForUserDataMultiple({ type: 'twitch', val: twitchUsername }, { type: 'name', val: str }, { type: 'twitch', val: str }, { type: 'twitter', val: str });
+                                const sData = yield (0, srcom_api_1.searchForUserDataMultiple)({ type: 'twitch', val: twitchUsername }, { type: 'name', val: str }, { type: 'twitch', val: str }, { type: 'twitter', val: str });
                                 if (sData) {
                                     // Always favour the supplied Twitch username from schedule if available.
                                     if (!twitchUsername) {
                                         const tURL = (sData.twitch && sData.twitch.uri)
                                             ? sData.twitch.uri : undefined;
-                                        player.social.twitch = helpers_1.getTwitchUserFromURL(tURL);
+                                        player.social.twitch = (0, helpers_1.getTwitchUserFromURL)(tURL);
                                     }
                                     player.country = ((_b = sData.location) === null || _b === void 0 ? void 0 : _b.country.code) || undefined;
                                     player.pronouns = ((_c = sData.pronouns) === null || _c === void 0 ? void 0 : _c.toLowerCase()) || undefined;
@@ -289,8 +290,8 @@ function importSchedule(optsO, dashID) {
 }
 nodecg.listenFor('loadSchedule', (data, ack) => {
     loadSchedule(data.url, data.dashID)
-        .then((data_) => helpers_1.processAck(ack, null, data_))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then((data_) => (0, helpers_1.processAck)(ack, null, data_))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('importSchedule', (data, ack) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -300,10 +301,10 @@ nodecg.listenFor('importSchedule', (data, ack) => __awaiter(void 0, void 0, void
         nodecg.log.info('[Horaro Import] Started importing schedule');
         yield importSchedule(data.opts, data.dashID);
         nodecg.log.info('[Horaro Import] Successfully imported schedule');
-        helpers_1.processAck(ack, null);
+        (0, helpers_1.processAck)(ack, null);
     }
     catch (err) {
         nodecg.log.warn('[Horaro Import] Error importing schedule:', err);
-        helpers_1.processAck(ack, err);
+        (0, helpers_1.processAck)(ack, err);
     }
 }));

@@ -41,7 +41,7 @@ const events = __importStar(require("./util/events"));
 const helpers_1 = require("./util/helpers"); // eslint-disable-line object-curly-newline, max-len
 const nodecg_1 = require("./util/nodecg");
 const replicants_1 = require("./util/replicants");
-const nodecg = nodecg_1.get();
+const nodecg = (0, nodecg_1.get)();
 /**
  * Used to update the replicant that stores ID references to previous/current/next runs.
  */
@@ -56,9 +56,9 @@ function changeSurroundingRuns() {
     else {
         current = replicants_1.runDataActiveRun.value; // Current will always be the active one.
         // Try to find currently set runs in the run data array.
-        const currentIndex = helpers_1.findRunIndexFromId(current.id);
-        const previousIndex = helpers_1.findRunIndexFromId(replicants_1.runDataActiveRunSurrounding.value.previous);
-        const nextIndex = helpers_1.findRunIndexFromId(replicants_1.runDataActiveRunSurrounding.value.next);
+        const currentIndex = (0, helpers_1.findRunIndexFromId)(current.id);
+        const previousIndex = (0, helpers_1.findRunIndexFromId)(replicants_1.runDataActiveRunSurrounding.value.previous);
+        const nextIndex = (0, helpers_1.findRunIndexFromId)(replicants_1.runDataActiveRunSurrounding.value.next);
         if (currentIndex >= 0) { // Found current run in array.
             if (currentIndex > 0) {
                 [previous, , next] = replicants_1.runDataArray.value.slice(currentIndex - 1);
@@ -92,23 +92,24 @@ function updateTwitchInformation(runData) {
             return false;
         }
         // Constructing Twitch title and game to send off.
-        const status = helpers_1.bundleConfig().twitch.streamTitle
+        const status = (0, helpers_1.bundleConfig)().twitch.streamTitle
             .replace(new RegExp('{{game}}', 'g'), runData.game || '')
-            .replace(new RegExp('{{players}}', 'g'), helpers_1.formPlayerNamesStr(runData))
+            .replace(new RegExp('{{players}}', 'g'), (0, helpers_1.formPlayerNamesStr)(runData))
             .replace(new RegExp('{{category}}', 'g'), runData.category || '');
         // Attempts to find the correct Twitch game directory.
         let { gameTwitch } = runData;
         if (!gameTwitch && runData.game) {
-            const [, srcomGameTwitch] = yield helpers_1.to(srcom_api_1.searchForTwitchGame(runData.game));
+            const [, srcomGameTwitch] = yield (0, helpers_1.to)((0, srcom_api_1.searchForTwitchGame)(runData.game));
             gameTwitch = srcomGameTwitch || runData.game;
         }
+        // TDO: Is this extra lookup needed if the next one just kinda does it anyway?
         if (gameTwitch) { // Verify game directory supplied exists on Twitch.
-            gameTwitch = (_a = (yield helpers_1.to(twitch_api_1.verifyTwitchDir(gameTwitch)))[1]) === null || _a === void 0 ? void 0 : _a.name;
+            gameTwitch = (_a = (yield (0, helpers_1.to)((0, twitch_api_1.verifyTwitchDir)(gameTwitch)))[1]) === null || _a === void 0 ? void 0 : _a.name;
         }
-        helpers_1.to(twitch_api_1.updateChannelInfo(status, gameTwitch || helpers_1.bundleConfig().twitch.streamDefaultGame));
+        (0, helpers_1.to)((0, twitch_api_1.updateChannelInfo)(status, gameTwitch || (0, helpers_1.bundleConfig)().twitch.streamDefaultGame));
         // Construct/send featured channels if enabled.
-        if (helpers_1.bundleConfig().twitch.ffzIntegration) {
-            helpers_1.to(ffz_ws_1.setChannels(helpers_1.getTwitchChannels(runData)));
+        if ((0, helpers_1.bundleConfig)().twitch.ffzIntegration) {
+            (0, helpers_1.to)((0, ffz_ws_1.setChannels)((0, helpers_1.getTwitchChannels)(runData)));
         }
         return !gameTwitch;
     });
@@ -132,8 +133,8 @@ function changeActiveRun(id) {
             }
             else {
                 const noTwitchGame = yield updateTwitchInformation(runData);
-                replicants_1.runDataActiveRun.value = clone_1.default(runData);
-                helpers_1.to(timer_1.resetTimer(true));
+                replicants_1.runDataActiveRun.value = (0, clone_1.default)(runData);
+                (0, helpers_1.to)((0, timer_1.resetTimer)(true));
                 nodecg.log.debug(`[Run Control] Active run changed to ${id}`);
                 return noTwitchGame;
             }
@@ -213,8 +214,8 @@ function modifyRun(runData, prevID, twitch = false) {
             // Verify and convert estimate.
             if (data.estimate) {
                 if (data.estimate.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-                    const ms = helpers_1.timeStrToMS(data.estimate);
-                    data.estimate = helpers_1.msToTimeStr(ms);
+                    const ms = (0, helpers_1.timeStrToMS)(data.estimate);
+                    data.estimate = (0, helpers_1.msToTimeStr)(ms);
                     data.estimateS = ms / 1000;
                 }
                 else { // Throw error if format is incorrect.
@@ -228,8 +229,8 @@ function modifyRun(runData, prevID, twitch = false) {
             // Verify and convert setup time.
             if (data.setupTime) {
                 if (data.setupTime.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
-                    const ms = helpers_1.timeStrToMS(data.setupTime);
-                    data.setupTime = helpers_1.msToTimeStr(ms);
+                    const ms = (0, helpers_1.timeStrToMS)(data.setupTime);
+                    data.setupTime = (0, helpers_1.msToTimeStr)(ms);
                     data.setupTimeS = ms / 1000;
                 }
                 else { // Throw error if format is incorrect.
@@ -240,16 +241,16 @@ function modifyRun(runData, prevID, twitch = false) {
                 delete data.setupTime;
                 delete data.setupTimeS;
             }
-            const index = helpers_1.findRunIndexFromId(data.id);
+            const index = (0, helpers_1.findRunIndexFromId)(data.id);
             if (index >= 0) { // Run already exists, edit it.
                 if (replicants_1.runDataActiveRun.value && data.id === replicants_1.runDataActiveRun.value.id) {
-                    replicants_1.runDataActiveRun.value = clone_1.default(data);
+                    replicants_1.runDataActiveRun.value = (0, clone_1.default)(data);
                 }
-                replicants_1.runDataArray.value[index] = clone_1.default(data);
+                replicants_1.runDataArray.value[index] = (0, clone_1.default)(data);
             }
             else { // Run is new, add it.
-                const prevIndex = helpers_1.findRunIndexFromId(prevID);
-                replicants_1.runDataArray.value.splice(prevIndex + 1 || replicants_1.runDataArray.value.length, 0, clone_1.default(data));
+                const prevIndex = (0, helpers_1.findRunIndexFromId)(prevID);
+                replicants_1.runDataArray.value.splice(prevIndex + 1 || replicants_1.runDataArray.value.length, 0, (0, clone_1.default)(data));
             }
             const noTwitchGame = (twitch) ? yield updateTwitchInformation(runData) : false;
             return noTwitchGame;
@@ -269,7 +270,7 @@ function modifyRun(runData, prevID, twitch = false) {
 function modifyRelayPlayerID(runID, teamID, playerID) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const run = clone_1.default(replicants_1.runDataArray.value.find((r) => r.id === runID));
+            const run = (0, clone_1.default)(replicants_1.runDataArray.value.find((r) => r.id === runID));
             if (!run) {
                 throw new Error(`Run with ID ${runID} was not found`);
             }
@@ -303,7 +304,7 @@ function removeActiveRun() {
                 throw new Error('Timer is running/paused');
             }
             replicants_1.runDataActiveRun.value = undefined;
-            helpers_1.to(timer_1.resetTimer(true));
+            (0, helpers_1.to)((0, timer_1.resetTimer)(true));
             nodecg.log.debug('[Run Control] Successfully removed active run');
         }
         catch (err) {
@@ -322,7 +323,7 @@ function removeAllRuns() {
             }
             replicants_1.runDataArray.value.length = 0;
             removeActiveRun();
-            helpers_1.to(timer_1.resetTimer(true));
+            (0, helpers_1.to)((0, timer_1.resetTimer)(true));
             nodecg.log.debug('[Run Control] Successfully removed all runs');
         }
         catch (err) {
@@ -334,84 +335,84 @@ function removeAllRuns() {
 // NodeCG messaging system.
 nodecg.listenFor('changeActiveRun', (id, ack) => {
     changeActiveRun(id)
-        .then((noTwitchGame) => helpers_1.processAck(ack, null, noTwitchGame))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then((noTwitchGame) => (0, helpers_1.processAck)(ack, null, noTwitchGame))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('removeRun', (id, ack) => {
     removeRun(id)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('modifyRun', (data, ack) => {
     modifyRun(data.runData, data.prevID, data.updateTwitch)
-        .then((noTwitchGame) => helpers_1.processAck(ack, null, noTwitchGame))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then((noTwitchGame) => (0, helpers_1.processAck)(ack, null, noTwitchGame))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('modifyRelayPlayerID', (data, ack) => {
     modifyRelayPlayerID(data.runID, data.teamID, data.playerID)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('changeToNextRun', (data, ack) => {
     changeActiveRun(replicants_1.runDataActiveRunSurrounding.value.next)
-        .then((noTwitchGame) => helpers_1.processAck(ack, null, noTwitchGame))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then((noTwitchGame) => (0, helpers_1.processAck)(ack, null, noTwitchGame))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('returnToStart', (data, ack) => {
     removeActiveRun()
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('removeAllRuns', (data, ack) => {
     removeAllRuns()
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 // Our messaging system.
 events.listenFor('changeActiveRun', (id, ack) => {
     changeActiveRun(id)
         .then((noTwitchGame) => {
-        helpers_1.processAck(ack, null, noTwitchGame);
+        (0, helpers_1.processAck)(ack, null, noTwitchGame);
         if (noTwitchGame) {
             nodecg.sendMessage('triggerAlert', 'NoTwitchGame');
         }
     })
-        .catch((err) => helpers_1.processAck(ack, err));
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('removeRun', (id, ack) => {
     removeRun(id)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('modifyRun', (data, ack) => {
     modifyRun(data.runData, data.prevID, data.updateTwitch)
-        .then((noTwitchGame) => helpers_1.processAck(ack, null, noTwitchGame))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then((noTwitchGame) => (0, helpers_1.processAck)(ack, null, noTwitchGame))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('modifyRelayPlayerID', (data, ack) => {
     modifyRelayPlayerID(data.runID, data.teamID, data.playerID)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('changeToNextRun', (data, ack) => {
     changeActiveRun(replicants_1.runDataActiveRunSurrounding.value.next)
         .then((noTwitchGame) => {
-        helpers_1.processAck(ack, null, noTwitchGame);
+        (0, helpers_1.processAck)(ack, null, noTwitchGame);
         if (noTwitchGame) {
             nodecg.sendMessage('triggerAlert', 'NoTwitchGame');
         }
     })
-        .catch((err) => helpers_1.processAck(ack, err));
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('returnToStart', (data, ack) => {
     removeActiveRun()
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('removeAllRuns', (data, ack) => {
     removeAllRuns()
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 replicants_1.runDataActiveRun.on('change', changeSurroundingRuns);
 replicants_1.runDataArray.on('change', changeSurroundingRuns);

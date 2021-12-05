@@ -7,16 +7,16 @@ const nodecg_1 = require("./nodecg");
  * This is where you can declare all your replicant to import easily into other files,
  * and to make sure they have any correct settings on startup.
  */
-exports.defaultSetupTime = nodecg_1.get().Replicant('defaultSetupTime');
-exports.horaroImportSavedOpts = nodecg_1.get().Replicant('horaroImportSavedOpts');
-exports.horaroImportStatus = nodecg_1.get().Replicant('horaroImportStatus', { persistent: false });
-exports.oengusImportStatus = nodecg_1.get().Replicant('oengusImportStatus', { persistent: false });
-exports.runDataActiveRun = nodecg_1.get().Replicant('runDataActiveRun');
-exports.runDataActiveRunSurrounding = nodecg_1.get().Replicant('runDataActiveRunSurrounding');
-exports.runDataArray = nodecg_1.get().Replicant('runDataArray');
-exports.runFinishTimes = nodecg_1.get().Replicant('runFinishTimes');
-exports.timer = nodecg_1.get().Replicant('timer', { persistenceInterval: 100 });
-exports.timerChangesDisabled = nodecg_1.get().Replicant('timerChangesDisabled');
-exports.twitchAPIData = nodecg_1.get().Replicant('twitchAPIData');
-exports.twitchChannelInfo = nodecg_1.get().Replicant('twitchChannelInfo');
-exports.twitchCommercialTimer = nodecg_1.get().Replicant('twitchCommercialTimer');
+exports.defaultSetupTime = (0, nodecg_1.get)().Replicant('defaultSetupTime');
+exports.horaroImportSavedOpts = (0, nodecg_1.get)().Replicant('horaroImportSavedOpts');
+exports.horaroImportStatus = (0, nodecg_1.get)().Replicant('horaroImportStatus', { persistent: false });
+exports.oengusImportStatus = (0, nodecg_1.get)().Replicant('oengusImportStatus', { persistent: false });
+exports.runDataActiveRun = (0, nodecg_1.get)().Replicant('runDataActiveRun');
+exports.runDataActiveRunSurrounding = (0, nodecg_1.get)().Replicant('runDataActiveRunSurrounding');
+exports.runDataArray = (0, nodecg_1.get)().Replicant('runDataArray');
+exports.runFinishTimes = (0, nodecg_1.get)().Replicant('runFinishTimes');
+exports.timer = (0, nodecg_1.get)().Replicant('timer', { persistenceInterval: 100 });
+exports.timerChangesDisabled = (0, nodecg_1.get)().Replicant('timerChangesDisabled');
+exports.twitchAPIData = (0, nodecg_1.get)().Replicant('twitchAPIData');
+exports.twitchChannelInfo = (0, nodecg_1.get)().Replicant('twitchChannelInfo');
+exports.twitchCommercialTimer = (0, nodecg_1.get)().Replicant('twitchCommercialTimer');

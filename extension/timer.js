@@ -39,7 +39,7 @@ const events = __importStar(require("./util/events"));
 const helpers_1 = require("./util/helpers");
 const nodecg_1 = require("./util/nodecg");
 const replicants_1 = require("./util/replicants");
-const nodecg = nodecg_1.get();
+const nodecg = (0, nodecg_1.get)();
 let timer;
 // Cross references for LiveSplit's TimerPhases.
 const LS_TIMER_PHASE = {
@@ -67,7 +67,7 @@ function resetTimerRepToDefault() {
  * @param ms Milliseconds you want to set the timer replicant at.
  */
 function setTime(ms) {
-    replicants_1.timer.value.time = helpers_1.msToTimeStr(ms);
+    replicants_1.timer.value.time = (0, helpers_1.msToTimeStr)(ms);
     replicants_1.timer.value.milliseconds = ms;
     // nodecg.log.debug(`[Timer] Set to ${msToTimeStr(ms)}/${ms}`);
 }
@@ -196,7 +196,7 @@ function stopTimer(id, forfeit) {
             }
             // If we have a UUID and an active run, set that team as finished.
             if (id && replicants_1.runDataActiveRun.value) {
-                const timerRepCopy = Object.assign(Object.assign({}, clone_1.default(replicants_1.timer.value)), { teamFinishTimes: undefined, state: undefined });
+                const timerRepCopy = Object.assign(Object.assign({}, (0, clone_1.default)(replicants_1.timer.value)), { teamFinishTimes: undefined, state: undefined });
                 delete timerRepCopy.teamFinishTimes;
                 delete timerRepCopy.state;
                 replicants_1.timer.value.teamFinishTimes[id] = Object.assign(Object.assign({}, timerRepCopy), { state: (forfeit) ? 'forfeit' : 'completed' });
@@ -212,7 +212,7 @@ function stopTimer(id, forfeit) {
                 timer.split();
                 replicants_1.timer.value.state = 'finished';
                 if (replicants_1.runDataActiveRun.value) {
-                    replicants_1.runFinishTimes.value[replicants_1.runDataActiveRun.value.id] = clone_1.default(replicants_1.timer.value);
+                    replicants_1.runFinishTimes.value[replicants_1.runDataActiveRun.value.id] = (0, clone_1.default)(replicants_1.timer.value);
                 }
                 nodecg.log.debug('[Timer] Finished');
             }
@@ -288,7 +288,7 @@ function editTimer(time) {
             if (!time.match(/^(\d+:)?(?:\d{1}|\d{2}):\d{2}$/)) {
                 throw new Error('The supplied string is in the incorrect format');
             }
-            const ms = helpers_1.timeStrToMS(time);
+            const ms = (0, helpers_1.timeStrToMS)(time);
             setTime(ms);
             nodecg.log.debug(`[Timer] Edited to ${time}/${ms}`);
         }
@@ -327,63 +327,63 @@ if (replicants_1.timer.value.state === 'running') {
 // NodeCG messaging system.
 nodecg.listenFor('timerStart', (data, ack) => {
     startTimer()
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('timerPause', (data, ack) => {
     pauseTimer()
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('timerReset', (force, ack) => {
     resetTimer(force)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('timerStop', (data, ack) => {
     stopTimer(data.id, data.forfeit)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('timerUndo', (id, ack) => {
     undoTimer(id)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('timerEdit', (time, ack) => {
     editTimer(time)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 // Our messaging system.
 events.listenFor('timerStart', (data, ack) => {
     startTimer()
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('timerPause', (data, ack) => {
     pauseTimer()
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('timerReset', (force, ack) => {
     resetTimer(force)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('timerStop', (data, ack) => {
     stopTimer(data.id, data.forfeit)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('timerUndo', (id, ack) => {
     undoTimer(id)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('timerEdit', (time, ack) => {
     editTimer(time)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 setInterval(tick, 100);

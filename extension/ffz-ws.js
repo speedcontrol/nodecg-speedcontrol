@@ -41,8 +41,8 @@ const events = __importStar(require("./util/events"));
 const helpers_1 = require("./util/helpers"); // eslint-disable-line object-curly-newline, max-len
 const nodecg_1 = require("./util/nodecg");
 const replicants_1 = require("./util/replicants");
-const nodecg = nodecg_1.get();
-const config = helpers_1.bundleConfig();
+const nodecg = (0, nodecg_1.get)();
+const config = (0, helpers_1.bundleConfig)();
 let ws;
 let msgNo = 1;
 let pingTO;
@@ -102,7 +102,7 @@ function sendAuth(auth) {
             }
             catch (err) {
                 if (err.includes('authentication failed') && attempts <= 1) {
-                    yield helpers_1.to(twitch_api_1.refreshToken());
+                    yield (0, helpers_1.to)((0, twitch_api_1.refreshToken)());
                     opts.identity.password = replicants_1.twitchAPIData.value.accessToken; // Update auth in opts.
                     retry = true;
                 }
@@ -145,7 +145,7 @@ function setChannels(names) {
             }
         }
         else { // Send out message for external code to listen to.
-            helpers_1.to(events.sendMessage('repeaterFeaturedChannels', toSend));
+            (0, helpers_1.to)(events.sendMessage('repeaterFeaturedChannels', toSend));
             nodecg.sendMessage('repeaterFeaturedChannels', toSend);
             nodecg.log.info('[FrankerFaceZ] Featured channels being sent to repeater code');
             replicants_1.twitchAPIData.value.featuredChannels = toSend;
@@ -186,7 +186,7 @@ function ping() {
  * Picks a server to connect to randomly.
  */
 function pickServer() {
-    switch (helpers_1.randomInt(0, 20)) {
+    switch ((0, helpers_1.randomInt)(0, 20)) {
         default:
         case 0:
             return 'wss://catbag.frankerfacez.com/';
@@ -228,7 +228,7 @@ function sendInitMsgs() {
             `sub "channel.${replicants_1.twitchAPIData.value.channelName}"`,
             'ready 0',
         ];
-        yield p_iteration_1.forEachSeries(messagesToSend, (msg) => __awaiter(this, void 0, void 0, function* () {
+        yield (0, p_iteration_1.forEachSeries)(messagesToSend, (msg) => __awaiter(this, void 0, void 0, function* () {
             yield sendMsg(msg);
         }));
     });
@@ -298,12 +298,12 @@ if (config.twitch.enabled && config.twitch.ffzIntegration) {
 // NodeCG messaging system.
 nodecg.listenFor('updateFeaturedChannels', (names, ack) => {
     setChannels(names)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 // Our messaging system.
 events.listenFor('updateFeaturedChannels', (names, ack) => {
     setChannels(names)
-        .then(() => helpers_1.processAck(ack, null))
-        .catch((err) => helpers_1.processAck(ack, err));
+        .then(() => (0, helpers_1.processAck)(ack, null))
+        .catch((err) => (0, helpers_1.processAck)(ack, err));
 });

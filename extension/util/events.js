@@ -33,7 +33,7 @@ function wrapAck(ack) {
  */
 function sendMessage(name, data) {
     return new Promise((resolve, reject) => {
-        nodecg_1.get().log.debug(`[Events] sendMessage triggered for "${name}":`, JSON.stringify(data));
+        (0, nodecg_1.get)().log.debug(`[Events] sendMessage triggered for "${name}":`, JSON.stringify(data));
         emitter.emit(name, data, wrapAck((err, data_) => {
             if (err) {
                 reject(err);
@@ -51,7 +51,7 @@ exports.sendMessage = sendMessage;
  * @param callback Function that will be called when message received.
  */
 function listenFor(name, callback) {
-    nodecg_1.get().log.debug(`[Events] listenFor added for "${name}"`);
+    (0, nodecg_1.get)().log.debug(`[Events] listenFor added for "${name}"`);
     emitter.on(name, (data, ack) => {
         callback(data, ack);
     });

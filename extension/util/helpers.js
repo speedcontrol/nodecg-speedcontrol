@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTwitterUserFromURL = exports.getTwitchUserFromURL = exports.checkGameAgainstIgnoreList = exports.randomInt = exports.to = exports.processAck = exports.bundleConfig = exports.findRunIndexFromId = exports.sleep = exports.msToTimeStr = exports.timeStrToMS = exports.padTimeNumber = exports.getTwitchChannels = exports.formPlayerNamesStr = void 0;
 const lodash_1 = __importDefault(require("lodash"));
 const nodecg_1 = require("./nodecg");
-const nodecg = nodecg_1.get();
+const nodecg = (0, nodecg_1.get)();
 /**
  * Takes a run data object and returns a formed string of the player names.
  * @param runData Run Data object.
