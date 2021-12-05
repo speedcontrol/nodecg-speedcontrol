@@ -28,6 +28,7 @@ async function get(endpoint: string): Promise<NeedleResponse> {
         headers: {
           'User-Agent': 'nodecg-speedcontrol',
           Accept: 'application/json',
+          'oengus-version': '1',
         },
       },
     );
@@ -130,7 +131,8 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
       runData.setupTimeS = toSeconds(parsedSetup);
       if (line.setupBlock) {
         // Game name set to "Setup" if the line is a setup block.
-        runData.game = 'Setup';
+        runData.game = line.setupBlockText || 'Setup';
+        runData.gameTwitch = 'Just Chatting';
         // Estimate for a setup block will be the setup time instead.
         runData.estimate = runData.setupTime;
         runData.estimateS = runData.setupTimeS;

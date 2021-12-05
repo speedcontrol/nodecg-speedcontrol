@@ -18,6 +18,7 @@ export interface OengusLine {
   estimate: string;
   setupTime: string;
   setupBlock: boolean;
+  setupBlockText: string | null;
   customRun: boolean;
   position: number;
   categoryId: number | null;
