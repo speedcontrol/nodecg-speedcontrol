@@ -158,6 +158,7 @@ async function importSchedule(optsO: ImportOptions, dashID: string): Promise<voi
       // Attempts to find the correct Twitch game directory.
       const game = parseMarkdown(run.data[opts.columns.game]);
       let gameTwitch = parseMarkdown(run.data[opts.columns.gameTwitch]).str;
+      // TODO: Don't even try to look up Twitch directory if we can't verify it!
       let srcomGameTwitch;
       if (!(config.schedule || config.horaro).disableSpeedrunComLookup && !gameTwitch) {
         if (game.url && game.url.includes('speedrun.com')) {

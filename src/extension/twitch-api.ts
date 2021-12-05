@@ -164,6 +164,7 @@ async function refreshChannelInfo(): Promise<void> {
   }
 }
 
+// TODO: Add delay to this?
 /**
  * Returns the correct name of a game in the Twitch directory based on a search.
  * @param query String you wish to try to find a game with.
