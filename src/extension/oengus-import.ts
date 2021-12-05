@@ -28,6 +28,7 @@ async function get(endpoint: string): Promise<NeedleResponse> {
         headers: {
           'User-Agent': 'nodecg-speedcontrol',
           Accept: 'application/json',
+          'oengus-version': '1',
         },
       },
     );
