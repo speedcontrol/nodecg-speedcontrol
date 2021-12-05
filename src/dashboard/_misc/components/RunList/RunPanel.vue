@@ -132,7 +132,7 @@ export default class extends Vue {
   get playerStr(): string {
     return this.runData.teams.map((team) => (
       `${team.name ? `${team.name}:` : ''}
-      ${team.players.map((player) => player.name).join(', ')}`
+      ${team.players.map((player) => player.pronouns ? `${player.name} [${player.pronouns}]` : player.name).join(', ')}`
     )).join(' vs. ');
   }
 
