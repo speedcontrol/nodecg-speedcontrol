@@ -11,8 +11,11 @@ import { listenFor, sendMessage } from './util/events';
 import { set } from './util/nodecg';
 
 export = (nodecg: NodeCG): ExtensionReturn => {
+  /**
+   * Because of how `import`s work, it helps to use `require`s to force
+   * things to be loaded *after* the NodeCG context is set.
+   */
   set(nodecg);
-
   require('./run-control');
   require('./timer');
   require('./horaro-import');

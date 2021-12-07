@@ -55,7 +55,7 @@ jobs:
     - name: Node.js setup
       uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '16'
 
     # Set NPM cache options
     - name: Set NPM cache

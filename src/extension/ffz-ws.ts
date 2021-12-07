@@ -161,8 +161,6 @@ function ping(): void {
  */
 function pickServer(): string {
   switch (randomInt(0, 20)) {
-    default: case 0:
-      return 'wss://catbag.frankerfacez.com/';
     case 1: case 2: case 3:
       return 'wss://andknuckles.frankerfacez.com/';
     case 4: case 5: case 6: case 7:
@@ -173,6 +171,8 @@ function pickServer(): string {
       return 'wss://yoohoo.frankerfacez.com/';
     case 16: case 17: case 18: case 19:
       return 'wss://pog.frankerfacez.com/';
+    case 0: default:
+      return 'wss://catbag.frankerfacez.com/';
   }
 }
 
