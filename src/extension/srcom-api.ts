@@ -134,13 +134,13 @@ export async function searchForUserData(
       const exact = results.find((user) => {
         const exactToCheck = (() => {
           switch (type) {
-            case 'name':
-            default:
-              return user.names.international;
             case 'twitch':
               return getTwitchUserFromURL(user.twitch?.uri);
             case 'twitter':
               return getTwitterUserFromURL(user.twitter?.uri);
+            case 'name':
+            default:
+              return user.names.international;
           }
         })();
         return exactToCheck

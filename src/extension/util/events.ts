@@ -58,9 +58,7 @@ export function listenFor<K extends keyof SendMessageArgsMap>(
   callback: (data: SendMessageArgsMap[K], ack: SendMessageAck) => void,
 ): void {
   nodecg().log.debug(`[Events] listenFor added for "${name}"`);
-  emitter.on(name, (
-    data: SendMessageArgsMap[K], ack: SendMessageAck,
-  ) => {
+  emitter.on(name, (data: SendMessageArgsMap[K], ack: SendMessageAck) => {
     callback(data, ack);
   });
 }

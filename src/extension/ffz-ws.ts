@@ -28,11 +28,11 @@ function sendMsg(msg: string): Promise<string> {
     ws.send(`${msgNo} ${msg}`);
     const thisMsgNo = msgNo;
     msgNo += 1;
-    const msgEvt = (data: string): void => {
-      if (ws && data.includes(`${thisMsgNo} ok`)) {
+    const msgEvt = (data: WebSocket.RawData): void => {
+      if (ws && data.toString().includes(`${thisMsgNo} ok`)) {
         nodecg.log.debug(`[FrankerFaceZ] Message was successful: ${thisMsgNo} ${msg}`);
         ws.removeListener('message', msgEvt);
-        resolve(data.substr(data.indexOf(' ') + 1));
+        resolve(data.toString().substring(data.toString().indexOf(' ') + 1));
       }
     };
     ws.on('message', msgEvt);
@@ -109,7 +109,7 @@ export async function setChannels(names: string[]): Promise<void> {
           toSend,
         ])}`,
       );
-      const clients = JSON.parse(msg.substr(3)).updated_clients;
+      const clients = JSON.parse(msg.substring(3)).updated_clients;
       nodecg.log.info(`[FrankerFaceZ] Featured channels have been updated for ${clients} viewers`);
     } catch (err) {
       nodecg.log.warn('[FrankerFaceZ] Featured channels could not successfully be updated');
@@ -161,8 +161,6 @@ function ping(): void {
  */
 function pickServer(): string {
   switch (randomInt(0, 20)) {
-    default: case 0:
-      return 'wss://catbag.frankerfacez.com/';
     case 1: case 2: case 3:
       return 'wss://andknuckles.frankerfacez.com/';
     case 4: case 5: case 6: case 7:
@@ -173,6 +171,8 @@ function pickServer(): string {
       return 'wss://yoohoo.frankerfacez.com/';
     case 16: case 17: case 18: case 19:
       return 'wss://pog.frankerfacez.com/';
+    case 0: default:
+      return 'wss://catbag.frankerfacez.com/';
   }
 }
 
@@ -225,20 +225,20 @@ function connect(): void {
     }
   });
 
-  ws.on('message', (data: string) => {
-    if (data.startsWith('-1')) {
+  ws.on('message', (data) => {
+    if (data.toString().startsWith('-1')) {
       // If we need to authorize, gets the auth code and does that.
       // Original command will still be executed once authed,
       // so no need for any other checking.
-      if (data.includes('do_authorize')) {
-        sendAuth(JSON.parse(data.substr(16)));
+      if (data.toString().includes('do_authorize')) {
+        sendAuth(JSON.parse(data.toString().substring(16)));
       }
 
       // This is returned when the follower buttons are updated
       // (including through this application).
-      if (data.includes('follow_buttons')) {
+      if (data.toString().includes('follow_buttons')) {
         nodecg.log.debug('[FrankerFaceZ] Received follow_buttons');
-        const channels: string[] = JSON.parse(data.substr(18))[
+        const channels: string[] = JSON.parse(data.toString().substring(18))[
           twitchAPIData.value.channelName as string
         ];
         twitchAPIData.value.featuredChannels.splice(

@@ -1,7 +1,3 @@
-/**
- * Some stuff is commented out that may need re-enabling if necessary.
- */
-
 module.exports = {
   root: true,
   env: {
@@ -15,6 +11,7 @@ module.exports = {
     '@typescript-eslint',
   ],
   extends: [
+    'airbnb-base',
     'airbnb-typescript/base',
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
@@ -58,8 +55,6 @@ module.exports = {
       'import/prefer-default-export': 'off',
       // Types are only used for development (usually!) so dev dependencies are fine.
       'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
-
-      // 'camelcase': 'off',
     }
   }],
 };

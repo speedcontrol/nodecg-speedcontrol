@@ -51,14 +51,14 @@ export default class extends Vue {
 
   get bgColour(): string {
     switch (this.timer.state) {
-      case 'stopped':
-      case 'paused':
-      default:
-        return '#455A64';
       case 'running':
         return '';
       case 'finished':
         return '#388E3C';
+      case 'stopped':
+      case 'paused':
+      default:
+        return '#455A64';
     }
   }
 

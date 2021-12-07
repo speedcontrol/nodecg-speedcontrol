@@ -64,9 +64,9 @@ async function updateTwitchInformation(runData: RunData): Promise<boolean> {
 
   // Constructing Twitch title and game to send off.
   const status = bundleConfig().twitch.streamTitle
-    .replace(new RegExp('{{game}}', 'g'), runData.game || '')
-    .replace(new RegExp('{{players}}', 'g'), formPlayerNamesStr(runData))
-    .replace(new RegExp('{{category}}', 'g'), runData.category || '');
+    .replace(/{{game}}/g, runData.game || '')
+    .replace(/{{players}}/g, formPlayerNamesStr(runData))
+    .replace(/{{category}}/g, runData.category || '');
 
   // Attempts to find the correct Twitch game directory.
   let { gameTwitch } = runData;

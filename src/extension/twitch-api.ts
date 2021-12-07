@@ -90,9 +90,8 @@ export async function refreshToken(): Promise<void> {
 /**
  * Make a request to Twitch API.
  */
-async function request(
-  method: NeedleHttpVerbs, endpoint: string, data: BodyData = null, newAPI = false,
-): Promise<NeedleResponse> {
+// eslint-disable-next-line max-len
+async function request(method: NeedleHttpVerbs, endpoint: string, data: BodyData = null, newAPI = false): Promise<NeedleResponse> {
   const ep = `/${newAPI ? 'helix' : 'kraken'}${endpoint}`;
   try {
     nodecg.log.debug(`[Twitch] API ${method.toUpperCase()} request processing on ${ep}`);
