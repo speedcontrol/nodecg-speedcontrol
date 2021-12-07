@@ -60,10 +60,10 @@ function sendMsg(msg) {
         const thisMsgNo = msgNo;
         msgNo += 1;
         const msgEvt = (data) => {
-            if (ws && data.includes(`${thisMsgNo} ok`)) {
+            if (ws && data.toString().includes(`${thisMsgNo} ok`)) {
                 nodecg.log.debug(`[FrankerFaceZ] Message was successful: ${thisMsgNo} ${msg}`);
                 ws.removeListener('message', msgEvt);
-                resolve(data.substr(data.indexOf(' ') + 1));
+                resolve(data.toString().substring(data.toString().indexOf(' ') + 1));
             }
         };
         ws.on('message', msgEvt);
@@ -135,7 +135,7 @@ function setChannels(names) {
                     replicants_1.twitchAPIData.value.channelName,
                     toSend,
                 ])}`);
-                const clients = JSON.parse(msg.substr(3)).updated_clients;
+                const clients = JSON.parse(msg.substring(3)).updated_clients;
                 nodecg.log.info(`[FrankerFaceZ] Featured channels have been updated for ${clients} viewers`);
             }
             catch (err) {
@@ -187,9 +187,6 @@ function ping() {
  */
 function pickServer() {
     switch ((0, helpers_1.randomInt)(0, 20)) {
-        default:
-        case 0:
-            return 'wss://catbag.frankerfacez.com/';
         case 1:
         case 2:
         case 3:
@@ -214,6 +211,9 @@ function pickServer() {
         case 18:
         case 19:
             return 'wss://pog.frankerfacez.com/';
+        case 0:
+        default:
+            return 'wss://catbag.frankerfacez.com/';
     }
 }
 /**
@@ -263,18 +263,18 @@ function connect() {
         }
     });
     ws.on('message', (data) => {
-        if (data.startsWith('-1')) {
+        if (data.toString().startsWith('-1')) {
             // If we need to authorize, gets the auth code and does that.
             // Original command will still be executed once authed,
             // so no need for any other checking.
-            if (data.includes('do_authorize')) {
-                sendAuth(JSON.parse(data.substr(16)));
+            if (data.toString().includes('do_authorize')) {
+                sendAuth(JSON.parse(data.toString().substring(16)));
             }
             // This is returned when the follower buttons are updated
             // (including through this application).
-            if (data.includes('follow_buttons')) {
+            if (data.toString().includes('follow_buttons')) {
                 nodecg.log.debug('[FrankerFaceZ] Received follow_buttons');
-                const channels = JSON.parse(data.substr(18))[replicants_1.twitchAPIData.value.channelName];
+                const channels = JSON.parse(data.toString().substring(18))[replicants_1.twitchAPIData.value.channelName];
                 replicants_1.twitchAPIData.value.featuredChannels.splice(0, replicants_1.twitchAPIData.value.featuredChannels.length, ...channels);
             }
         }

@@ -158,13 +158,13 @@ function searchForUserData({ type, val }) {
                     const exactToCheck = (() => {
                         var _a, _b;
                         switch (type) {
-                            case 'name':
-                            default:
-                                return user.names.international;
                             case 'twitch':
                                 return (0, helpers_1.getTwitchUserFromURL)((_a = user.twitch) === null || _a === void 0 ? void 0 : _a.uri);
                             case 'twitter':
                                 return (0, helpers_1.getTwitterUserFromURL)((_b = user.twitter) === null || _b === void 0 ? void 0 : _b.uri);
+                            case 'name':
+                            default:
+                                return user.names.international;
                         }
                     })();
                     return exactToCheck

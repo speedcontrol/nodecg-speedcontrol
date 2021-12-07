@@ -93,9 +93,9 @@ function updateTwitchInformation(runData) {
         }
         // Constructing Twitch title and game to send off.
         const status = (0, helpers_1.bundleConfig)().twitch.streamTitle
-            .replace(new RegExp('{{game}}', 'g'), runData.game || '')
-            .replace(new RegExp('{{players}}', 'g'), (0, helpers_1.formPlayerNamesStr)(runData))
-            .replace(new RegExp('{{category}}', 'g'), runData.category || '');
+            .replace(/{{game}}/g, runData.game || '')
+            .replace(/{{players}}/g, (0, helpers_1.formPlayerNamesStr)(runData))
+            .replace(/{{category}}/g, runData.category || '');
         // Attempts to find the correct Twitch game directory.
         let { gameTwitch } = runData;
         if (!gameTwitch && runData.game) {

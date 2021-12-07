@@ -7,6 +7,10 @@ require('module-alias').addAlias('@nodecg-speedcontrol', require('path').join(__
 const events_1 = require("./util/events");
 const nodecg_1 = require("./util/nodecg");
 module.exports = (nodecg) => {
+    /**
+     * Because of how `import`s work, it helps to use `require`s to force
+     * things to be loaded *after* the NodeCG context is set.
+     */
     (0, nodecg_1.set)(nodecg);
     require('./run-control');
     require('./timer');

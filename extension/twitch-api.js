@@ -111,6 +111,7 @@ exports.refreshToken = refreshToken;
 /**
  * Make a request to Twitch API.
  */
+// eslint-disable-next-line max-len
 function request(method, endpoint, data = null, newAPI = false) {
     return __awaiter(this, void 0, void 0, function* () {
         const ep = `/${newAPI ? 'helix' : 'kraken'}${endpoint}`;
