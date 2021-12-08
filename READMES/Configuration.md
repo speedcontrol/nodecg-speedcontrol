@@ -26,6 +26,8 @@ Below is an example configuration file contents with everything that is availabl
     "channelName": "OTHER_CHANNEL",
     "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
     "streamDefaultGame": "Games + Demos",
+    "commercialsExtraButtons": false,
+    "commercialsUseExternal": false,
     "ffzIntegration": false,
     "ffzUseRepeater": false
   },
@@ -95,6 +97,8 @@ The currently available languages are:
     "channelName": "OTHER_CHANNEL",
     "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
     "streamDefaultGame": "Games + Demos",
+    "commercialsExtraButtons": false,
+    "commercialsUseExternal": false,
     "ffzIntegration": false,
     "ffzUseRepeater": false
   }
@@ -121,6 +125,10 @@ There is also another optional parameter, `additionalScopes`, which is an array 
 - `channel:manage:broadcast`
 - `chat:read`
 - `chat:edit`
+
+The `commercialsExtraButtons` option adds more buttons on the *Twitch Control* dashboard panel (3:30 - 6:00); these will only work if your Twitch channel is allowed to run commercials of that length.
+
+The `commercialsUseExternal` is an advanced option; it will stop the internal logic of communicating with Twitch to run commercials, and will make the bundle emit a `twitchExternalCommercial` message that can be picked up by other bundles so you can integrate your own logic; see the [API documentation](API.md) for more information. This is similar to the FrankerFaceZ repeater logic described above.
 
 
 ### Horaro Schedule
