@@ -25,6 +25,7 @@ export interface Configschema {
 		channelName?: string;
 		streamTitle: string;
 		streamDefaultGame: string;
+		commercialsExtraButtons?: boolean;
 		commercialsUseExternal?: boolean;
 		ffzIntegration: boolean;
 		ffzUseRepeater?: boolean;

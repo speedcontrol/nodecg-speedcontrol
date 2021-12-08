@@ -141,11 +141,12 @@
       <template v-if="['affiliate', 'partner'].includes(apiData.broadcasterType)">
         <div
           v-if="timer.secondsRemaining <= 0"
-          class="d-flex justify-center align-center mt-2"
+          class="d-flex justify-center align-center"
         >
           <div
-            class="flex-grow-1"
+            class="mt-2 mr-1"
             :style="{
+              'min-width': '78px',
               'font-size': '0.9em',
               'line-height': '100%',
               'text-align': 'center',
@@ -153,16 +154,23 @@
           >
             {{ $t('startCommercial') }}
           </div>
-          <v-btn
-            v-for="(len, i) in [30, 60, 90, 120, 150, 180]"
-            :key="i"
-            class="ml-1"
-            :style="{ padding: '0 6px' }"
-            :min-width="0"
-            @click="startCommercial(len)"
+          <div
+            :class="{
+              'd-flex': true,
+              'flex-wrap': config.commercialsExtraButtons,
+            }"
           >
-            {{ formatSeconds(len) }}
-          </v-btn>
+            <v-btn
+              v-for="(len, i) in commercialLengths"
+              :key="i"
+              class="mt-2 ml-1"
+              :style="{ padding: '0 6px' }"
+              :min-width="0"
+              @click="startCommercial(len)"
+            >
+              {{ formatSeconds(len) }}
+            </v-btn>
+          </div>
         </div>
         <v-btn
           v-else
@@ -239,6 +247,14 @@ export default class extends Vue {
     + '&response_type=code'
     + `&scope=${scopes.join('+')}`
     + '&force_verify=true';
+  }
+
+  get commercialLengths(): number[] {
+    const lengths = [30, 60, 90, 120, 150, 180];
+    if (this.config.commercialsExtraButtons) {
+      lengths.push(...[210, 240, 270, 300, 330, 360]);
+    }
+    return lengths;
   }
 
   get commercialTimeRemaining(): string {
