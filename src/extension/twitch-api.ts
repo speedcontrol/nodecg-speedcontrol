@@ -413,12 +413,12 @@ nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
 });
 nodecg.listenFor('twitchStartCommercial', (data, ack) => {
   startCommercial(data.duration)
-    .then(() => processAck(ack, null))
+    .then((resp) => processAck(ack, null, resp))
     .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('playTwitchAd', (data, ack) => { // Legacy
   startCommercial(data.duration)
-    .then(() => processAck(ack, null))
+    .then((resp) => processAck(ack, null, resp))
     .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('twitchStartCommercialTimer', (data, ack) => {
@@ -448,7 +448,7 @@ events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
 });
 events.listenFor('twitchStartCommercial', (data, ack) => {
   startCommercial(data.duration)
-    .then(() => processAck(ack, null))
+    .then((resp) => processAck(ack, null, resp))
     .catch((err) => processAck(ack, err));
 });
 events.listenFor('twitchStartCommercialTimer', (data, ack) => {
