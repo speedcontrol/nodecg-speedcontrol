@@ -25,8 +25,8 @@ export interface SendMessageArgsMap {
 
   // Twitch
   twitchCommercialStarted: { duration: CommercialDuration };
-  twitchStartCommercial: { duration?: CommercialDuration };
-  twitchExternalCommercial: { duration: CommercialDuration };
+  twitchStartCommercial: { duration?: CommercialDuration, fromDashboard?: boolean };
+  twitchExternalCommercial: { duration: CommercialDuration, fromDashboard: boolean };
   twitchStartCommercialTimer: { duration: CommercialDuration };
   twitchUpdateChannelInfo: { status?: string; game?: string };
   twitchAPIRequest: {
@@ -65,7 +65,7 @@ export interface SendMessageReturnMap {
   // Twitch
   twitchCommercialStarted: void;
   twitchStartCommercial: { duration: CommercialDuration };
-  twitchExternalCommercial: void;
+  twitchExternalCommercial: { duration: CommercialDuration };
   twitchStartCommercialTimer: void;
   twitchUpdateChannelInfo: boolean;
   twitchAPIRequest: NeedleResponse;

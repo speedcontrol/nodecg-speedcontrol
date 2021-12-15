@@ -320,7 +320,7 @@ export default class extends Vue {
 
   async startCommercial(duration: number): Promise<void> {
     try {
-      await nodecg.sendMessage('twitchStartCommercial', { duration });
+      await nodecg.sendMessage('twitchStartCommercial', { duration, fromDashboard: true });
     } catch (err) {
       // catch
     }

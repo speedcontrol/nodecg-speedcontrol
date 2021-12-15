@@ -274,8 +274,8 @@ function startCommercialTimer(dur: number): void {
 /**
  * Attempts to start a commercial on the set channel.
  */
-async function startCommercial(duration?: CommercialDuration):
-Promise<{ duration: CommercialDuration }> {
+async function startCommercial(duration?: CommercialDuration, fromDashboard = false):
+Promise<{ duration: CommercialDuration, fromDashboard: boolean }> {
   if (twitchAPIData.value.state !== 'on') {
     throw new Error('Integration not ready');
   }
@@ -300,8 +300,8 @@ Promise<{ duration: CommercialDuration }> {
         throw new Error(JSON.stringify(resp.body));
       }
     } else { // Send out message for external code to listen to.
-      to(events.sendMessage('twitchExternalCommercial', { duration: dur }));
-      nodecg.sendMessage('twitchExternalCommercial', { duration: dur });
+      to(events.sendMessage('twitchExternalCommercial', { duration: dur, fromDashboard }));
+      nodecg.sendMessage('twitchExternalCommercial', { duration: dur, fromDashboard });
       nodecg.log.info('[Twitch] Commercial request being sent to external script');
       // Currently we assume it worked and don't get a confirmation.
     }
@@ -311,7 +311,7 @@ Promise<{ duration: CommercialDuration }> {
     nodecg.sendMessage('twitchCommercialStarted', { duration: dur });
     nodecg.sendMessage('twitchAdStarted', { duration: dur }); // Legacy
     to(events.sendMessage('twitchCommercialStarted', { duration: dur }));
-    return { duration: dur };
+    return { duration: dur, fromDashboard };
   } catch (err) {
     nodecg.log.warn('[Twitch] Error starting commercial');
     nodecg.log.debug('[Twitch] Error starting commercial:', err);
@@ -412,12 +412,12 @@ nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('twitchStartCommercial', (data, ack) => {
-  startCommercial(data.duration)
+  startCommercial(data.duration, data.fromDashboard)
     .then((resp) => processAck(ack, null, resp))
     .catch((err) => processAck(ack, err));
 });
 nodecg.listenFor('playTwitchAd', (data, ack) => { // Legacy
-  startCommercial(data.duration)
+  startCommercial(data.duration, data.fromDashboard)
     .then((resp) => processAck(ack, null, resp))
     .catch((err) => processAck(ack, err));
 });
@@ -447,7 +447,7 @@ events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
     .catch((err) => processAck(ack, err));
 });
 events.listenFor('twitchStartCommercial', (data, ack) => {
-  startCommercial(data.duration)
+  startCommercial(data.duration, data.fromDashboard)
     .then((resp) => processAck(ack, null, resp))
     .catch((err) => processAck(ack, err));
 });

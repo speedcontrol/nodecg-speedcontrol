@@ -476,30 +476,33 @@ Removes all of the runs in the `runDataArray` replicant, and also removes the ac
 
 ### Parameters
 - *[`object`]*
-  - `duration` *[`number`]* How long you want the commercial to run for in seconds.
+  - `duration` *[`number`]* (default: `180`) How long you want the commercial to run for in seconds; if not supplied will default to 180s/3m.
+  - `fromDashboard` *[`boolean`]* (default: `false`) If this message was triggered manually via a dashboard panel; internally used on the *Twitch Control* panel.
 ### Data
 - *[`object`]*
   - `duration` *[`number`]* How long the commercial will run for in seconds.
+  - `fromDashboard` *[`boolean`]* If the commercial was triggered via a dashboard button.
 ### Example code (extension/no acknowledgement)
 ```javascript
-nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180 });
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180, fromDashboard: false });
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180 }, (err, data) => {
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180, fromDashboard: false }, (err, data) => {
   ...
 });
 ```
 ### Example code (promise)
 ```javascript
-nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180 })
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180, fromDashboard: false })
   .then((data) => { ... })
   .catch((err) => { ... });
 ```
 ### Example data
 ```javascript
 {
-  duration: 180
+  duration: 180,
+  fromDashboard: false
 }
 ```
 
