@@ -476,23 +476,24 @@ Removes all of the runs in the `runDataArray` replicant, and also removes the ac
 
 ### Parameters
 - *[`object`]*
-  - `duration` *[`number`]* How long you want the commercial to run for in seconds.
+  - `duration` *[`number`]* (default: `180`) How long you want the commercial to run for in seconds; if not supplied will default to 180s/3m.
+  - `fromDashboard` *[`boolean`]* (default: `false`) If this message was triggered manually via a dashboard panel; internally used on the *Twitch Control* panel.
 ### Data
 - *[`object`]*
   - `duration` *[`number`]* How long the commercial will run for in seconds.
 ### Example code (extension/no acknowledgement)
 ```javascript
-nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180 });
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180, fromDashboard: false });
 ```
 ### Example code (callback)
 ```javascript
-nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180 }, (err, data) => {
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180, fromDashboard: false }, (err, data) => {
   ...
 });
 ```
 ### Example code (promise)
 ```javascript
-nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180 })
+nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180, fromDashboard: false })
   .then((data) => { ... })
   .catch((err) => { ... });
 ```
@@ -585,7 +586,7 @@ Used to update the Twitch status (title) and/or game (directory), if the integra
   - `method` *[`string`]* Request HTTP type: `"get"`/`"head"`/`"delete"`/`"patch"`/`"post"`/`"put"`.
   - `endpoint` *[`string`]* Endpoint you wish to request.
   - `data` *[`object` (usually) or `undefined`]* Data, if any, to be sent alongside this request.
-  - `newAPI` *[`boolean` or `undefined`]* If this request is for Twitch's "new" API; if false it will request on the (now deprecated) v5 API.
+  - `newAPI` *[`boolean`]* (default: `false`) If this request is for Twitch's "new" API; if false it will request on the (now deprecated) v5 API.
 ### Data
 - `response` *[`object`]* The received response; see the [needle](https://github.com/tomas/needle) documentation for more information.
 ### Example code (extension/no acknowledgement)
