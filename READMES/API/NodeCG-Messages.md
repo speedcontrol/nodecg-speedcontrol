@@ -481,7 +481,6 @@ Removes all of the runs in the `runDataArray` replicant, and also removes the ac
 ### Data
 - *[`object`]*
   - `duration` *[`number`]* How long the commercial will run for in seconds.
-  - `fromDashboard` *[`boolean`]* If the commercial was triggered via a dashboard button.
 ### Example code (extension/no acknowledgement)
 ```javascript
 nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180, fromDashboard: false });
@@ -501,8 +500,7 @@ nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { dur
 ### Example data
 ```javascript
 {
-  duration: 180,
-  fromDashboard: false
+  duration: 180
 }
 ```
 
