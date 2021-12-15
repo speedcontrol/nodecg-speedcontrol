@@ -304,6 +304,9 @@ Promise<{ duration: CommercialDuration, fromDashboard: boolean }> {
       nodecg.sendMessage('twitchExternalCommercial', { duration: dur, fromDashboard });
       nodecg.log.info('[Twitch] Commercial request being sent to external script');
       // Currently we assume it worked and don't get a confirmation.
+      // Checking *our* event system (server-to-server) isn't too hard, but checking
+      // NodeCG's server-to-server can never work, so for now not implementing it.
+      // For future-proofing, the message's types are set to allow an acknowledgement.
     }
 
     startCommercialTimer(dur);
