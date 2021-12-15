@@ -282,7 +282,7 @@ function startCommercialTimer(dur) {
 /**
  * Attempts to start a commercial on the set channel.
  */
-function startCommercial(duration) {
+function startCommercial(duration, fromDashboard = false) {
     return __awaiter(this, void 0, void 0, function* () {
         if (replicants_1.twitchAPIData.value.state !== 'on') {
             throw new Error('Integration not ready');
@@ -303,17 +303,20 @@ function startCommercial(duration) {
                 }
             }
             else { // Send out message for external code to listen to.
-                (0, helpers_1.to)(events.sendMessage('twitchExternalCommercial', { duration: dur }));
-                nodecg.sendMessage('twitchExternalCommercial', { duration: dur });
+                (0, helpers_1.to)(events.sendMessage('twitchExternalCommercial', { duration: dur, fromDashboard }));
+                nodecg.sendMessage('twitchExternalCommercial', { duration: dur, fromDashboard });
                 nodecg.log.info('[Twitch] Commercial request being sent to external script');
                 // Currently we assume it worked and don't get a confirmation.
+                // Checking *our* event system (server-to-server) isn't too hard, but checking
+                // NodeCG's server-to-server can never work, so for now not implementing it.
+                // For future-proofing, the message's types are set to allow an acknowledgement.
             }
             startCommercialTimer(dur);
             nodecg.log.info(`[Twitch] Commercial started successfully (${dur} seconds)`);
             nodecg.sendMessage('twitchCommercialStarted', { duration: dur });
             nodecg.sendMessage('twitchAdStarted', { duration: dur }); // Legacy
             (0, helpers_1.to)(events.sendMessage('twitchCommercialStarted', { duration: dur }));
-            return { duration: dur };
+            return { duration: dur, fromDashboard };
         }
         catch (err) {
             nodecg.log.warn('[Twitch] Error starting commercial');
@@ -409,13 +412,13 @@ nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
         .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('twitchStartCommercial', (data, ack) => {
-    startCommercial(data.duration)
-        .then(() => (0, helpers_1.processAck)(ack, null))
+    startCommercial(data.duration, data.fromDashboard)
+        .then((resp) => (0, helpers_1.processAck)(ack, null, resp))
         .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('playTwitchAd', (data, ack) => {
-    startCommercial(data.duration)
-        .then(() => (0, helpers_1.processAck)(ack, null))
+    startCommercial(data.duration, data.fromDashboard)
+        .then((resp) => (0, helpers_1.processAck)(ack, null, resp))
         .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 nodecg.listenFor('twitchStartCommercialTimer', (data, ack) => {
@@ -444,8 +447,8 @@ events.listenFor('twitchUpdateChannelInfo', (data, ack) => {
         .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('twitchStartCommercial', (data, ack) => {
-    startCommercial(data.duration)
-        .then(() => (0, helpers_1.processAck)(ack, null))
+    startCommercial(data.duration, data.fromDashboard)
+        .then((resp) => (0, helpers_1.processAck)(ack, null, resp))
         .catch((err) => (0, helpers_1.processAck)(ack, err));
 });
 events.listenFor('twitchStartCommercialTimer', (data, ack) => {
