@@ -588,7 +588,7 @@ Used to update the Twitch status (title) and/or game (directory), if the integra
   - `method` *[`string`]* Request HTTP type: `"get"`/`"head"`/`"delete"`/`"patch"`/`"post"`/`"put"`.
   - `endpoint` *[`string`]* Endpoint you wish to request.
   - `data` *[`object` (usually) or `undefined`]* Data, if any, to be sent alongside this request.
-  - `newAPI` *[`boolean` or `undefined`]* If this request is for Twitch's "new" API; if false it will request on the (now deprecated) v5 API.
+  - `newAPI` *[`boolean`]* (default: `false`) If this request is for Twitch's "new" API; if false it will request on the (now deprecated) v5 API.
 ### Data
 - `response` *[`object`]* The received response; see the [needle](https://github.com/tomas/needle) documentation for more information.
 ### Example code (extension/no acknowledgement)
