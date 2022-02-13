@@ -229,12 +229,31 @@ function updateChannelInfo(title, game) {
                 noTwitchGame = true;
                 [, dir] = yield (0, helpers_1.to)(verifyTwitchDir((0, helpers_1.bundleConfig)().twitch.streamDefaultGame));
             }
-            const resp = yield request('patch', `/channels?broadcaster_id=${replicants_1.twitchAPIData.value.channelID}`, {
-                title: title === null || title === void 0 ? void 0 : title.slice(0, 140),
-                game_id: (dir === null || dir === void 0 ? void 0 : dir.id) || '',
-            }, true);
-            if (resp.statusCode !== 204) {
-                throw new Error(JSON.stringify(resp.body));
+            if (!config.twitch.metadataUseExternal) {
+                const resp = yield request('patch', `/channels?broadcaster_id=${replicants_1.twitchAPIData.value.channelID}`, {
+                    title: title === null || title === void 0 ? void 0 : title.slice(0, 140),
+                    game_id: (dir === null || dir === void 0 ? void 0 : dir.id) || '',
+                }, true);
+                if (resp.statusCode !== 204) {
+                    throw new Error(JSON.stringify(resp.body));
+                }
+            }
+            else { // Send out message for external code to listen to.
+                /* to(events.sendMessage('twitchExternalMetadata', {
+                  channelID: twitchAPIData.value.channelID,
+                  title: title?.slice(0, 140),
+                  gameID: dir?.id || '',
+                })); */
+                nodecg.sendMessage('twitchExternalMetadata', {
+                    channelID: replicants_1.twitchAPIData.value.channelID,
+                    title: title === null || title === void 0 ? void 0 : title.slice(0, 140),
+                    gameID: (dir === null || dir === void 0 ? void 0 : dir.id) || '',
+                });
+                nodecg.log.info('[Twitch] Metadata request being sent to external script');
+                // Currently we assume it worked and don't get a confirmation.
+                // Checking *our* event system (server-to-server) isn't too hard, but checking
+                // NodeCG's server-to-server can never work, so for now not implementing it.
+                // For future-proofing, the message's types are set to allow an acknowledgement.
             }
             nodecg.log.info('[Twitch] Successfully updated channel information');
             // "New" API doesn't return anything so update the data with what we've got.

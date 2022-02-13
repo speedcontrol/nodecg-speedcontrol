@@ -102,7 +102,7 @@ function updateTwitchInformation(runData) {
             const [, srcomGameTwitch] = yield (0, helpers_1.to)((0, srcom_api_1.searchForTwitchGame)(runData.game));
             gameTwitch = srcomGameTwitch || runData.game;
         }
-        // TDO: Is this extra lookup needed if the next one just kinda does it anyway?
+        // TODO: Is this extra lookup needed if the next one just kinda does it anyway?
         if (gameTwitch) { // Verify game directory supplied exists on Twitch.
             gameTwitch = (_a = (yield (0, helpers_1.to)((0, twitch_api_1.verifyTwitchDir)(gameTwitch)))[1]) === null || _a === void 0 ? void 0 : _a.name;
         }
