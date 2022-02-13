@@ -126,6 +126,9 @@
           "type": "string",
           "default": "Games + Demos"
         },
+        "metadataUseExternal": {
+          "type": "boolean"
+        },
         "commercialsExtraButtons": {
           "type": "boolean"
         },

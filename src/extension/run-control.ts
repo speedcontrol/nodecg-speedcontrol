@@ -74,7 +74,7 @@ async function updateTwitchInformation(runData: RunData): Promise<boolean> {
     const [, srcomGameTwitch] = await to(searchForTwitchGame(runData.game));
     gameTwitch = srcomGameTwitch || runData.game;
   }
-  // TDO: Is this extra lookup needed if the next one just kinda does it anyway?
+  // TODO: Is this extra lookup needed if the next one just kinda does it anyway?
   if (gameTwitch) { // Verify game directory supplied exists on Twitch.
     gameTwitch = (await to(verifyTwitchDir(gameTwitch)))[1]?.name;
   }
