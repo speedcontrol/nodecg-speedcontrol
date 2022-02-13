@@ -217,18 +217,38 @@ export async function updateChannelInfo(title?: string, game?: string): Promise<
       noTwitchGame = true;
       [, dir] = await to(verifyTwitchDir(bundleConfig().twitch.streamDefaultGame));
     }
-    const resp = await request(
-      'patch',
-      `/channels?broadcaster_id=${twitchAPIData.value.channelID}`,
-      {
+
+    if (!config.twitch.metadataUseExternal) {
+      const resp = await request(
+        'patch',
+        `/channels?broadcaster_id=${twitchAPIData.value.channelID}`,
+        {
+          title: title?.slice(0, 140),
+          game_id: dir?.id || '',
+        },
+        true,
+      );
+      if (resp.statusCode !== 204) {
+        throw new Error(JSON.stringify(resp.body));
+      }
+    } else { // Send out message for external code to listen to.
+      /* to(events.sendMessage('twitchExternalMetadata', {
+        channelID: twitchAPIData.value.channelID,
         title: title?.slice(0, 140),
-        game_id: dir?.id || '',
-      },
-      true,
-    );
-    if (resp.statusCode !== 204) {
-      throw new Error(JSON.stringify(resp.body));
+        gameID: dir?.id || '',
+      })); */
+      nodecg.sendMessage('twitchExternalMetadata', {
+        channelID: twitchAPIData.value.channelID,
+        title: title?.slice(0, 140),
+        gameID: dir?.id || '',
+      });
+      nodecg.log.info('[Twitch] Metadata request being sent to external script');
+      // Currently we assume it worked and don't get a confirmation.
+      // Checking *our* event system (server-to-server) isn't too hard, but checking
+      // NodeCG's server-to-server can never work, so for now not implementing it.
+      // For future-proofing, the message's types are set to allow an acknowledgement.
     }
+
     nodecg.log.info('[Twitch] Successfully updated channel information');
     // "New" API doesn't return anything so update the data with what we've got.
     twitchChannelInfo.value.title = title?.slice(0, 140) || '';
