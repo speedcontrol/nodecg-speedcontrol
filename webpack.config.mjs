@@ -77,6 +77,7 @@ const config = (name) => {
       extensions: ['.js', '.ts', '.tsx', '.json'],
       alias: {
         vue: 'vue/dist/vue.esm.js',
+        // vue: path.resolve(__dirname, 'node_modules/vue/dist/vue.esm.js'),
       },
       plugins: [
         new TsConfigPathsPlugin({

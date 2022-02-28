@@ -121,12 +121,12 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "include": [
-    // "src/browser_shared/**/*.ts",
-    // "src/browser_shared/**/*.vue",
+    "src/browser_shared/**/*.ts",
+    "src/browser_shared/**/*.vue",
     "src/dashboard/**/*.ts",
     "src/dashboard/**/*.vue",
-    // "src/graphics/**/*.ts",
-    // "src/graphics/**/*.vue",
+    "src/graphics/**/*.ts",
+    "src/graphics/**/*.vue",
     "src/types/**/*.d.ts",
     "../../types/browser.d.ts"
   ],
