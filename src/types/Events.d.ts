@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 
 import { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
+import { OengusLine } from './Oengus';
 import { RunData } from './RunData';
 import { Speedruncom } from './Speedruncom';
 import { CommercialDuration } from './Twitch';
@@ -42,6 +43,10 @@ export interface SendMessageArgsMap {
 
   // Speedrun.com
   srcomSearchForUserDataMultiple: { type: 'name' | 'srcom' | 'twitch' | 'twitter', val: (string | undefined | null) }[];
+
+  // Oengus
+  importOengusSchedule: { marathonShort: string, useJapanese: boolean };
+  updateOengusSchedule: { marathonShort: string, lines: Partial<OengusLine>[]};
 }
 
 export interface SendMessageReturnMap {
@@ -76,6 +81,10 @@ export interface SendMessageReturnMap {
 
   // Speedrun.com
   srcomSearchForUserDataMultiple: Speedruncom.UserData | undefined;
+
+  // Oengus
+  importOengusSchedule: void;
+  updateOengusSchedule: void;
 }
 
 export type SendMessageAck = HandledSendMessageAck | UnhandledSendMessageAck;

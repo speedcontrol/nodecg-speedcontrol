@@ -7,6 +7,10 @@
       "type": "boolean",
       "default": false
     },
+    "exporting": {
+      "type": "boolean",
+      "default": false
+    },
     "item": {
       "type": "number",
       "default": 0

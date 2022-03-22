@@ -7,6 +7,7 @@
 
 export interface HoraroImportStatus {
 	importing?: boolean;
+	exporting?: boolean;
 	item?: number;
 	total?: number;
 }

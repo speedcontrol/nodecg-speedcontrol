@@ -1,4 +1,4 @@
-import { OengusMarathon, OengusSchedule, RunData, RunDataPlayer, RunDataTeam } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
+import { OengusLine, OengusMarathon, OengusSchedule, RunData, RunDataPlayer, RunDataTeam, SendMessageAck } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
 import { Duration, parse as isoParse, toSeconds } from 'iso8601-duration';
 import { isObject } from 'lodash';
 import needle, { NeedleResponse } from 'needle';
@@ -9,6 +9,7 @@ import { verifyTwitchDir } from './twitch-api';
 import { bundleConfig, checkGameAgainstIgnoreList, getTwitchUserFromURL, padTimeNumber, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get as ncgGet } from './util/nodecg';
 import { defaultSetupTime, oengusImportStatus, runDataArray } from './util/replicants';
+import * as events from './util/events';
 
 const nodecg = ncgGet();
 const config = bundleConfig();
@@ -48,6 +49,44 @@ async function get(endpoint: string): Promise<NeedleResponse> {
 }
 
 /**
+ * Make a PUT request to Oengus API.
+ * @param endpoint Oengus API endpoint you want to access.
+ * @param oengusSchedule Oengus schedule.
+ */
+async function put(endpoint: string, oengusSchedule: OengusSchedule): Promise<void> {
+  if (config.oengus.token) {
+    try {
+      nodecg.log.debug(`[Oengus Update] API request processing on ${endpoint}`);
+      const resp = await needle(
+        'put',
+        `https://${config.oengus.useSandbox ? 'sandbox.' : ''}oengus.io/api${endpoint}`,
+        oengusSchedule,
+        {
+          headers: {
+            'Authorization': `Bearer ${config.oengus.token}`,
+            'User-Agent': 'nodecg-speedcontrol',
+            'Content-Type': 'application/json',
+            'oengus-version': '1',
+          },
+        },
+      );
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore: parser exists but isn't in the typings
+      if (resp.statusCode !== 204) {
+        throw new Error('Response status was not 204' + JSON.stringify(resp.body));
+      }
+      nodecg.log.debug(`[Oengus Update] API request successful on ${endpoint}`);
+    } catch (err) {
+      nodecg.log.debug(`[Oengus Update] API request error on ${endpoint}:`, err);
+      throw err;
+    }
+  } else {
+    nodecg.log.debug(`[Oengus Update] No Authorization provided`);
+    throw new Error('No Authorization provided');
+  }
+}
+
+/**
  * Format to time string from Duration object.
  * @param duration Duration object you want to format.
  */
@@ -74,6 +113,7 @@ function isOengusSchedule(source: any): source is OengusSchedule {
  */
 function resetImportStatus(): void {
   oengusImportStatus.value.importing = false;
+  oengusImportStatus.value.exporting = false;
   oengusImportStatus.value.item = 0;
   oengusImportStatus.value.total = 0;
   nodecg.log.debug('[Oengus Import] Import status restored to default');
@@ -235,16 +275,86 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
 }
 
 nodecg.listenFor('importOengusSchedule', async (data, ack) => {
-  try {
-    if (oengusImportStatus.value.importing) {
-      throw new Error('Already importing schedule');
-    }
-    nodecg.log.info('[Oengus Import] Started importing schedule');
-    await importSchedule(data.marathonShort, data.useJapanese);
-    nodecg.log.info('[Oengus Import] Successfully imported schedule from Oengus');
-    processAck(ack, null);
-  } catch (err) {
-    nodecg.log.warn('[Oengus Import] Error importing schedule:', err);
-    processAck(ack, err);
-  }
+  importOengusSchedule(data)
+    .then(() => processAck(ack, null))
+    .catch((err) => {
+      nodecg.log.warn('[Oengus Import] Error importing schedule:', err);
+      processAck(ack, err)
+    });
 });
+
+events.listenFor('importOengusSchedule', async (data, ack) => {
+  importOengusSchedule(data)
+    .then(() => processAck(ack, null))
+    .catch((err) => {
+      nodecg.log.warn('[Oengus Import] Error importing schedule:', err);
+      processAck(ack, err)
+    });
+});
+
+async function importOengusSchedule(data: { marathonShort: string; useJapanese: boolean; }): Promise<void> {
+  if (oengusImportStatus.value.importing) {
+    throw new Error('Already importing schedule');
+  }
+  if (oengusImportStatus.value.exporting) {
+    throw new Error('Already exporting schedule');
+  }
+  nodecg.log.info('[Oengus Import] Started importing schedule');
+  await importSchedule(data.marathonShort, data.useJapanese);
+  nodecg.log.info('[Oengus Import] Successfully imported schedule from Oengus');
+}
+
+nodecg.listenFor('updateOengusSchedule', async (data, ack) => {
+  updateOengusSchedule(data)
+    .then(() => processAck(ack, null))
+    .catch((err) => {
+      nodecg.log.warn('[Oengus Import] Error importing schedule:', err);
+      processAck(ack, err)
+    });
+});
+
+events.listenFor('updateOengusSchedule', async (data, ack) => {
+  updateOengusSchedule(data)
+    .then(() => processAck(ack, null))
+    .catch((err) => {
+      nodecg.log.warn('[Oengus Update] Error updating schedule:', err);
+      processAck(ack, err)
+    });
+});
+
+async function updateOengusSchedule(data: { marathonShort: string, lines: Partial<OengusLine>[]}): Promise<void> {
+  if (oengusImportStatus.value.importing) {
+    throw new Error('Already importing schedule');
+  }
+  if (oengusImportStatus.value.exporting) {
+    throw new Error('Already exporting schedule');
+  }
+  nodecg.log.info('[Oengus Update] Started exporting schedule');
+  if (!data) {
+    throw new Error('Did not receive schedule lines from parameters correctly');
+  }
+  if (!data.marathonShort) {
+    throw new Error('Did not receive marathon name from parameters correctly');
+  }
+  const getResponse = await get(`/marathons/${data.marathonShort}/schedule?withCustomData=true`);
+  if (!isOengusSchedule(getResponse.body)) {
+    throw new Error('Did not receive schedule data from Oengus');
+  }
+  var oengusSchedule = getResponse.body;
+
+  data.lines.forEach(lineWithUpdatedValues => {
+    var currentRun = oengusSchedule.lines.find(line => line.id === lineWithUpdatedValues.id);
+    if (!currentRun) {
+      throw new Error(`Did not find run with oengus id:${lineWithUpdatedValues.id} `);
+    }
+    Object.assign(currentRun, lineWithUpdatedValues);
+  });
+
+  oengusSchedule.lines.forEach(line => {
+    var lineAsAny = line as any;
+    lineAsAny.customData = line.customDataDTO;
+  });
+
+  await put(`/marathons/${data.marathonShort}/schedule`, oengusSchedule);
+  nodecg.log.info('[Oengus Update] Successfully updated schedule to Oengus');
+}

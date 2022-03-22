@@ -7,6 +7,7 @@
 
 export interface OengusImportStatus {
 	importing?: boolean;
+	exporting?: boolean;
 	item?: number;
 	total?: number;
 }
