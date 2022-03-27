@@ -1,4 +1,4 @@
-import { OengusMarathon, OengusSchedule, RunData, RunDataPlayer, RunDataTeam } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
+import { OengusMarathon, OengusSchedule, OengusUser, RunData, RunDataPlayer, RunDataTeam } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
 import { Duration, parse as isoParse, toSeconds } from 'iso8601-duration';
 import { isObject } from 'lodash';
 import needle, { NeedleResponse } from 'needle';
@@ -87,6 +87,7 @@ function resetImportStatus(): void {
 async function importSchedule(marathonShort: string, useJapanese: boolean): Promise<void> {
   try {
     oengusImportStatus.value.importing = true;
+
     const marathonResp = await get(`/marathons/${marathonShort}`);
     const scheduleResp = await get(`/marathons/${marathonShort}/schedule?withCustomData=true`);
     if (!isOengusMarathon(marathonResp.body)) {
@@ -101,12 +102,18 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
     // This is updated for every run so we can calculate a scheduled time for each one.
     let scheduledTime = Math.floor(Date.parse(marathonResp.body.startDate) / 1000);
 
+    var gameTwitchPromises: Promise<void>[] = [];
+    var allRunnersPromises: Promise<void>[] = [];
+
+    var lines = oengusLines.filter((line) => (!checkGameAgainstIgnoreList(line.gameName, 'oengus')));
+    oengusImportStatus.value.item = 0;
+    oengusImportStatus.value.total = oengusLines.length;
+
     // Filtering out any games on the ignore list before processing them all.
-    const newRunDataArray = await mapSeries(oengusLines.filter((line) => (
-      !checkGameAgainstIgnoreList(line.gameName, 'oengus')
-    )), async (line, index, arr) => {
-      oengusImportStatus.value.item = index + 1;
-      oengusImportStatus.value.total = arr.length;
+    const newRunDataArray = await mapSeries(lines, async (line) => {
+
+      var gameTwitchPromise : Promise<void>;
+      var runnersPromise: Promise<void>[] = [];
 
       // If Oengus ID matches run already imported, re-use our UUID.
       const matchingOldRun = runDataArray.value
@@ -129,33 +136,22 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
       const parsedSetup = isoParse(line.setupTime);
       runData.setupTime = formatDuration(parsedSetup);
       runData.setupTimeS = toSeconds(parsedSetup);
+      
       if (line.setupBlock) {
         // Game name set to "Setup" if the line is a setup block.
         runData.game = line.setupBlockText || 'Setup';
         runData.gameTwitch = 'Just Chatting';
+        gameTwitchPromise = Promise.resolve();
+
         // Estimate for a setup block will be the setup time instead.
         runData.estimate = runData.setupTime;
         runData.estimateS = runData.setupTimeS;
         runData.setupTime = formatDuration({ seconds: 0 });
         runData.setupTimeS = 0;
-      } else if (line.gameName) {
-        // Attempt to find Twitch directory on speedrun.com if setting is enabled.
-        let srcomGameTwitch;
-        if (!config.oengus.disableSpeedrunComLookup) {
-          [, srcomGameTwitch] = await to(searchForTwitchGame(line.gameName));
-        }
-        let gameTwitch;
-        // Verify some game directory supplied exists on Twitch.
-        for (const str of [srcomGameTwitch, line.gameName]) {
-          if (str) {
-            gameTwitch = (await to(verifyTwitchDir(str)))[1]?.name;
-            if (gameTwitch) {
-              break; // If a directory was successfully found, stop loop early.
-            }
-          }
-        }
-        runData.gameTwitch = gameTwitch;
+      } else {
+        gameTwitchPromise = setTwitchGame(runData);
       }
+      gameTwitchPromises.push(gameTwitchPromise);
 
       // Custom Data
       if (line.customDataDTO) {
@@ -175,57 +171,23 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
       scheduledTime += runData.estimateS + runData.setupTimeS;
 
       // Team Data
-      runData.teams = await mapSeries(line.runners, async (runner) => {
-        const team: RunDataTeam = {
-          id: uuid(),
-          players: [],
-        };
-        const playerTwitch = runner.connections
-          ?.find((c) => c.platform === 'TWITCH')?.username || runner.twitchName;
-        const playerPronouns = typeof runner.pronouns === 'string'
-          ? runner.pronouns.split(',')
-          : runner.pronouns;
-        const player: RunDataPlayer = {
-          name: (useJapanese && runner.usernameJapanese)
-            ? runner.usernameJapanese : runner.username,
-          id: uuid(),
-          teamID: team.id,
-          social: {
-            twitch: playerTwitch || undefined,
-          },
-          country: runner.country?.toLowerCase() || undefined,
-          pronouns: playerPronouns?.join(', ') || undefined,
-          customData: {},
-        };
-        if (!config.oengus.disableSpeedrunComLookup) {
-          const playerTwitter = runner.connections
-            ?.find((c) => c.platform === 'TWITTER')?.username || runner.twitterName;
-          const playerSrcom = runner.connections
-            ?.find((c) => c.platform === 'SPEEDRUNCOM')?.username || runner.speedruncomName;
-          const data = await searchForUserDataMultiple(
-            { type: 'srcom', val: playerSrcom },
-            { type: 'twitch', val: playerTwitch },
-            { type: 'twitter', val: playerTwitter },
-            { type: 'name', val: runner.username },
-          );
-          if (data) {
-            // Always favour the supplied Twitch username/country/pronouns
-            // from Oengus if available.
-            if (!playerTwitch) {
-              const tURL = data.twitch?.uri || undefined;
-              player.social.twitch = getTwitchUserFromURL(tURL);
-            }
-            if (!runner.country) player.country = data.location?.country.code || undefined;
-            if (!runner.pronouns?.length) {
-              player.pronouns = data.pronouns?.toLowerCase() || undefined;
-            }
-          }
+      runData.teams = [];
+      line.runners.forEach((runner, index, array) => { 
+        var runnerPromise =  setRunner(runData, runner, useJapanese,index);
+        runnersPromise.push(runnerPromise);
+        allRunnersPromises.push(runnerPromise);
+      });
+
+      Promise.allSettled(runnersPromise.concat(gameTwitchPromise)).then(()=>{
+        if (oengusImportStatus.value.item != undefined) {
+          oengusImportStatus.value.item++;
         }
-        team.players.push(player);
-        return team;
       });
       return runData;
     });
+
+    await Promise.allSettled(gameTwitchPromises);
+    await Promise.allSettled(allRunnersPromises);
     runDataArray.value = newRunDataArray;
     resetImportStatus();
   } catch (err) {
@@ -248,3 +210,74 @@ nodecg.listenFor('importOengusSchedule', async (data, ack) => {
     processAck(ack, err);
   }
 });
+
+async function setTwitchGame(runData: RunData): Promise<void> {
+  if (runData.game) {
+    // Attempt to find Twitch directory on speedrun.com if setting is enabled.
+    let srcomGameTwitch;
+    if (!config.oengus.disableSpeedrunComLookup) {
+      [, srcomGameTwitch] = await to(searchForTwitchGame(runData.game));
+    }
+    let gameTwitch;
+    // Verify some game directory supplied exists on Twitch.
+    for (const str of [srcomGameTwitch, runData.game]) {
+      if (str) {
+        gameTwitch = (await to(verifyTwitchDir(str)))[1]?.name;
+        if (gameTwitch) {
+          break; // If a directory was successfully found, stop loop early.
+        }
+      }
+    }
+    runData.gameTwitch = gameTwitch;
+  }
+}
+
+async function setRunner(runData: RunData, runner: OengusUser, useJapanese: boolean, index: number): Promise<void> {
+  const team: RunDataTeam = {
+    id: uuid(),
+    players: [],
+  };
+  const playerTwitch = runner.connections
+    ?.find((c) => c.platform === 'TWITCH')?.username || runner.twitchName;
+  const playerPronouns = typeof runner.pronouns === 'string'
+    ? runner.pronouns.split(',')
+    : runner.pronouns;
+  const player: RunDataPlayer = {
+    name: (useJapanese && runner.usernameJapanese)
+      ? runner.usernameJapanese : runner.username,
+    id: uuid(),
+    teamID: team.id,
+    social: {
+      twitch: playerTwitch || undefined,
+    },
+    country: runner.country?.toLowerCase() || undefined,
+    pronouns: playerPronouns?.join(', ') || undefined,
+    customData: {},
+  };
+  if (!config.oengus.disableSpeedrunComLookup && !(playerTwitch && runner.country && runner.pronouns?.length)) {
+    const playerTwitter = runner.connections
+      ?.find((c) => c.platform === 'TWITTER')?.username || runner.twitterName;
+    const playerSrcom = runner.connections
+      ?.find((c) => c.platform === 'SPEEDRUNCOM')?.username || runner.speedruncomName;
+    const data = await searchForUserDataMultiple(
+      { type: 'srcom', val: playerSrcom },
+      { type: 'twitch', val: playerTwitch },
+      { type: 'twitter', val: playerTwitter },
+      { type: 'name', val: runner.username },
+    );
+    if (data) {
+      // Always favour the supplied Twitch username/country/pronouns
+      // from Oengus if available.
+      if (!playerTwitch) {
+        const tURL = data.twitch?.uri || undefined;
+        player.social.twitch = getTwitchUserFromURL(tURL);
+      }
+      if (!runner.country) player.country = data.location?.country.code || undefined;
+      if (!runner.pronouns?.length) {
+        player.pronouns = data.pronouns?.toLowerCase() || undefined;
+      }
+    }
+  }
+  team.players.push(player);
+  runData.teams[index]=team;
+}
