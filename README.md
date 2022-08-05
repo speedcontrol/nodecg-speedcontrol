@@ -144,6 +144,7 @@ To easily install: `nodecg install BUNDLE`, where `BUNDLE` is the full name belo
 - [No Glitches Allowed](https://twitch.tv/speedrunslive) since No Glitches Allowed 4
 - [Completithon](https://twitch.tv/completithon) since Completithon 2019
 - [MDSR Summer '21](https://twitch.tv/ModernDOOMSpeedrunning)
+- All [Hekathon](https://twitch.tv/esamarathon) marathons since Hekathon 2020
 
 
 <a id="authors-contributors"></a>
