@@ -45,9 +45,6 @@
       "@nodecg-speedcontrol/types/*": [
         "src/types/*"
       ],
-      "nodecg/*": [
-        "../../*"
-      ]
     },                                                   /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [],                                  /* Specify multiple folders that act like `./node_modules/@types`. */
@@ -128,9 +125,9 @@
     "src/graphics/**/*.ts",
     "src/graphics/**/*.vue",
     "src/types/**/*.d.ts",
-    "../../types/browser.d.ts"
+    "node_modules/@alvancamp/test-nodecg-types/augment-window.d.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "vueCompilerOptions": {
+    "target": 2.7
+  }
 }

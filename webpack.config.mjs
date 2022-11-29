@@ -152,7 +152,7 @@ const config = (name) => {
           test: /\.tsx?$/,
           loader: 'ts-loader',
           options: {
-            transpileOnly: true, // ForkTsCheckerWebpackPlugin will do type checking
+            transpileOnly: false, // ForkTsCheckerWebpackPlugin will do type checking
             appendTsSuffixTo: [/\.vue$/],
           },
         },
