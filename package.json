@@ -80,7 +80,7 @@
     "globby": "^11.0.4",
     "html-webpack-plugin": "^5.3.2",
     "mini-css-extract-plugin": "^1.6.2",
-    "nodecg-cli": "git+https://git@github.com/zoton2/nodecg-cli.git#d7c7c5673753441d254c31d4f980727cd42505f9",
+    "nodecg-cli": "^8.0.0",
     "npm-run-all": "^4.1.5",
     "sass": "~1.32",
     "sass-loader": "^12.1.0",
