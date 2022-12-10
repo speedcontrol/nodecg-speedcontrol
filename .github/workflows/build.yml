@@ -41,7 +41,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         token: ${{ secrets['GITHUB_TOKEN'] }}
-        ref: ${{ inputs.base_branch }}
+        ref: ${{ inputs.base_branch || 'master' }}
         fetch-depth: 0
         path: ./nodecg/bundles/nodecg-speedcontrol
 
@@ -58,9 +58,9 @@ jobs:
       continue-on-error: true
       working-directory: ./nodecg/bundles/nodecg-speedcontrol
       run: |
-        git checkout ${{ inputs.base_branch }}
-        git checkout ${{ inputs.build_branch }}
-        git merge ${{ inputs.base_branch }}
+        git checkout ${{ inputs.base_branch || 'master' }}
+        git checkout ${{ inputs.build_branch || 'build' }}
+        git merge ${{ inputs.base_branch || 'master' }}
 
     # Setup some Node stuff
     - name: Node.js setup
@@ -114,5 +114,5 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets['GITHUB_TOKEN'] }}
-        branch: ${{ inputs.build_branch }}
+        branch: ${{ inputs.build_branch || 'build' }}
         directory: ./nodecg/bundles/nodecg-speedcontrol
