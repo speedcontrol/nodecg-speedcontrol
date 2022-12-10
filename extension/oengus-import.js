@@ -32,7 +32,7 @@ function get(endpoint) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             nodecg.log.debug(`[Oengus Import] API request processing on ${endpoint}`);
-            const resp = yield (0, needle_1.default)('get', `https://${config.oengus.useSandbox ? 'sandbox.' : ''}oengus.io/api${endpoint}`, null, {
+            const resp = yield (0, needle_1.default)('get', `https://${config.oengus.useSandbox ? 'sandbox.' : ''}oengus.io/api/v1${endpoint}`, null, {
                 headers: {
                     'User-Agent': 'nodecg-speedcontrol',
                     Accept: 'application/json',
