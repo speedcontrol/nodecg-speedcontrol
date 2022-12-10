@@ -5,7 +5,9 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type RunDataArray = {
+export type RunDataArray = RunData[];
+
+export interface RunData {
 	game?: string;
 	gameTwitch?: string;
 	system?: string;
@@ -42,4 +44,4 @@ export type RunDataArray = {
 	};
 	id: string;
 	externalID?: string;
-}[];
+}
