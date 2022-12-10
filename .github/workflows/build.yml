@@ -28,7 +28,7 @@ jobs:
       with:
         token: ${{ secrets['GITHUB_TOKEN'] }}
         repository: nodecg/nodecg
-        ref: 'v1.8.1'
+        ref: 'v1.9.0'
         path: ./nodecg-temp
 
     # Copies checked out NodeCG into permanent folder
