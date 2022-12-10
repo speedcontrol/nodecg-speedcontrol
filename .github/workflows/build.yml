@@ -5,6 +5,17 @@ on:
     branches: [ master ]
 
   workflow_dispatch:
+    inputs:
+      base_branch:
+        description: 'Name of branch to base build on'
+        type: string
+        required: false
+        default: 'master'
+      build_branch:
+        description: 'Name of branch to commit build to'
+        type: string
+        required: false
+        default: 'build'
 
 jobs:
   build:
@@ -25,12 +36,12 @@ jobs:
     - name: Copy ./nodecg-temp > ./nodecg
       run: cp -r ./nodecg-temp ./nodecg
 
-    # Checkout the main branch of this repository with full depth
+    # Checkout the base branch of this repository with full depth
     - name: Checkout this repository
       uses: actions/checkout@v2
       with:
         token: ${{ secrets['GITHUB_TOKEN'] }}
-        ref: master
+        ref: ${{ inputs.base_branch }}
         fetch-depth: 0
         path: ./nodecg/bundles/nodecg-speedcontrol
 
@@ -41,15 +52,15 @@ jobs:
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
 
-    # Recheckout both the main and build branches and merge the main into build
+    # Recheckout both the base and build branches and merge the base into build
     # This can "fail" if the build branch doesn't exist, but we should continue anyway
     - name: (Re)checkout both branches and merge main into build
       continue-on-error: true
       working-directory: ./nodecg/bundles/nodecg-speedcontrol
       run: |
-        git checkout master
-        git checkout build
-        git merge master
+        git checkout ${{ inputs.base_branch }}
+        git checkout ${{ inputs.build_branch }}
+        git merge ${{ inputs.base_branch }}
 
     # Setup some Node stuff
     - name: Node.js setup
@@ -98,10 +109,10 @@ jobs:
         git commit -m "Built files" -a
 
     # Pushes the built files to a specific branch
-    - name: Push built files to "build" branch
+    - name: Push built files to build branch
       #if: ${{ steps.commit.outcome == 'success' }}
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets['GITHUB_TOKEN'] }}
-        branch: build
+        branch: ${{ inputs.build_branch }}
         directory: ./nodecg/bundles/nodecg-speedcontrol
