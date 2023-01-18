@@ -14,7 +14,7 @@ export type CustomDataRun =
 	  }[]
 	| null;
 
-export interface MutableConfigschema {
+export interface Configschema {
 	language: 'en' | 'ja';
 	twitch: {
 		enabled: boolean;
@@ -51,9 +51,6 @@ export interface MutableConfigschema {
 			| null;
 	} | null;
 }
-
-export type Configschema = Readonly<MutableConfigschema>;
-
 export interface Horaro {
 	defaultURL: string;
 	ignoreGamesWhileImporting?: IgnoreGamesWhileImporting;
