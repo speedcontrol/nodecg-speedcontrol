@@ -28,9 +28,6 @@
     "build:browser": "cross-env NODE_ENV=production webpack",
     "build:extension": "tsc -b tsconfig.extension.json",
     "clean": "trash node_modules/.cache && trash dashboard && trash extension",
-    "lint": "run-s lint:*",
-    "lint:browser": "eslint --ext .ts,.vue src/dashboard",
-    "lint:extension": "eslint --ext .ts src/extension && eslint --ext .d.ts src/types",
     "schema-types": "nodecg schema-types",
     "start": "node ../..",
     "watch": "run-p watch:*",
@@ -38,7 +35,6 @@
     "watch:extension": "tsc -b tsconfig.extension.json -w"
   },
   "dependencies": {
-    "@alvancamp/test-nodecg-types": "^1.9.25",
     "clone": "^2.1.2",
     "iso8601-duration": "^1.3.0",
     "livesplit-core": "^0.10.2",
@@ -54,6 +50,7 @@
     "ws": "^8.8.1"
   },
   "devDependencies": {
+    "@alvancamp/test-nodecg-types": "^1.9.28",
     "@fontsource/roboto": "^4.5.7",
     "@intlify/vue-i18n-loader": "^1.1.0",
     "@mdi/font": "^6.9.96",
