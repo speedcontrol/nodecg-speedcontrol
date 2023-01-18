@@ -1,7 +1,7 @@
 import { RunData, RunDataArray, SendMessageAck } from '@nodecg-speedcontrol/types';
 import { Configschema } from '@nodecg-speedcontrol/types/schemas';
 import _ from 'lodash';
-import NodeCG from '@alvancamp/test-nodecg-types';
+import type NodeCG from '@alvancamp/test-nodecg-types';
 import { get } from './nodecg';
 
 const nodecg = get();

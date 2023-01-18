@@ -1,4 +1,4 @@
-import NodeCG from '@alvancamp/test-nodecg-types';
+import type NodeCG from '@alvancamp/test-nodecg-types';
 import { Configschema } from '@nodecg-speedcontrol/types/schemas';
 
 let nodecg: NodeCG.ServerAPI<Configschema>;
