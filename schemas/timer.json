@@ -1,4 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$ref": "./reused/Timer.json"
+  "anyOf": [
+    {
+      "$ref": "./reused/Timer.json"
+    }
+  ]
 }
