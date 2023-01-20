@@ -1,6 +1,6 @@
 {
   "name": "nodecg-speedcontrol",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "NodeCG bundle to help facilitate the running of speedrunning marathons, including overlays.",
   "homepage": "https://github.com/speedcontrol/nodecg-speedcontrol#readme",
   "bugs": {
