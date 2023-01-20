@@ -24,7 +24,7 @@ jobs:
     steps:
     # Checkout NodeCG
     - name: Checkout nodecg/nodecg
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         token: ${{ secrets['GITHUB_TOKEN'] }}
         repository: nodecg/nodecg
@@ -38,7 +38,7 @@ jobs:
 
     # Checkout the base branch of this repository with full depth
     - name: Checkout this repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         token: ${{ secrets['GITHUB_TOKEN'] }}
         ref: ${{ inputs.base_branch || 'master' }}
@@ -64,13 +64,13 @@ jobs:
 
     # Setup some Node stuff
     - name: Node.js setup
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: '18'
 
     # Set NPM cache options
     - name: Set NPM cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
