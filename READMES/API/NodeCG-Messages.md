@@ -58,7 +58,7 @@ Emitted when a Twitch commercial is successfully started via this bundle.
   - `duration` *[`number`]* How long the commercial should run for in seconds.
 ### Example code
 ```javascript
-nodecg.listenFor('twitchExternalCommercial', 'nodecg-speedcontrol', (names) => {
+nodecg.listenFor('twitchExternalCommercial', 'nodecg-speedcontrol', (data) => {
   ...
 });
 ```
