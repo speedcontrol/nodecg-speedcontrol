@@ -29,6 +29,7 @@ export interface SendMessageArgsMap {
   twitchExternalCommercial: { duration: CommercialDuration, fromDashboard: boolean };
   twitchStartCommercialTimer: { duration: CommercialDuration };
   twitchUpdateChannelInfo: { status?: string; game?: string };
+  twitchExternalMetadata: { channelID?: string, title?: string, gameID: string };
   twitchAPIRequest: {
     method: NeedleHttpVerbs;
     endpoint: string;
@@ -68,6 +69,7 @@ export interface SendMessageReturnMap {
   twitchExternalCommercial: { duration: CommercialDuration };
   twitchStartCommercialTimer: void;
   twitchUpdateChannelInfo: boolean;
+  twitchExternalMetadata: void;
   twitchAPIRequest: NeedleResponse;
 
   // Featured Channels
