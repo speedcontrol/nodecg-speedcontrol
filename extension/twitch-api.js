@@ -243,11 +243,11 @@ function updateChannelInfo(title, game) {
                 }
             }
             else { // Send out message for external code to listen to.
-                /* to(events.sendMessage('twitchExternalMetadata', {
-                  channelID: twitchAPIData.value.channelID,
-                  title: title?.slice(0, 140),
-                  gameID: dir?.id || '',
-                })); */
+                (0, helpers_1.to)(events.sendMessage('twitchExternalMetadata', {
+                    channelID: replicants_1.twitchAPIData.value.channelID,
+                    title: title === null || title === void 0 ? void 0 : title.slice(0, 140),
+                    gameID: (dir === null || dir === void 0 ? void 0 : dir.id) || '',
+                }));
                 nodecg.sendMessage('twitchExternalMetadata', {
                     channelID: replicants_1.twitchAPIData.value.channelID,
                     title: title === null || title === void 0 ? void 0 : title.slice(0, 140),
@@ -257,7 +257,8 @@ function updateChannelInfo(title, game) {
                 // Currently we assume it worked and don't get a confirmation.
                 // Checking *our* event system (server-to-server) isn't too hard, but checking
                 // NodeCG's server-to-server can never work, so for now not implementing it.
-                // For future-proofing, the message's types are set to allow an acknowledgement.
+                // For future-proofing, the message's types are set to allow an acknowledgement,
+                // although the return data type is set to `void`.
             }
             nodecg.log.info('[Twitch] Successfully updated channel information');
             // "New" API doesn't return anything so update the data with what we've got.
