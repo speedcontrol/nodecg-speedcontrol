@@ -232,11 +232,11 @@ export async function updateChannelInfo(title?: string, game?: string): Promise<
         throw new Error(JSON.stringify(resp.body));
       }
     } else { // Send out message for external code to listen to.
-      /* to(events.sendMessage('twitchExternalMetadata', {
+      to(events.sendMessage('twitchExternalMetadata', {
         channelID: twitchAPIData.value.channelID,
         title: title?.slice(0, 140),
         gameID: dir?.id || '',
-      })); */
+      }));
       nodecg.sendMessage('twitchExternalMetadata', {
         channelID: twitchAPIData.value.channelID,
         title: title?.slice(0, 140),
@@ -246,7 +246,8 @@ export async function updateChannelInfo(title?: string, game?: string): Promise<
       // Currently we assume it worked and don't get a confirmation.
       // Checking *our* event system (server-to-server) isn't too hard, but checking
       // NodeCG's server-to-server can never work, so for now not implementing it.
-      // For future-proofing, the message's types are set to allow an acknowledgement.
+      // For future-proofing, the message's types are set to allow an acknowledgement,
+      // although the return data type is set to `void`.
     }
 
     nodecg.log.info('[Twitch] Successfully updated channel information');

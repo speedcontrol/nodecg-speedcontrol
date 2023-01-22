@@ -4,6 +4,7 @@
 
 - [Messages Sent (*listenFor*)](#Messages-Sent-listenFor)
   - [twitchCommercialStarted](#twitchCommercialStarted)
+  - [twitchExternalMetadata](#twitchExternalMetadata)
   - [twitchExternalCommercial](#twitchExternalCommercial)
   - [repeaterFeaturedChannels](#repeaterFeaturedChannels)
 - [Messages Received (*sendMessage/sendMessageToBundle*)](#Messages-Received-sendMessagesendMessageToBundle)
@@ -51,6 +52,30 @@ nodecg.listenFor('twitchCommercialStarted', 'nodecg-speedcontrol', (data) => {
 
 Emitted when a Twitch commercial is successfully started via this bundle.
 
+# twitchExternalMetadata
+
+### Data
+- *[`object`]*
+  - `channelID` *[`string` or `undefined`]* DESCRIPTION_TODO
+  - `title` *[`string` or `undefined`]* DESCRIPTION_TODO
+  - `gameID` *[`string`]* DESCRIPTION_TODO
+### Example code
+```javascript
+nodecg.listenFor('twitchExternalMetadata', 'nodecg-speedcontrol', (data) => {
+  ...
+});
+```
+### Example data
+```javascript
+{
+  channelID: 'EXAMPLE_TODO',
+  title: 'EXAMPLE_TODO',
+  gameID: 'EXAMPLE_TODO'
+}
+```
+
+Emitted when the Twitch metadata (title/game) should be updated, either automatically or via the *Twitch Control* panel, only if `twitch.metadataUseExternal` is set to true in the bundle configuration. Only needed if you need to use an alternative script to change this instead of the default integreation.
+
 ## twitchExternalCommercial
 
 ### Data
@@ -58,7 +83,7 @@ Emitted when a Twitch commercial is successfully started via this bundle.
   - `duration` *[`number`]* How long the commercial should run for in seconds.
 ### Example code
 ```javascript
-nodecg.listenFor('twitchExternalCommercial', 'nodecg-speedcontrol', (names) => {
+nodecg.listenFor('twitchExternalCommercial', 'nodecg-speedcontrol', (data) => {
   ...
 });
 ```
