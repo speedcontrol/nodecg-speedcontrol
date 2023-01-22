@@ -559,7 +559,7 @@ nodecg.sendMessageToBundle('twitchStartCommercialTimer', 'nodecg-speedcontrol', 
   .catch((err) => { ... });
 ```
 
-***Does not run a commercial!*** Used to manually start the in-built "commercial timer" that will disable the commercial buttons in the dashboard and display the countdown, and also update the `twitchCommercialTimer` replicant. Usually used alongside the `twitchExternalCommercial` message to start the timer based on an outside source running a commercial.
+***Does not run a commercial!*** Used to manually start the in-built "commercial timer" that will disable the commercial buttons in the dashboard and display the countdown, and also update the `twitchCommercialTimer` replicant. This may be useful if you also have external services running commercials on the Twitch channel but also use this bundle to run them as well, and wish to show that information to users on NodeCG and your other bundles.
 
 
 ## twitchUpdateChannelInfo
