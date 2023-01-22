@@ -129,7 +129,7 @@ The `commercialsExtraButtons` option adds more buttons on the *Twitch Control* d
 
 If you cannot log into the Twitch account that you will be changing the information on, you will need to find a workaround that involves an external bundle, for example it may involve an external server that you send requests to, that you then ask the owner of the channel to log in to. To help with this, we offer these settings (set any of them to true to activate them). Note that if using any of these settings, this bundle will update the our information assuming that any other bundle you have programmed has worked correctly, without you needing to respond.
 
-- `metadataUseExternal`: instead of this bundle changing the title/game, we will emit the (`twitchExternalMetadata`)(./API/NodeCG-Messages.md#twitchExternalMetadata) message, and allow you to handle it yourself.
+- `metadataUseExternal`: instead of this bundle changing the title/game, we will emit the [`twitchExternalMetadata`](./API/NodeCG-Messages.md#twitchExternalMetadata) message, and allow you to handle it yourself.
 - `commercialsUseExternal`: instead of this bundle running commercials, we will emit the [`twitchExternalCommercial`](./API/NodeCG-Messages.md#twitchExternalCommercial) message, and allow you to handle them yourself.
 - `ffzUseRepeater`: instead of this bundle setting the FrankerFaceZ featured channels, we will emit the [`repeaterFeaturedChannels`](./API/NodeCG-Messages.md#repeaterFeaturedChannels) message, and allow you to handle them yourself.
 
