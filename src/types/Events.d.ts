@@ -65,7 +65,7 @@ export interface SendMessageReturnMap {
 
   // Twitch
   twitchCommercialStarted: void;
-  twitchStartCommercial: { duration: CommercialDuration };
+  twitchStartCommercial: { duration: CommercialDuration, fromDashboard: boolean };
   twitchExternalCommercial: { duration: CommercialDuration };
   twitchStartCommercialTimer: void;
   twitchUpdateChannelInfo: boolean;
