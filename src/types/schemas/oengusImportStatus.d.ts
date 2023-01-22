@@ -5,7 +5,9 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface OengusImportStatus {
+export type OengusImportStatus = ScheduleImportStatus;
+
+export interface ScheduleImportStatus {
 	importing?: boolean;
 	item?: number;
 	total?: number;

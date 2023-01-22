@@ -22,7 +22,7 @@ async function get(endpoint: string): Promise<NeedleResponse> {
     nodecg.log.debug(`[Oengus Import] API request processing on ${endpoint}`);
     const resp = await needle(
       'get',
-      `https://${config.oengus.useSandbox ? 'sandbox.' : ''}oengus.io/api${endpoint}`,
+      `https://${config.oengus.useSandbox ? 'sandbox.' : ''}oengus.io/api/v1${endpoint}`,
       null,
       {
         headers: {

@@ -4,6 +4,7 @@
 
 - [Messages Sent (*listenFor*)](#Messages-Sent-listenFor)
   - [twitchCommercialStarted](#twitchCommercialStarted)
+  - [twitchExternalMetadata](#twitchExternalMetadata)
   - [twitchExternalCommercial](#twitchExternalCommercial)
   - [repeaterFeaturedChannels](#repeaterFeaturedChannels)
 - [Messages Received (*sendMessage/sendMessageToBundle*)](#Messages-Received-sendMessagesendMessageToBundle)
@@ -51,21 +52,47 @@ nodecg.listenFor('twitchCommercialStarted', 'nodecg-speedcontrol', (data) => {
 
 Emitted when a Twitch commercial is successfully started via this bundle.
 
-## twitchExternalCommercial
+# twitchExternalMetadata
 
 ### Data
 - *[`object`]*
-  - `duration` *[`number`]* How long the commercial should run for in seconds.
+  - `channelID` *[`string` or `undefined`]* Twitch channel ID (*not name!*) of the channel expecting it's metadata to be updated.
+  - `title` *[`string` or `undefined`]* Title to be set.
+  - `gameID` *[`string`]* Twitch game/category ID (*not name!*) of the game to be set.
 ### Example code
 ```javascript
-nodecg.listenFor('twitchExternalCommercial', 'nodecg-speedcontrol', (names) => {
+nodecg.listenFor('twitchExternalMetadata', 'nodecg-speedcontrol', (data) => {
   ...
 });
 ```
 ### Example data
 ```javascript
 {
-  duration: 180
+  channelID: '46573611',
+  title: 'Good Games Marathon Continues',
+  gameID: '1316'
+}
+```
+
+Emitted when the Twitch metadata (title/game) should be updated, either automatically or via the *Twitch Control* panel, only if `twitch.metadataUseExternal` is set to true in the bundle configuration. Only needed if you need to use an alternative script to change this instead of the default integration.
+
+## twitchExternalCommercial
+
+### Data
+- *[`object`]*
+  - `duration` *[`number`]* How long the commercial should run for in seconds.
+  - `fromDashboard` *[`boolean`]* If this message was triggered manually via a dashboard panel; internally used on the *Twitch Control* panel.
+### Example code
+```javascript
+nodecg.listenFor('twitchExternalCommercial', 'nodecg-speedcontrol', (data) => {
+  ...
+});
+```
+### Example data
+```javascript
+{
+  duration: 180,
+  fromDashboard: false
 }
 ```
 
@@ -89,7 +116,7 @@ nodecg.listenFor('repeaterFeaturedChannels', 'nodecg-speedcontrol', (names) => {
 ]
 ```
 
-Emitted when the featured channels should be updated, either automatically or via the *Twitch Control* panel, only if `twitch.ffzUseRepeater` is set to true in the bundle configuration. This is the same list that is given to the default integration. Only needed if you need to use an alternative script to update these instead of the default integration.
+Emitted when the featured channels should be updated, either automatically or via the *Twitch Control* panel, only if `twitch.ffzUseRepeater` is set to true in the bundle configuration. Only needed if you need to use an alternative script to update these instead of the default integration.
 
 
 # Messages Received (*sendMessage/sendMessageToBundle*)
@@ -477,10 +504,11 @@ Removes all of the runs in the `runDataArray` replicant, and also removes the ac
 ### Parameters
 - *[`object`]*
   - `duration` *[`number`]* (default: `180`) How long you want the commercial to run for in seconds; if not supplied will default to 180s/3m.
-  - `fromDashboard` *[`boolean`]* (default: `false`) If this message was triggered manually via a dashboard panel; internally used on the *Twitch Control* panel.
+  - `fromDashboard` *[`boolean`]* (default: `false`) If this message was triggered manually via a dashboard panel; internally used on the *Twitch Control* panel, for passing on via the `twitchExternalCommercial` message, if you use this.
 ### Data
 - *[`object`]*
   - `duration` *[`number`]* How long the commercial will run for in seconds.
+  - `fromDashboard` *[`boolean`]* If the commercial was triggered via a dashboard panel (see comment above for use cases).
 ### Example code (extension/no acknowledgement)
 ```javascript
 nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180, fromDashboard: false });
@@ -500,7 +528,8 @@ nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { dur
 ### Example data
 ```javascript
 {
-  duration: 180
+  duration: 180,
+  fromDashboard: false
 }
 ```
 
@@ -530,7 +559,7 @@ nodecg.sendMessageToBundle('twitchStartCommercialTimer', 'nodecg-speedcontrol', 
   .catch((err) => { ... });
 ```
 
-***Does not run a commercial!*** Used to manually start the in-built "commercial timer" that will disable the commercial buttons in the dashboard and display the countdown, and also update the `twitchCommercialTimer` replicant. Usually used alongside the `twitchExternalCommercial` message to start the timer based on an outside source running a commercial.
+***Does not run a commercial!*** Used to manually start the in-built "commercial timer" that will disable the commercial buttons in the dashboard and display the countdown, and also update the `twitchCommercialTimer` replicant. This may be useful if you also have external services running commercials on the Twitch channel but also use this bundle to run them as well, and wish to show that information to users on NodeCG and your other bundles.
 
 
 ## twitchUpdateChannelInfo

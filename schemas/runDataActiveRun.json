@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
+  "$comment": "We use anyOf here because we also allow `undefined` to be set, which is the default.",
   "anyOf": [
     {
       "$ref": "./reused/RunData.json"

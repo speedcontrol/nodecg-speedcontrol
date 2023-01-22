@@ -171,7 +171,7 @@ If you wish to test/use experimental unfinished features without needing to buil
 
 The `dev` branch is a legacy branch; it used to be used for current development but that has now all moved to the `master` branch.
 
-The `v1.x` branch is a legacy branch for that version; this exists for archival purposes, as the strucutre was highly different.
+The `v1.x` branch is a legacy branch for that version; this exists for archival purposes, as the structure was highly different.
 
 If you need to report an issue, you can [do that on GitHub](https://github.com/speedcontrol/nodecg-speedcontrol/issues).
 
