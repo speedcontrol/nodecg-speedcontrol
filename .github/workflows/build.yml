@@ -22,20 +22,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout NodeCG
-    - name: Checkout nodecg/nodecg
-      uses: actions/checkout@v3
-      with:
-        token: ${{ secrets['GITHUB_TOKEN'] }}
-        repository: nodecg/nodecg
-        ref: 'v1.9.0'
-        path: ./nodecg-temp
-
-    # Copies checked out NodeCG into permanent folder
-    # If I didn't do this, some bundles seemed to not actually checkout successfully later
-    - name: Copy ./nodecg-temp > ./nodecg
-      run: cp -r ./nodecg-temp ./nodecg
-
     # Checkout the base branch of this repository with full depth
     - name: Checkout this repository
       uses: actions/checkout@v3
@@ -43,11 +29,9 @@ jobs:
         token: ${{ secrets['GITHUB_TOKEN'] }}
         ref: ${{ inputs.base_branch || 'master' }}
         fetch-depth: 0
-        path: ./nodecg/bundles/nodecg-speedcontrol
 
     # Set the local git user config to use the GitHub Actions bot account
     - name: Set local git config user details
-      working-directory: ./nodecg/bundles/nodecg-speedcontrol
       run: |
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
@@ -56,7 +40,6 @@ jobs:
     # This can "fail" if the build branch doesn't exist, but we should continue anyway
     - name: (Re)checkout both branches and merge main into build
       continue-on-error: true
-      working-directory: ./nodecg/bundles/nodecg-speedcontrol
       run: |
         git checkout ${{ inputs.base_branch || 'master' }}
         git checkout ${{ inputs.build_branch || 'build' }}
@@ -81,19 +64,12 @@ jobs:
     - name: Update NPM installation
       run: npm install -g npm@latest
 
-    # Install NodeCG NPM dependencies
-    - name: Install NodeCG NPM dependencies
-      working-directory: ./nodecg
-      run: npm install --production
-
-    # Install this bundle's NPM dependencies
-    - name: Install bundle NPM dependencies
-      working-directory: ./nodecg/bundles/nodecg-speedcontrol
+    # Install NPM dependencies
+    - name: Install NPM dependencies
       run: npm ci
 
     # Actually build everything
     - name: Build
-      working-directory: ./nodecg/bundles/nodecg-speedcontrol
       run: |
         npm run clean
         npm run build
@@ -103,7 +79,6 @@ jobs:
     - name: Commit built files
       id: commit
       continue-on-error: true
-      working-directory: ./nodecg/bundles/nodecg-speedcontrol
       run: |
         git add -f dashboard extension
         git commit -m "Built files" -a
@@ -115,4 +90,3 @@ jobs:
       with:
         github_token: ${{ secrets['GITHUB_TOKEN'] }}
         branch: ${{ inputs.build_branch || 'build' }}
-        directory: ./nodecg/bundles/nodecg-speedcontrol
