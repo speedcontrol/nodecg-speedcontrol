@@ -124,8 +124,7 @@
     "src/dashboard/**/*.vue",
     "src/graphics/**/*.ts",
     "src/graphics/**/*.vue",
-    "src/types/**/*.d.ts",
-    "node_modules/@alvancamp/test-nodecg-types/augment-window.d.ts"
+    "src/types/**/*.d.ts"
   ],
   "vueCompilerOptions": {
     "target": 2.7

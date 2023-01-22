@@ -6,7 +6,7 @@ import { searchForTwitchGame } from './srcom-api';
 import { resetTimer } from './timer';
 import { updateChannelInfo, verifyTwitchDir } from './twitch-api';
 import * as events from './util/events';
-import { bundleConfig, findRunIndexFromId, formPlayerNamesStr, getTwitchChannels, msToTimeStr, processAck, timeStrToMS, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { findRunIndexFromId, formPlayerNamesStr, getTwitchChannels, msToTimeStr, processAck, timeStrToMS, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 import { runDataActiveRun, runDataActiveRunSurrounding, runDataArray, timer, twitchAPIData } from './util/replicants';
 
@@ -63,7 +63,7 @@ async function updateTwitchInformation(runData: RunData): Promise<boolean> {
   }
 
   // Constructing Twitch title and game to send off.
-  const status = bundleConfig().twitch.streamTitle
+  const status = nodecg.bundleConfig.twitch.streamTitle
     .replace(/{{game}}/g, runData.game || '')
     .replace(/{{players}}/g, formPlayerNamesStr(runData))
     .replace(/{{category}}/g, runData.category || '');
@@ -81,11 +81,11 @@ async function updateTwitchInformation(runData: RunData): Promise<boolean> {
 
   to(updateChannelInfo(
     status,
-    gameTwitch || bundleConfig().twitch.streamDefaultGame,
+    gameTwitch || nodecg.bundleConfig.twitch.streamDefaultGame,
   ));
 
   // Construct/send featured channels if enabled.
-  if (bundleConfig().twitch.ffzIntegration) {
+  if (nodecg.bundleConfig.twitch.ffzIntegration) {
     to(setChannels(getTwitchChannels(runData)));
   }
 

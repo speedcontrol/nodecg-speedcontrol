@@ -8,12 +8,12 @@ import removeMd from 'remove-markdown';
 import { v4 as uuid } from 'uuid';
 import { searchForTwitchGame, searchForUserDataMultiple } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
-import { bundleConfig, checkGameAgainstIgnoreList, getTwitchUserFromURL, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { checkGameAgainstIgnoreList, getTwitchUserFromURL, msToTimeStr, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 import { defaultSetupTime, horaroImportStatus, runDataArray } from './util/replicants';
 
 const nodecg = get();
-const config = bundleConfig();
+const config = nodecg.bundleConfig;
 const md = new MarkdownIt();
 const scheduleDataCache: { [k: string]: HoraroSchedule } = {};
 

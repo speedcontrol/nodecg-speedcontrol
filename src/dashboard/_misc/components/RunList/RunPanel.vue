@@ -109,12 +109,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { RunFinishTimes, Timer, Configschema } from '@nodecg-speedcontrol/types/schemas';
-import { RunData, RunModification, Alert, RunDataActiveRun } from '@nodecg-speedcontrol/types';
-import ModifyButton from './ModifyButton.vue';
+import { Alert, RunData, RunDataActiveRun, RunModification } from '@nodecg-speedcontrol/types';
+import { RunFinishTimes, Timer } from '@nodecg-speedcontrol/types/schemas';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { getDialog } from '../../helpers';
 import { replicantNS } from '../../replicant_store';
+import ModifyButton from './ModifyButton.vue';
 
 @Component({
   components: {
@@ -143,7 +143,7 @@ export default class extends Vue {
   }
 
   customDataName(key: string): string {
-    const cfg = nodecg.bundleConfig as Configschema;
+    const cfg = nodecg.bundleConfig;
     const customData = cfg.schedule?.customData || cfg.customData?.run || [];
     return customData.find(
       (custom) => custom.key === key,

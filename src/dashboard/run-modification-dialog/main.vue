@@ -150,17 +150,18 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { TwitchAPIData, Configschema } from '@nodecg-speedcontrol/types/schemas';
-import Draggable from 'vuedraggable';
-import { RunData, RunModification, Alert } from '@nodecg-speedcontrol/types';
-import clone from 'clone';
 import { NodeCGAPIClient } from '@alvancamp/test-nodecg-types/client/api/api.client';
-import TextInput from './components/TextInput.vue';
-import Team from './components/Team.vue';
-import ModifyButton from './components/ModifyButton.vue';
+import { Alert, RunData, RunModification } from '@nodecg-speedcontrol/types';
+import { Configschema, TwitchAPIData } from '@nodecg-speedcontrol/types/schemas';
+import clone from 'clone';
+import { DeepWritable } from 'ts-essentials';
+import { Component, Vue } from 'vue-property-decorator';
+import Draggable from 'vuedraggable';
 import { getDialog } from '../_misc/helpers';
 import { replicantNS } from '../_misc/replicant_store';
+import ModifyButton from './components/ModifyButton.vue';
+import Team from './components/Team.vue';
+import TextInput from './components/TextInput.vue';
 import { storeModule } from './store';
 
 @Component({
@@ -188,7 +189,7 @@ export default class extends Vue {
   addNewTeam(): void { storeModule.addNewTeam(); }
 
   get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
-    const cfg = nodecg.bundleConfig as Configschema;
+    const cfg = nodecg.bundleConfig as DeepWritable<Configschema>; // Doing this for simplicity
     const customData = clone(cfg.schedule?.customData || cfg.customData?.run || []);
     Object.keys(this.runData.customData).forEach((key) => {
       if (!customData.find(({ key: k }) => k === key)) {

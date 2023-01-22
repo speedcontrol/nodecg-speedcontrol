@@ -2,12 +2,12 @@ import { CommercialDuration } from '@nodecg-speedcontrol/types';
 import express from 'express'; // eslint-disable-line import/no-extraneous-dependencies
 import needle, { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
 import * as events from './util/events';
-import { bundleConfig, processAck, to } from './util/helpers';
+import { processAck, to } from './util/helpers';
 import { get } from './util/nodecg';
 import { twitchAPIData, twitchChannelInfo, twitchCommercialTimer } from './util/replicants';
 
 const nodecg = get();
-const config = bundleConfig();
+const config = nodecg.bundleConfig;
 const app = express();
 let channelInfoTO: NodeJS.Timeout;
 
@@ -215,7 +215,7 @@ export async function updateChannelInfo(title?: string, game?: string): Promise<
     if (!dir && game) {
       // If no category found, find entry for default category.
       noTwitchGame = true;
-      [, dir] = await to(verifyTwitchDir(bundleConfig().twitch.streamDefaultGame));
+      [, dir] = await to(verifyTwitchDir(nodecg.bundleConfig.twitch.streamDefaultGame));
     }
 
     if (!config.twitch.metadataUseExternal) {
