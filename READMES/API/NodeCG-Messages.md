@@ -502,10 +502,11 @@ Removes all of the runs in the `runDataArray` replicant, and also removes the ac
 ### Parameters
 - *[`object`]*
   - `duration` *[`number`]* (default: `180`) How long you want the commercial to run for in seconds; if not supplied will default to 180s/3m.
-  - `fromDashboard` *[`boolean`]* (default: `false`) If this message was triggered manually via a dashboard panel; internally used on the *Twitch Control* panel.
+  - `fromDashboard` *[`boolean`]* (default: `false`) If this message was triggered manually via a dashboard panel; internally used on the *Twitch Control* panel, for passing on via the `twitchExternalCommercial` message, if you use this.
 ### Data
 - *[`object`]*
   - `duration` *[`number`]* How long the commercial will run for in seconds.
+  - `fromDashboard` *[`boolean`]* If the commercial was triggered via a dashboard panel (see comment above for use cases).
 ### Example code (extension/no acknowledgement)
 ```javascript
 nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { duration: 180, fromDashboard: false });
@@ -526,6 +527,7 @@ nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { dur
 ```javascript
 {
   duration: 180
+  fromDashboard: false,
 }
 ```
 
