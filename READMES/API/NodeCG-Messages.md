@@ -114,7 +114,7 @@ nodecg.listenFor('repeaterFeaturedChannels', 'nodecg-speedcontrol', (names) => {
 ]
 ```
 
-Emitted when the featured channels should be updated, either automatically or via the *Twitch Control* panel, only if `twitch.ffzUseRepeater` is set to true in the bundle configuration. This is the same list that is given to the default integration. Only needed if you need to use an alternative script to update these instead of the default integration.
+Emitted when the featured channels should be updated, either automatically or via the *Twitch Control* panel, only if `twitch.ffzUseRepeater` is set to true in the bundle configuration. Only needed if you need to use an alternative script to update these instead of the default integration.
 
 
 # Messages Received (*sendMessage/sendMessageToBundle*)

@@ -25,7 +25,7 @@ These are also available typed if you use TypeScript.
 
 *Types available in [./src/types/ExtensionReturn.d.ts](../../src/types/ExtensionReturn.d.ts) and [./types/Events.d.ts](../../src/types/Events.d.ts)*
 
-You can use the `ExtensionReturn` interface to properly type what the extension returns, although due to an issue with NodeCG's own typings (correct as of `1.6.0`), you must convert the expression to `unknown` first:
+You can use the `ExtensionReturn` interface to properly type what the extension returns, although due to an issue with NodeCG's own typings (correct as of `1.9.0`), you must convert the expression to `unknown` first:
 ```typescript
 const speedcontrol = nodecg.extensions['nodecg-speedcontrol'] as unknown as ExtensionReturn;
 ```
