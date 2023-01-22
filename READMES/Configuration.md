@@ -26,6 +26,7 @@ Below is an example configuration file contents with everything that is availabl
     "channelName": "OTHER_CHANNEL",
     "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
     "streamDefaultGame": "Games + Demos",
+    "metadataUseExternal": false,
     "commercialsExtraButtons": false,
     "commercialsUseExternal": false,
     "ffzIntegration": false,
@@ -94,9 +95,9 @@ The currently available languages are:
     "additionalScopes": [
       "SCOPE"
     ],
-    "channelName": "OTHER_CHANNEL",
     "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
     "streamDefaultGame": "Games + Demos",
+    "metadataUseExternal": false,
     "commercialsExtraButtons": false,
     "commercialsUseExternal": false,
     "ffzIntegration": false,
@@ -114,11 +115,7 @@ FrankerFaceZ integration can also be enabled with `ffzIntegration`, this will ma
 
 Once the Twitch integration settings are fully set up and your NodeCG server has been (re)started, you will see a "Connect with Twitch" button on the dashboard, which can be used to authorise nodecg-speedcontrol with Twitch.
 
-Currently, you must either:
-- Login with the channel you wish to have the information updated for *or*
-- Specify a channel name in the `channelName` setting that the account you logged in with has editor access for. Currently if this setting is used, the FrankerFaceZ integration will not successfully be able set the featured channels due to a limitation in the FrankerFaceZ service.
-
-If you decide to use the 2nd option above, there is also another boolean, `ffzUseRepeater`; if this is true it will never attempt to set the FrankerFaceZ featured channels but instead will make the bundle emit a `repeaterFeaturedChannels` message so if you want to work around this limitation in your own bundle you can; see the [API documentation](API.md) for more information.
+For most people, it is advised that you connect using the same account that you want the information updated for. ***Unfortunately it is no longer possible to just be an editor for a channel that you specify in `channelName`, due to Twitch API permission changes.*** If you cannot log into said account, you will need to find a workaround, see the "Advanced Users" section below.
 
 There is also another optional parameter, `additionalScopes`, which is an array of strings, which if any are specified will be added to the Twitch authorisation request and allow the token to have more control, which can be useful if you plan to use the [Twitch API request feature](./API/NodeCG-Messages.md#twitchAPIRequest) feature. By default we request these scopes, so if you specify these again they will be ignored:
 - `channel:edit:commercial`
@@ -128,7 +125,15 @@ There is also another optional parameter, `additionalScopes`, which is an array 
 
 The `commercialsExtraButtons` option adds more buttons on the *Twitch Control* dashboard panel (3:30 - 6:00); these will only work if your Twitch channel is allowed to run commercials of that length.
 
-The `commercialsUseExternal` is an advanced option; it will stop the internal logic of communicating with Twitch to run commercials, and will make the bundle emit a `twitchExternalCommercial` message that can be picked up by other bundles so you can integrate your own logic; see the [API documentation](API.md) for more information. This is similar to the FrankerFaceZ repeater logic described above.
+**Advanced Users:**
+
+If you cannot log into the Twitch account that you will be changing the information on, you will need to find a workaround that involves an external bundle, for example it may involve an external server that you send requests to, that you then ask the owner of the channel to log in to. To help with this, we offer these settings (set any of them to true to activate them). Note that if using any of these settings, this bundle will update the our information assuming that any other bundle you have programmed has worked correctly, without you needing to respond.
+
+- `metadataUseExternal`: instead of this bundle changing the title/game, we will emit the (`twitchExternalMetadata`)(./API/NodeCG-Messages.md#twitchExternalMetadata) message, and allow you to handle it yourself.
+- `commercialsUseExternal`: instead of this bundle running commercials, we will emit the [`twitchExternalCommercial`](./API/NodeCG-Messages.md#twitchExternalCommercial) message, and allow you to handle them yourself.
+- `ffzUseRepeater`: instead of this bundle setting the FrankerFaceZ featured channels, we will emit the [`repeaterFeaturedChannels`](./API/NodeCG-Messages.md#repeaterFeaturedChannels) message, and allow you to handle them yourself.
+
+You will very likely also want to add/change `channelName` in the configuration to the channel you wish to pull the information from that gets pre-filled in the *Twitch Control* dashboard panel.
 
 
 ### Horaro Schedule
