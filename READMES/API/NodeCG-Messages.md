@@ -56,9 +56,9 @@ Emitted when a Twitch commercial is successfully started via this bundle.
 
 ### Data
 - *[`object`]*
-  - `channelID` *[`string` or `undefined`]* DESCRIPTION_TODO
-  - `title` *[`string` or `undefined`]* DESCRIPTION_TODO
-  - `gameID` *[`string`]* DESCRIPTION_TODO
+  - `channelID` *[`string` or `undefined`]* Twitch channel ID (*not name!*) of the channel expecting it's metadata to be updated.
+  - `title` *[`string` or `undefined`]* Title to be set.
+  - `gameID` *[`string`]* Twitch game/category ID (*not name!*) of the game to be set.
 ### Example code
 ```javascript
 nodecg.listenFor('twitchExternalMetadata', 'nodecg-speedcontrol', (data) => {
@@ -68,9 +68,9 @@ nodecg.listenFor('twitchExternalMetadata', 'nodecg-speedcontrol', (data) => {
 ### Example data
 ```javascript
 {
-  channelID: 'EXAMPLE_TODO',
-  title: 'EXAMPLE_TODO',
-  gameID: 'EXAMPLE_TODO'
+  channelID: '46573611',
+  title: 'Good Games Marathon Continues',
+  gameID: '1316'
 }
 ```
 
@@ -81,6 +81,7 @@ Emitted when the Twitch metadata (title/game) should be updated, either automati
 ### Data
 - *[`object`]*
   - `duration` *[`number`]* How long the commercial should run for in seconds.
+  - `fromDashboard` *[`boolean`]* If this message was triggered manually via a dashboard panel; internally used on the *Twitch Control* panel.
 ### Example code
 ```javascript
 nodecg.listenFor('twitchExternalCommercial', 'nodecg-speedcontrol', (data) => {
@@ -90,7 +91,8 @@ nodecg.listenFor('twitchExternalCommercial', 'nodecg-speedcontrol', (data) => {
 ### Example data
 ```javascript
 {
-  duration: 180
+  duration: 180,
+  fromDashboard: false
 }
 ```
 
@@ -526,8 +528,8 @@ nodecg.sendMessageToBundle('twitchStartCommercial', 'nodecg-speedcontrol', { dur
 ### Example data
 ```javascript
 {
-  duration: 180
-  fromDashboard: false,
+  duration: 180,
+  fromDashboard: false
 }
 ```
 
