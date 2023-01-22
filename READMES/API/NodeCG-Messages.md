@@ -74,7 +74,7 @@ nodecg.listenFor('twitchExternalMetadata', 'nodecg-speedcontrol', (data) => {
 }
 ```
 
-Emitted when the Twitch metadata (title/game) should be updated, either automatically or via the *Twitch Control* panel, only if `twitch.metadataUseExternal` is set to true in the bundle configuration. Only needed if you need to use an alternative script to change this instead of the default integreation.
+Emitted when the Twitch metadata (title/game) should be updated, either automatically or via the *Twitch Control* panel, only if `twitch.metadataUseExternal` is set to true in the bundle configuration. Only needed if you need to use an alternative script to change this instead of the default integration.
 
 ## twitchExternalCommercial
 
