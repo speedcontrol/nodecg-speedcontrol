@@ -1,7 +1,7 @@
 import { RunData, RunDataArray, SendMessageAck } from '@nodecg-speedcontrol/types';
 import { Configschema } from '@nodecg-speedcontrol/types/schemas';
 import _ from 'lodash';
-import type { ListenForCb } from 'nodecg/types/lib/nodecg-instance';
+import type NodeCG from '@alvancamp/test-nodecg-types';
 import { get } from './nodecg';
 
 const nodecg = get();
@@ -97,7 +97,7 @@ export function bundleConfig(): Configschema {
  * @param data Anything else you want to send alongside.
  */
 export function processAck<T>(
-  ack: ListenForCb | SendMessageAck | undefined,
+  ack: ReturnType<NodeCG.ListenHandler> | SendMessageAck | undefined,
   err: Error | null,
   data?: T,
 ): void {

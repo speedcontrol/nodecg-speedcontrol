@@ -150,7 +150,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { v4 as uuid } from 'uuid';
 import { HoraroImportStatus, HoraroImportSavedOpts, Configschema } from '@nodecg-speedcontrol/types/schemas';
-import { Alert } from '@nodecg-speedcontrol/types';
+import { Alert, HoraroSchedule } from '@nodecg-speedcontrol/types';
 import RunDataOptions from './RunDataOptions';
 import Dropdown from './components/Dropdown.vue';
 import ConfigButton from './components/ConfigButton.vue';
@@ -202,7 +202,7 @@ export default class extends Vue {
 
   async loadSchedule(): Promise<void> {
     try {
-      const data = await nodecg.sendMessage('loadSchedule', {
+      const data = await nodecg.sendMessage<HoraroSchedule>('loadSchedule', {
         url: this.url,
         dashID: this.dashID,
       });

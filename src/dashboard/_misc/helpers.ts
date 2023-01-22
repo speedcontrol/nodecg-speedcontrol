@@ -1,5 +1,3 @@
-import type { Dialog } from '@nodecg-speedcontrol/types';
-
 /**
  * Checks if number needs a 0 adding to the start and does so if needed.
  * @param num Number which you want to turn into a padded string.
@@ -27,8 +25,8 @@ export function msToTimeStr(ms: number): string {
  */
 export function getDialog(name: string): Window | null {
   try {
-    const dialog = nodecg.getDialog(name) as Dialog;
-    const iframe = dialog.querySelector('iframe')?.contentWindow || null;
+    const dialog = nodecg.getDialog(name);
+    const iframe = dialog?.querySelector('iframe')?.contentWindow || null;
     if (!iframe) {
       throw new Error('Could not find the iFrame');
     }

@@ -51,6 +51,7 @@
     "ws": "^8.12.0"
   },
   "devDependencies": {
+    "@alvancamp/test-nodecg-types": "^1.9.28",
     "@fontsource/roboto": "^4.5.8",
     "@intlify/vue-i18n-loader": "^1.1.0",
     "@mdi/font": "^7.1.96",
@@ -72,8 +73,8 @@
     "deepmerge": "^4.2.2",
     "eslint": "^8.32.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-airbnb-typescript": "^16.2.0",
-    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-import-resolver-typescript": "^3.5.2",
     "eslint-import-resolver-webpack": "^0.13.2",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-vue": "^8.7.1",

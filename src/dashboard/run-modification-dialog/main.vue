@@ -153,8 +153,9 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { TwitchAPIData, Configschema } from '@nodecg-speedcontrol/types/schemas';
 import Draggable from 'vuedraggable';
-import { RunData, RunModification, Dialog, Alert } from '@nodecg-speedcontrol/types';
+import { RunData, RunModification, Alert } from '@nodecg-speedcontrol/types';
 import clone from 'clone';
+import { NodeCGAPIClient } from '@alvancamp/test-nodecg-types/client/api/api.client';
 import TextInput from './components/TextInput.vue';
 import Team from './components/Team.vue';
 import ModifyButton from './components/ModifyButton.vue';
@@ -172,7 +173,7 @@ import { storeModule } from './store';
 })
 export default class extends Vue {
   @replicantNS.State((s) => s.reps.twitchAPIData) readonly twitchAPIData!: TwitchAPIData;
-  dialog!: Dialog;
+  dialog: ReturnType<NodeCGAPIClient['getDialog']>;
   err: Error | null = null;
 
   get mode(): RunModification.Mode { return storeModule.mode; }
@@ -199,7 +200,7 @@ export default class extends Vue {
 
   open(opts: { mode: RunModification.Mode, runData?: RunData, prevID?: string }): void {
     // Waits for dialog to actually open before changing storage.
-    this.dialog.open();
+    this.dialog?.open();
     document.addEventListener('dialog-opened', () => {
       this.mode = opts.mode;
       this.err = null;
@@ -244,8 +245,8 @@ export default class extends Vue {
   }
 
   close(confirm: boolean): void {
-    this.dialog._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle
-    this.dialog.close();
+    (this.dialog as any)._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle
+    this.dialog?.close();
   }
 
   confirm(): void {
@@ -257,7 +258,7 @@ export default class extends Vue {
   }
 
   mounted(): void {
-    this.dialog = nodecg.getDialog('run-modification-dialog') as Dialog;
+    this.dialog = nodecg.getDialog('run-modification-dialog');
 
     // Attaching this function to the window for easy access from dashboard panels.
     (window as Window as RunModification.Dialog).openDialog = (
@@ -265,7 +266,7 @@ export default class extends Vue {
     ): void => this.open(opts);
 
     // Small hack to make the NodeCG dialog look a little better for us, not perfect yet.
-    const elem = this.dialog.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;
+    const elem = this.dialog?.getElementsByTagName('paper-dialog-scrollable')[0] as HTMLElement;
     elem.style.marginBottom = '12px';
   }
 }

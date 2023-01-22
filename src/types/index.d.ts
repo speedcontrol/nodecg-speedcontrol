@@ -1,5 +1,4 @@
 export * from './Alert';
-export * from './Dialog';
 export * from './Events';
 export * from './ExtensionReturn';
 export * from './HoraroImport';

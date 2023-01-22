@@ -1,4 +1,4 @@
-import { RunData, RunDataActiveRun, RunDataPlayer, RunDataTeam } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
+import { RunData, RunDataActiveRun, RunDataPlayer, RunDataTeam, SendMessageArgsMap } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
 import clone from 'clone';
 import _ from 'lodash';
 import { setChannels } from './ffz-ws';
@@ -300,22 +300,23 @@ async function removeAllRuns(): Promise<void> {
 }
 
 // NodeCG messaging system.
-nodecg.listenFor('changeActiveRun', (id, ack) => {
+nodecg.listenFor('changeActiveRun', (id: SendMessageArgsMap['changeActiveRun'], ack) => {
   changeActiveRun(id)
     .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
     .catch((err) => processAck(ack, err));
 });
-nodecg.listenFor('removeRun', (id, ack) => {
+nodecg.listenFor('removeRun', (id: SendMessageArgsMap['removeRun'], ack) => {
   removeRun(id)
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
-nodecg.listenFor('modifyRun', (data, ack) => {
+
+nodecg.listenFor('modifyRun', (data: SendMessageArgsMap['modifyRun'], ack) => {
   modifyRun(data.runData, data.prevID, data.updateTwitch)
     .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
     .catch((err) => processAck(ack, err));
 });
-nodecg.listenFor('modifyRelayPlayerID', (data, ack) => {
+nodecg.listenFor('modifyRelayPlayerID', (data: SendMessageArgsMap['modifyRelayPlayerID'], ack) => {
   modifyRelayPlayerID(data.runID, data.teamID, data.playerID)
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
