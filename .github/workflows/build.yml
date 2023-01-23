@@ -85,7 +85,6 @@ jobs:
 
     # Pushes the built files to a specific branch
     - name: Push built files to build branch
-      #if: ${{ steps.commit.outcome == 'success' }}
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets['GITHUB_TOKEN'] }}
