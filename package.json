@@ -51,7 +51,7 @@
     "ws": "^8.12.0"
   },
   "devDependencies": {
-    "@alvancamp/test-nodecg-types": "^1.9.30",
+    "@alvancamp/test-nodecg-types": "^1.9.31",
     "@fontsource/roboto": "^4.5.8",
     "@intlify/vue-i18n-loader": "^1.1.0",
     "@mdi/font": "^7.1.96",
