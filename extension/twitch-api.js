@@ -36,7 +36,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateChannelInfo = exports.verifyTwitchDir = exports.refreshToken = void 0;
-const express_1 = __importDefault(require("express")); // eslint-disable-line import/no-extraneous-dependencies
 const needle_1 = __importDefault(require("needle"));
 const events = __importStar(require("./util/events"));
 const helpers_1 = require("./util/helpers");
@@ -44,7 +43,7 @@ const nodecg_1 = require("./util/nodecg");
 const replicants_1 = require("./util/replicants");
 const nodecg = (0, nodecg_1.get)();
 const config = (0, helpers_1.bundleConfig)();
-const app = (0, express_1.default)();
+const router = nodecg.Router();
 let channelInfoTO;
 replicants_1.twitchAPIData.value.state = 'off'; // Set this to "off" on every start.
 if (!config.twitch.ffzUseRepeater) {
@@ -403,7 +402,7 @@ if (config.twitch.enabled) {
         });
     }
     // Route that receives Twitch's auth code when the user does the flow from the dashboard.
-    app.get('/nodecg-speedcontrol/twitchauth', (req, res) => {
+    router.get('/twitchauth', (req, res) => {
         replicants_1.twitchAPIData.value.state = 'authenticating';
         (0, needle_1.default)('post', 'https://id.twitch.tv/oauth2/token', {
             client_id: config.twitch.clientID,
@@ -427,7 +426,7 @@ if (config.twitch.enabled) {
             res.send('<b>Error while processing the Twitch authentication, please try again.</b>');
         });
     });
-    nodecg.mount(app);
+    nodecg.mount('/nodecg-speedcontrol', router);
 }
 // NodeCG messaging system.
 nodecg.listenFor('twitchUpdateChannelInfo', (data, ack) => {
