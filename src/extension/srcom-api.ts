@@ -155,7 +155,8 @@ export async function searchForUserData(
     if (data.pronouns) {
       // Erase any pronouns that are custom strings that used to be allowed.
       const split = data.pronouns.split(',').map((p) => p.trim().toLowerCase());
-      if (!split.includes('he/him') && !split.includes('she/her') && !split.includes('they/them')) {
+      const allowed = ['any/all', 'he/him', 'she/her', 'they/them', 'it/its'];
+      if (split.find((p) => !allowed.includes(p))) {
         data.pronouns = '';
       }
     }

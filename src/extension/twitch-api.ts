@@ -1,5 +1,4 @@
 import { CommercialDuration } from '@nodecg-speedcontrol/types';
-import express from 'express'; // eslint-disable-line import/no-extraneous-dependencies
 import needle, { BodyData, NeedleHttpVerbs, NeedleResponse } from 'needle';
 import * as events from './util/events';
 import { bundleConfig, processAck, to } from './util/helpers';
@@ -8,7 +7,7 @@ import { twitchAPIData, twitchChannelInfo, twitchCommercialTimer } from './util/
 
 const nodecg = get();
 const config = bundleConfig();
-const app = express();
+const router = nodecg.Router();
 let channelInfoTO: NodeJS.Timeout;
 
 twitchAPIData.value.state = 'off'; // Set this to "off" on every start.
@@ -397,7 +396,7 @@ if (config.twitch.enabled) {
   }
 
   // Route that receives Twitch's auth code when the user does the flow from the dashboard.
-  app.get('/nodecg-speedcontrol/twitchauth', (req, res) => {
+  router.get('/twitchauth', (req, res) => {
     twitchAPIData.value.state = 'authenticating';
     needle(
       'post',
@@ -426,7 +425,7 @@ if (config.twitch.enabled) {
     });
   });
 
-  nodecg.mount(app);
+  nodecg.mount('/nodecg-speedcontrol', router);
 }
 
 // NodeCG messaging system.
