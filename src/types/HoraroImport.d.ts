@@ -17,6 +17,7 @@ export interface HoraroSchedule {
         setup?: string;
       };
     }[];
+    columns: string[];
   };
 }
 

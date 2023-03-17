@@ -130,7 +130,7 @@
     "src/types/**/*.d.ts",
     "../../types/browser.d.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "vueCompilerOptions": {
+    "target": 2.7
+  }
 }
