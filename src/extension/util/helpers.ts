@@ -12,7 +12,7 @@ const nodecg = get();
  */
 export function formPlayerNamesStr(runData: RunData): string {
   return runData.teams.map((team) => (
-    team.players.map((player) => player.name).join(', ')
+    team.players.map((player) => `@${player.name}`).join(', ')
   )).join(' vs. ') || 'N/A';
 }
 
