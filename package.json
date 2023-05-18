@@ -112,7 +112,7 @@
     "webpack-livereload-plugin": "^3.0.2"
   },
   "nodecg": {
-    "compatibleRange": "^1.9.0",
+    "compatibleRange": "^1.9.0||^2",
     "dashboardPanels": [
       {
         "name": "run-player",
