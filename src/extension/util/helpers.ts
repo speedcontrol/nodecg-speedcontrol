@@ -9,6 +9,7 @@ const nodecg = get();
 /**
  * Takes a run data object and returns a formed string of the player names.
  * @param runData Run Data object.
+ * @param mentionChannels Set to true to mention the runner's twitch channel in the title instead
  */
 export function formatPlayersForTwitchTitle(runData: RunData, mentionChannels: boolean): string {
   return runData.teams.map((team) => (
