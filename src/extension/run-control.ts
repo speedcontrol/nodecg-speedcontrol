@@ -6,7 +6,7 @@ import { searchForTwitchGame } from './srcom-api';
 import { resetTimer } from './timer';
 import { updateChannelInfo, verifyTwitchDir } from './twitch-api';
 import * as events from './util/events';
-import { bundleConfig, findRunIndexFromId, formPlayerNamesStr, getTwitchChannels, msToTimeStr, processAck, timeStrToMS, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { bundleConfig, findRunIndexFromId, formatPlayersForTwitchTitle, getTwitchChannels, msToTimeStr, processAck, timeStrToMS, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 import { runDataActiveRun, runDataActiveRunSurrounding, runDataArray, timer, twitchAPIData } from './util/replicants';
 
@@ -62,10 +62,12 @@ async function updateTwitchInformation(runData: RunData): Promise<boolean> {
     return false;
   }
 
+  const twitchConfig = bundleConfig().twitch;
+
   // Constructing Twitch title and game to send off.
-  const status = bundleConfig().twitch.streamTitle
+  const status = twitchConfig.streamTitle
     .replace(/{{game}}/g, runData.game || '')
-    .replace(/{{players}}/g, formPlayerNamesStr(runData))
+    .replace(/{{players}}/g, formatPlayersForTwitchTitle(runData, twitchConfig.mentionRunnersInStreamTitle))
     .replace(/{{category}}/g, runData.category || '');
 
   // Attempts to find the correct Twitch game directory.
@@ -81,11 +83,11 @@ async function updateTwitchInformation(runData: RunData): Promise<boolean> {
 
   to(updateChannelInfo(
     status,
-    gameTwitch || bundleConfig().twitch.streamDefaultGame,
+    gameTwitch || twitchConfig.streamDefaultGame,
   ));
 
   // Construct/send featured channels if enabled.
-  if (bundleConfig().twitch.ffzIntegration) {
+  if (twitchConfig.ffzIntegration) {
     to(setChannels(getTwitchChannels(runData)));
   }
 

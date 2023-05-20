@@ -24,6 +24,7 @@ export interface Configschema {
 		additionalScopes?: string[] | null;
 		channelName?: string;
 		streamTitle: string;
+		mentionRunnersInStreamTitle: boolean;
 		streamDefaultGame: string;
 		metadataUseExternal?: boolean;
 		commercialsExtraButtons?: boolean;

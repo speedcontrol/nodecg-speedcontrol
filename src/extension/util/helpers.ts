@@ -10,9 +10,9 @@ const nodecg = get();
  * Takes a run data object and returns a formed string of the player names.
  * @param runData Run Data object.
  */
-export function formPlayerNamesStr(runData: RunData): string {
+export function formatPlayersForTwitchTitle(runData: RunData, mentionChannels: boolean): string {
   return runData.teams.map((team) => (
-    team.players.map((player) => player.social.twitch
+    team.players.map((player) => mentionChannels && player.social.twitch
     ? `@${player.social.twitch}` : player.name).join(', ')
   )).join(' vs. ') || 'N/A';
 }

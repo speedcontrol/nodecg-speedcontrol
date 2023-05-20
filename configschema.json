@@ -122,6 +122,10 @@
           "type": "string",
           "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"
         },
+        "mentionRunnersInStreamTitle": {
+          "type": "boolean",
+          "default": false
+        },
         "streamDefaultGame": {
           "type": "string",
           "default": "Games + Demos"
