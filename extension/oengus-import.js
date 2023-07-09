@@ -23,7 +23,7 @@ const helpers_1 = require("./util/helpers"); // eslint-disable-line object-curly
 const nodecg_1 = require("./util/nodecg");
 const replicants_1 = require("./util/replicants");
 const nodecg = (0, nodecg_1.get)();
-const config = (0, helpers_1.bundleConfig)();
+const config = nodecg.bundleConfig;
 /**
  * Make a GET request to Oengus API.
  * @param endpoint Oengus API endpoint you want to access.

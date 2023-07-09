@@ -96,7 +96,7 @@ function updateTwitchInformation(runData) {
             return false;
         }
         // Constructing Twitch title and game to send off.
-        const status = (0, helpers_1.bundleConfig)().twitch.streamTitle
+        const status = nodecg.bundleConfig.twitch.streamTitle
             .replace(/{{game}}/g, runData.game || '')
             .replace(/{{players}}/g, (0, helpers_1.formPlayerNamesStr)(runData))
             .replace(/{{category}}/g, runData.category || '');
@@ -110,9 +110,9 @@ function updateTwitchInformation(runData) {
         if (gameTwitch) { // Verify game directory supplied exists on Twitch.
             gameTwitch = (_a = (yield (0, helpers_1.to)((0, twitch_api_1.verifyTwitchDir)(gameTwitch)))[1]) === null || _a === void 0 ? void 0 : _a.name;
         }
-        (0, helpers_1.to)((0, twitch_api_1.updateChannelInfo)(status, gameTwitch || (0, helpers_1.bundleConfig)().twitch.streamDefaultGame));
+        (0, helpers_1.to)((0, twitch_api_1.updateChannelInfo)(status, gameTwitch || nodecg.bundleConfig.twitch.streamDefaultGame));
         // Construct/send featured channels if enabled.
-        if ((0, helpers_1.bundleConfig)().twitch.ffzIntegration) {
+        if (nodecg.bundleConfig.twitch.ffzIntegration) {
             (0, helpers_1.to)((0, ffz_ws_1.setChannels)((0, helpers_1.getTwitchChannels)(runData)));
         }
         return !gameTwitch;

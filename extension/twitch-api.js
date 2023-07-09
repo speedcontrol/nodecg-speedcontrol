@@ -42,7 +42,7 @@ const helpers_1 = require("./util/helpers");
 const nodecg_1 = require("./util/nodecg");
 const replicants_1 = require("./util/replicants");
 const nodecg = (0, nodecg_1.get)();
-const config = (0, helpers_1.bundleConfig)();
+const config = nodecg.bundleConfig;
 const router = nodecg.Router();
 let channelInfoTO;
 replicants_1.twitchAPIData.value.state = 'off'; // Set this to "off" on every start.
@@ -230,7 +230,7 @@ function updateChannelInfo(title, game) {
             if (!dir && game) {
                 // If no category found, find entry for default category.
                 noTwitchGame = true;
-                [, dir] = yield (0, helpers_1.to)(verifyTwitchDir((0, helpers_1.bundleConfig)().twitch.streamDefaultGame));
+                [, dir] = yield (0, helpers_1.to)(verifyTwitchDir(nodecg.bundleConfig.twitch.streamDefaultGame));
             }
             if (!config.twitch.metadataUseExternal) {
                 const resp = yield request('patch', `/channels?broadcaster_id=${replicants_1.twitchAPIData.value.channelID}`, {

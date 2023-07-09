@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTwitterUserFromURL = exports.getTwitchUserFromURL = exports.checkGameAgainstIgnoreList = exports.randomInt = exports.to = exports.processAck = exports.bundleConfig = exports.findRunIndexFromId = exports.sleep = exports.msToTimeStr = exports.timeStrToMS = exports.padTimeNumber = exports.getTwitchChannels = exports.formPlayerNamesStr = void 0;
+exports.getTwitterUserFromURL = exports.getTwitchUserFromURL = exports.checkGameAgainstIgnoreList = exports.randomInt = exports.to = exports.processAck = exports.findRunIndexFromId = exports.sleep = exports.msToTimeStr = exports.timeStrToMS = exports.padTimeNumber = exports.getTwitchChannels = exports.formPlayerNamesStr = void 0;
 const lodash_1 = __importDefault(require("lodash"));
 const nodecg_1 = require("./nodecg");
 const nodecg = (0, nodecg_1.get)();
@@ -88,13 +88,6 @@ function findRunIndexFromId(id) {
 }
 exports.findRunIndexFromId = findRunIndexFromId;
 /**
- * Returns this bundle's configuration along with the correct typings.
- */
-function bundleConfig() {
-    return nodecg.bundleConfig;
-}
-exports.bundleConfig = bundleConfig;
-/**
  * Simple helper function to handle NodeCG/our message acknowledgements.
  * @param ack The acknoledgement function itself.
  * @param err Error to supply if any.
@@ -141,9 +134,9 @@ function checkGameAgainstIgnoreList(game, service = 'horaro') {
         return false;
     }
     const list = service === 'horaro'
-        ? (bundleConfig().horaro || bundleConfig().schedule).ignoreGamesWhileImporting || []
-        : bundleConfig().oengus.ignoreGamesWhileImporting
-            || (bundleConfig().horaro || bundleConfig().schedule).ignoreGamesWhileImporting || [];
+        ? (nodecg.bundleConfig.horaro || nodecg.bundleConfig.schedule).ignoreGamesWhileImporting || []
+        : nodecg.bundleConfig.oengus.ignoreGamesWhileImporting
+            || (nodecg.bundleConfig.horaro || nodecg.bundleConfig.schedule).ignoreGamesWhileImporting || [];
     return !!list.find((str) => !!str.toLowerCase().match(new RegExp(`\\b${lodash_1.default.escapeRegExp(game.toLowerCase())}\\b`)));
 }
 exports.checkGameAgainstIgnoreList = checkGameAgainstIgnoreList;
