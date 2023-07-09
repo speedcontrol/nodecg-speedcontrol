@@ -1,5 +1,5 @@
-import type NodeCG from '@alvancamp/test-nodecg-types';
 import { RunData, RunDataArray, SendMessageAck } from '@nodecg-speedcontrol/types';
+import type NodeCG from '@nodecg/types';
 import _ from 'lodash';
 import { get } from './nodecg';
 

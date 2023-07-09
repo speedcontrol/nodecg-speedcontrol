@@ -13,7 +13,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { VueConstructor } from 'vue';
 import { Alert, RunData } from '@nodecg-speedcontrol/types';
-import { NodeCGAPIClient } from '@alvancamp/test-nodecg-types/client/api/api.client';
+import { NodeCGAPIClient } from '@nodecg/types/client/api/api.client';
 import ImportConfirm from './components/ImportConfirm.vue';
 import ReturnToStartConfirm from './components/ReturnToStartConfirm.vue';
 import RemoveAllRunsConfirm from './components/RemoveAllRunsConfirm.vue';

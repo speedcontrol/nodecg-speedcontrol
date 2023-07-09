@@ -6,8 +6,8 @@
 require('module-alias').addAlias('@nodecg-speedcontrol', require('path').join(__dirname, '.'));
 
 import { ExtensionReturn } from '@nodecg-speedcontrol/types';
-import type NodeCG from '@alvancamp/test-nodecg-types';
 import { Configschema } from '@nodecg-speedcontrol/types/schemas';
+import type NodeCG from '@nodecg/types';
 import { listenFor, sendMessage } from './util/events';
 import { set } from './util/nodecg';
 

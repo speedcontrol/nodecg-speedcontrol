@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 
-import type NodeCG from '@alvancamp/test-nodecg-types';
 import type { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, OengusImportStatus, RunDataActiveRun, RunDataActiveRunSurrounding, RunDataArray, RunFinishTimes, Timer, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '@nodecg-speedcontrol/types/schemas';
+import type NodeCG from '@nodecg/types';
 import { get as nodecg } from './nodecg';
 
 /**

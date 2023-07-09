@@ -150,7 +150,7 @@
 </template>
 
 <script lang="ts">
-import { NodeCGAPIClient } from '@alvancamp/test-nodecg-types/client/api/api.client';
+import { NodeCGAPIClient } from '@nodecg/types/client/api/api.client';
 import { Alert, RunData, RunModification } from '@nodecg-speedcontrol/types';
 import { Configschema, TwitchAPIData } from '@nodecg-speedcontrol/types/schemas';
 import clone from 'clone';
