@@ -6,12 +6,12 @@ import { mapSeries } from 'p-iteration';
 import { v4 as uuid } from 'uuid';
 import { searchForTwitchGame, searchForUserDataMultiple } from './srcom-api';
 import { verifyTwitchDir } from './twitch-api';
-import { bundleConfig, checkGameAgainstIgnoreList, getTwitchUserFromURL, padTimeNumber, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { checkGameAgainstIgnoreList, getTwitchUserFromURL, padTimeNumber, processAck, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get as ncgGet } from './util/nodecg';
 import { defaultSetupTime, oengusImportStatus, runDataArray } from './util/replicants';
 
 const nodecg = ncgGet();
-const config = bundleConfig();
+const config = nodecg.bundleConfig;
 
 /**
  * Make a GET request to Oengus API.

@@ -5,12 +5,12 @@ import TMI from 'tmi.js';
 import WebSocket from 'ws';
 import { refreshToken } from './twitch-api';
 import * as events from './util/events';
-import { bundleConfig, processAck, randomInt, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { processAck, randomInt, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 import { twitchAPIData } from './util/replicants';
 
 const nodecg = get();
-const config = bundleConfig();
+const config = nodecg.bundleConfig;
 let ws: WebSocket;
 let msgNo = 1;
 let pingTO: NodeJS.Timeout;

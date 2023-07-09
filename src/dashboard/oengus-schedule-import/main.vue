@@ -72,17 +72,17 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { OengusImportStatus, Configschema } from '@nodecg-speedcontrol/types/schemas';
 import { Alert } from '@nodecg-speedcontrol/types';
+import { OengusImportStatus } from '@nodecg-speedcontrol/types/schemas';
+import { Component, Vue } from 'vue-property-decorator';
 import { getDialog } from '../_misc/helpers';
 import { replicantNS } from '../_misc/replicant_store';
 
 @Component
 export default class extends Vue {
   @replicantNS.State((s) => s.reps.oengusImportStatus) readonly importStatus!: OengusImportStatus;
-  marathonShort = (nodecg.bundleConfig as Configschema).oengus.defaultMarathon || '';
-  useJapanese = (nodecg.bundleConfig as Configschema).oengus.useJapanese;
+  marathonShort = nodecg.bundleConfig.oengus.defaultMarathon || '';
+  useJapanese = nodecg.bundleConfig.oengus.useJapanese;
 
   importConfirm(): void {
     const dialog = getDialog('alert-dialog') as Alert.Dialog;

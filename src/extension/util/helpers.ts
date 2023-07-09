@@ -1,7 +1,6 @@
+import type NodeCG from '@alvancamp/test-nodecg-types';
 import { RunData, RunDataArray, SendMessageAck } from '@nodecg-speedcontrol/types';
-import { Configschema } from '@nodecg-speedcontrol/types/schemas';
 import _ from 'lodash';
-import type { ListenForCb } from 'nodecg/types/lib/nodecg-instance';
 import { get } from './nodecg';
 
 const nodecg = get();
@@ -84,20 +83,13 @@ export function findRunIndexFromId(id?: string): number {
 }
 
 /**
- * Returns this bundle's configuration along with the correct typings.
- */
-export function bundleConfig(): Configschema {
-  return nodecg.bundleConfig;
-}
-
-/**
  * Simple helper function to handle NodeCG/our message acknowledgements.
  * @param ack The acknoledgement function itself.
  * @param err Error to supply if any.
  * @param data Anything else you want to send alongside.
  */
 export function processAck<T>(
-  ack: ListenForCb | SendMessageAck | undefined,
+  ack: ReturnType<NodeCG.ListenHandler> | SendMessageAck | undefined,
   err: Error | null,
   data?: T,
 ): void {
@@ -141,9 +133,9 @@ export function checkGameAgainstIgnoreList(
     return false;
   }
   const list = service === 'horaro'
-    ? (bundleConfig().horaro || bundleConfig().schedule).ignoreGamesWhileImporting || []
-    : bundleConfig().oengus.ignoreGamesWhileImporting
-      || (bundleConfig().horaro || bundleConfig().schedule).ignoreGamesWhileImporting || [];
+    ? (nodecg.bundleConfig.horaro || nodecg.bundleConfig.schedule).ignoreGamesWhileImporting || []
+    : nodecg.bundleConfig.oengus.ignoreGamesWhileImporting
+      || (nodecg.bundleConfig.horaro || nodecg.bundleConfig.schedule).ignoreGamesWhileImporting || [];
   return !!list.find((str) => !!str.toLowerCase().match(
     new RegExp(`\\b${_.escapeRegExp(game.toLowerCase())}\\b`),
   ));

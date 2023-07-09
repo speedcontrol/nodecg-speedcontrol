@@ -63,12 +63,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Configschema } from '@nodecg-speedcontrol/types/schemas';
 import { RunDataPlayer } from '@nodecg-speedcontrol/types';
-import TextInput from './TextInput.vue';
-import ModifyButton from './ModifyButton.vue';
+import { DeepReadonly } from 'vue';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { storeModule } from '../store';
+import ModifyButton from './ModifyButton.vue';
+import TextInput from './TextInput.vue';
 
 @Component({
   components: {
@@ -99,8 +99,8 @@ export default class extends Vue {
     storeModule.removePlayer({ teamID, id });
   }
 
-  get customData(): { name: string, key: string }[] {
-    return (nodecg.bundleConfig as Configschema).customData?.player || [];
+  get customData(): DeepReadonly<{ name: string, key: string }[]> {
+    return nodecg.bundleConfig.customData?.player || [];
   }
 }
 </script>

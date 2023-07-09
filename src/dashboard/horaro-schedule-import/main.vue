@@ -147,16 +147,17 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Alert, HoraroSchedule } from '@nodecg-speedcontrol/types';
+import { HoraroImportSavedOpts, HoraroImportStatus } from '@nodecg-speedcontrol/types/schemas';
 import { v4 as uuid } from 'uuid';
-import { HoraroImportStatus, HoraroImportSavedOpts, Configschema } from '@nodecg-speedcontrol/types/schemas';
-import { Alert } from '@nodecg-speedcontrol/types';
-import RunDataOptions from './RunDataOptions';
-import Dropdown from './components/Dropdown.vue';
-import ConfigButton from './components/ConfigButton.vue';
+import { DeepReadonly } from 'vue';
+import { Component, Vue } from 'vue-property-decorator';
 import { getDialog } from '../_misc/helpers';
-import { storeModule } from './store';
 import { replicantNS } from '../_misc/replicant_store';
+import ConfigButton from './components/ConfigButton.vue';
+import Dropdown from './components/Dropdown.vue';
+import RunDataOptions from './RunDataOptions';
+import { storeModule } from './store';
 
 @Component({
   components: {
@@ -170,7 +171,7 @@ export default class extends Vue {
     (s) => s.reps.horaroImportSavedOpts,
   ) readonly horaroImportSavedOpts!: HoraroImportSavedOpts;
   dashID = uuid(); // Temp ID for this page load.
-  cfg = nodecg.bundleConfig as Configschema;
+  cfg = nodecg.bundleConfig;
   url = (this.cfg.schedule || this.cfg.horaro).defaultURL;
   loaded = false;
   saved = false;
@@ -195,14 +196,14 @@ export default class extends Vue {
     storeModule.updateSplit(val);
   }
 
-  get customData(): { name: string, key: string, ignoreMarkdown?: boolean }[] {
-    const cfg = nodecg.bundleConfig as Configschema;
+  get customData(): DeepReadonly<{ name: string, key: string, ignoreMarkdown?: boolean }[]> {
+    const cfg = nodecg.bundleConfig;
     return cfg.schedule?.customData || cfg.customData?.run || [];
   }
 
   async loadSchedule(): Promise<void> {
     try {
-      const data = await nodecg.sendMessage('loadSchedule', {
+      const data = await nodecg.sendMessage<HoraroSchedule>('loadSchedule', {
         url: this.url,
         dashID: this.dashID,
       });
