@@ -1,11 +1,11 @@
 import { RunDataActiveRun, RunFinishTimes } from '@nodecg-speedcontrol/types';
 import type { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, OengusImportStatus, RunDataActiveRunSurrounding, RunDataArray, Timer, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '@nodecg-speedcontrol/types/schemas';
+import type NodeCGTypes from '@nodecg/types';
 import clone from 'clone';
-import type NodeCGTypes from '@alvancamp/test-nodecg-types';
 import Vue from 'vue';
 import type { Store } from 'vuex';
 import { namespace } from 'vuex-class';
-import { getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
+import { Module, Mutation, VuexModule, getModule } from 'vuex-module-decorators';
 
 // Declaring replicants.
 export const reps: {

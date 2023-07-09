@@ -51,10 +51,10 @@
     "ws": "^8.13.0"
   },
   "devDependencies": {
-    "@alvancamp/test-nodecg-types": "^1.9.35",
     "@fontsource/roboto": "^4.5.8",
     "@intlify/vue-i18n-loader": "^1.1.0",
     "@mdi/font": "^7.2.96",
+    "@nodecg/types": "^2.1.11",
     "@types/clone": "^2.1.1",
     "@types/lodash": "^4.14.195",
     "@types/markdown-it": "12.2.3",

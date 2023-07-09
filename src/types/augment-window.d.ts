@@ -3,7 +3,7 @@
  * the NodeCG types, but allows us to automatically receive the configuration types.
  */
 
-import { NodeCGAPIClient } from '@alvancamp/test-nodecg-types/client/api/api.client';
+import { NodeCGAPIClient } from '@nodecg/types/client/api/api.client';
 import { Configschema } from './schemas';
 
 declare global {
