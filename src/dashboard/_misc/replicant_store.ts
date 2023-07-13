@@ -1,28 +1,28 @@
 import { RunDataActiveRun, RunFinishTimes } from '@nodecg-speedcontrol/types';
 import type { DefaultSetupTime, HoraroImportSavedOpts, HoraroImportStatus, OengusImportStatus, RunDataActiveRunSurrounding, RunDataArray, Timer, TimerChangesDisabled, TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '@nodecg-speedcontrol/types/schemas';
+import type NodeCGTypes from '@nodecg/types';
 import clone from 'clone';
-import type { ReplicantBrowser } from 'nodecg/types/browser';
 import Vue from 'vue';
 import type { Store } from 'vuex';
 import { namespace } from 'vuex-class';
-import { getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
+import { Module, Mutation, VuexModule, getModule } from 'vuex-module-decorators';
 
 // Declaring replicants.
 export const reps: {
-  defaultSetupTime: ReplicantBrowser<DefaultSetupTime>;
-  horaroImportSavedOpts: ReplicantBrowser<HoraroImportSavedOpts>;
-  horaroImportStatus: ReplicantBrowser<HoraroImportStatus>;
-  oengusImportStatus: ReplicantBrowser<OengusImportStatus>;
-  runDataActiveRun: ReplicantBrowser<RunDataActiveRun>;
-  runDataActiveRunSurrounding: ReplicantBrowser<RunDataActiveRunSurrounding>;
-  runDataArray: ReplicantBrowser<RunDataArray>;
-  runFinishTimes: ReplicantBrowser<RunFinishTimes>;
-  timer: ReplicantBrowser<Timer>;
-  timerChangesDisabled: ReplicantBrowser<TimerChangesDisabled>;
-  twitchAPIData: ReplicantBrowser<TwitchAPIData>;
-  twitchChannelInfo: ReplicantBrowser<TwitchChannelInfo>;
-  twitchCommercialTimer: ReplicantBrowser<TwitchCommercialTimer>;
-  [k: string]: ReplicantBrowser<unknown>;
+  defaultSetupTime: NodeCGTypes.ClientReplicant<DefaultSetupTime>;
+  horaroImportSavedOpts: NodeCGTypes.ClientReplicant<HoraroImportSavedOpts>;
+  horaroImportStatus: NodeCGTypes.ClientReplicant<HoraroImportStatus>;
+  oengusImportStatus: NodeCGTypes.ClientReplicant<OengusImportStatus>;
+  runDataActiveRun: NodeCGTypes.ClientReplicant<RunDataActiveRun>;
+  runDataActiveRunSurrounding: NodeCGTypes.ClientReplicant<RunDataActiveRunSurrounding>;
+  runDataArray: NodeCGTypes.ClientReplicant<RunDataArray>;
+  runFinishTimes: NodeCGTypes.ClientReplicant<RunFinishTimes>;
+  timer: NodeCGTypes.ClientReplicant<Timer>;
+  timerChangesDisabled: NodeCGTypes.ClientReplicant<TimerChangesDisabled>;
+  twitchAPIData: NodeCGTypes.ClientReplicant<TwitchAPIData>;
+  twitchChannelInfo: NodeCGTypes.ClientReplicant<TwitchChannelInfo>;
+  twitchCommercialTimer: NodeCGTypes.ClientReplicant<TwitchCommercialTimer>;
+  [k: string]: NodeCGTypes.ClientReplicant<unknown>;
 } = {
   defaultSetupTime: nodecg.Replicant('defaultSetupTime'),
   horaroImportSavedOpts: nodecg.Replicant('horaroImportSavedOpts'),

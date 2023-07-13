@@ -186,11 +186,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator';
-import { debounce } from 'lodash';
-import { TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer, Configschema } from '@nodecg-speedcontrol/types/schemas';
 import { Alert } from '@nodecg-speedcontrol/types';
-import { padTimeNumber, getDialog } from '../_misc/helpers';
+import { Configschema, TwitchAPIData, TwitchChannelInfo, TwitchCommercialTimer } from '@nodecg-speedcontrol/types/schemas';
+import { debounce } from 'lodash';
+import { DeepReadonly } from 'vue';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import { getDialog, padTimeNumber } from '../_misc/helpers';
 import { replicantNS } from '../_misc/replicant_store';
 import { storeModule } from './store';
 
@@ -221,8 +222,8 @@ export default class extends Vue {
     storeModule.updateSyncToggle(val);
   }
 
-  get config(): Configschema['twitch'] {
-    return (nodecg.bundleConfig as Configschema).twitch;
+  get config(): DeepReadonly<Configschema['twitch']> {
+    return nodecg.bundleConfig.twitch;
   }
 
   get url(): string {

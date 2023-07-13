@@ -143,7 +143,7 @@ class OurModule extends VuexModule {
 
   @Action({ rawError: true })
   async saveRunData(): Promise<boolean> {
-    const noTwitchGame = await nodecg.sendMessage('modifyRun', {
+    const noTwitchGame = await nodecg.sendMessage<boolean>('modifyRun', {
       runData: this.runData,
       prevID: this.prevID ?? undefined,
       updateTwitch: this.updateTwitchBool,

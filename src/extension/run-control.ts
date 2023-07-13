@@ -1,4 +1,4 @@
-import { RunData, RunDataActiveRun, RunDataPlayer, RunDataTeam } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
+import { RunData, RunDataActiveRun, RunDataPlayer, RunDataTeam, SendMessageArgsMap } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
 import clone from 'clone';
 import _ from 'lodash';
 import { setChannels } from './ffz-ws';
@@ -6,7 +6,7 @@ import { searchForTwitchGame } from './srcom-api';
 import { resetTimer } from './timer';
 import { updateChannelInfo, verifyTwitchDir } from './twitch-api';
 import * as events from './util/events';
-import { bundleConfig, findRunIndexFromId, formatPlayersForTwitchTitle, getTwitchChannels, msToTimeStr, processAck, timeStrToMS, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
+import { findRunIndexFromId, formatPlayersForTwitchTitle, getTwitchChannels, msToTimeStr, processAck, timeStrToMS, to } from './util/helpers'; // eslint-disable-line object-curly-newline, max-len
 import { get } from './util/nodecg';
 import { runDataActiveRun, runDataActiveRunSurrounding, runDataArray, timer, twitchAPIData } from './util/replicants';
 
@@ -62,12 +62,11 @@ async function updateTwitchInformation(runData: RunData): Promise<boolean> {
     return false;
   }
 
-  const twitchConfig = bundleConfig().twitch;
-
   // Constructing Twitch title and game to send off.
-  const status = twitchConfig.streamTitle
+  const status = nodecg.bundleConfig.twitch.streamTitle
+  const status = nodecg.bundleConfig.twitch.streamTitle
     .replace(/{{game}}/g, runData.game || '')
-    .replace(/{{players}}/g, formatPlayersForTwitchTitle(runData, twitchConfig.mentionRunnersInStreamTitle))
+    .replace(/{{players}}/g, formatPlayersForTwitchTitle(runData, nodecg.bundleConfig.twitch.mentionRunnersInStreamTitle))
     .replace(/{{category}}/g, runData.category || '');
 
   // Attempts to find the correct Twitch game directory.
@@ -83,11 +82,11 @@ async function updateTwitchInformation(runData: RunData): Promise<boolean> {
 
   to(updateChannelInfo(
     status,
-    gameTwitch || twitchConfig.streamDefaultGame,
+    gameTwitch || nodecg.bundleConfig.twitch.streamDefaultGame,
   ));
 
   // Construct/send featured channels if enabled.
-  if (twitchConfig.ffzIntegration) {
+  if (nodecg.bundleConfig.twitch.ffzIntegration) {
     to(setChannels(getTwitchChannels(runData)));
   }
 
@@ -302,22 +301,23 @@ async function removeAllRuns(): Promise<void> {
 }
 
 // NodeCG messaging system.
-nodecg.listenFor('changeActiveRun', (id, ack) => {
+nodecg.listenFor('changeActiveRun', (id: SendMessageArgsMap['changeActiveRun'], ack) => {
   changeActiveRun(id)
     .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
     .catch((err) => processAck(ack, err));
 });
-nodecg.listenFor('removeRun', (id, ack) => {
+nodecg.listenFor('removeRun', (id: SendMessageArgsMap['removeRun'], ack) => {
   removeRun(id)
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
 });
-nodecg.listenFor('modifyRun', (data, ack) => {
+
+nodecg.listenFor('modifyRun', (data: SendMessageArgsMap['modifyRun'], ack) => {
   modifyRun(data.runData, data.prevID, data.updateTwitch)
     .then((noTwitchGame) => processAck(ack, null, noTwitchGame))
     .catch((err) => processAck(ack, err));
 });
-nodecg.listenFor('modifyRelayPlayerID', (data, ack) => {
+nodecg.listenFor('modifyRelayPlayerID', (data: SendMessageArgsMap['modifyRelayPlayerID'], ack) => {
   modifyRelayPlayerID(data.runID, data.teamID, data.playerID)
     .then(() => processAck(ack, null))
     .catch((err) => processAck(ack, err));
