@@ -12,18 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTwitterUserFromURL = exports.getTwitchUserFromURL = exports.checkGameAgainstIgnoreList = exports.randomInt = exports.to = exports.processAck = exports.findRunIndexFromId = exports.sleep = exports.msToTimeStr = exports.timeStrToMS = exports.padTimeNumber = exports.getTwitchChannels = exports.formPlayerNamesStr = void 0;
+exports.getTwitterUserFromURL = exports.getTwitchUserFromURL = exports.checkGameAgainstIgnoreList = exports.randomInt = exports.to = exports.processAck = exports.findRunIndexFromId = exports.sleep = exports.msToTimeStr = exports.timeStrToMS = exports.padTimeNumber = exports.getTwitchChannels = exports.formatPlayersForTwitchTitle = void 0;
 const lodash_1 = __importDefault(require("lodash"));
 const nodecg_1 = require("./nodecg");
 const nodecg = (0, nodecg_1.get)();
 /**
- * Takes a run data object and returns a formed string of the player names.
+ * Takes a run data object and returns a formed string of the player names for the Twitch title.
  * @param runData Run Data object.
+ * @param mentionChannels Set to true to mention the player's Twitch channel in the title instead.
  */
-function formPlayerNamesStr(runData) {
-    return runData.teams.map((team) => (team.players.map((player) => player.name).join(', '))).join(' vs. ') || 'N/A';
+function formatPlayersForTwitchTitle(runData, mentionChannels) {
+    return runData.teams.map((team) => (team.players.map((player) => (mentionChannels && player.social.twitch
+        ? `@${player.social.twitch}` : player.name)).join(', '))).join(' vs. ') || 'N/A';
 }
-exports.formPlayerNamesStr = formPlayerNamesStr;
+exports.formatPlayersForTwitchTitle = formatPlayersForTwitchTitle;
 /**
  * Takes a run data object and returns an array of all associated Twitch usernames.
  * @param runData Run Data object.

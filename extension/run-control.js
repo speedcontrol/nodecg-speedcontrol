@@ -98,7 +98,7 @@ function updateTwitchInformation(runData) {
         // Constructing Twitch title and game to send off.
         const status = nodecg.bundleConfig.twitch.streamTitle
             .replace(/{{game}}/g, runData.game || '')
-            .replace(/{{players}}/g, (0, helpers_1.formPlayerNamesStr)(runData))
+            .replace(/{{players}}/g, (0, helpers_1.formatPlayersForTwitchTitle)(runData, nodecg.bundleConfig.twitch.tagPlayersInStreamTitle))
             .replace(/{{category}}/g, runData.category || '');
         // Attempts to find the correct Twitch game directory.
         let { gameTwitch } = runData;
