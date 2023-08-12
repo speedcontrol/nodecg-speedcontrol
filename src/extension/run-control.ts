@@ -64,9 +64,11 @@ async function updateTwitchInformation(runData: RunData): Promise<boolean> {
 
   // Constructing Twitch title and game to send off.
   const status = nodecg.bundleConfig.twitch.streamTitle
-  const status = nodecg.bundleConfig.twitch.streamTitle
     .replace(/{{game}}/g, runData.game || '')
-    .replace(/{{players}}/g, formatPlayersForTwitchTitle(runData, nodecg.bundleConfig.twitch.mentionRunnersInStreamTitle))
+    .replace(
+      /{{players}}/g,
+      formatPlayersForTwitchTitle(runData, nodecg.bundleConfig.twitch.tagPlayersInStreamTitle),
+    )
     .replace(/{{category}}/g, runData.category || '');
 
   // Attempts to find the correct Twitch game directory.

@@ -122,7 +122,7 @@
           "type": "string",
           "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"
         },
-        "mentionRunnersInStreamTitle": {
+        "tagPlayersInStreamTitle": {
           "type": "boolean",
           "default": false
         },
@@ -167,6 +167,7 @@
         "clientSecret",
         "redirectURI",
         "streamTitle",
+        "tagPlayersInStreamTitle",
         "streamDefaultGame",
         "ffzIntegration"
       ]
