@@ -122,6 +122,10 @@
           "type": "string",
           "default": "Game: {{game}} - Category: {{category}} - Players: {{players}}"
         },
+        "tagPlayersInStreamTitle": {
+          "type": "boolean",
+          "default": false
+        },
         "streamDefaultGame": {
           "type": "string",
           "default": "Games + Demos"
@@ -163,6 +167,7 @@
         "clientSecret",
         "redirectURI",
         "streamTitle",
+        "tagPlayersInStreamTitle",
         "streamDefaultGame",
         "ffzIntegration"
       ]

@@ -25,6 +25,7 @@ Below is an example configuration file contents with everything that is availabl
     ],
     "channelName": "OTHER_CHANNEL",
     "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
+    "tagPlayersInStreamTitle": false,
     "streamDefaultGame": "Games + Demos",
     "metadataUseExternal": false,
     "commercialsExtraButtons": false,
@@ -96,6 +97,7 @@ The currently available languages are:
       "SCOPE"
     ],
     "streamTitle": "Game: {{game}} - Category: {{category}} - Players: {{players}}",
+    "tagPlayersInStreamTitle": false,
     "streamDefaultGame": "Games + Demos",
     "metadataUseExternal": false,
     "commercialsExtraButtons": false,
@@ -109,6 +111,7 @@ The currently available languages are:
 This is the part where the Twitch integration configuration is set up. Make sure `enabled` is true (it defaults to `false`), and then you will need to [create a Twitch API app yourself from their developer site](https://dev.twitch.tv/console/apps/create) and put in the supplied client ID and client secret. The redirect URI should be the same as the one above unless you are **not** running your NodeCG server locally and/or you changed the port it uses.
 
 - `streamTitle` is a string that specifies what the title will be updated to when a run is switched. There are some wildcards as seen above that will be replaced with the relevant data if they're specified. Leave it blank if you don't want to have the title updated.
+- `tagPlayersInStreamTitle` is a boolean (defaults to `false`) for, if you have set the players to appear in the title using the above configuration option, their names to be replaced with their Twitch usernames instead, which allows them to be "tagged" on the Twitch website itself and become links to those channels.
 - `streamDefaultGame` is the game in the Twitch directory that will be used if the game name from your schedule cannot be found in the directory.
 
 FrankerFaceZ integration can also be enabled with `ffzIntegration`, this will make it so people who use the browser extension see the player(s) as a "featured" channel for easy following, and if enabled on your channel, will also add their FrankerFaceZ emoticons for use during their run (you will need to ask the devs of the extension to enable this for you).
