@@ -9,6 +9,7 @@ export type OengusImportStatus = ScheduleImportStatus;
 
 export interface ScheduleImportStatus {
 	importing?: boolean;
+	exporting?: boolean;
 	item?: number;
 	total?: number;
 }

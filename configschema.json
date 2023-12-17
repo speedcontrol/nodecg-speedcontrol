@@ -193,6 +193,10 @@
           "type": "string",
           "default": "SHORTNAME"
         },
+        "token": {
+          "type": "string",
+          "default": "TOKEN"
+        },
         "useJapanese": {
           "type": "boolean",
           "default": false
