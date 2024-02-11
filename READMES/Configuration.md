@@ -8,7 +8,7 @@ If you haven't, I would recommend installing [nodecg-cli](https://github.com/nod
 
 As normal with NodeCG, you will need to restart your instance of the NodeCG server when you change the config for them to be applied.
 
-If you're an experienced user you can also check out the [configschema.json here](../configschema.json). As an additional note: if you see a configuration option avaiable in the schema that isn't documented here, assume it my change at any time.
+If you're an experienced user you can also check out the [configschema.json here](../configschema.json). As an additional note: if you see a configuration option avaiable in the schema that isn't documented here, assume it may change at any time.
 
 Below is an example configuration file contents with everything that is available (*do **not** copy this and put it in directly without any modifications; it won't work, sorry*):
 
