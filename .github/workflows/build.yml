@@ -51,22 +51,31 @@ jobs:
       with:
         node-version: '18'
 
-    # Set NPM cache options
-    - name: Set NPM cache
-      uses: actions/cache@v3
+    # Install pnpm
+    - uses: pnpm/action-setup@v2
+      name: Install pnpm
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        version: 8
+
+    # Gets pnpm's store directory (for next step)
+    - name: Get pnpm store directory
+      id: pnpm-cache
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+    # Set pnpm cache options
+    - uses: actions/cache@v3
+      name: Setup pnpm cache
+      with:
+        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
-          ${{ runner.os }}-node-
+          ${{ runner.os }}-pnpm-store-
 
-    # Update NPM to the latest version
-    - name: Update NPM installation
-      run: npm install -g npm@latest
-
-    # Install NPM dependencies
-    - name: Install NPM dependencies
-      run: npm ci
+    # Install pnpm dependencies
+    - name: Install pnpm dependencies
+      run: pnpm i --frozen-lockfile
 
     # Actually build everything
     - name: Build
