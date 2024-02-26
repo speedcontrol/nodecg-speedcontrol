@@ -37,7 +37,6 @@ export interface Configschema {
 	horaro: Horaro;
 	oengus: {
 		defaultMarathon: string;
-		useJapanese: boolean;
 		ignoreGamesWhileImporting?: IgnoreGamesWhileImporting;
 		disableSpeedrunComLookup: boolean;
 		useSandbox?: boolean | null;
