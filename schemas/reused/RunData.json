@@ -86,6 +86,9 @@
                   "properties": {
                     "twitch": {
                       "type": "string"
+                    },
+                    "youtube": {
+                      "type": "string"
                     }
                   }
                 },

@@ -82,9 +82,8 @@ function resetImportStatus(): void {
 /**
  * Import schedule data in from Oengus.
  * @param marathonShort Oengus' marathon shortname you want to import.
- * @param useJapanese If you want to use usernameJapanese from the user data.
  */
-async function importSchedule(marathonShort: string, useJapanese: boolean): Promise<void> {
+async function importSchedule(marathonShort: string): Promise<void> {
   try {
     oengusImportStatus.value.importing = true;
     const marathonResp = await get(`/marathons/${marathonShort}`);
@@ -182,16 +181,18 @@ async function importSchedule(marathonShort: string, useJapanese: boolean): Prom
         };
         const playerTwitch = runner.connections
           ?.find((c) => c.platform === 'TWITCH')?.username || runner.twitchName;
+        const playerYoutube = runner.connections
+          ?.find((c) => c.platform === 'YOUTUBE')?.username;
         const playerPronouns = typeof runner.pronouns === 'string'
           ? runner.pronouns.split(',')
           : runner.pronouns;
         const player: RunDataPlayer = {
-          name: (useJapanese && runner.usernameJapanese)
-            ? runner.usernameJapanese : runner.username,
+          name: runner.displayName || runner.username,
           id: uuid(),
           teamID: team.id,
           social: {
             twitch: playerTwitch || undefined,
+            youtube: playerYoutube || undefined,
           },
           country: runner.country?.toLowerCase() || undefined,
           pronouns: playerPronouns?.join(', ') || undefined,
@@ -240,7 +241,7 @@ nodecg.listenFor('importOengusSchedule', async (data, ack) => {
       throw new Error('Already importing schedule');
     }
     nodecg.log.info('[Oengus Import] Started importing schedule');
-    await importSchedule(data.marathonShort, data.useJapanese);
+    await importSchedule(data.marathonShort);
     nodecg.log.info('[Oengus Import] Successfully imported schedule from Oengus');
     processAck(ack, null);
   } catch (err) {

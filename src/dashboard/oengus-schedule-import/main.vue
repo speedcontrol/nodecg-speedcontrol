@@ -5,7 +5,6 @@
     "shortname": "Oengus Marathon Shortname",
     "helpText": "Insert the Oengus marathon shortname (not including \"/schedule\") above and press the \"Import Schedule Data\" button.",
     "importInProgressHelpText": "Import currently in progress...",
-    "useJapaneseNames": "Use Japanese names?",
     "import": "Import Schedule Data",
     "importProgress": "Importing {item}/{total}"
   },
@@ -14,7 +13,6 @@
     "shortname": "Oengusマラソンの略称",
     "helpText": "上記にインポートしたいOengusのイベントの略称を入力し(\"/schedule\"を含めないでください)、「スケジュール情報のインポート」ボタンを押してください。",
     "importInProgressHelpText": "インポート処理の実行中...",
-    "useJapaneseNames": "日本語ユーザーネームを使用しますか？",
     "import": "スケジュール情報のインポート",
     "importProgress": "{item}/{total}件をインポート"
   }
@@ -38,13 +36,6 @@
         <div>
           {{ $t('helpText') }}
         </div>
-        <!-- Switch use Japanese or not for importing data -->
-        <v-switch
-          v-model="useJapanese"
-          class="ma-1"
-          hide-details
-          :label="$t('useJapaneseNames')"
-        />
       </template>
       <template v-else>
         {{ $t('importInProgressHelpText') }}
@@ -82,7 +73,6 @@ import { replicantNS } from '../_misc/replicant_store';
 export default class extends Vue {
   @replicantNS.State((s) => s.reps.oengusImportStatus) readonly importStatus!: OengusImportStatus;
   marathonShort = nodecg.bundleConfig.oengus.defaultMarathon || '';
-  useJapanese = nodecg.bundleConfig.oengus.useJapanese;
 
   importConfirm(): void {
     const dialog = getDialog('alert-dialog') as Alert.Dialog;
@@ -99,7 +89,6 @@ export default class extends Vue {
       try {
         await nodecg.sendMessage('importOengusSchedule', {
           marathonShort: this.marathonShort,
-          useJapanese: this.useJapanese,
         });
       } catch (err) {
         // catch

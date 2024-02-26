@@ -81,7 +81,7 @@ const config = (name) => {
       },
       plugins: [
         new TsConfigPathsPlugin({
-          configFile: 'tsconfig.browser.json',
+          configFile: path.resolve(__dirname, 'tsconfig.browser.json'),
         }),
       ],
     },

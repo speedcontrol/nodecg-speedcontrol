@@ -3,6 +3,7 @@
   "en": {
     "name": "Name",
     "twitch": "Twitch",
+    "youtube": "YouTube",
     "countryCode": "Country Code",
     "removePlayer": "Remove Player",
     "pronouns": "Pronouns"
@@ -10,6 +11,7 @@
   "ja": {
     "name": "プレイヤー名",
     "twitch": "Twitch ID",
+    "youtube": "YouTube",
     "countryCode": "国名コード",
     "removePlayer": "プレイヤーの削除",
     "pronouns": "Pronouns"
@@ -31,6 +33,12 @@
       :value="playerData.social.twitch"
       @input="updatePlayerDataProp('social.twitch', $event)"
       :label="$t('twitch')"
+      left-border
+    />
+    <text-input
+      :value="playerData.social.youtube"
+      @input="updatePlayerDataProp('social.youtube', $event)"
+      :label="$t('youtube')"
       left-border
     />
     <text-input

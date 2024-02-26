@@ -37,7 +37,8 @@ export enum OengusRunType {
 export interface OengusUser {
   id: number;
   username: string;
-  usernameJapanese: string | null;
+  displayName: string;
+  usernameJapanese: string | null; // deprecated
   enabled: boolean;
   twitterName?: string | null; // deprecated
   twitchName?: string | null; // deprecated
@@ -49,7 +50,7 @@ export interface OengusUser {
 
 export interface OengusUserConnections {
   id: number;
-  platform: 'DISCORD' | 'SPEEDRUNCOM' | 'TWITCH' | 'TWITTER';
+  platform: 'DISCORD' | 'SPEEDRUNCOM' | 'TWITCH' | 'TWITTER' | 'YOUTUBE';
   username: string;
   usernameValidForPlatform: boolean;
 }

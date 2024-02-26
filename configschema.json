@@ -193,10 +193,6 @@
           "type": "string",
           "default": "SHORTNAME"
         },
-        "useJapanese": {
-          "type": "boolean",
-          "default": false
-        },
         "ignoreGamesWhileImporting": {
           "$ref": "#/definitions/ignoreGamesWhileImporting"
         },
@@ -217,7 +213,6 @@
       },
       "required": [
         "defaultMarathon",
-        "useJapanese",
         "disableSpeedrunComLookup"
       ]
     },
