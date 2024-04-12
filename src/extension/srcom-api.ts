@@ -6,7 +6,11 @@ import { get as ncgGet } from './util/nodecg';
 
 const nodecg = ncgGet();
 const userDataCache: { [k: string]: Speedruncom.UserData } = {};
+const gameDataCache: { [k: string]: string } = {};
+const rateLimitNumber = 100; // 100 requests
+const rateLimitTime = 60000; // per minute
 
+var requestTimes: number[] = [];
 /**
  * Make a GET request to speedrun.com API.
  * @param url speedrun.com API endpoint you want to access.
@@ -18,6 +22,18 @@ async function get(endpoint: string): Promise<NeedleResponse> {
       ? `https://www.speedrun.com${endpoint}`
       : `https://www.speedrun.com/api/v1${endpoint}`;
     nodecg.log.debug(`[speedrun.com] API request processing on ${endpoint}`);
+    nodecg.log.debug(`[speedrun.com] API request number ${requestTimes.length}`);
+
+    while (requestTimes.length >= rateLimitNumber) {
+      var now = Date.now();
+      requestTimes = requestTimes.filter(time => time + rateLimitTime > now);
+
+      if (requestTimes.length >= rateLimitNumber) {
+        nodecg.log.debug(`[speedrun.com] Waiting to not reach API limit rate`);
+        await sleep(requestTimes[0] + rateLimitTime - now);
+      }
+    }
+    requestTimes.push(Date.now());
     const resp = await needle(
       'get',
       url,
@@ -53,13 +69,22 @@ async function get(endpoint: string): Promise<NeedleResponse> {
  */
 export async function searchForTwitchGame(query: string, abbr = false): Promise<string> {
   try {
+    const cacheKey = `${query}_${abbr}`;
+    if (gameDataCache[cacheKey]) {
+      nodecg.log.debug(
+        `[speedrun.com] Game data found in cache for "${query}_${abbr}":`,
+        JSON.stringify(gameDataCache[cacheKey]),
+      );
+      return gameDataCache[cacheKey];
+    }
+
     let result: Speedruncom.GameData | undefined;
 
     // Abbreviation is easy to find, plug in and receive result.
     if (abbr) {
       const resp = await get(`/games?abbreviation=${encodeURIComponent(query)}&max=1`);
       [result] = resp.body.data;
-    // Using a name is slightly more complicated to find an accurate result.
+      // Using a name is slightly more complicated to find an accurate result.
     } else {
       // First, try searching the regular API's top 10 and see if there's an exact match at all.
       const resp1 = await get(`/games?name=${encodeURIComponent(query)}&max=10`);
@@ -96,6 +121,9 @@ export async function searchForTwitchGame(query: string, abbr = false): Promise<
       `[speedrun.com] Twitch game name found for "${query}":`,
       result.names.twitch,
     );
+
+    gameDataCache[cacheKey] = result.names.twitch; // Simple temp cache storage.
+
     return result.names.twitch;
   } catch (err) {
     nodecg.log.debug(`[speedrun.com] Twitch game name lookup failed for "${query}":`, err);
@@ -119,7 +147,6 @@ export async function searchForUserData(
     return userDataCache[cacheKey];
   }
   try {
-    await sleep(1000);
     let data: Speedruncom.UserData | undefined;
     if (type === 'srcom') {
       const resp = await get(
