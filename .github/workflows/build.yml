@@ -24,7 +24,7 @@ jobs:
     steps:
     # Checkout the base branch of this repository with full depth
     - name: Checkout this repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         token: ${{ secrets['GITHUB_TOKEN'] }}
         ref: ${{ inputs.base_branch || 'master' }}
@@ -47,15 +47,15 @@ jobs:
 
     # Setup some Node stuff
     - name: Node.js setup
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
 
     # Install pnpm
-    - uses: pnpm/action-setup@v2
+    - uses: pnpm/action-setup@v4
       name: Install pnpm
       with:
-        version: 8
+        version: 9
 
     # Gets pnpm's store directory (for next step)
     - name: Get pnpm store directory
@@ -65,7 +65,7 @@ jobs:
         echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
     # Set pnpm cache options
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       name: Setup pnpm cache
       with:
         path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}

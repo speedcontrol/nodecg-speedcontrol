@@ -194,6 +194,8 @@
           "default": "SHORTNAME"
         },
         "useJapanese": {
+          "$comment": "DEPRECATED; should be removed in next major version (2.x > 3.x).",
+          "description": "DEPRECATED; left for compatibility reasons.",
           "type": "boolean",
           "default": false
         },
