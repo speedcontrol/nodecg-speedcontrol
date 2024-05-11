@@ -87,9 +87,8 @@ function resetImportStatus() {
 /**
  * Import schedule data in from Oengus.
  * @param marathonShort Oengus' marathon shortname you want to import.
- * @param useJapanese If you want to use usernameJapanese from the user data.
  */
-function importSchedule(marathonShort, useJapanese) {
+function importSchedule(marathonShort) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             replicants_1.oengusImportStatus.value.importing = true;
@@ -181,42 +180,43 @@ function importSchedule(marathonShort, useJapanese) {
                 scheduledTime += runData.estimateS + runData.setupTimeS;
                 // Team Data
                 runData.teams = yield (0, p_iteration_1.mapSeries)(line.runners, (runner) => __awaiter(this, void 0, void 0, function* () {
-                    var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+                    var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
                     const team = {
                         id: (0, uuid_1.v4)(),
                         players: [],
                     };
                     const playerTwitch = ((_d = (_c = runner.connections) === null || _c === void 0 ? void 0 : _c.find((c) => c.platform === 'TWITCH')) === null || _d === void 0 ? void 0 : _d.username) || runner.twitchName;
+                    const playerYoutube = (_f = (_e = runner.connections) === null || _e === void 0 ? void 0 : _e.find((c) => c.platform === 'YOUTUBE')) === null || _f === void 0 ? void 0 : _f.username;
                     const playerPronouns = typeof runner.pronouns === 'string'
                         ? runner.pronouns.split(',')
                         : runner.pronouns;
                     const player = {
-                        name: (useJapanese && runner.usernameJapanese)
-                            ? runner.usernameJapanese : runner.username,
+                        name: runner.displayName || runner.username,
                         id: (0, uuid_1.v4)(),
                         teamID: team.id,
                         social: {
                             twitch: playerTwitch || undefined,
+                            youtube: playerYoutube || undefined,
                         },
-                        country: ((_e = runner.country) === null || _e === void 0 ? void 0 : _e.toLowerCase()) || undefined,
+                        country: ((_g = runner.country) === null || _g === void 0 ? void 0 : _g.toLowerCase()) || undefined,
                         pronouns: (playerPronouns === null || playerPronouns === void 0 ? void 0 : playerPronouns.join(', ')) || undefined,
                         customData: {},
                     };
                     if (!config.oengus.disableSpeedrunComLookup) {
-                        const playerTwitter = ((_g = (_f = runner.connections) === null || _f === void 0 ? void 0 : _f.find((c) => c.platform === 'TWITTER')) === null || _g === void 0 ? void 0 : _g.username) || runner.twitterName;
-                        const playerSrcom = ((_j = (_h = runner.connections) === null || _h === void 0 ? void 0 : _h.find((c) => c.platform === 'SPEEDRUNCOM')) === null || _j === void 0 ? void 0 : _j.username) || runner.speedruncomName;
+                        const playerTwitter = ((_j = (_h = runner.connections) === null || _h === void 0 ? void 0 : _h.find((c) => c.platform === 'TWITTER')) === null || _j === void 0 ? void 0 : _j.username) || runner.twitterName;
+                        const playerSrcom = ((_l = (_k = runner.connections) === null || _k === void 0 ? void 0 : _k.find((c) => c.platform === 'SPEEDRUNCOM')) === null || _l === void 0 ? void 0 : _l.username) || runner.speedruncomName;
                         const data = yield (0, srcom_api_1.searchForUserDataMultiple)({ type: 'srcom', val: playerSrcom }, { type: 'twitch', val: playerTwitch }, { type: 'twitter', val: playerTwitter }, { type: 'name', val: runner.username });
                         if (data) {
                             // Always favour the supplied Twitch username/country/pronouns
                             // from Oengus if available.
                             if (!playerTwitch) {
-                                const tURL = ((_k = data.twitch) === null || _k === void 0 ? void 0 : _k.uri) || undefined;
+                                const tURL = ((_m = data.twitch) === null || _m === void 0 ? void 0 : _m.uri) || undefined;
                                 player.social.twitch = (0, helpers_1.getTwitchUserFromURL)(tURL);
                             }
                             if (!runner.country)
-                                player.country = ((_l = data.location) === null || _l === void 0 ? void 0 : _l.country.code) || undefined;
-                            if (!((_m = runner.pronouns) === null || _m === void 0 ? void 0 : _m.length)) {
-                                player.pronouns = ((_o = data.pronouns) === null || _o === void 0 ? void 0 : _o.toLowerCase()) || undefined;
+                                player.country = ((_o = data.location) === null || _o === void 0 ? void 0 : _o.country.code) || undefined;
+                            if (!((_p = runner.pronouns) === null || _p === void 0 ? void 0 : _p.length)) {
+                                player.pronouns = ((_q = data.pronouns) === null || _q === void 0 ? void 0 : _q.toLowerCase()) || undefined;
                             }
                         }
                     }
@@ -240,7 +240,7 @@ nodecg.listenFor('importOengusSchedule', (data, ack) => __awaiter(void 0, void 0
             throw new Error('Already importing schedule');
         }
         nodecg.log.info('[Oengus Import] Started importing schedule');
-        yield importSchedule(data.marathonShort, data.useJapanese);
+        yield importSchedule(data.marathonShort);
         nodecg.log.info('[Oengus Import] Successfully imported schedule from Oengus');
         (0, helpers_1.processAck)(ack, null);
     }
