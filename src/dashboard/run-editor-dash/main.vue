@@ -25,11 +25,11 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { RunDataActiveRun } from '@nodecg-speedcontrol/types/schemas';
 import { RunModification } from '@nodecg-speedcontrol/types';
+import { RunDataActiveRun } from '@nodecg-speedcontrol/types/schemas';
+import { Component, Vue } from 'vue-property-decorator';
 import RunList from '../_misc/components/RunList.vue';
-import { getDialog } from '../_misc/helpers';
+import { checkDialog, getDialog } from '../_misc/helpers';
 import { replicantNS } from '../_misc/replicant_store';
 
 @Component({
@@ -44,13 +44,15 @@ export default class extends Vue {
 
   editActiveRun(): void {
     if (this.activeRun) {
-      const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
-      if (dialog) {
-        dialog.openDialog({
-          mode: 'EditActive',
-          runData: this.activeRun,
-        });
-      }
+      checkDialog('run-modification-dialog').then(() => {
+        const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+        if (dialog) {
+          dialog.openDialog({
+            mode: 'EditActive',
+            runData: this.activeRun,
+          });
+        }
+      });
     }
   }
 

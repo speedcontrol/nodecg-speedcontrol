@@ -66,7 +66,7 @@
 import { Alert } from '@nodecg-speedcontrol/types';
 import { OengusImportStatus } from '@nodecg-speedcontrol/types/schemas';
 import { Component, Vue } from 'vue-property-decorator';
-import { getDialog } from '../_misc/helpers';
+import { checkDialog, getDialog } from '../_misc/helpers';
 import { replicantNS } from '../_misc/replicant_store';
 
 @Component
@@ -75,13 +75,15 @@ export default class extends Vue {
   marathonShort = nodecg.bundleConfig.oengus.defaultMarathon || '';
 
   importConfirm(): void {
-    const dialog = getDialog('alert-dialog') as Alert.Dialog;
-    if (dialog) {
-      dialog.openDialog({
-        name: 'ImportConfirm',
-        func: this.import,
-      });
-    }
+    checkDialog('alert-dialog').then(() => {
+      const dialog = getDialog('alert-dialog') as Alert.Dialog;
+      if (dialog) {
+        dialog.openDialog({
+          name: 'ImportConfirm',
+          func: this.import,
+        });
+      }
+    });
   }
 
   async import(confirm: boolean): Promise<void> {

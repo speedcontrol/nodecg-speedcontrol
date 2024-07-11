@@ -1,3 +1,5 @@
+import { Alert } from "@nodecg-speedcontrol/types";
+
 /**
  * Checks if number needs a 0 adding to the start and does so if needed.
  * @param num Number which you want to turn into a padded string.
@@ -17,6 +19,33 @@ export function msToTimeStr(ms: number): string {
   return `${padTimeNumber(hours)
   }:${padTimeNumber(minutes)
   }:${padTimeNumber(seconds)}`;
+}
+
+/**
+ * Check if a dialog is "loaded" or not (due to NodeCG v2.2.2 changes with lazy iframes).
+ * If it's not, will quickly open and close it to load it.
+ * @param name Name of dialog.
+ */
+export function checkDialog(name: string): Promise<void> {
+  return new Promise<void>((res) => {
+    const dialog = nodecg.getDialog(name);
+    const iframe = dialog?.querySelector('iframe');
+    if (iframe && dialog) {
+      // We check if it's loaded or not if our custom "openDialog" function exists.
+      const openDialog = (iframe.contentWindow as Alert.Dialog | null)?.openDialog;
+      if (openDialog) {
+        res();
+      } else {
+        iframe.addEventListener('load', () => {
+          dialog.close();
+          res();
+        }, { once: true });
+        dialog.open();
+      }
+    } else {
+      res();
+    }
+  });
 }
 
 /**

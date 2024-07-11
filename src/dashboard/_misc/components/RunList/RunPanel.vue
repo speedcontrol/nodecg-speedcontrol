@@ -112,7 +112,7 @@
 import { Alert, RunData, RunDataActiveRun, RunModification } from '@nodecg-speedcontrol/types';
 import { RunFinishTimes, Timer } from '@nodecg-speedcontrol/types/schemas';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { getDialog } from '../../helpers';
+import { checkDialog, getDialog } from '../../helpers';
 import { replicantNS } from '../../replicant_store';
 import ModifyButton from './ModifyButton.vue';
 
@@ -154,10 +154,12 @@ export default class extends Vue {
     try {
       const noTwitchGame = await nodecg.sendMessage('changeActiveRun', this.runData.id); // TYPE!
       if (noTwitchGame) {
-        const dialog = getDialog('alert-dialog') as Alert.Dialog;
-        if (dialog) {
-          dialog.openDialog({ name: 'NoTwitchGame' });
-        }
+        checkDialog('alert-dialog').then(() => {
+          const dialog = getDialog('alert-dialog') as Alert.Dialog;
+          if (dialog) {
+            dialog.openDialog({ name: 'NoTwitchGame' });
+          }
+        });
       }
     } catch (err) {
       // catch
@@ -165,44 +167,52 @@ export default class extends Vue {
   }
 
   duplicateRun(): void {
-    const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
-    if (dialog) {
-      dialog.openDialog({
-        mode: 'Duplicate',
-        runData: this.runData,
-      });
-    }
+    checkDialog('run-modification-dialog').then(() => {
+      const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+      if (dialog) {
+        dialog.openDialog({
+          mode: 'Duplicate',
+          runData: this.runData,
+        });
+      }
+    });
   }
 
   addNewRunAfter(): void {
-    const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
-    if (dialog) {
-      dialog.openDialog({
-        mode: 'New',
-        prevID: this.runData.id,
-      });
-    }
+    checkDialog('run-modification-dialog').then(() => {
+      const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+      if (dialog) {
+        dialog.openDialog({
+          mode: 'New',
+          prevID: this.runData.id,
+        });
+      }
+    });
   }
 
   editRun(): void {
-    const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
-    if (dialog) {
-      dialog.openDialog({
-        mode: 'EditOther',
-        runData: this.runData,
-      });
-    }
+    checkDialog('run-modification-dialog').then(() => {
+      const dialog = getDialog('run-modification-dialog') as RunModification.Dialog;
+      if (dialog) {
+        dialog.openDialog({
+          mode: 'EditOther',
+          runData: this.runData,
+        });
+      }
+    });
   }
 
   removeRunConfirm(): void {
-    const dialog = getDialog('alert-dialog') as Alert.Dialog;
-    if (dialog) {
-      dialog.openDialog({
-        name: 'RemoveRunConfirm',
-        data: { runData: this.runData },
-        func: this.removeRun,
-      });
-    }
+    checkDialog('alert-dialog').then(() => {
+      const dialog = getDialog('alert-dialog') as Alert.Dialog;
+      if (dialog) {
+        dialog.openDialog({
+          name: 'RemoveRunConfirm',
+          data: { runData: this.runData },
+          func: this.removeRun,
+        });
+      }
+    });
   }
 
   async removeRun(confirm: boolean): Promise<void> {

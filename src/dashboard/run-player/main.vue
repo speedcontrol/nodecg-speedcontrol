@@ -74,11 +74,11 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import { RunDataArray, RunDataActiveRun, RunDataActiveRunSurrounding, Timer } from '@nodecg-speedcontrol/types/schemas';
-import { RunData, Alert } from '@nodecg-speedcontrol/types';
+import { Alert, RunData } from '@nodecg-speedcontrol/types';
+import { RunDataActiveRun, RunDataActiveRunSurrounding, RunDataArray, Timer } from '@nodecg-speedcontrol/types/schemas';
+import { Component, Vue } from 'vue-property-decorator';
 import RunList from '../_misc/components/RunList.vue';
-import { getDialog } from '../_misc/helpers';
+import { checkDialog, getDialog } from '../_misc/helpers';
 import { replicantNS } from '../_misc/replicant_store';
 
 @Component({
@@ -116,13 +116,15 @@ export default class extends Vue {
   }
 
   returnToStartConfirm(): void {
-    const dialog = getDialog('alert-dialog') as Alert.Dialog;
-    if (dialog) {
-      dialog.openDialog({
-        name: 'ReturnToStartConfirm',
-        func: this.returnToStart,
-      });
-    }
+    checkDialog('alert-dialog').then(() => {
+      const dialog = getDialog('alert-dialog') as Alert.Dialog;
+      if (dialog) {
+        dialog.openDialog({
+          name: 'ReturnToStartConfirm',
+          func: this.returnToStart,
+        });
+      }
+    });
   }
 
   async returnToStart(confirm: boolean): Promise<void> {
@@ -140,10 +142,12 @@ export default class extends Vue {
       try {
         const noTwitchGame = await nodecg.sendMessage('changeToNextRun');
         if (noTwitchGame) {
-          const dialog = getDialog('alert-dialog') as Alert.Dialog;
-          if (dialog) {
-            dialog.openDialog({ name: 'NoTwitchGame' });
-          }
+          checkDialog('alert-dialog').then(() => {
+            const dialog = getDialog('alert-dialog') as Alert.Dialog;
+            if (dialog) {
+              dialog.openDialog({ name: 'NoTwitchGame' });
+            }
+          });
         }
       } catch (err) {
         // run change unsuccessful
