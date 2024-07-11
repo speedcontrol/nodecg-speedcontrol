@@ -13,13 +13,13 @@
 .theme--light.v-subheader{color:rgba(0,0,0,.6)}.theme--dark.v-subheader{color:rgba(255,255,255,.7)}.v-subheader{align-items:center;display:flex;height:48px;font-size:.875rem;font-weight:400;padding:0 16px 0 16px}.v-subheader--inset{margin-left:56px}
 
 /* Tweaks to dropdowns to make them smaller. */
-.Dropdown[data-v-9fbefecc] .v-input__slot {
+.Dropdown[data-v-0c4a7d0d] .v-input__slot {
   min-height: 0 !important;
 }
-.Dropdown[data-v-9fbefecc] .v-label {
+.Dropdown[data-v-0c4a7d0d] .v-label {
   top: 4px !important;
 }
-.Dropdown[data-v-9fbefecc] .v-input__append-inner {
+.Dropdown[data-v-0c4a7d0d] .v-input__append-inner {
   margin-top: 2px !important;
 }
 
