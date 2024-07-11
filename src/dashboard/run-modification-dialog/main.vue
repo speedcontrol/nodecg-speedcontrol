@@ -150,14 +150,14 @@
 </template>
 
 <script lang="ts">
-import { NodeCGAPIClient } from '@nodecg/types/client/api/api.client';
 import { Alert, RunData, RunModification } from '@nodecg-speedcontrol/types';
 import { Configschema, TwitchAPIData } from '@nodecg-speedcontrol/types/schemas';
+import { NodeCGAPIClient } from '@nodecg/types/client/api/api.client';
 import clone from 'clone';
 import { DeepWritable } from 'ts-essentials';
 import { Component, Vue } from 'vue-property-decorator';
 import Draggable from 'vuedraggable';
-import { getDialog } from '../_misc/helpers';
+import { checkDialog, getDialog } from '../_misc/helpers';
 import { replicantNS } from '../_misc/replicant_store';
 import ModifyButton from './components/ModifyButton.vue';
 import Team from './components/Team.vue';
@@ -235,10 +235,12 @@ export default class extends Vue {
       const noTwitchGame = await storeModule.saveRunData();
       this.close(true);
       if (noTwitchGame) {
-        const dialog = getDialog('alert-dialog') as Alert.Dialog;
-        if (dialog) {
-          dialog.openDialog({ name: 'NoTwitchGame' });
-        }
+        checkDialog('alert-dialog').then(() => {
+          const dialog = getDialog('alert-dialog') as Alert.Dialog;
+          if (dialog) {
+            dialog.openDialog({ name: 'NoTwitchGame' });
+          }
+        });
       }
     } catch (err) {
       this.err = err;
