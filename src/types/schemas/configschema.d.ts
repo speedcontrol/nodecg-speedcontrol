@@ -37,7 +37,7 @@ export interface Configschema {
 	horaro: Horaro;
 	oengus: {
 		defaultMarathon: string;
-		defaultSchedule?: string;
+		defaultSchedule: string;
 		/**
 		 * DEPRECATED; left for compatibility reasons.
 		 */
