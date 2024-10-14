@@ -5,16 +5,20 @@ export interface OengusMarathon {
 
 export interface OengusSchedule {
   id: number;
+  marathonId: string;
+  name: string;
+  slug: string;
+  published: boolean;
   lines: OengusLine[];
 }
 
 export interface OengusLine {
   id: number;
-  gameName: string | null;
+  game: string | null;
   console: string | null;
   emulated: boolean;
   ratio: string | null;
-  categoryName: string | null;
+  category: string | null;
   estimate: string;
   setupTime: string;
   setupBlock: boolean;
@@ -23,8 +27,13 @@ export interface OengusLine {
   position: number;
   categoryId: number | null;
   type: OengusRunType;
-  runners: OengusUser[];
-  customDataDTO: string | null;
+  runners: OengusLineRunner[];
+  customData: string | null;
+}
+
+export interface OengusLineRunner {
+  runnerName: string;
+  profile: OengusUser | null;
 }
 
 export enum OengusRunType {
@@ -38,23 +47,23 @@ export interface OengusUser {
   id: number;
   username: string;
   displayName: string;
-  usernameJapanese: string | null; // deprecated
   enabled: boolean;
-  twitterName?: string | null; // deprecated
-  twitchName?: string | null; // deprecated
-  speedruncomName?: string | null; // deprecated
-  connections?: OengusUserConnections[]; // to be introduced
-  pronouns?: string | string[] | null; // to be introduced
-  country?: string | null; // to be introduced
+  banned: boolean;
+  languagesSpoken: string[];
+  connections: OengusUserConnections[]; // to be introduced
+  pronouns: string[];
+  country: string | null;
 }
 
 export interface OengusUserConnections {
   id: number;
   platform: 'DISCORD' | 'SPEEDRUNCOM' | 'TWITCH' | 'TWITTER' | 'YOUTUBE';
   username: string;
-  usernameValidForPlatform: boolean;
 }
 
 export enum OengusRole {
   user = 'ROLE_USER',
+  admin = 'ROLE_ADMIN',
+  banned = 'ROLE_BANNED',
+  sponsor = 'ROLE_SPONSOR',
 }

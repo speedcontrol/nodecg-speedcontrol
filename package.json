@@ -145,7 +145,7 @@
         "name": "oengus-schedule-import",
         "title": "Oengus Schedule Import",
         "file": "oengus-schedule-import.html",
-        "width": 2,
+        "width": 3,
         "workspace": "Run Modifications"
       },
       {
