@@ -4,7 +4,7 @@
     "panelTitle": "Oengus Schedule Import",
     "shortname": "Oengus Marathon Shortname",
     "scheduleSlug": "Schedule Slug",
-    "helpText": "Insert the Oengus marathon shortname (not including \"/schedule\") above and press the \"Import Schedule Data\" button. Keep in mind that it may take 5 minutes after saving for your schedule to update.",
+    "helpText": "Insert the Oengus marathon shortname and schedule slug above and press the \"Import Schedule Data\" button. Keep in mind that it may take 5 minutes after saving for your schedule to update.",
     "importInProgressHelpText": "Import currently in progress...",
     "import": "Import Schedule Data",
     "importProgress": "Importing {item}/{total}"
@@ -25,24 +25,25 @@
     <div class="d-flex">
       <!-- Oengus Shortname Field -->
       <v-text-field
-          class="d-flex-inline"
-          v-model="marathonShort"
-          filled
-          hide-details
-          :label="$t('shortname')"
-          placeholder="id"
-          prefix="/marathon/"
-          :disabled="importStatus.importing"
+        class="d-flex-inline"
+        v-model="marathonShort"
+        filled
+        hide-details
+        :label="$t('shortname')"
+        placeholder="id"
+        prefix="/marathon/"
+        :disabled="importStatus.importing"
       />
+      <!-- Oengus Schedule Slug Field -->
       <v-text-field
-          class="d-flex-inline"
-          v-model="scheduleSlug"
-          filled
-          hide-details
-          prefix="/schedule/"
-          :label="$t('scheduleSlug')"
-          placeholder="stream-1"
-          :disabled="importStatus.importing"
+        class="d-flex-inline"
+        v-model="scheduleSlug"
+        filled
+        hide-details
+        prefix="/schedule/"
+        :label="$t('scheduleSlug')"
+        placeholder="stream-1"
+        :disabled="importStatus.importing"
       />
     </div>
     <div class="mt-2">
