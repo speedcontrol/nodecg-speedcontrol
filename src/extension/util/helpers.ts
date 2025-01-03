@@ -137,7 +137,8 @@ export function checkGameAgainstIgnoreList(
   const list = service === 'horaro'
     ? (nodecg.bundleConfig.horaro || nodecg.bundleConfig.schedule).ignoreGamesWhileImporting || []
     : nodecg.bundleConfig.oengus.ignoreGamesWhileImporting
-      || (nodecg.bundleConfig.horaro || nodecg.bundleConfig.schedule).ignoreGamesWhileImporting || [];
+      || (nodecg.bundleConfig.horaro || nodecg.bundleConfig.schedule)
+        .ignoreGamesWhileImporting || [];
   return !!list.find((str) => !!str.toLowerCase().match(
     new RegExp(`\\b${_.escapeRegExp(game.toLowerCase())}\\b`),
   ));

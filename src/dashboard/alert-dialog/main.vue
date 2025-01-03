@@ -64,7 +64,8 @@ export default class extends Vue {
     if (this.callbackFunc) {
       this.callbackFunc(confirm);
     }
-    (this.dialog as any)._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle
+    // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/no-explicit-any
+    (this.dialog as any)._updateClosingReasonConfirmed(confirm);
     this.dialog?.close();
     this.currentComponent = null;
     this.alertData = {};
