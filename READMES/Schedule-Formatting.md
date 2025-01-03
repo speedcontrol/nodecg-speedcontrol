@@ -86,8 +86,6 @@ If you need any good examples of schedules that use correct formatting, here are
 
 Oengus, by design, is a lot simpler in regard to Horaro as the structure is specifically geared towards speedrun marathon usage, and all the player data is stored in their database so can easily be referenced.
 
-The only option available when importing (and also available to set the default in the [configuration](Configuration.md#oengus-schedule)) is `Use Japanese names?` which will import the players using their Japanese names if available, instead of their international ones.
-
 <a id="oengus-custom-data"></a>
 ### Custom Data
 
