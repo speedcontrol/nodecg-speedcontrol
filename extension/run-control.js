@@ -166,7 +166,6 @@ function removeRun(id) {
             else {
                 replicants_1.runDataArray.value.splice(runIndex, 1);
                 nodecg.log.debug(`[Run Control] Successfully removed run ${id}`);
-                return;
             }
         }
         catch (err) {
