@@ -34,7 +34,8 @@ Various places in this bundle store information in the format we refer to as the
           country: "de",
           pronouns: "He/Him",
           social: {
-            twitch: "esamarathon"
+            twitch: "esamarathon",
+            youtube: "ESAMarathon"
           },
           customData: {
             otherData: "Some String"
@@ -54,7 +55,8 @@ Various places in this bundle store information in the format we refer to as the
           country: "nl",
           pronouns: "She/Her",
           social: {
-            twitch: "monstercat"
+            twitch: "monstercat",
+            youtube: "Monstercat"
           },
           customData: {
             otherData: "Some String"
@@ -110,5 +112,6 @@ The `players` array in "`team` objects" will contain (if anything) "`player` obj
 - `country` *[`string`]* Country code of the country where this player is from, usually pulled from [speedrun.com](https://www.speedrun.com) or [Oengus](https://oengus.io).
 - `pronouns` *[`string`]* List of the player's pronouns, usually either pulled from [speedrun.com](https://www.speedrun.com) or [Oengus](https://oengus.io), and if so, can also be a comma separated list of each option these services allow to be selected.
 - `social` *[`object`]* Contains information on this player's social media references.
-  - `twitch` *[`string`]* Username of this player on [twitch.tv](https://www.twitch.tv).
+  - `twitch` *[`string`]* Username of this player on [Twitch](https://www.twitch.tv).
+  - `youtube` *[`string]* Username of this player on [YouTube](https://www.youtube.com/).
 - `customData` *[`object`]* Contains keyed strings, with the key(s) from your configuration for *player based* custom data; this will always be an object even if no data is contained within it.
