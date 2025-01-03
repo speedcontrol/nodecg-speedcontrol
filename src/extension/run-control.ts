@@ -111,10 +111,10 @@ async function changeActiveRun(id?: string): Promise<boolean> {
     if (!runData) {
       throw new Error(`Run with ID ${id} was not found`);
     } else {
-      const noTwitchGame = await updateTwitchInformation(runData);
       runDataActiveRun.value = clone(runData);
       to(resetTimer(true));
       nodecg.log.debug(`[Run Control] Active run changed to ${id}`);
+      const noTwitchGame = await updateTwitchInformation(runData);
       return noTwitchGame;
     }
   } catch (err) {
