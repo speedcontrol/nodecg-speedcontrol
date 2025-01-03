@@ -32,11 +32,10 @@ function get(endpoint) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             nodecg.log.debug(`[Oengus Import] API request processing on ${endpoint}`);
-            const resp = yield (0, needle_1.default)('get', `https://${config.oengus.useSandbox ? 'sandbox.' : ''}oengus.io/api/v1${endpoint}`, null, {
+            const resp = yield (0, needle_1.default)('get', `https://${config.oengus.useSandbox ? 'sandbox.' : ''}oengus.io/api${endpoint}`, null, {
                 headers: {
                     'User-Agent': 'nodecg-speedcontrol',
                     Accept: 'application/json',
-                    'oengus-version': '1',
                 },
             });
             if (resp.statusCode !== 200) {
@@ -84,16 +83,57 @@ function resetImportStatus() {
     replicants_1.oengusImportStatus.value.total = 0;
     nodecg.log.debug('[Oengus Import] Import status restored to default');
 }
+function runnerToPlayer(runner, team) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    return __awaiter(this, void 0, void 0, function* () {
+        const playerTwitch = (_b = (_a = runner.connections) === null || _a === void 0 ? void 0 : _a.find((c) => c.platform === 'TWITCH')) === null || _b === void 0 ? void 0 : _b.username;
+        const playerYoutube = (_d = (_c = runner.connections) === null || _c === void 0 ? void 0 : _c.find((c) => c.platform === 'YOUTUBE')) === null || _d === void 0 ? void 0 : _d.username;
+        const playerPronouns = runner.pronouns;
+        const player = {
+            name: runner.displayName || runner.username,
+            id: (0, uuid_1.v4)(),
+            teamID: team.id,
+            social: {
+                twitch: playerTwitch || undefined,
+                youtube: playerYoutube || undefined,
+            },
+            country: ((_e = runner.country) === null || _e === void 0 ? void 0 : _e.toLowerCase()) || undefined,
+            pronouns: (playerPronouns === null || playerPronouns === void 0 ? void 0 : playerPronouns.join(', ')) || undefined,
+            customData: {},
+        };
+        if (!config.oengus.disableSpeedrunComLookup) {
+            const playerTwitter = (_g = (_f = runner.connections) === null || _f === void 0 ? void 0 : _f.find((c) => c.platform === 'TWITTER')) === null || _g === void 0 ? void 0 : _g.username;
+            const playerSrcom = (_j = (_h = runner.connections) === null || _h === void 0 ? void 0 : _h.find((c) => c.platform === 'SPEEDRUNCOM')) === null || _j === void 0 ? void 0 : _j.username;
+            const data = yield (0, srcom_api_1.searchForUserDataMultiple)({ type: 'srcom', val: playerSrcom }, { type: 'twitch', val: playerTwitch }, { type: 'twitter', val: playerTwitter }, { type: 'name', val: runner.username });
+            if (data) {
+                // Always favour the supplied Twitch username/country/pronouns
+                // from Oengus if available.
+                if (!playerTwitch) {
+                    const tURL = ((_k = data.twitch) === null || _k === void 0 ? void 0 : _k.uri) || undefined;
+                    player.social.twitch = (0, helpers_1.getTwitchUserFromURL)(tURL);
+                }
+                if (!runner.country)
+                    player.country = ((_l = data.location) === null || _l === void 0 ? void 0 : _l.country.code) || undefined;
+                if (!((_m = runner.pronouns) === null || _m === void 0 ? void 0 : _m.length)) {
+                    player.pronouns = ((_o = data.pronouns) === null || _o === void 0 ? void 0 : _o.toLowerCase()) || undefined;
+                }
+            }
+        }
+        return player;
+    });
+}
 /**
  * Import schedule data in from Oengus.
  * @param marathonShort Oengus' marathon shortname you want to import.
+ * @param slug A user defined part in the url that is used when fetching a schedule.
  */
-function importSchedule(marathonShort) {
+function importSchedule(marathonShort, slug) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             replicants_1.oengusImportStatus.value.importing = true;
-            const marathonResp = yield get(`/marathons/${marathonShort}`);
-            const scheduleResp = yield get(`/marathons/${marathonShort}/schedule?withCustomData=true`);
+            const marathonResp = yield get(`/v1/marathons/${marathonShort}`);
+            const scheUrl = `/v2/marathons/${marathonShort}/schedules/for-slug/${slug}?withCustomData=true`;
+            const scheduleResp = yield get(scheUrl);
             if (!isOengusMarathon(marathonResp.body)) {
                 throw new Error('Did not receive marathon data correctly');
             }
@@ -105,7 +145,7 @@ function importSchedule(marathonShort) {
             // This is updated for every run so we can calculate a scheduled time for each one.
             let scheduledTime = Math.floor(Date.parse(marathonResp.body.startDate) / 1000);
             // Filtering out any games on the ignore list before processing them all.
-            const newRunDataArray = yield (0, p_iteration_1.mapSeries)(oengusLines.filter((line) => (!(0, helpers_1.checkGameAgainstIgnoreList)(line.gameName, 'oengus'))), (line, index, arr) => __awaiter(this, void 0, void 0, function* () {
+            const newRunDataArray = yield (0, p_iteration_1.mapSeries)(oengusLines.filter((line) => (!(0, helpers_1.checkGameAgainstIgnoreList)(line.game, 'oengus'))), (line, index, arr) => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b;
                 replicants_1.oengusImportStatus.value.item = index + 1;
                 replicants_1.oengusImportStatus.value.total = arr.length;
@@ -119,9 +159,9 @@ function importSchedule(marathonShort) {
                     externalID: line.id.toString(),
                 };
                 // General Run Data
-                runData.game = line.gameName || undefined;
+                runData.game = line.game || undefined;
                 runData.system = line.console || undefined;
-                runData.category = line.categoryName || undefined;
+                runData.category = line.category || undefined;
                 const parsedEstimate = (0, iso8601_duration_1.parse)(line.estimate);
                 runData.estimate = formatDuration(parsedEstimate);
                 runData.estimateS = (0, iso8601_duration_1.toSeconds)(parsedEstimate);
@@ -138,15 +178,15 @@ function importSchedule(marathonShort) {
                     runData.setupTime = formatDuration({ seconds: 0 });
                     runData.setupTimeS = 0;
                 }
-                else if (line.gameName) {
+                else if (line.game) {
                     // Attempt to find Twitch directory on speedrun.com if setting is enabled.
                     let srcomGameTwitch;
                     if (!config.oengus.disableSpeedrunComLookup) {
-                        [, srcomGameTwitch] = yield (0, helpers_1.to)((0, srcom_api_1.searchForTwitchGame)(line.gameName));
+                        [, srcomGameTwitch] = yield (0, helpers_1.to)((0, srcom_api_1.searchForTwitchGame)(line.game));
                     }
                     let gameTwitch;
                     // Verify some game directory supplied exists on Twitch.
-                    for (const str of [srcomGameTwitch, line.gameName]) {
+                    for (const str of [srcomGameTwitch, line.game]) {
                         if (str) {
                             gameTwitch = (_b = (yield (0, helpers_1.to)((0, twitch_api_1.verifyTwitchDir)(str)))[1]) === null || _b === void 0 ? void 0 : _b.name;
                             if (gameTwitch) {
@@ -157,10 +197,10 @@ function importSchedule(marathonShort) {
                     runData.gameTwitch = gameTwitch;
                 }
                 // Custom Data
-                if (line.customDataDTO) {
+                if (line.customData) {
                     let parsed;
                     try {
-                        parsed = JSON.parse(line.customDataDTO);
+                        parsed = JSON.parse(line.customData);
                     }
                     catch (err) { /* err */ }
                     if (parsed && (0, lodash_1.isObject)(parsed)) {
@@ -180,45 +220,23 @@ function importSchedule(marathonShort) {
                 scheduledTime += runData.estimateS + runData.setupTimeS;
                 // Team Data
                 runData.teams = yield (0, p_iteration_1.mapSeries)(line.runners, (runner) => __awaiter(this, void 0, void 0, function* () {
-                    var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
                     const team = {
                         id: (0, uuid_1.v4)(),
                         players: [],
                     };
-                    const playerTwitch = ((_d = (_c = runner.connections) === null || _c === void 0 ? void 0 : _c.find((c) => c.platform === 'TWITCH')) === null || _d === void 0 ? void 0 : _d.username) || runner.twitchName;
-                    const playerYoutube = (_f = (_e = runner.connections) === null || _e === void 0 ? void 0 : _e.find((c) => c.platform === 'YOUTUBE')) === null || _f === void 0 ? void 0 : _f.username;
-                    const playerPronouns = typeof runner.pronouns === 'string'
-                        ? runner.pronouns.split(',')
-                        : runner.pronouns;
-                    const player = {
-                        name: runner.displayName || runner.username,
-                        id: (0, uuid_1.v4)(),
-                        teamID: team.id,
-                        social: {
-                            twitch: playerTwitch || undefined,
-                            youtube: playerYoutube || undefined,
-                        },
-                        country: ((_g = runner.country) === null || _g === void 0 ? void 0 : _g.toLowerCase()) || undefined,
-                        pronouns: (playerPronouns === null || playerPronouns === void 0 ? void 0 : playerPronouns.join(', ')) || undefined,
-                        customData: {},
-                    };
-                    if (!config.oengus.disableSpeedrunComLookup) {
-                        const playerTwitter = ((_j = (_h = runner.connections) === null || _h === void 0 ? void 0 : _h.find((c) => c.platform === 'TWITTER')) === null || _j === void 0 ? void 0 : _j.username) || runner.twitterName;
-                        const playerSrcom = ((_l = (_k = runner.connections) === null || _k === void 0 ? void 0 : _k.find((c) => c.platform === 'SPEEDRUNCOM')) === null || _l === void 0 ? void 0 : _l.username) || runner.speedruncomName;
-                        const data = yield (0, srcom_api_1.searchForUserDataMultiple)({ type: 'srcom', val: playerSrcom }, { type: 'twitch', val: playerTwitch }, { type: 'twitter', val: playerTwitter }, { type: 'name', val: runner.username });
-                        if (data) {
-                            // Always favour the supplied Twitch username/country/pronouns
-                            // from Oengus if available.
-                            if (!playerTwitch) {
-                                const tURL = ((_m = data.twitch) === null || _m === void 0 ? void 0 : _m.uri) || undefined;
-                                player.social.twitch = (0, helpers_1.getTwitchUserFromURL)(tURL);
-                            }
-                            if (!runner.country)
-                                player.country = ((_o = data.location) === null || _o === void 0 ? void 0 : _o.country.code) || undefined;
-                            if (!((_p = runner.pronouns) === null || _p === void 0 ? void 0 : _p.length)) {
-                                player.pronouns = ((_q = data.pronouns) === null || _q === void 0 ? void 0 : _q.toLowerCase()) || undefined;
-                            }
-                        }
+                    let player;
+                    if (runner.profile) {
+                        player = yield runnerToPlayer(runner.profile, team);
+                    }
+                    else {
+                        // Oengus supports "fake" users, they do not have a profile
+                        player = {
+                            name: runner.runnerName,
+                            id: (0, uuid_1.v4)(),
+                            teamID: team.id,
+                            social: {},
+                            customData: {},
+                        };
                     }
                     team.players.push(player);
                     return team;
@@ -240,7 +258,7 @@ nodecg.listenFor('importOengusSchedule', (data, ack) => __awaiter(void 0, void 0
             throw new Error('Already importing schedule');
         }
         nodecg.log.info('[Oengus Import] Started importing schedule');
-        yield importSchedule(data.marathonShort);
+        yield importSchedule(data.marathonShort, data.slug);
         nodecg.log.info('[Oengus Import] Successfully imported schedule from Oengus');
         (0, helpers_1.processAck)(ack, null);
     }
