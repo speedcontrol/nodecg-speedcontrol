@@ -248,7 +248,8 @@ export default class extends Vue {
   }
 
   close(confirm: boolean): void {
-    (this.dialog as any)._updateClosingReasonConfirmed(confirm); // eslint-disable-line no-underscore-dangle
+    // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/no-explicit-any
+    (this.dialog as any)._updateClosingReasonConfirmed(confirm);
     this.dialog?.close();
   }
 

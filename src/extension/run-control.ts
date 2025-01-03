@@ -138,7 +138,6 @@ async function removeRun(id?: string): Promise<void> {
     } else {
       runDataArray.value.splice(runIndex, 1);
       nodecg.log.debug(`[Run Control] Successfully removed run ${id}`);
-      return;
     }
   } catch (err) {
     nodecg.log.debug('[Run Control] Could not successfully remove run:', err);
