@@ -1,11 +1,4 @@
-import {
-  OengusMarathon,
-  OengusSchedule,
-  OengusUser,
-  RunData,
-  RunDataPlayer,
-  RunDataTeam,
-} from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
+import { OengusMarathon, OengusSchedule, OengusUser, RunData, RunDataPlayer, RunDataTeam } from '@nodecg-speedcontrol/types'; // eslint-disable-line object-curly-newline, max-len
 import { Duration, parse as isoParse, toSeconds } from 'iso8601-duration';
 import { isObject } from 'lodash';
 import needle, { NeedleResponse } from 'needle';
