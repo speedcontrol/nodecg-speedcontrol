@@ -67,7 +67,7 @@ To import a schedule, start by going to the *Run Modifications* workspace along 
 
 #### Oengus
 
-If you are importing a schedule from Oengus, this part is pretty simple. Paste in the shortname of the marathon (the part at the end of the Oengus URL) into the box (it will be automatically pre-filled if you set `oengus.defaultMarathon` in this bundle's config), toggle "Use Japanese names?" if needed (will be automatically pre-set if you set `oengus.useJapanese` in the bundle's config) and click *Import Schedule Data* button. There will be an alert dialog to confirm you want to proceed as well.
+If you are importing a schedule from Oengus, this part is pretty simple. Paste in the shortname of the marathon (the part after `/marathon/` in the URL) into the first box, and the schedule slug (the part after `/schedule/` in the URL) into the second box (these will be automatically pre-filled if you set `oengus.defaultMarathon` and `oengus.defaultSchedule` in this bundle's config) and click *Import Schedule Data* button. There will be an alert dialog to confirm you want to proceed as well.
 
 ![Oengus Schedule Import Before](READMES/img/oengus-schedule-import-1.png)
 
@@ -156,8 +156,9 @@ With help and contributions from:
 - btrim
 - Zephyyrr
 - Planks
-- cma2819 *(Oengus Support)*
-- yagamuu *(Japanese Localisation)*
+- cma2819 *(Oengus support)*
+- duncte123 *(Oengus updates and assistance)*
+- yagamuu *(Japanese localisation)*
 
 
 <a id="contribution-development"></a>
