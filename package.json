@@ -54,7 +54,7 @@
     "@fontsource/roboto": "^4.5.8",
     "@intlify/vue-i18n-loader": "^1.1.0",
     "@mdi/font": "^7.4.47",
-    "@nodecg/types": "^2.5.3",
+    "@nodecg/types": "~2.4.3",
     "@types/clone": "^2.1.4",
     "@types/lodash": "^4.17.17",
     "@types/markdown-it": "12.2.3",
